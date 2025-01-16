@@ -1,23 +1,8 @@
  # 오늘 한 일
-25.01.13 (월)
-- 기획안 작성하기
-- 환경설정 세팅
-- 팀 미팅 진행
 
 
-25.01.14 (화)
-- issue template 만들기
-- JPA 강의 수강하기
 
-25.01.15 (수)
-- 2차 기획안 작성하기
-- 팀 미팅 진행
-- Team Notion 정리하기
-
-<br><br>
-
-# 기획안 작성
-<h3>25.01.13 1차 기획안 작성</h3>
+### 25.01.13(월) 1차 기획안 작성
 <details>
 <summary>“대중교통 불편 해소 서비스“ - 김현진</summary>
 <div markdown="1">
@@ -191,10 +176,22 @@
 
 <br>
 
-<h3>25.01.15 2차 기획안 작성</h3>
+### 25.01.14(화) 
+<details>
+<summary>오늘 한 일</summary>
+<div markdown="2">
+
+- issue template 만들기
+- JPA 강의 수강하기
+</div>
+</details>
+
+<br>
+
+### 25.01.15(수) 2차 기획안 작성 
 <details>
 <summary>일괄 중고 가전/가구 서비스 (돌싱 마켓)</summary>
-<div markdown="2">
+<div markdown="3">
 
 ## 이혼 전문 가전/가구 경매 사이트 기획서
 
@@ -402,6 +399,20 @@
 </div>
 </details>
 
+<br>
 
+### 25.01.16(목) 기획 및 설계
+<details>
+<summary>오늘 한 일</summary>
+<div markdown="4">
 
+- 설문조사 구글폼 작성하기
+![image](./image/image.png)
+
+- 기능 명세서 작성하기
+![image](./image/image2.png)
+
+<img>
+</div>
+</details>
 
