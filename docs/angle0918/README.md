@@ -1,3 +1,7 @@
+# 1/16 오늘의 업무
+
+## 1. 3차 기획안 PPT 작성 
+[3차 기획안 PPT](https://www.canva.com/design/DAGcUbBIt9w/AqMXszBeIhopzP0bT6DGeQ/edit?utm_content=DAGcUbBIt9w&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 # 1/15 2차 아이디어 제안
 
