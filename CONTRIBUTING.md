@@ -2,22 +2,22 @@
 
 A108팀에서 소프트웨어 개발 시 준수해야 하는 코딩 스타일을 정의하고 가이드합니다.
 
-## Submitting a merge request
+## Merge request
 
-### Forked strategy
+### Submitting a merge request
 
-해당 리포지토리는 forked merge request strategy를 기반으로 관리됩니다.
+해당 리포지토리는 merge request를 기반으로 관리됩니다.
 
 ```
-# Fork this repository to yours.
-$ git clone [YOUR_REPOSITORY_URL]
+$ git clone https://lab.ssafy.com/s12-webmobile2-sub1/S12P11A108
 $ cd S12P11A108
 
 # Install packages.
+# git checkout -b [NEW_BRANCH]
 # (Working...)
 
 $ git commit [...]
-$ git push origin [YOUR_REPOSITORY]
+$ git push origin [NEW_BRANCH]
 
 # Enroll merge-request!
 # in https://lab.ssafy.com/s12-webmobile2-sub1/S12P11A108
