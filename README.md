@@ -38,3 +38,7 @@
   ]
 }
 ```
+
+## ERD Diagram 1차 설계안
+
+![ERD Diagram 1차 설계안](https://github.com/user-attachments/assets/956a9056-cefa-4055-9dba-90fcbfa8b8de)
