@@ -1,0 +1,29 @@
+stages:
+  - build_backend
+
+build_backend:
+  stage: build_backend
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - backend/**/*
+      when: always
+  image: gradle:latest
+  cache:
+    paths:
+      - backend/.gradle/
+      - backend/build/
+    key: $CI_PROJECT_NAME-backend-cache
+  before_script:
+    - cd backend
+  script:
+    - gradle build --build-cache
+  after_script:
+    - cd backend
+    - chmod +x scripts/ci/generate-codequality-report-from-checkstyle.sh
+    - scripts/ci/generate-codequality-report-from-checkstyle.sh build/reports/checkstyle/main.xml > checkstyle-report.json
+  artifacts:
+    when: always
+    reports:
+      codequality:
+        - backend/checkstyle-report.json
