@@ -43,7 +43,7 @@ public class Request {
 	@Column(name = "created_at")
 	private Timestamp createdAt;
 
-	@Column(name = "memo", length = 1000)
+	@Column(name = "memo", length = 1_000)
 	private String memo;
 
 	@Enumerated(EnumType.STRING)
