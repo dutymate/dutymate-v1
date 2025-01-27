@@ -1,5 +1,9 @@
 spring:
-# JPA 설정
+  # 환경변수 파일 설정
+  profiles:
+    include: env
+
+  # JPA 설정
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
@@ -9,7 +13,7 @@ spring:
       hibernate:
         format_sql: true
 
-# 최대 이미지 파일 크기 설정
+  # 최대 이미지 파일 크기 설정
   servlet:
     multipart:
       maxFileSize: 10MB
