@@ -34,6 +34,12 @@ public class Member {
 	@Column(nullable = false)
 	private String password;
 
+	@Column(length = 10, nullable = false)
+	private String name;
+
+	@Column(length = 10)
+	private String nickname;
+
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
