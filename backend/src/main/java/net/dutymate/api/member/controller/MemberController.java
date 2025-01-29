@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.dutymate.api.annotation.Auth;
-import net.dutymate.api.entity.Member;
 import net.dutymate.api.member.dto.LoginResponseDto;
 import net.dutymate.api.member.service.MemberService;
 

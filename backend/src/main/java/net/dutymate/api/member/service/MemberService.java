@@ -74,7 +74,6 @@ public class MemberService {
 
 	// 액세스 토큰으로 KAKAO로부터 사용자 정보를 가져오는 메서드
 	public KakaoUserResponseDto.KakaoAccount getKakaoUserInfo(String kakaoAccessToken) {
-
 		// WebClient 인스턴스 생성 후 사용자 정보 가져오기 GET 요청
 		KakaoUserResponseDto kakaoUserResponseDto = WebClient.create().post()
 			.uri(KAKAO_USER_URI)

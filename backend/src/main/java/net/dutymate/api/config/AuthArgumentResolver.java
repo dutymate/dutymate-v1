@@ -47,9 +47,7 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
 		Long memberId = (Long)request.getAttribute("memberId");
 
 		// Member 엔티티 반환
-		return memberRepository.findById(memberId)
-			.orElseThrow(() -> new ResponseStatusException(
-				HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."
-			));
+		return memberRepository.findById(memberId).orElseThrow(
+			() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."));
 	}
 }
