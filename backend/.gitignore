@@ -36,5 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-### 환경변수 파일 ###
+### ENV Files ###
 application-env.yaml
