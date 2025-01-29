@@ -1,0 +1,95 @@
+package net.dutymate.api.member.service;
+
+import java.util.Objects;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import net.dutymate.api.entity.Member;
+import net.dutymate.api.member.dto.KakaoTokenResponseDto;
+import net.dutymate.api.member.dto.KakaoUserResponseDto;
+import net.dutymate.api.member.dto.LoginResponseDto;
+import net.dutymate.api.member.repository.MemberRepository;
+import net.dutymate.api.member.util.JwtUtil;
+
+import io.netty.handler.codec.http.HttpHeaderValues;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class MemberService {
+
+	private static final String KAKAO_CLIENT_ID = "dc9758f762b36b3dea542a3bcf9322dd";
+	private static final String KAKAO_TOKEN_URI = "https://kauth.kakao.com/oauth/token";
+	private static final String KAKAO_USER_URI = "https://kapi.kakao.com/v2/user/me";
+	private static final String KAKAO_REDIRECT_URI = "http://localhost:8080/member/login/kakao";
+
+	private final MemberRepository memberRepository;
+	private final JwtUtil jwtUtil;
+
+	@Transactional
+	public LoginResponseDto kakaoLogin(String code) {
+		// KAKAO로부터 토큰 발급받아 유저 정보 확인
+		String kakaoAccessToken = getKakaoAccessToken(code);
+		KakaoUserResponseDto.KakaoAccount kakaoAccount = getKakaoUserInfo(kakaoAccessToken);
+
+		// 가입된 회원 엔티티를 조회. 회원 테이블에 없으면 회원가입 처리
+		Member member = memberRepository.findMemberByEmail(kakaoAccount.getEmail())
+			.orElseGet(() -> signUp(kakaoAccount));
+
+		// memberId로 AccessToken 생성
+		String accessToken = jwtUtil.createToken(member.getMemberId());
+
+		// TODO 부가정보 기입 여부 확인
+
+		// TODO 병동 입장 여부 확인
+
+		return LoginResponseDto.of(member, accessToken, false, false);
+	}
+
+	// 인가 코드로 KAKAO로부터 액세스 토큰을 받아오는 메서드
+	private String getKakaoAccessToken(String code) {
+		// 요청 Param 설정
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", "authorization_code");
+		params.add("client_id", KAKAO_CLIENT_ID);
+		params.add("redirect_uri", KAKAO_REDIRECT_URI);
+		params.add("code", code);
+
+		// WebClient 인스턴스 생성 후 토큰 받기 POST 요청
+		KakaoTokenResponseDto kakaoTokenResponseDto = WebClient.create().post()
+			.uri(KAKAO_TOKEN_URI)
+			.body(BodyInserters.fromFormData(params))
+			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
+			.retrieve()
+			.bodyToMono(KakaoTokenResponseDto.class)
+			.block();
+		return Objects.requireNonNull(kakaoTokenResponseDto).getAccessToken();
+	}
+
+	// 액세스 토큰으로 KAKAO로부터 사용자 정보를 가져오는 메서드
+	public KakaoUserResponseDto.KakaoAccount getKakaoUserInfo(String kakaoAccessToken) {
+
+		// WebClient 인스턴스 생성 후 사용자 정보 가져오기 GET 요청
+		KakaoUserResponseDto kakaoUserResponseDto = WebClient.create().post()
+			.uri(KAKAO_USER_URI)
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + kakaoAccessToken)
+			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
+			.retrieve()
+			.bodyToMono(KakaoUserResponseDto.class)
+			.block();
+		return Objects.requireNonNull(kakaoUserResponseDto).getKakaoAccount();
+	}
+
+	// KAKAO 계정으로 회원가입
+	private Member signUp(KakaoUserResponseDto.KakaoAccount kakaoAccount) {
+		Member newMember = kakaoAccount.toMember();
+		memberRepository.save(newMember);
+		return newMember;
+	}
+}
