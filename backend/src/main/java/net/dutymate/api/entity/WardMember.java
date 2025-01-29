@@ -3,8 +3,6 @@ package net.dutymate.api.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.ColumnDefault;
-
 import net.dutymate.api.enumclass.ShiftType;
 import net.dutymate.api.enumclass.SkillLevel;
 
@@ -65,6 +63,5 @@ public class WardMember {
 	private SkillLevel skillLevel;
 
 	@Column(columnDefinition = "TINYINT(1)", nullable = false)
-	@ColumnDefault("false")
 	private Boolean isSynced;
 }
