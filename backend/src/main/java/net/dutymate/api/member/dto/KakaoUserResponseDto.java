@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.enumclass.Provider;
-import net.dutymate.api.member.util.NicknameGenerator;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -53,13 +52,12 @@ public class KakaoUserResponseDto {
 			private Boolean isDefaultNickname;
 		}
 
-		// KakaoAccount -> Member Entity
+		// KakaoAccount(DTO) -> Member Entity
 		public Member toMember() {
 			return Member.builder()
 				.email(email)
 				.password("KakaoPassword123!!")
 				.name(profile.getNickname())
-				.nickname(NicknameGenerator.generateNickname())
 				.profileImg(profile.getProfileImageUrl())
 				.provider(Provider.KAKAO)
 				.createdAt(new Timestamp(System.currentTimeMillis()))
