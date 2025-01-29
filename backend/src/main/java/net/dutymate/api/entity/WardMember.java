@@ -62,6 +62,6 @@ public class WardMember {
 	@Enumerated(EnumType.STRING)
 	private SkillLevel skillLevel;
 
-	@Column(columnDefinition = "TINYINT(1)", nullable = false)
+	@Column(columnDefinition = "tinyint(1)", nullable = false)
 	private Boolean isSynced;
 }
