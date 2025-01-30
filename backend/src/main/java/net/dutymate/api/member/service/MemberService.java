@@ -2,6 +2,7 @@ package net.dutymate.api.member.service;
 
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -24,13 +25,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService {
 
-	private static final String KAKAO_CLIENT_ID = "dc9758f762b36b3dea542a3bcf9322dd";
-	private static final String KAKAO_TOKEN_URI = "https://kauth.kakao.com/oauth/token";
-	private static final String KAKAO_USER_URI = "https://kapi.kakao.com/v2/user/me";
-	private static final String KAKAO_REDIRECT_URI = "http://localhost:8080/member/login/kakao";
-
 	private final MemberRepository memberRepository;
 	private final JwtUtil jwtUtil;
+
+	@Value("${kakao.client.id}")
+	private String kakaoClientId;
+	@Value("${kakao.token.uri}")
+	private String kakaoTokenUri;
+	@Value("${kakao.user.uri}")
+	private String kakaoUserUri;
+	@Value("${kakao.redirect.uri}")
+	private String kakaoRedirectUri;
 
 	@Transactional
 	public LoginResponseDto kakaoLogin(String code) {
@@ -57,13 +62,13 @@ public class MemberService {
 		// 요청 Param 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "authorization_code");
-		params.add("client_id", KAKAO_CLIENT_ID);
-		params.add("redirect_uri", KAKAO_REDIRECT_URI);
+		params.add("client_id", kakaoClientId);
+		params.add("redirect_uri", kakaoRedirectUri);
 		params.add("code", code);
 
 		// WebClient 인스턴스 생성 후 토큰 받기 POST 요청
 		KakaoTokenResponseDto kakaoTokenResponseDto = WebClient.create().post()
-			.uri(KAKAO_TOKEN_URI)
+			.uri(kakaoTokenUri)
 			.body(BodyInserters.fromFormData(params))
 			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
 			.retrieve()
@@ -76,7 +81,7 @@ public class MemberService {
 	public KakaoUserResponseDto.KakaoAccount getKakaoUserInfo(String kakaoAccessToken) {
 		// WebClient 인스턴스 생성 후 사용자 정보 가져오기 GET 요청
 		KakaoUserResponseDto kakaoUserResponseDto = WebClient.create().post()
-			.uri(KAKAO_USER_URI)
+			.uri(kakaoUserUri)
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + kakaoAccessToken)
 			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
 			.retrieve()
