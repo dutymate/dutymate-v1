@@ -1,12 +1,13 @@
-package net.dutymate.api.wardSchedules.repository;
+package net.dutymate.api.wardschedules.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import net.dutymate.api.wardSchedules.document.WardSchedule;
+import net.dutymate.api.wardschedules.collection.WardSchedule;
 
 public interface WardScheduleRepository
 	extends MongoRepository<WardSchedule, String> {
+
 	Optional<WardSchedule> findByWardIdAndYearAndMonth(Long wardId, int year, int month);
 }

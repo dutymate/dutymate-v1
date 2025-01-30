@@ -1,18 +1,19 @@
-package net.dutymate.api.wardSchedules.service;
+package net.dutymate.api.wardschedules.service;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import net.dutymate.api.wardSchedules.document.WardSchedule;
-import net.dutymate.api.wardSchedules.repository.WardScheduleRepository;
+import net.dutymate.api.wardschedules.collection.WardSchedule;
+import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class WardScheduleService {
+
 	private final WardScheduleRepository wardScheduleRepository;
 
 	/**
@@ -24,12 +25,17 @@ public class WardScheduleService {
 			month);
 
 		return existingWardSchedule.orElseGet(() -> {
-			WardSchedule newWardSchedule = new WardSchedule();
-			newWardSchedule.setWardId(wardId);
-			newWardSchedule.setYear(year);
-			newWardSchedule.setMonth(month);
-			newWardSchedule.setDuties(new ArrayList<>()); // 초기 duties 리스트
+			WardSchedule newWardSchedule = WardSchedule.builder()
+				.wardId(wardId)
+				.year(year)
+				.month(month)
+				.duties(new ArrayList<>()) // 초기 duties 리스트
+				.build();
 			return wardScheduleRepository.save(newWardSchedule);
 		});
 	}
+
+	/**
+	 * duties 추가 API (PUT 요청)
+	 */
 }
