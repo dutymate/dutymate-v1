@@ -54,11 +54,12 @@ public class MemberService {
 		// memberId로 AccessToken 생성
 		String accessToken = jwtUtil.createToken(member.getMemberId());
 
-		// TODO 부가정보 기입 여부 확인
+		boolean existAdditionalInfo =
+			member.getGrade() != null && member.getGender() != null && member.getRole() != null;
 
 		// TODO 병동 입장 여부 확인
 
-		return LoginResponseDto.of(member, accessToken, false, false);
+		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, false);
 	}
 
 	@Transactional

@@ -18,7 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 	private final String[] excludePath = {
 		"/error",
-		"/member/login", "/member/login/**", "/member/check-email",
+		"/api/member/login", "/api/member/login/**", "/api/member/check-email",
 	};
 
 	@Override
