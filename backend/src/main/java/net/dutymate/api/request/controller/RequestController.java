@@ -18,8 +18,8 @@ public class RequestController {
 
 	private final RequestService requestService;
 
-	@PostMapping(value = "/request")
-	public ResponseEntity<Void> createRequest(@RequestBody RequestCreateDto requestCreateDto) {
+	@PostMapping("/request")
+	public ResponseEntity<?> createRequest(@RequestBody RequestCreateDto requestCreateDto) {
 
 		requestService.createRequest(requestCreateDto);
 		return ResponseEntity.ok().build();
