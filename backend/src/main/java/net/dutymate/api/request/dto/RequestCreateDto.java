@@ -14,6 +14,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RequestCreateDto {
+	
 	private Date date;
 	private String shift;
 	private String memo;

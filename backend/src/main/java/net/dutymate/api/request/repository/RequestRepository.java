@@ -7,4 +7,5 @@ import net.dutymate.api.entity.Request;
 
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
+	
 }
