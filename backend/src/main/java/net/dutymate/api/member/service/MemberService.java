@@ -11,6 +11,10 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.enumclass.Gender;
+import net.dutymate.api.enumclass.Role;
+import net.dutymate.api.member.dto.AdditionalInfoRequestDto;
+import net.dutymate.api.member.dto.AdditionalInfoResponseDto;
 import net.dutymate.api.member.dto.KakaoTokenResponseDto;
 import net.dutymate.api.member.dto.KakaoUserResponseDto;
 import net.dutymate.api.member.dto.LoginResponseDto;
@@ -55,6 +59,19 @@ public class MemberService {
 		// TODO 병동 입장 여부 확인
 
 		return LoginResponseDto.of(member, accessToken, false, false);
+	}
+
+	@Transactional
+	public AdditionalInfoResponseDto addAdditionalInfo(Member member,
+		AdditionalInfoRequestDto additionalInfoRequestDto) {
+		// DTO -> 연차, 성별, 역할 가져오기
+		Integer grade = additionalInfoRequestDto.getGrade();
+		Gender gender = Gender.valueOf(additionalInfoRequestDto.getGender());
+		Role role = Role.valueOf(additionalInfoRequestDto.getRole());
+
+		// Member 엔티티 수정하기
+		member.changeAdditionalInfo(grade, gender, role);
+		return AdditionalInfoResponseDto.of(member);
 	}
 
 	// 인가 코드로 KAKAO로부터 액세스 토큰을 받아오는 메서드

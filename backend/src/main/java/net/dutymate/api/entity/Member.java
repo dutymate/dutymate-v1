@@ -70,4 +70,10 @@ public class Member {
 		this.createdAt = new Timestamp(System.currentTimeMillis());
 		this.isActive = true;
 	}
+
+	public void changeAdditionalInfo(Integer grade, Gender gender, Role role) {
+		this.grade = grade;
+		this.gender = gender;
+		this.role = role;
+	}
 }
