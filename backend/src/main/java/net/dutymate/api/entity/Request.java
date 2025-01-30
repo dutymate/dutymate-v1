@@ -25,9 +25,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class Request {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long requestId;
@@ -52,4 +53,5 @@ public class Request {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private RequestStatus status;
+
 }
