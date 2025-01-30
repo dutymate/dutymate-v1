@@ -11,9 +11,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -62,6 +64,9 @@ public class Member {
 
 	@Column(columnDefinition = "tinyint(1)", nullable = false)
 	private Boolean isActive;
+
+	@OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+	private WardMember wardMember;
 
 	// 멤버 초기값 설정 (닉네임, 생성시각, 활성화여부)
 	@PrePersist
