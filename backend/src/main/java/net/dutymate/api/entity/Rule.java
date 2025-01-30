@@ -2,11 +2,10 @@ package net.dutymate.api.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,9 +20,6 @@ public class Rule {
 	@Column(name = "rule_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long ruleId;
-
-	@OneToOne(mappedBy = "rule", fetch = FetchType.LAZY)
-	private Ward ward;
 
 	@Column(name = "wday_d_cnt")
 	private Integer wdayDCnt;
@@ -72,6 +68,47 @@ public class Rule {
 
 	@Column(name = "prio_off_cnt_after_max_shift")
 	private Integer prioOffCntAfterMaxShift;
+
+	@PrePersist
+	protected void applyDefaultValues() {
+		if (this.wdayDCnt == null)
+			this.wdayDCnt = 3;
+		if (this.wdayECnt == null)
+			this.wdayECnt = 2;
+		if (this.wdayNCnt == null)
+			this.wdayNCnt = 2;
+		if (this.wendDCnt == null)
+			this.wendDCnt = 2;
+		if (this.wendECnt == null)
+			this.wendECnt = 2;
+		if (this.wendNCnt == null)
+			this.wendNCnt = 2;
+		if (this.maxN == null)
+			this.maxN = 3;
+		if (this.prioMaxN == null)
+			this.prioMaxN = 3;
+		if (this.minN == null)
+			this.minN = 2;
+		if (this.prioMinN == null)
+			this.prioMinN = 3;
+		if (this.offCntAfterN == null)
+			this.offCntAfterN = 2;
+		if (this.prioOffCntAfterN == null)
+			this.prioOffCntAfterN = 2;
+		if (this.maxShift == null)
+			this.maxShift = 5;
+		if (this.prioMaxShift == null)
+			this.prioMaxShift = 3;
+		if (this.offCntAfterMaxShift == null)
+			this.offCntAfterMaxShift = 2;
+		if (this.prioOffCntAfterMaxShift == null)
+			this.prioOffCntAfterMaxShift = 2;
+	}
+
+	// 기본값이 설정된 Builder
+	public static Rule createDefaultRule() {
+		return Rule.builder().build();
+	}
 
 	@Builder
 	public Rule(Integer wdayDCnt, Integer wdayECnt, Integer wdayNCnt,
