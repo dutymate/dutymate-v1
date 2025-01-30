@@ -20,6 +20,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,9 +41,9 @@ public class WardMember {
 	private Ward ward;
 
 	// OneToOne => WardMember : Member = 1 : 1
-	// @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	// @JoinColumn(name = "member_id", nullable = false, unique = true)
-	// private Member member;
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "member_id", nullable = false, unique = true)
+	private Member member;
 
 	// OneToMany => wardMember : Request = 1 : N
 	@OneToMany(mappedBy = "wardMember", cascade = CascadeType.ALL, orphanRemoval = true)
