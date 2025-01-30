@@ -24,7 +24,7 @@ public class RequestCreateDto {
 			.requestDate(date)
 			.requestShift(Shift.valueOf(shift))
 			.memo(memo)
-			.wardMember(new WardMember(1L))
+			// .wardMember(new WardMember(1L))
 			.createdAt(new Timestamp(System.currentTimeMillis()))
 			.status(RequestStatus.HOLD)
 			.build();
