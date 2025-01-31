@@ -30,6 +30,12 @@ public class MemberController {
 		return ResponseEntity.ok(loginResponseDto);
 	}
 
+	@GetMapping("/login/google")
+	public ResponseEntity<?> googleLogin(@RequestParam String code) {
+		LoginResponseDto loginResponseDto = memberService.googleLogin(code);
+		return ResponseEntity.ok(loginResponseDto);
+	}
+
 	@PostMapping("/info")
 	public ResponseEntity<?> addAdditionalInfo(
 		@RequestBody AdditionalInfoRequestDto additionalInfoRequestDto,
