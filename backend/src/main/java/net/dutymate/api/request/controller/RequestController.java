@@ -34,8 +34,8 @@ public class RequestController {
 	}
 
 	@GetMapping("/request")
-	public ResponseEntity<List<RequestResponseDto>> readMyRequest(@Auth Member member) {
-		List<RequestResponseDto> myRequests = requestService.readMyRequest(member);
+	public ResponseEntity<List<MyRequestResponseDto>> readMyRequest(@Auth Member member) {
+		List<MyRequestResponseDto> myRequests = requestService.readMyRequest(member);
 		return ResponseEntity.ok(myRequests);
 	}
 

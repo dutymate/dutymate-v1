@@ -9,15 +9,15 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RequestResponseDto {
+public class MyRequestResponseDto {
 
 	private Date date;
 	private String shift;
 	private String memo;
 	private String status;
 
-	public static RequestResponseDto of(Request request) {
-		return RequestResponseDto.builder()
+	public static MyRequestResponseDto of(Request request) {
+		return MyRequestResponseDto.builder()
 			.date(request.getRequestDate())
 			.shift(String.valueOf(request.getRequestShift()))
 			.memo(request.getMemo())

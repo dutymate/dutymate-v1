@@ -10,5 +10,5 @@ import net.dutymate.api.entity.Request;
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
-	List<Request> findAllByWardMember_WardMemberId(Long wardMemberId);
+	List<Request> findAllByWardMember(WardMember wardMember);
 }

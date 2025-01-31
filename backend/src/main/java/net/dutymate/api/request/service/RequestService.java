@@ -27,12 +27,11 @@ public class RequestService {
 	}
 
 	@Transactional
-	public List<RequestResponseDto> readMyRequest(Member member) {
-		List<Request> requests = requestRepository.findAllByWardMember_WardMemberId(
-			member.getWardMember().getWardMemberId());
-		List<RequestResponseDto> dtos = new ArrayList<>();
+	public List<MyRequestResponseDto> readMyRequest(Member member) {
+		List<Request> requests = requestRepository.findAllByWardMember(member.getWardMember());
+		List<MyRequestResponseDto> dtos = new ArrayList<>();
 		for (Request request : requests) {
-			dtos.add(RequestResponseDto.of(request));
+			dtos.add(MyRequestResponseDto.of(request));
 		}
 		return dtos;
 	}
