@@ -25,5 +25,6 @@ public class WardController {
 	public ResponseEntity<?> addWard(@RequestBody RequestWardDto requestWardDto, @Auth Member member) {
 		wardService.createWard(requestWardDto, member);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+
 	}
 }

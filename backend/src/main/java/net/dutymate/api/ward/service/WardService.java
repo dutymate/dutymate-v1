@@ -1,6 +1,8 @@
 package net.dutymate.api.ward.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Ward;
@@ -21,11 +23,18 @@ public class WardService {
 
 	@Transactional
 	public void createWard(RequestWardDto requestWardDto, Member member) {
-		// 1. Ward  생성 -> Rule 자동 생성
+		// 1. 로그인한 member가 이미 병동을 생성했다면, 400(BAD_REQUEST)
+		boolean exists = wardMemberRepository.existsByMember(member);
+
+		if (exists) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 병동이 있습니다.");
+		}
+
+		// 2. Ward  생성 -> Rule 자동 생성
 		Ward ward = requestWardDto.toWard();
 		wardRepository.save(ward);
 
-		// 2. WardMember 생성 (로그인한 사용자 추가)
+		// 3. WardMember 생성 (로그인한 사용자 추가)
 		WardMember wardMember = WardMember.builder()
 			.isSynced(true)
 			.ward(ward)

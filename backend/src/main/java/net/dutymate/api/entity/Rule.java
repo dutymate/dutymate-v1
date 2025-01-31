@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -69,58 +68,6 @@ public class Rule {
 	@Column(name = "prio_off_cnt_after_max_shift")
 	private Integer prioOffCntAfterMaxShift;
 
-	@PrePersist
-	protected void applyDefaultValues() {
-		if (this.wdayDCnt == null) {
-			this.wdayDCnt = 3;
-		}
-		if (this.wdayECnt == null) {
-			this.wdayECnt = 2;
-		}
-		if (this.wdayNCnt == null) {
-			this.wdayNCnt = 2;
-		}
-		if (this.wendDCnt == null) {
-			this.wendDCnt = 2;
-		}
-		if (this.wendECnt == null) {
-			this.wendECnt = 2;
-		}
-		if (this.wendNCnt == null) {
-			this.wendNCnt = 2;
-		}
-		if (this.maxN == null) {
-			this.maxN = 3;
-		}
-		if (this.prioMaxN == null) {
-			this.prioMaxN = 3;
-		}
-		if (this.minN == null) {
-			this.minN = 2;
-		}
-		if (this.prioMinN == null) {
-			this.prioMinN = 3;
-		}
-		if (this.offCntAfterN == null) {
-			this.offCntAfterN = 2;
-		}
-		if (this.prioOffCntAfterN == null) {
-			this.prioOffCntAfterN = 2;
-		}
-		if (this.maxShift == null) {
-			this.maxShift = 5;
-		}
-		if (this.prioMaxShift == null) {
-			this.prioMaxShift = 3;
-		}
-		if (this.offCntAfterMaxShift == null) {
-			this.offCntAfterMaxShift = 2;
-		}
-		if (this.prioOffCntAfterMaxShift == null) {
-			this.prioOffCntAfterMaxShift = 2;
-		}
-	}
-
 	// 기본값이 설정된 Builder
 	public static Rule createDefaultRule() {
 		return Rule.builder().build();
@@ -133,21 +80,21 @@ public class Rule {
 		Integer offCntAfterN, Integer prioOffCntAfterN,
 		Integer maxShift, Integer prioMaxShift,
 		Integer offCntAfterMaxShift, Integer prioOffCntAfterMaxShift) {
-		this.wdayDCnt = wdayDCnt;
-		this.wdayECnt = wdayECnt;
-		this.wdayNCnt = wdayNCnt;
-		this.wendDCnt = wendDCnt;
-		this.wendECnt = wendECnt;
-		this.wendNCnt = wendNCnt;
-		this.maxN = maxN;
-		this.prioMaxN = prioMaxN;
-		this.minN = minN;
-		this.prioMinN = prioMinN;
-		this.offCntAfterN = offCntAfterN;
-		this.prioOffCntAfterN = prioOffCntAfterN;
-		this.maxShift = maxShift;
-		this.prioMaxShift = prioMaxShift;
-		this.offCntAfterMaxShift = offCntAfterMaxShift;
-		this.prioOffCntAfterMaxShift = prioOffCntAfterMaxShift;
+		this.wdayDCnt = (wdayDCnt != null) ? wdayDCnt : 3;
+		this.wdayECnt = (wdayECnt != null) ? wdayECnt : 2;
+		this.wdayNCnt = (wdayNCnt != null) ? wdayNCnt : 2;
+		this.wendDCnt = (wendDCnt != null) ? wendDCnt : 2;
+		this.wendECnt = (wendECnt != null) ? wendECnt : 2;
+		this.wendNCnt = (wendNCnt != null) ? wendNCnt : 2;
+		this.maxN = (maxN != null) ? maxN : 3;
+		this.prioMaxN = (prioMaxN != null) ? prioMaxN : 3;
+		this.minN = (minN != null) ? minN : 2;
+		this.prioMinN = (prioMinN != null) ? prioMinN : 3;
+		this.offCntAfterN = (offCntAfterN != null) ? offCntAfterN : 2;
+		this.prioOffCntAfterN = (prioOffCntAfterN != null) ? prioOffCntAfterN : 2;
+		this.maxShift = (maxShift != null) ? maxShift : 5;
+		this.prioMaxShift = (prioMaxShift != null) ? prioMaxShift : 3;
+		this.offCntAfterMaxShift = (offCntAfterMaxShift != null) ? offCntAfterMaxShift : 2;
+		this.prioOffCntAfterMaxShift = (prioOffCntAfterMaxShift != null) ? prioOffCntAfterMaxShift : 2;
 	}
 }

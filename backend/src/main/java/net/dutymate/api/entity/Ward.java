@@ -63,9 +63,8 @@ public class Ward {
 		this.wardCode = generateWardCode(); // 랜덤 6자리 코드 생성
 
 		// 1 : 1 관계인 rule이 ward 생성 시, 자동으로 생성되도록 설정
-		if (this.rule == null) {
-			this.rule = Rule.createDefaultRule();
-		}
+		this.rule = Rule.createDefaultRule();
+
 		this.wardMemberList = new ArrayList<>();
 	}
 
@@ -82,6 +81,7 @@ public class Ward {
 
 	// Ward 생성하는 사람을 첫 번째 병동 멤버로 추가
 	public void addWardMember(WardMember wardMember) {
+		System.out.println(wardMemberList);
 		this.wardMemberList.add(wardMember);
 	}
 }
