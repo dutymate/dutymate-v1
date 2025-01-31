@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import net.dutymate.api.wardschedules.collection.WardSchedule;
+import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
 import lombok.RequiredArgsConstructor;

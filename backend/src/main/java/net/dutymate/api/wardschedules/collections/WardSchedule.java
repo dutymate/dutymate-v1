@@ -1,10 +1,12 @@
-package net.dutymate.api.wardschedules.collection;
+package net.dutymate.api.wardschedules.collections;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
@@ -12,10 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -29,6 +29,7 @@ public class WardSchedule {
 	@Id
 	private String id;
 
+	@Field("ward_id")
 	private Long wardId;
 	private int year;
 	private int month;
@@ -45,6 +46,12 @@ public class WardSchedule {
 	@Builder
 	public static class Duty {
 		private List<NurseShift> duty;
+
+		public void addNurseShift(NurseShift nurseShift) {
+			this.duty = new ArrayList<>();
+			this.duty.add(nurseShift);
+		}
+
 	}
 
 	@Getter
