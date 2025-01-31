@@ -1,5 +1,10 @@
 package net.dutymate.api.ward.service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -10,6 +15,8 @@ import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.ward.dto.RequestWardDto;
 import net.dutymate.api.ward.repository.WardRepository;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
+import net.dutymate.api.wardschedules.collections.WardSchedule;
+import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +27,7 @@ public class WardService {
 
 	private final WardRepository wardRepository;
 	private final WardMemberRepository wardMemberRepository;
+	private final WardScheduleRepository wardScheduleRepository;
 
 	@Transactional
 	public void createWard(RequestWardDto requestWardDto, Member member) {
@@ -44,6 +52,40 @@ public class WardService {
 
 		// ward의 List에 wardMember 추가
 		ward.addWardMember(wardMember);
+
+		// 4. 현재 날짜 기준으로  year, month 생성
+		LocalDate currentDate = LocalDate.now();
+		int year = currentDate.getYear();
+		int month = currentDate.getMonthValue();
+
+		// 5. 현재 달의 일 수 계산 (28, 29, 30, 31일 중)
+		int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
+
+		// 6. shifts를 해당 달의 날짜 수 만큼 'X'로 초기화
+		String initializedShifts = "X".repeat(daysInMonth);
+
+		// 7. 병동 생성하는 관리인의 초기 Duty 생성
+		WardSchedule.Duty duty = WardSchedule.Duty.builder()
+			.duty(new ArrayList<>()) // 빈 리스트로 초기화
+			.build();
+
+		// 병동 생성하는 관리인의 id와 초기화된 shifts 추가
+		duty.addNurseShift(WardSchedule.NurseShift.builder()
+			.memberId(member.getMemberId())
+			.shifts(initializedShifts)
+			.build());
+
+		// 8. MongoDB에 wardSchedule 저장
+		if (!wardScheduleRepository.existsByWardIdAndYearAndMonth(ward.getWardId(), year, month)) {
+			WardSchedule wardSchedule = WardSchedule.builder()
+				.wardId(ward.getWardId())
+				.year(year)
+				.month(month)
+				.duties(List.of(duty)) // 초기 duty 리스트 추가
+				.build();
+
+			wardScheduleRepository.save(wardSchedule);
+		}
 	}
 
 	@Transactional
