@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Request;
 import net.dutymate.api.request.dto.RequestCreateDto;
-import net.dutymate.api.request.dto.RequestResponseDto;
+import net.dutymate.api.request.dto.MyRequestResponseDto;
 import net.dutymate.api.request.repository.RequestRepository;
 
 import lombok.RequiredArgsConstructor;
