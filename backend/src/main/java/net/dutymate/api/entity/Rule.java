@@ -71,38 +71,54 @@ public class Rule {
 
 	@PrePersist
 	protected void applyDefaultValues() {
-		if (this.wdayDCnt == null)
+		if (this.wdayDCnt == null) {
 			this.wdayDCnt = 3;
-		if (this.wdayECnt == null)
+		}
+		if (this.wdayECnt == null) {
 			this.wdayECnt = 2;
-		if (this.wdayNCnt == null)
+		}
+		if (this.wdayNCnt == null) {
 			this.wdayNCnt = 2;
-		if (this.wendDCnt == null)
+		}
+		if (this.wendDCnt == null) {
 			this.wendDCnt = 2;
-		if (this.wendECnt == null)
+		}
+		if (this.wendECnt == null) {
 			this.wendECnt = 2;
-		if (this.wendNCnt == null)
+		}
+		if (this.wendNCnt == null) {
 			this.wendNCnt = 2;
-		if (this.maxN == null)
+		}
+		if (this.maxN == null) {
 			this.maxN = 3;
-		if (this.prioMaxN == null)
+		}
+		if (this.prioMaxN == null) {
 			this.prioMaxN = 3;
-		if (this.minN == null)
+		}
+		if (this.minN == null) {
 			this.minN = 2;
-		if (this.prioMinN == null)
+		}
+		if (this.prioMinN == null) {
 			this.prioMinN = 3;
-		if (this.offCntAfterN == null)
+		}
+		if (this.offCntAfterN == null) {
 			this.offCntAfterN = 2;
-		if (this.prioOffCntAfterN == null)
+		}
+		if (this.prioOffCntAfterN == null) {
 			this.prioOffCntAfterN = 2;
-		if (this.maxShift == null)
+		}
+		if (this.maxShift == null) {
 			this.maxShift = 5;
-		if (this.prioMaxShift == null)
+		}
+		if (this.prioMaxShift == null) {
 			this.prioMaxShift = 3;
-		if (this.offCntAfterMaxShift == null)
+		}
+		if (this.offCntAfterMaxShift == null) {
 			this.offCntAfterMaxShift = 2;
-		if (this.prioOffCntAfterMaxShift == null)
+		}
+		if (this.prioOffCntAfterMaxShift == null) {
 			this.prioOffCntAfterMaxShift = 2;
+		}
 	}
 
 	// 기본값이 설정된 Builder

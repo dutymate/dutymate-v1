@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
-import net.dutymate.api.entity.Ward;
 import net.dutymate.api.ward.dto.RequestWardDto;
 import net.dutymate.api.ward.service.WardService;
 
@@ -23,8 +22,8 @@ public class WardController {
 	private final WardService wardService;
 
 	@PostMapping
-	public ResponseEntity<Ward> addWard(@RequestBody RequestWardDto requestWardDto, @Auth Member member) {
-		Ward createdWard = wardService.createWard(requestWardDto, member);
-		return ResponseEntity.status(HttpStatus.CREATED).body(createdWard);
+	public ResponseEntity<?> addWard(@RequestBody RequestWardDto requestWardDto, @Auth Member member) {
+		wardService.createWard(requestWardDto, member);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

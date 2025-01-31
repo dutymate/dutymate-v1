@@ -82,10 +82,6 @@ public class Ward {
 
 	// Ward 생성하는 사람을 첫 번째 병동 멤버로 추가
 	public void addWardMember(WardMember wardMember) {
-		if (wardMemberList == null) {
-			wardMemberList = new ArrayList<>();
-		}
-		wardMemberList.add(wardMember);
-
+		this.wardMemberList.add(wardMember);
 	}
 }

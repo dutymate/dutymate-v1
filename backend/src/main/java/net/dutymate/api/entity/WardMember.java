@@ -67,8 +67,4 @@ public class WardMember {
 	@Column(columnDefinition = "tinyint(1)", nullable = false)
 	private Boolean isSynced;
 
-	public void assignMember(Ward ward, Member member) {
-		this.ward = ward;
-		this.member = member;
-	}
 }
