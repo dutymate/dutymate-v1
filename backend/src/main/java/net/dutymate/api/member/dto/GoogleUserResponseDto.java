@@ -14,22 +14,9 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GoogleUserResponseDto {
 
-	private String iss;
-	private String azp;
-	private String aud;
-	private String sub;
 	private String email;
-	private boolean emailVerified;
-	private String atHash;
 	private String name;
 	private String picture;
-	private String givenName;
-	private String familyName;
-	private long iat;
-	private long exp;
-	private String alg;
-	private String kid;
-	private String typ;
 
 	// GoogleUser(DTO) -> Member Entity
 	public Member toMember() {

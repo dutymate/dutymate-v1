@@ -9,9 +9,5 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GoogleTokenResponseDto {
 
-	private String accessToken;
-	private Integer expiresIn;
-	private String scope;
-	private String tokenType;
 	private String idToken;
 }
