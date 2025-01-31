@@ -44,6 +44,5 @@ public class WardService {
 
 		// ward의 List에 wardMember 추가
 		ward.addWardMember(wardMember);
-
 	}
 }

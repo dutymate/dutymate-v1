@@ -6,13 +6,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Rule {
 
 	@Id
@@ -70,31 +73,23 @@ public class Rule {
 
 	// 기본값이 설정된 Builder
 	public static Rule createDefaultRule() {
-		return Rule.builder().build();
-	}
-
-	@Builder
-	public Rule(Integer wdayDCnt, Integer wdayECnt, Integer wdayNCnt,
-		Integer wendDCnt, Integer wendECnt, Integer wendNCnt,
-		Integer maxN, Integer prioMaxN, Integer minN, Integer prioMinN,
-		Integer offCntAfterN, Integer prioOffCntAfterN,
-		Integer maxShift, Integer prioMaxShift,
-		Integer offCntAfterMaxShift, Integer prioOffCntAfterMaxShift) {
-		this.wdayDCnt = (wdayDCnt != null) ? wdayDCnt : 3;
-		this.wdayECnt = (wdayECnt != null) ? wdayECnt : 2;
-		this.wdayNCnt = (wdayNCnt != null) ? wdayNCnt : 2;
-		this.wendDCnt = (wendDCnt != null) ? wendDCnt : 2;
-		this.wendECnt = (wendECnt != null) ? wendECnt : 2;
-		this.wendNCnt = (wendNCnt != null) ? wendNCnt : 2;
-		this.maxN = (maxN != null) ? maxN : 3;
-		this.prioMaxN = (prioMaxN != null) ? prioMaxN : 3;
-		this.minN = (minN != null) ? minN : 2;
-		this.prioMinN = (prioMinN != null) ? prioMinN : 3;
-		this.offCntAfterN = (offCntAfterN != null) ? offCntAfterN : 2;
-		this.prioOffCntAfterN = (prioOffCntAfterN != null) ? prioOffCntAfterN : 2;
-		this.maxShift = (maxShift != null) ? maxShift : 5;
-		this.prioMaxShift = (prioMaxShift != null) ? prioMaxShift : 3;
-		this.offCntAfterMaxShift = (offCntAfterMaxShift != null) ? offCntAfterMaxShift : 2;
-		this.prioOffCntAfterMaxShift = (prioOffCntAfterMaxShift != null) ? prioOffCntAfterMaxShift : 2;
+		return Rule.builder()
+			.wdayDCnt(3)
+			.wdayECnt(2)
+			.wdayNCnt(2)
+			.wendDCnt(2)
+			.wendECnt(2)
+			.wendNCnt(2)
+			.maxN(3)
+			.prioMaxN(3)
+			.minN(2)
+			.prioMinN(3)
+			.offCntAfterN(2)
+			.prioOffCntAfterN(2)
+			.maxShift(5)
+			.prioMaxShift(3)
+			.offCntAfterMaxShift(2)
+			.prioOffCntAfterMaxShift(2)
+			.build();
 	}
 }

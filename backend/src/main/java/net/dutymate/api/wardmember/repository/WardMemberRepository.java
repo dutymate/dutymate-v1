@@ -8,5 +8,6 @@ import net.dutymate.api.entity.WardMember;
 
 @Repository
 public interface WardMemberRepository extends JpaRepository<WardMember, Long> {
+
 	Boolean existsByMember(Member member);
 }
