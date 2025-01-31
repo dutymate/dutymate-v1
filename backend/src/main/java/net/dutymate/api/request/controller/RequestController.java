@@ -13,6 +13,7 @@ import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.request.dto.MyRequestResponseDto;
 import net.dutymate.api.request.dto.RequestCreateDto;
+import net.dutymate.api.request.dto.WardRequestResponseDto;
 import net.dutymate.api.request.service.RequestService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,12 @@ public class RequestController {
 	public ResponseEntity<List<MyRequestResponseDto>> readMyRequest(@Auth Member member) {
 		List<MyRequestResponseDto> myRequests = requestService.readMyRequest(member);
 		return ResponseEntity.ok(myRequests);
+	}
+
+	@GetMapping("/ward/request")
+	public ResponseEntity<List<WardRequestResponseDto>> readWardRequest(@Auth Member member) {
+		List<WardRequestResponseDto> wardRequests = requestService.readWardRequest(member);
+		return ResponseEntity.ok(wardRequests);
 	}
 
 }
