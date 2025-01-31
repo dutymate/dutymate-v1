@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -20,6 +21,16 @@ public class WebConfig implements WebMvcConfigurer {
 		"/error",
 		"/api/member/login", "/api/member/login/**", "/api/member/check-email",
 	};
+
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**")
+			.allowedOriginPatterns("http://localhost:5173", "https://dutymate.net")
+			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+			.allowedHeaders("*")
+			.allowCredentials(true)
+			.maxAge(3600);
+	}
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
