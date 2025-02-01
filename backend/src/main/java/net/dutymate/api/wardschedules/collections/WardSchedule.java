@@ -1,6 +1,5 @@
 package net.dutymate.api.wardschedules.collections;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -48,10 +47,8 @@ public class WardSchedule {
 		private List<NurseShift> duty;
 
 		public void addNurseShift(NurseShift nurseShift) {
-			this.duty = new ArrayList<>();
 			this.duty.add(nurseShift);
 		}
-
 	}
 
 	@Getter
