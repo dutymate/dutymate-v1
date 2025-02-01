@@ -95,7 +95,7 @@ public class WardService {
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 병동 코드입니다."));
 
 		// 2. 이미 ward에 입장한 회원인지 확인
-		boolean isAlreadyEnteredWard = wardMemberRepository.existsByWardAndMember(ward, member);
+		boolean isAlreadyEnteredWard = wardMemberRepository.existsByMember(member);
 		if (isAlreadyEnteredWard) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 입장한 병동이 있습니다.");
 		}
