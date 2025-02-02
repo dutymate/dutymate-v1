@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.ward.dto.RequestWardDto;
+import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.service.WardService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,12 @@ public class WardController {
 	public ResponseEntity<?> checkCode(@RequestParam String code, @Auth Member member) {
 		wardService.checkInvalidCode(code, member);
 		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	// 병동 정보 조회하기 (관리자)
+	@GetMapping
+	public ResponseEntity<?> getWards(@Auth Member member) {
+		WardInfoResponseDto wardInfoResponseDto = wardService.getWardInfo(member);
+		return ResponseEntity.ok(wardInfoResponseDto);
 	}
 }

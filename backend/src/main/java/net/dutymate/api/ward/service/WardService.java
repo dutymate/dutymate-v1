@@ -13,6 +13,7 @@ import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.ward.dto.RequestWardDto;
+import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.repository.WardRepository;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
@@ -109,5 +110,23 @@ public class WardService {
 		wardMemberRepository.save(newWardMember);
 
 		ward.addWardMember(newWardMember);
+	}
+
+	@Transactional
+	public WardInfoResponseDto getWardInfo(Member member) {
+		// 1. 현재 member(관리자)의 wardmemberId 조회
+		WardMember wardMember = wardMemberRepository.findByMember(member);
+
+		if (wardMember == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 멤버가 속한 병동을 찾을 수 없습니다.");
+		}
+
+		// 2. 관리자가 속한 병동 조회
+		Ward ward = wardMember.getWard();
+
+		// 3. 해당 병동의 모든 wardMember 조회
+		List<WardMember> wardMemberList = wardMemberRepository.findAllByWard(ward);
+
+		return WardInfoResponseDto.of(ward, wardMemberList);
 	}
 }
