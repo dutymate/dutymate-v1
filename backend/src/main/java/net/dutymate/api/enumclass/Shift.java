@@ -4,5 +4,6 @@ public enum Shift {
 	D,
 	E,
 	N,
-	O
+	O,
+	X
 }
