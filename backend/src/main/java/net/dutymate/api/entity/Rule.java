@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,6 @@ import lombok.NoArgsConstructor;
 public class Rule {
 
 	@Id
-	@Column(name = "rule_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long ruleId;
 
@@ -72,24 +72,23 @@ public class Rule {
 	private Integer prioOffCntAfterMaxShift;
 
 	// 기본값이 설정된 Builder
-	public static Rule createDefaultRule() {
-		return Rule.builder()
-			.wdayDCnt(3)
-			.wdayECnt(2)
-			.wdayNCnt(2)
-			.wendDCnt(2)
-			.wendECnt(2)
-			.wendNCnt(2)
-			.maxN(3)
-			.prioMaxN(3)
-			.minN(2)
-			.prioMinN(3)
-			.offCntAfterN(2)
-			.prioOffCntAfterN(2)
-			.maxShift(5)
-			.prioMaxShift(3)
-			.offCntAfterMaxShift(2)
-			.prioOffCntAfterMaxShift(2)
-			.build();
+	@PrePersist
+	protected void onCreate() {
+		this.wdayDCnt = 3;
+		this.wdayECnt = 2;
+		this.wdayNCnt = 2;
+		this.wendDCnt = 2;
+		this.wendECnt = 2;
+		this.wendNCnt = 2;
+		this.maxN = 3;
+		this.prioMaxN = 3;
+		this.minN = 2;
+		this.prioMinN = 3;
+		this.offCntAfterN = 2;
+		this.prioOffCntAfterN = 2;
+		this.maxShift = 5;
+		this.prioMaxShift = 3;
+		this.offCntAfterMaxShift = 2;
+		this.prioOffCntAfterMaxShift = 2;
 	}
 }

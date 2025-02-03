@@ -13,11 +13,12 @@ public class RequestWardDto {
 	private String hospitalName;
 	private String wardName;
 
-	public Ward toWard() {
+	public Ward toWard(String wardCode) {
 		return Ward.builder()
+			.wardCode(wardCode)
 			.wardName(wardName)
 			.hospitalName(hospitalName)
-			.rule(Rule.createDefaultRule())
+			.rule(Rule.builder().build())
 			.build();
 	}
 }

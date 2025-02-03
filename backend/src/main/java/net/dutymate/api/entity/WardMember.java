@@ -33,7 +33,6 @@ import lombok.NoArgsConstructor;
 public class WardMember {
 
 	@Id
-	@Column(name = "ward_member_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long wardMemberId;
 
@@ -43,8 +42,8 @@ public class WardMember {
 	private Ward ward;
 
 	// OneToOne => WardMember : Member = 1 : 1
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "member_id", nullable = false, unique = true)
+	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
 	// OneToMany => wardMember : Request = 1 : N

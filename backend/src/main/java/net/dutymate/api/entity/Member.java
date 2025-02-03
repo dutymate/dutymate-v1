@@ -7,11 +7,11 @@ import net.dutymate.api.enumclass.Provider;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.member.util.NicknameGenerator;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,10 +40,10 @@ public class Member {
 	@Column(nullable = false)
 	private String password;
 
-	@Column(length = 10, nullable = false)
+	@Column(length = 20, nullable = false)
 	private String name;
 
-	@Column(length = 10, nullable = false)
+	@Column(length = 20, nullable = false)
 	private String nickname;
 
 	@Enumerated(EnumType.STRING)
@@ -65,7 +65,7 @@ public class Member {
 	@Column(columnDefinition = "tinyint(1)", nullable = false)
 	private Boolean isActive;
 
-	@OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
 	private WardMember wardMember;
 
 	// 멤버 초기값 설정 (닉네임, 생성시각, 활성화여부)

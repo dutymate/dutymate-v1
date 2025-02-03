@@ -33,25 +33,21 @@ public class Request {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long requestId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "ward_member_id", nullable = false)
 	private WardMember wardMember;
 
-	@Column(name = "request_date")
 	private Date requestDate;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "request_shift")
 	private Shift requestShift;
 
-	@Column(name = "created_at")
 	private Timestamp createdAt;
 
-	@Column(name = "memo", length = 1_000)
+	@Column(length = 200)
 	private String memo;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
 	private RequestStatus status;
 
 }

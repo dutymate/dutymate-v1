@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class WardService {
 		}
 
 		// 2. Ward  생성 -> Rule 자동 생성
-		Ward ward = requestWardDto.toWard();
+		Ward ward = requestWardDto.toWard(generateWardCode());
 		wardRepository.save(ward);
 
 		// 3. WardMember 생성 (로그인한 사용자 추가)
@@ -128,5 +129,16 @@ public class WardService {
 		List<WardMember> wardMemberList = wardMemberRepository.findAllByWard(ward);
 
 		return WardInfoResponseDto.of(ward, wardMemberList);
+	}
+
+	// wardCode : 랜덤한 6자리 대문자 + 숫자 조합 코드 생성
+	private String generateWardCode() {
+		Random random = new Random();
+		StringBuilder code = new StringBuilder();
+		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		for (int i = 0; i < 6; i++) {
+			code.append(characters.charAt(random.nextInt(characters.length())));
+		}
+		return code.toString();
 	}
 }
