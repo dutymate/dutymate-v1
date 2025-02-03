@@ -12,8 +12,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Ward;
+import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
+import net.dutymate.api.wardschedules.dto.EditDutyRequestDto;
 import net.dutymate.api.wardschedules.dto.WardScheduleResponseDto;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
@@ -137,6 +139,71 @@ public class WardScheduleService {
 		// TODO history 구하기
 		// TODO Issues 구하기
 
+		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto);
+	}
+
+	@Transactional
+	public WardScheduleResponseDto editWardSchedule(Member member, EditDutyRequestDto editDutyRequestDto) {
+		// 병동멤버와 병동 초기화
+		WardMember wardMember = Optional.ofNullable(member.getWardMember())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."));
+		Ward ward = wardMember.getWard();
+
+		// 연, 월, 수정일, 수정할 멤버 변수 초기화
+		final Integer year = editDutyRequestDto.getYear();
+		final Integer month = editDutyRequestDto.getMonth();
+		final int modifiedIndex = editDutyRequestDto.getHistory().getModifiedDay() - 1;
+		final Long modifiedMemberId = editDutyRequestDto.getHistory().getMemberId();
+
+		// 근무표 불러오기
+		WardSchedule wardSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(), year, month)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무표가 생성되지 않았습니다."));
+
+		// 가장 최근 스냅샷
+		List<WardSchedule.NurseShift> recentDuty = wardSchedule.getDuties().getLast().getDuty();
+		// 새로 만들 스냅샷
+		List<WardSchedule.NurseShift> newDuty = new ArrayList<>();
+		// 가장 최근 스냅샷 -> 새로 만들 스냅샷 복사 (깊은 복사)
+		for (WardSchedule.NurseShift nurseShift : recentDuty) {
+			newDuty.add(WardSchedule.NurseShift.builder()
+				.memberId(nurseShift.getMemberId())
+				.shifts(nurseShift.getShifts())
+				.build());
+		}
+
+		// 새로 만들 스냅샷에 수정사항 반영
+		newDuty.stream()
+			.filter(prev -> Objects.equals(prev.getMemberId(), modifiedMemberId))
+			.forEach(prev -> {
+				String before = prev.getShifts();
+				String after = before.substring(0, modifiedIndex) + editDutyRequestDto.getHistory().getAfter()
+					+ before.substring(modifiedIndex + 1);
+
+				prev.changeShifts(after);
+			});
+
+		// 기존 병동 스케줄에 새로운 스냅샷 추가 및 저장
+		wardSchedule.getDuties().add(WardSchedule.Duty.builder().duty(newDuty).build());
+		wardScheduleRepository.save(wardSchedule);
+
+		// newDuty -> DTO 변환
+		List<WardScheduleResponseDto.NurseShifts> nurseShiftsDto = newDuty.stream()
+			.map(WardScheduleResponseDto.NurseShifts::of)
+			.toList();
+
+		// DTO에 값 넣어주기
+		nurseShiftsDto.forEach(now -> {
+			Member nurse = memberRepository.findById(now.getMemberId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사 매핑 오류"));
+			now.setName(nurse.getName());
+			now.setRole(nurse.getRole());
+		});
+
+		// TODO invalidCnt 구하기
+		// int invalidCnt = calcInvalidCnt(recentNurseShifts);
+
+		// TODO history 구하기
+		// TODO Issues 구하기
 		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto);
 	}
 

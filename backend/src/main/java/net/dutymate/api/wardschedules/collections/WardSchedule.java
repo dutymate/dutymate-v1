@@ -58,6 +58,10 @@ public class WardSchedule {
 	public static class NurseShift {
 		private Long memberId;
 		private String shifts;
+
+		public void changeShifts(String shifts) {
+			this.shifts = shifts;
+		}
 	}
 
 	// TODO History 변경 내역 추가 예정

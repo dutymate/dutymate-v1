@@ -4,12 +4,15 @@ import java.time.LocalDate;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.wardschedules.dto.EditDutyRequestDto;
 import net.dutymate.api.wardschedules.dto.WardScheduleResponseDto;
 import net.dutymate.api.wardschedules.service.WardScheduleService;
 
@@ -44,6 +47,16 @@ public class WardScheduleController {
 			month = LocalDate.now().getMonthValue();
 		}
 		WardScheduleResponseDto wardScheduleResponseDto = wardScheduleService.getWardSchedule(member, year, month);
+		return ResponseEntity.ok(wardScheduleResponseDto);
+	}
+
+	@PutMapping
+	public ResponseEntity<?> editWardSchedule(
+		@Auth Member member,
+		@RequestBody EditDutyRequestDto editDutyRequestDto
+	) {
+		WardScheduleResponseDto wardScheduleResponseDto =
+			wardScheduleService.editWardSchedule(member, editDutyRequestDto);
 		return ResponseEntity.ok(wardScheduleResponseDto);
 	}
 }
