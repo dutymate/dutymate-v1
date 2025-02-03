@@ -4,7 +4,6 @@ provider "aws" {
 }
 
 module "s3" {
-  source = "./Modules/S3"
-
+  source      = "./Modules/S3"
   bucket_name = "dutymate-bucket-${terraform.workspace}"
 }
