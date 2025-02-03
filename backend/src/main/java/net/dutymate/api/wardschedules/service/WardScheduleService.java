@@ -164,12 +164,10 @@ public class WardScheduleService {
 		// 새로 만들 스냅샷
 		List<WardSchedule.NurseShift> newDuty = new ArrayList<>();
 		// 가장 최근 스냅샷 -> 새로 만들 스냅샷 복사 (깊은 복사)
-		for (WardSchedule.NurseShift nurseShift : recentDuty) {
-			newDuty.add(WardSchedule.NurseShift.builder()
-				.memberId(nurseShift.getMemberId())
-				.shifts(nurseShift.getShifts())
-				.build());
-		}
+		recentDuty.forEach(nurseShift -> newDuty.add(WardSchedule.NurseShift.builder()
+			.memberId(nurseShift.getMemberId())
+			.shifts(nurseShift.getShifts())
+			.build()));
 
 		// 새로 만들 스냅샷에 수정사항 반영
 		newDuty.stream()

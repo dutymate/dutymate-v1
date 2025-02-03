@@ -1,6 +1,5 @@
 package net.dutymate.api.wardschedules.dto;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
