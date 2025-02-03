@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "s3_bucket" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "public-access" {
+resource "aws_s3_bucket_public_access_block" "public_access" {
   bucket = aws_s3_bucket.s3_bucket.id
 
   block_public_acls       = false
@@ -15,11 +15,11 @@ resource "aws_s3_bucket_public_access_block" "public-access" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_policy" "bucket-policy" {
+resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.s3_bucket.id
 
   depends_on = [
-    aws_s3_bucket_public_access_block.public-access
+    aws_s3_bucket_public_access_block.public_access
   ]
 
   policy = <<POLICY
