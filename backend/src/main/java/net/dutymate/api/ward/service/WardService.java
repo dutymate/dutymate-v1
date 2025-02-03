@@ -1,8 +1,6 @@
 package net.dutymate.api.ward.service;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -19,6 +17,7 @@ import net.dutymate.api.ward.repository.WardRepository;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
+import net.dutymate.api.wardschedules.util.InitialDutyGenerator;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,7 @@ public class WardService {
 	private final WardRepository wardRepository;
 	private final WardMemberRepository wardMemberRepository;
 	private final WardScheduleRepository wardScheduleRepository;
+	private final InitialDutyGenerator initialDutyGenerator;
 
 	@Transactional
 	public void createWard(RequestWardDto requestWardDto, Member member) {
@@ -60,34 +60,8 @@ public class WardService {
 		int year = currentDate.getYear();
 		int month = currentDate.getMonthValue();
 
-		// 5. 현재 달의 일 수 계산 (28, 29, 30, 31일 중)
-		int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
-
-		// 6. shifts를 해당 달의 날짜 수 만큼 'X'로 초기화
-		String initializedShifts = "X".repeat(daysInMonth);
-
-		// 7. 병동 생성하는 관리인의 초기 Duty 생성
-		WardSchedule.Duty duty = WardSchedule.Duty.builder()
-			.duty(new ArrayList<>()) // 빈 리스트로 초기화
-			.build();
-
-		// 병동 생성하는 관리인의 id와 초기화된 shifts 추가
-		duty.addNurseShift(WardSchedule.NurseShift.builder()
-			.memberId(member.getMemberId())
-			.shifts(initializedShifts)
-			.build());
-
-		// 8. MongoDB에 wardSchedule 저장
-		if (!wardScheduleRepository.existsByWardIdAndYearAndMonth(ward.getWardId(), year, month)) {
-			WardSchedule wardSchedule = WardSchedule.builder()
-				.wardId(ward.getWardId())
-				.year(year)
-				.month(month)
-				.duties(List.of(duty)) // 초기 duty 리스트 추가
-				.build();
-
-			wardScheduleRepository.save(wardSchedule);
-		}
+		// 5. 병동 생성하는 멤버의 듀티표 초기화하여 mongodb에 저장하기
+		initialDutyGenerator.initalizeDuty(wardMember, year, month);
 	}
 
 	@Transactional
@@ -108,9 +82,43 @@ public class WardService {
 			.ward(ward)
 			.member(member)
 			.build();
+
 		wardMemberRepository.save(newWardMember);
 
 		ward.addWardMember(newWardMember);
+
+		// 4. 병동 Id로 MongoDB에 추가된 현재달과 다음달 듀티 확인
+		// 4-1. 이번달 듀티
+		LocalDate currentDate = LocalDate.now();
+		int year = currentDate.getYear();
+		int month = currentDate.getMonthValue();
+
+		List<WardSchedule> currMonthScheduleList = wardScheduleRepository.findAllByWardIdAndYearAndMonth(
+			ward.getWardId(), year, month);
+
+		// 4-2. 다음달 듀티
+		int nextMonth = (month == 12) ? 1 : month + 1;
+		int nextYear = (month == 12) ? year + 1 : year;
+
+		List<WardSchedule> nextMonthScheduleList = wardScheduleRepository.findAllByWardIdAndYearAndMonth(
+			ward.getWardId(), nextYear, nextMonth);
+
+		// 5. 기존 스케줄이 존재한다면, 새로운 스냅샷 생성 및 초기화된 duty 추가하기
+		if (!currMonthScheduleList.isEmpty()) {
+			WardSchedule currMonthSchedule = currMonthScheduleList.getLast();
+			initialDutyGenerator.createSnapshotWithAddNewMember(currMonthSchedule, newWardMember);
+		}
+
+		if (!nextMonthScheduleList.isEmpty()) {
+			WardSchedule nextMonthSchedule = nextMonthScheduleList.getLast();
+			initialDutyGenerator.createSnapshotWithAddNewMember(nextMonthSchedule, newWardMember);
+		}
+
+		//6. 기존 스케줄이 없다면, 입장한 멤버의 듀티표 초기화하여 저장하기
+		// 사실 이미 병동이 생성된 이상, 무조건 기존 스케줄이 있어야만 함
+		if (currMonthScheduleList.isEmpty() && nextMonthScheduleList.isEmpty()) {
+			initialDutyGenerator.initalizeDuty(newWardMember, year, month);
+		}
 	}
 
 	@Transactional

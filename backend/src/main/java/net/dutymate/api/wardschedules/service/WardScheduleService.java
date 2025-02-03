@@ -31,25 +31,6 @@ public class WardScheduleService {
 	private final MemberRepository memberRepository;
 	private final WardScheduleRepository wardScheduleRepository;
 
-	/**
-	 * 초기 wardId, year, month에 해당하는 데이터가 없으면,
-	 * 초기화한 duties mongodb에 저장하기
-	 */
-	public WardSchedule getOrCreateWardSchedule(Long wardId, int year, int month) {
-		Optional<WardSchedule> existingWardSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(wardId, year,
-			month);
-
-		return existingWardSchedule.orElseGet(() -> {
-			WardSchedule newWardSchedule = WardSchedule.builder()
-				.wardId(wardId)
-				.year(year)
-				.month(month)
-				.duties(new ArrayList<>()) // 초기 duties 리스트
-				.build();
-			return wardScheduleRepository.save(newWardSchedule);
-		});
-	}
-
 	@Transactional
 	public WardScheduleResponseDto getWardSchedule(Member member, final Integer year, final Integer month) {
 		// 현재 달의 일 수 계산 (28, 29, 30, 31일 중)
@@ -307,8 +288,4 @@ public class WardScheduleService {
 
 		return TodayDutyResponseDto.of(myShift.getShifts().charAt(date - 1), otherShifts);
 	}
-
-	/**
-	 * duties 추가 API (PUT 요청)
-	 */
 }
