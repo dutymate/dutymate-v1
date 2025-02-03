@@ -11,11 +11,15 @@ const Playgrounds: React.FC = () => {
 				<div className="space-y-4">
 					<p className="text-lg font-black">Black (900) - 가장 두꺼운 텍스트</p>
 					<p className="text-lg font-bold">Bold (700) - 굵은 텍스트</p>
-					<p className="text-lg font-semibold">SemiBold (600) - 중간 굵은 텍스트</p>
+					<p className="text-lg font-semibold">
+						SemiBold (600) - 중간 굵은 텍스트
+					</p>
 					<p className="text-lg font-medium">Medium (500) - 중간 텍스트</p>
 					<p className="text-lg font-normal">Regular (400) - 기본 텍스트</p>
 					<p className="text-lg font-light">Light (300) - 얇은 텍스트</p>
-					<p className="text-lg font-extralight">ExtraLight (200) - 매우 얇은 텍스트</p>
+					<p className="text-lg font-extralight">
+						ExtraLight (200) - 매우 얇은 텍스트
+					</p>
 					<p className="text-lg font-thin">Thin (100) - 가장 얇은 텍스트</p>
 				</div>
 			</section>
@@ -23,7 +27,7 @@ const Playgrounds: React.FC = () => {
 			{/* Color System */}
 			<section className="mb-12">
 				<h2 className="text-2xl font-bold mb-6">Color System</h2>
-				
+
 				{/* Primary Colors */}
 				<div className="mb-8">
 					<h3 className="text-xl font-semibold mb-4">Primary Colors</h3>
