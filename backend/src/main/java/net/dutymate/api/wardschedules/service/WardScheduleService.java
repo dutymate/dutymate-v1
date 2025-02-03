@@ -16,6 +16,7 @@ import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.dto.EditDutyRequestDto;
+import net.dutymate.api.wardschedules.dto.MyDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.WardScheduleResponseDto;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
@@ -203,6 +204,71 @@ public class WardScheduleService {
 		// TODO history 구하기
 		// TODO Issues 구하기
 		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto);
+	}
+
+	public MyDutyResponseDto getMyDuty(Member member, final Integer year, final Integer month) {
+		// 병동멤버와 병동 초기화
+		WardMember wardMember = Optional.ofNullable(member.getWardMember())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."));
+		Ward ward = wardMember.getWard();
+
+		// 이전 연, 월 초기화
+		int prevYear = year;
+		int prevMonth = month - 1;
+		if (prevMonth == 0) {
+			prevYear--;
+			prevMonth = 12;
+		}
+
+		// 다음 연, 월 초기화
+		int nextYear = year;
+		int nextMonth = month + 1;
+		if (nextMonth == 13) {
+			nextYear++;
+			nextMonth = 1;
+		}
+
+		// 현재 달의 일 수 계산 (28, 29, 30, 31일 중)
+		int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
+
+		// 현재 달, 이전 달, 다음 달 병동 스케줄 불러오기
+		WardSchedule wardSchedule = wardScheduleRepository
+			.findByWardIdAndYearAndMonth(ward.getWardId(), year, month).orElse(null);
+		WardSchedule prevWardSchedule = wardScheduleRepository
+			.findByWardIdAndYearAndMonth(ward.getWardId(), prevYear, prevMonth).orElse(null);
+		WardSchedule nextWardSchedule = wardScheduleRepository
+			.findByWardIdAndYearAndMonth(ward.getWardId(), nextYear, nextMonth).orElse(null);
+
+		// 듀티 기본값 초기화
+		String shifts = "X".repeat(daysInMonth);
+		String prevShifts = "X".repeat(7);
+		String nextShifts = "X".repeat(7);
+
+		// 3달치 병동 스케줄을 모두 확인. 병동 스케줄이 있으면 한달치, 일주일치 shifts 구하기
+		if (wardSchedule != null) {
+			shifts = getShifts(member, wardSchedule, daysInMonth);
+		}
+
+		if (prevWardSchedule != null) {
+			prevShifts = getShifts(member, prevWardSchedule, 7)
+				.substring(YearMonth.of(prevYear, prevMonth).lengthOfMonth() - 7);
+		}
+
+		if (nextWardSchedule != null) {
+			nextShifts = getShifts(member, nextWardSchedule, 7)
+				.substring(0, 7);
+		}
+
+		return MyDutyResponseDto.of(year, month, prevShifts, nextShifts, shifts);
+	}
+
+	// 병동 스케줄에서 현재 로그인한 멤버의 듀티 구하기
+	private static String getShifts(Member member, WardSchedule wardSchedule, int daysInMonth) {
+		return wardSchedule.getDuties().getLast().getDuty().stream()
+			.filter(o -> Objects.equals(o.getMemberId(), member.getMemberId()))
+			.findAny()
+			.orElseGet(() -> WardSchedule.NurseShift.builder().shifts("X".repeat(daysInMonth)).build())
+			.getShifts();
 	}
 
 	/**
