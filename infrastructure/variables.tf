@@ -1,7 +1,7 @@
 variable "aws_profile" {
   description = "The profile name that you have configured in the file .aws/credentials"
   type        = string
-  default     = "dutymate-admin"
+  default     = "dutymate-terraform"
 }
 
 variable "aws_region" {
