@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.entity.Member;
@@ -20,7 +21,6 @@ import net.dutymate.api.wardschedules.dto.MyDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.WardScheduleResponseDto;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -206,6 +206,7 @@ public class WardScheduleService {
 		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto);
 	}
 
+	@Transactional(readOnly = true)
 	public MyDutyResponseDto getMyDuty(Member member, final Integer year, final Integer month) {
 		// 병동멤버와 병동 초기화
 		WardMember wardMember = Optional.ofNullable(member.getWardMember())
