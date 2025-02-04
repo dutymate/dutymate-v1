@@ -140,20 +140,37 @@ public class WardScheduleService {
 
 	@Transactional
 	public WardScheduleResponseDto editWardSchedule(Member member, EditDutyRequestDto editDutyRequestDto) {
-		// 병동멤버와 병동 초기화
-		WardMember wardMember = Optional.ofNullable(member.getWardMember())
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."));
-		Ward ward = wardMember.getWard();
-
 		// 연, 월, 수정일, 수정할 멤버 변수 초기화
 		final Integer year = editDutyRequestDto.getYear();
 		final Integer month = editDutyRequestDto.getMonth();
 		final int modifiedIndex = editDutyRequestDto.getHistory().getModifiedDay() - 1;
 		final Long modifiedMemberId = editDutyRequestDto.getHistory().getMemberId();
 
-		// 근무표 불러오기
+		// 이전 연, 월 초기화
+		int prevMonth = (month == 1) ? 12 : month - 1;
+		int prevYear = (month == 1) ? year - 1 : year;
+
+		// 병동멤버와 병동 초기화
+		WardMember wardMember = Optional.ofNullable(member.getWardMember())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."));
+		Ward ward = wardMember.getWard();
+
+		// 몽고 DB에서 이번달 병동 스케줄 불러오기
 		WardSchedule wardSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(), year, month)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무표가 생성되지 않았습니다."));
+
+		// 몽고 DB에서 전달 병동 스케줄 가져오기
+		WardSchedule prevWardSchedule =
+			wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(), prevYear, prevMonth)
+				.orElse(null);
+
+		// 전달 듀티표 가져오기
+		List<WardSchedule.NurseShift> prevNurseShifts;
+		if (prevWardSchedule != null) {
+			prevNurseShifts = prevWardSchedule.getDuties().getLast().getDuty();
+		} else {
+			prevNurseShifts = null;
+		}
 
 		// 가장 최근 스냅샷
 		List<WardSchedule.NurseShift> recentDuty = wardSchedule.getDuties().getLast().getDuty();
@@ -191,6 +208,17 @@ public class WardScheduleService {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사 매핑 오류"));
 			now.setName(nurse.getName());
 			now.setRole(nurse.getRole());
+
+			// prevShifts 구하기
+			if (prevNurseShifts == null) {
+				now.setPrevShifts("XXXX");
+			} else {
+				WardSchedule.NurseShift prevShifts = prevNurseShifts.stream()
+					.filter(prev -> Objects.equals(prev.getMemberId(), nurse.getMemberId()))
+					.findAny()
+					.orElseGet(() -> WardSchedule.NurseShift.builder().shifts("XXXX").build());
+				now.setPrevShifts(prevShifts.getShifts().substring(prevShifts.getShifts().length() - 4));
+			}
 		});
 
 		// TODO invalidCnt 구하기
