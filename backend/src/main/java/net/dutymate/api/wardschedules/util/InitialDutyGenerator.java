@@ -59,28 +59,35 @@ public class InitialDutyGenerator {
 	/**
 	 * 기존 스케줄에 새로운 멤버 추가하여 새 스냅샷 생성 (병동 입장 시)
 	 */
-	public void createSnapshotWithAddNewMember(WardSchedule existingSchedule, WardMember newWardMember) {
+	public void updateDutyWithNewMember(WardSchedule existingSchedule, WardMember newWardMember) {
 
 		int daysInMonth = YearMonth.of(existingSchedule.getYear(), existingSchedule.getMonth()).lengthOfMonth();
 		String initializedShifts = "X".repeat(daysInMonth);
 
 		WardSchedule.NurseShift nurseShift = createNurseShift(newWardMember, initializedShifts);
 
-		// 1. 기존의 Duty 복사 후, 새로운 멤버 추가
-		List<WardSchedule.Duty> newDuties = new ArrayList<>(existingSchedule.getDuties());
-		WardSchedule.Duty recentSchedule = newDuties.getLast();
-		recentSchedule.addNurseShift(nurseShift);
+		//List<WardSchedule.Duty> newDuties = new ArrayList<>(); // Duties를 초기화
 
-		// 2. 새로운 스냅샷 생성
-		WardSchedule snapshot = WardSchedule.builder()
-			.wardId(existingSchedule.getWardId())
+		// 1. 기존의 duty 마지막에 새로운 멤버 추가
+		WardSchedule.Duty lastDuty =
+			existingSchedule.getDuties().isEmpty()
+				? WardSchedule.Duty.builder().duty(new ArrayList<>()).build()
+				: existingSchedule.getDuties().getLast();
+
+		// 2. 마지막 duty에 새로운 멤버 초기화된 값 추가
+		lastDuty.addNurseShift(nurseShift);
+
+		// 3. 기존 duties 초기화 후, 새 멤버 추가된 duty 추가하기
+		WardSchedule updatedSchedule = WardSchedule.builder()
+			.id(existingSchedule.getId())
+			.wardId(newWardMember.getWard().getWardId())
 			.year(existingSchedule.getYear())
 			.month(existingSchedule.getMonth())
-			.duties(newDuties)
+			.duties(new ArrayList<>(List.of(lastDuty)))
 			.build();
 
 		// mongodb 저장
-		wardScheduleRepository.save(snapshot);
+		wardScheduleRepository.save(updatedSchedule);
 	}
 
 	// 초기 duty 생성을 위한 NurseShift 생성 메서드

@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.entity.Member;
@@ -19,7 +20,6 @@ import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 import net.dutymate.api.wardschedules.util.InitialDutyGenerator;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -93,30 +93,28 @@ public class WardService {
 		int year = currentDate.getYear();
 		int month = currentDate.getMonthValue();
 
-		List<WardSchedule> currMonthScheduleList = wardScheduleRepository.findAllByWardIdAndYearAndMonth(
-			ward.getWardId(), year, month);
+		WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
+			ward.getWardId(), year, month).orElse(null);
 
 		// 4-2. 다음달 듀티
 		int nextMonth = (month == 12) ? 1 : month + 1;
 		int nextYear = (month == 12) ? year + 1 : year;
 
-		List<WardSchedule> nextMonthScheduleList = wardScheduleRepository.findAllByWardIdAndYearAndMonth(
-			ward.getWardId(), nextYear, nextMonth);
+		WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
+			ward.getWardId(), nextYear, nextMonth).orElse(null);
 
 		// 5. 기존 스케줄이 존재한다면, 새로운 스냅샷 생성 및 초기화된 duty 추가하기
-		if (!currMonthScheduleList.isEmpty()) {
-			WardSchedule currMonthSchedule = currMonthScheduleList.getLast();
-			initialDutyGenerator.createSnapshotWithAddNewMember(currMonthSchedule, newWardMember);
+		if (currMonthSchedule != null) {
+			initialDutyGenerator.updateDutyWithNewMember(currMonthSchedule, newWardMember);
 		}
 
-		if (!nextMonthScheduleList.isEmpty()) {
-			WardSchedule nextMonthSchedule = nextMonthScheduleList.getLast();
-			initialDutyGenerator.createSnapshotWithAddNewMember(nextMonthSchedule, newWardMember);
+		if (nextMonthSchedule != null) {
+			initialDutyGenerator.updateDutyWithNewMember(nextMonthSchedule, newWardMember);
 		}
 
-		//6. 기존 스케줄이 없다면, 입장한 멤버의 듀티표 초기화하여 저장하기
+		// 6. 기존 스케줄이 없다면, 입장한 멤버의 듀티표 초기화하여 저장하기
 		// 사실 이미 병동이 생성된 이상, 무조건 기존 스케줄이 있어야만 함
-		if (currMonthScheduleList.isEmpty() && nextMonthScheduleList.isEmpty()) {
+		if (currMonthSchedule == null && nextMonthSchedule == null) {
 			initialDutyGenerator.initalizeDuty(newWardMember, year, month);
 		}
 	}
