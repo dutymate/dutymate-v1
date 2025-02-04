@@ -14,6 +14,7 @@ import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.wardschedules.dto.EditDutyRequestDto;
 import net.dutymate.api.wardschedules.dto.MyDutyResponseDto;
+import net.dutymate.api.wardschedules.dto.TodayDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.WardScheduleResponseDto;
 import net.dutymate.api.wardschedules.service.WardScheduleService;
 
@@ -75,5 +76,16 @@ public class WardScheduleController {
 
 		MyDutyResponseDto myDutyResponseDto = wardScheduleService.getMyDuty(member, year, month);
 		return ResponseEntity.ok(myDutyResponseDto);
+	}
+
+	@GetMapping("/my/date")
+	public ResponseEntity<?> getTodayDuty(
+		@Auth Member member,
+		@RequestParam Integer year,
+		@RequestParam Integer month,
+		@RequestParam Integer date
+	) {
+		TodayDutyResponseDto todayDutyResponseDto = wardScheduleService.getTodayDuty(member, year, month, date);
+		return ResponseEntity.ok(todayDutyResponseDto);
 	}
 }

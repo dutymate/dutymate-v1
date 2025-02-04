@@ -18,6 +18,7 @@ import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.dto.EditDutyRequestDto;
 import net.dutymate.api.wardschedules.dto.MyDutyResponseDto;
+import net.dutymate.api.wardschedules.dto.TodayDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.WardScheduleResponseDto;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
@@ -271,6 +272,40 @@ public class WardScheduleService {
 			.findAny()
 			.orElseGet(() -> WardSchedule.NurseShift.builder().shifts("X".repeat(daysInMonth)).build())
 			.getShifts();
+	}
+
+	@Transactional(readOnly = true)
+	public TodayDutyResponseDto getTodayDuty(Member member, final Integer year, final Integer month,
+		final Integer date) {
+		// 병동멤버와 병동 불러오기
+		WardMember wardMember = Optional.ofNullable(member.getWardMember())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."));
+		Ward ward = wardMember.getWard();
+
+		// 해당 월의 근무표 불러오기
+		WardSchedule wardSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(), year, month)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "아직 해당 월의 근무표가 생성되지 않았습니다."));
+
+		// 간호사 듀티 리스트 가져오기
+		List<WardSchedule.NurseShift> nurseShifts = wardSchedule.getDuties().getLast().getDuty();
+
+		// 나의 근무표 구하기
+		WardSchedule.NurseShift myShift = nurseShifts.stream()
+			.filter(o -> Objects.equals(o.getMemberId(), member.getMemberId()))
+			.findAny()
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "나의 근무를 찾을 수 없습니다."));
+
+		// 다른 사람들의 근무표 리스트 구하고 DTO 변환
+		List<TodayDutyResponseDto.GradeNameShift> otherShifts = nurseShifts.stream()
+			.map(nurseShift -> {
+				Member nurse = memberRepository.findById(nurseShift.getMemberId())
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사 매핑 오류"));
+				return TodayDutyResponseDto.GradeNameShift
+					.of(nurse.getGrade(), nurse.getName(), nurseShift.getShifts().charAt(date - 1));
+			})
+			.toList();
+
+		return TodayDutyResponseDto.of(myShift.getShifts().charAt(date - 1), otherShifts);
 	}
 
 	/**
