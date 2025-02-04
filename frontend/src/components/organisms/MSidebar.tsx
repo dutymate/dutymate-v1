@@ -1,3 +1,5 @@
+//아직 카피만 함!!
+
 "use client";
 
 import React from "react";
@@ -9,7 +11,7 @@ import { BiSolidUserPin } from "react-icons/bi";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { IoIosChatboxes } from "react-icons/io";
 import { PiLightbulbFilamentFill } from "react-icons/pi";
-import { BiSolidUserCircle } from "react-icons/bi";
+import Profile from "../atoms/Profile";
 
 interface NavigationItem {
 	name: string;
@@ -77,23 +79,7 @@ const Sidebar = () => {
 				</ul>
 			</nav>
 
-			{/* Footer */}
-			<div className="px-6 py-6 border-t border-gray-200">
-				<a
-					href="/my-page"
-					className="flex items-center gap-x-4 p-4 text-gray-900 hover:bg-gray-50 rounded-lg text-lg"
-				>
-					<BiSolidUserCircle className="w-[1.2em] h-[1.2em] text-gray-500" />
-					<span className="font-semibold">마이 페이지</span>
-				</a>
-
-				<div className="mt-6 text-sm text-gray-500">
-					<div className="font-bold text-gray-900 text-base">
-						(주) 듀티메이트.
-					</div>
-					<div className="text-sm text-gray-400 mt-1">support@dutymate.net</div>
-				</div>
-			</div>
+			<Profile />
 		</div>
 	);
 };

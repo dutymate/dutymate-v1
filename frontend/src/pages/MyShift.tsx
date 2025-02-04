@@ -1,12 +1,20 @@
-import HNTemplate from "../components/templates/HNTemplate";
+import Sidebar from "../components/organisms/WSidebar";
+import Title from "../components/atoms/Title";
 
 const MyShift = () => {
 	return (
-		<HNTemplate>
-			<div className="flex items-center justify-center h-full">
-				<h1 className="text-3xl font-bold text-primary-dark">My Shift Page</h1>
+		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
+			{/* Sidebar 적용 */}
+			<div className="w-[20%] min-w-[280px] max-w-[25%] h-full">
+				<Sidebar />
 			</div>
-		</HNTemplate>
+
+			{/* 메인 컨텐츠 영역 */}
+			<div className="w-[68.75rem] mx-auto flex flex-col px-[2%] py-6 bg-[#F4F4F4]">
+				{/* ✅ Title 컴포넌트 적용 */}
+				<Title className="px-4" title="듀티표 관리" subtitle="부제목을 입력하세요" />
+			</div>
+		</div>
 	);
 };
 

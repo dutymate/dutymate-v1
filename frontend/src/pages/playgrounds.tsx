@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "../components/organisms/HNWSidebar";
+import Sidebar from "../components/organisms/WSidebar";
 
 const Playgrounds: React.FC = () => {
 	return (

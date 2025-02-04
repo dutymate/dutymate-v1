@@ -1,1 +1,0 @@
-// RNTemplate.tsx
