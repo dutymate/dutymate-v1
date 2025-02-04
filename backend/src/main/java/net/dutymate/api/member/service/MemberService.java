@@ -29,6 +29,7 @@ import net.dutymate.api.member.dto.LoginResponseDto;
 import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.member.util.JwtUtil;
+import net.dutymate.api.wardmember.repository.WardMemberRepository;
 
 import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final JwtUtil jwtUtil;
+	private final WardMemberRepository wardMemberRepository;
 
 	@Value("${kakao.client.id}")
 	private String kakaoClientId;
@@ -91,9 +93,9 @@ public class MemberService {
 		boolean existAdditionalInfo =
 			member.getGrade() != null && member.getGender() != null && member.getRole() != null;
 
-		// TODO 병동 입장 여부 확인
+		boolean existMyWard = wardMemberRepository.existsByMember(member);
 
-		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, false);
+		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, existMyWard);
 	}
 
 	@Transactional
@@ -117,9 +119,9 @@ public class MemberService {
 		boolean existAdditionalInfo =
 			member.getGrade() != null && member.getGender() != null && member.getRole() != null;
 
-		// TODO 병동 입장 여부 확인
+		boolean existMyWard = wardMemberRepository.existsByMember(member);
 
-		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, false);
+		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, existMyWard);
 	}
 
 	@Transactional
@@ -143,9 +145,9 @@ public class MemberService {
 		boolean existAdditionalInfo =
 			member.getGrade() != null && member.getGender() != null && member.getRole() != null;
 
-		// TODO 병동 입장 여부 확인
+		boolean existMyWard = wardMemberRepository.existsByMember(member);
 
-		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, false);
+		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, existMyWard);
 	}
 
 	@Transactional
