@@ -1,9 +1,19 @@
 import React from "react";
 import { Button } from "@/components/atoms/Button";
+import {
+	Input,
+	EmailInput,
+	PasswordInput,
+	NumberInput,
+	DateInput,
+	TextArea,
+	SearchInput,
+} from "@/components/atoms/Input";
+import { WardCodeInput } from "@/components/atoms/WardCodeInput";
 
 const Playgrounds: React.FC = () => {
 	return (
-		<div className="p-8 font-pretendard">
+		<div className="p-8 font-pretendard bg-base-background">
 			<h1 className="text-3xl font-black mb-8">Component Playgrounds</h1>
 			{/* Atoms Section */}
 			<section className="mb-12">
@@ -32,27 +42,40 @@ const Playgrounds: React.FC = () => {
 									</div>
 								</div>
 
-								{/* Secondary Buttons */}
+								{/* Evening Buttons */}
 								<div>
 									<h5 className="text-sm font-medium text-base-muted mb-2">
-										Secondary Button
+										Evening Button
 									</h5>
 									<div className="flex flex-wrap gap-4">
-										<Button color="secondary">Active</Button>
-										<Button color="secondary" disabled>
+										<Button color="evening">Active</Button>
+										<Button color="evening" disabled>
 											Disabled
 										</Button>
 									</div>
 								</div>
 
-								{/* Tertiary Buttons */}
+								{/* Night Buttons */}
 								<div>
 									<h5 className="text-sm font-medium text-base-muted mb-2">
-										Tertiary Button
+										Night Button
 									</h5>
 									<div className="flex flex-wrap gap-4">
-										<Button color="tertiary">Active</Button>
-										<Button color="tertiary" disabled>
+										<Button color="night">Active</Button>
+										<Button color="night" disabled>
+											Disabled
+										</Button>
+									</div>
+								</div>
+
+								{/* Day Buttons */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Day Button
+									</h5>
+									<div className="flex flex-wrap gap-4">
+										<Button color="day">Active</Button>
+										<Button color="day" disabled>
 											Disabled
 										</Button>
 									</div>
@@ -140,6 +163,198 @@ const Playgrounds: React.FC = () => {
 							<Button size="md" fullWidth>
 								Full Width Button
 							</Button>
+						</div>
+					</div>
+				</div>
+
+				{/* Inputs */}
+				<div className="mb-8">
+					<h3 className="text-xl font-semibold mb-4">Inputs</h3>
+					<div className="space-y-8">
+						{/* Basic Input */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Basic Input
+							</h4>
+							<Input
+								id="basic-input"
+								name="basic"
+								label="기본 입력"
+								placeholder="텍스트를 입력해주세요"
+								helpText="기본적인 텍스트 입력 필드입니다"
+							/>
+						</div>
+
+						{/* Email Input */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Email Input
+							</h4>
+							<div className="space-y-4">
+								<EmailInput
+									id="email-input"
+									name="email"
+									label="이메일"
+									placeholder="you@example.com"
+									helpText="업무용 이메일을 입력해주세요"
+								/>
+								<EmailInput
+									id="email-input-error"
+									name="email-error"
+									label="이메일 (에러)"
+									error="올바른 이메일 형식이 아닙니다"
+									defaultValue="invalid-email"
+								/>
+								<EmailInput
+									id="email-input-disabled"
+									name="email-disabled"
+									label="이메일 (비활성화)"
+									disabled
+									defaultValue="disabled@example.com"
+								/>
+							</div>
+						</div>
+
+						{/* Password Input */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Password Input
+							</h4>
+							<div className="space-y-4">
+								<PasswordInput
+									id="password-input"
+									name="password"
+									label="비밀번호"
+									helpText="8자 이상 입력해주세요"
+								/>
+								<PasswordInput
+									id="password-input-error"
+									name="password-error"
+									label="비밀번호 (에러)"
+									error="비밀번호는 8자 이상이어야 합니다"
+								/>
+							</div>
+						</div>
+
+						{/* Number Input */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Number Input
+							</h4>
+							<div className="space-y-4">
+								<NumberInput
+									id="experience-input"
+									name="experience"
+									label="간호사 연차"
+									min={0}
+									max={50}
+									helpText="연차를 숫자로 입력해주세요"
+								/>
+								<NumberInput
+									id="experience-input-error"
+									name="experience-error"
+									label="간호사 연차 (에러)"
+									min={0}
+									max={50}
+									error="0-50 사이의 숫자를 입력해주세요"
+									defaultValue="99"
+								/>
+								<NumberInput
+									id="experience-input-optional"
+									name="experience-optional"
+									label="간호사 연차 (선택)"
+									min={0}
+									max={50}
+									optional
+								/>
+							</div>
+						</div>
+
+						{/* Date Input */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Date Input
+							</h4>
+							<div className="space-y-4">
+								<DateInput
+									id="work-date-input"
+									name="workDate"
+									label="근무 날짜"
+									helpText="근무 시작일을 선택해주세요"
+								/>
+								<DateInput
+									id="work-date-input-error"
+									name="workDate-error"
+									label="근무 날짜 (에러)"
+									error="시작일은 오늘 이후여야 합니다"
+								/>
+								<DateInput
+									id="work-date-input-disabled"
+									name="workDate-disabled"
+									label="근무 날짜 (비활성화)"
+									disabled
+									defaultValue="2024-03-01"
+								/>
+							</div>
+						</div>
+
+						{/* Text Area */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Text Area
+							</h4>
+							<div className="space-y-4">
+								<TextArea
+									id="memo-input"
+									name="memo"
+									label="메모"
+									placeholder="추가 내용을 입력해주세요"
+									rows={4}
+									helpText="필요한 내용을 자유롭게 입력해주세요"
+								/>
+								<TextArea
+									id="memo-input-error"
+									name="memo-error"
+									label="메모 (에러)"
+									rows={4}
+									error="메모는 최소 10자 이상이어야 합니다"
+									defaultValue="짧은메모"
+								/>
+								<TextArea
+									id="memo-input-disabled"
+									name="memo-disabled"
+									label="메모 (비활성화)"
+									rows={4}
+									disabled
+									defaultValue="이 메모는 수정할 수 없습니다"
+								/>
+								<TextArea
+									id="memo-input-optional"
+									name="memo-optional"
+									label="메모 (선택)"
+									rows={4}
+									optional
+									placeholder="선택적으로 입력 가능합니다"
+								/>
+							</div>
+						</div>
+
+						{/* Search Input */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">Search Input</h4>
+							<div className="space-y-4">
+								<SearchInput 
+									id="search-input"
+									name="search"
+									placeholder="이름으로 검색하기"
+								/>
+								<SearchInput 
+									id="search-input-disabled"
+									name="search-disabled"
+									placeholder="이름으로 검색하기"
+									disabled
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -326,6 +541,45 @@ const Playgrounds: React.FC = () => {
 							<p className="text-sm">Muted 30</p>
 							<p className="text-xs text-base-muted">#F4F4F4</p>
 						</div>
+					</div>
+				</div>
+			</section>
+
+			{/* Ward Code Input Section */}
+			<section className="mb-12">
+				<h2 className="text-2xl font-semibold mb-6">Ward Code Input</h2>
+				<div className="space-y-8">
+					{/* Default */}
+					<div>
+						<h3 className="text-sm font-medium text-base-muted mb-4">Default</h3>
+						<WardCodeInput 
+							id="ward-code"
+							name="wardCode"
+							label="병동 코드"
+							onChange={(value) => console.log('Ward Code:', value)}
+						/>
+					</div>
+
+					{/* With Error */}
+					<div>
+						<h3 className="text-sm font-medium text-base-muted mb-4">With Error</h3>
+						<WardCodeInput 
+							id="ward-code-error"
+							name="wardCode"
+							label="병동 코드"
+							error="올바른 병동 코드를 입력해주세요 (숫자와 영문 대문자만 가능)"
+						/>
+					</div>
+
+					{/* Disabled */}
+					<div>
+						<h3 className="text-sm font-medium text-base-muted mb-4">Disabled</h3>
+						<WardCodeInput 
+							id="ward-code-disabled"
+							name="wardCode"
+							label="병동 코드"
+							disabled
+						/>
 					</div>
 				</div>
 			</section>

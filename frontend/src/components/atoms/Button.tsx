@@ -1,6 +1,6 @@
 type ButtonSize = "sm" | "md" | "lg";
 type ButtonWidth = "short" | "long";
-type ButtonColor = "primary" | "secondary" | "tertiary";
+type ButtonColor = "primary" | "evening" | "night" | "day";
 
 interface ButtonProps {
 	size?: ButtonSize;
@@ -48,15 +48,20 @@ const colorStyles: Record<
 		hover: "hover:bg-primary hover:text-white",
 		pressed: "active:bg-primary-dark active:text-white",
 	},
-	secondary: {
+	evening: {
 		active: "bg-duty-evening-bg text-duty-evening",
 		hover: "hover:bg-duty-evening hover:text-white",
 		pressed: "active:bg-duty-evening-dark active:text-white",
 	},
-	tertiary: {
+	night: {
 		active: "bg-duty-night-bg text-duty-night",
 		hover: "hover:bg-duty-night hover:text-white",
 		pressed: "active:bg-duty-night-dark active:text-white",
+	},
+	day: {
+		active: "bg-duty-day-bg text-duty-day",
+		hover: "hover:bg-duty-day hover:text-white",
+		pressed: "active:bg-duty-day-dark active:text-white",
 	},
 };
 
