@@ -1,6 +1,8 @@
 package net.dutymate.api.wardschedules.service;
 
+import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,17 +35,18 @@ public class WardScheduleService {
 
 	@Transactional
 	public WardScheduleResponseDto getWardSchedule(Member member, final Integer year, final Integer month) {
+		// 조회하려는 달이 (현재 달 + 1달) 안에 포함되지 않는 경우 예외 처리
+		if (!isInNextMonth(year, month)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무표는 최대 다음달 까지만 조회가 가능합니다.");
+		}
+
 		// 현재 달의 일 수 계산 (28, 29, 30, 31일 중)
 		int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
 		String initializedShifts = "X".repeat(daysInMonth);
 
 		// 이전 연, 월 초기화
-		int prevYear = year;
-		int prevMonth = month - 1;
-		if (prevMonth == 0) {
-			prevYear--;
-			prevMonth = 12;
-		}
+		int prevMonth = (month == 1) ? 12 : month - 1;
+		int prevYear = (month == 1) ? year - 1 : year;
 
 		// 현재 속한 병동 정보 가져오기
 		if (member.getWardMember() == null) {
@@ -125,6 +128,12 @@ public class WardScheduleService {
 		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto);
 	}
 
+	private boolean isInNextMonth(Integer year, Integer month) {
+		int serverMonth = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")));
+		int inputMonth = Integer.parseInt(year + String.format("%02d", month));
+		return inputMonth <= serverMonth + 1;
+	}
+
 	@Transactional
 	public WardScheduleResponseDto editWardSchedule(Member member, EditDutyRequestDto editDutyRequestDto) {
 		// 병동멤버와 병동 초기화
@@ -196,20 +205,12 @@ public class WardScheduleService {
 		Ward ward = wardMember.getWard();
 
 		// 이전 연, 월 초기화
-		int prevYear = year;
-		int prevMonth = month - 1;
-		if (prevMonth == 0) {
-			prevYear--;
-			prevMonth = 12;
-		}
+		int prevMonth = (month == 1) ? 12 : month - 1;
+		int prevYear = (month == 1) ? year - 1 : year;
 
 		// 다음 연, 월 초기화
-		int nextYear = year;
-		int nextMonth = month + 1;
-		if (nextMonth == 13) {
-			nextYear++;
-			nextMonth = 1;
-		}
+		int nextMonth = (month == 12) ? 1 : month + 1;
+		int nextYear = (month == 12) ? year + 1 : year;
 
 		// 현재 달의 일 수 계산 (28, 29, 30, 31일 중)
 		int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
