@@ -230,6 +230,7 @@ public class WardScheduleService {
 
 		// 현재 달의 일 수 계산 (28, 29, 30, 31일 중)
 		int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
+		final int daysInAWeek = 7;
 
 		// 현재 달, 이전 달, 다음 달 병동 스케줄 불러오기
 		WardSchedule wardSchedule = wardScheduleRepository
@@ -241,8 +242,8 @@ public class WardScheduleService {
 
 		// 듀티 기본값 초기화
 		String shifts = "X".repeat(daysInMonth);
-		String prevShifts = "X".repeat(7);
-		String nextShifts = "X".repeat(7);
+		String prevShifts = "X".repeat(daysInAWeek);
+		String nextShifts = "X".repeat(daysInAWeek);
 
 		// 3달치 병동 스케줄을 모두 확인. 병동 스케줄이 있으면 한달치, 일주일치 shifts 구하기
 		if (wardSchedule != null) {
@@ -250,13 +251,13 @@ public class WardScheduleService {
 		}
 
 		if (prevWardSchedule != null) {
-			prevShifts = getShifts(member, prevWardSchedule, 7)
-				.substring(YearMonth.of(prevYear, prevMonth).lengthOfMonth() - 7);
+			prevShifts = getShifts(member, prevWardSchedule, daysInAWeek)
+				.substring(YearMonth.of(prevYear, prevMonth).lengthOfMonth() - daysInAWeek);
 		}
 
 		if (nextWardSchedule != null) {
-			nextShifts = getShifts(member, nextWardSchedule, 7)
-				.substring(0, 7);
+			nextShifts = getShifts(member, nextWardSchedule, daysInAWeek)
+				.substring(0, daysInAWeek);
 		}
 
 		return MyDutyResponseDto.of(year, month, prevShifts, nextShifts, shifts);
