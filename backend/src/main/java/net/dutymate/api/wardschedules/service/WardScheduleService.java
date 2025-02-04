@@ -23,6 +23,7 @@ import net.dutymate.api.wardschedules.dto.MyDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.TodayDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.WardScheduleResponseDto;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
+import net.dutymate.api.wardschedules.util.DutyAutoCheck;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +33,7 @@ public class WardScheduleService {
 
 	private final MemberRepository memberRepository;
 	private final WardScheduleRepository wardScheduleRepository;
+	private final DutyAutoCheck dutyAutoCheck;
 
 	@Transactional
 	public WardScheduleResponseDto getWardSchedule(Member member, final Integer year, final Integer month) {
@@ -125,7 +127,9 @@ public class WardScheduleService {
 		// TODO history 구하기
 		// TODO Issues 구하기
 
-		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto);
+		List<WardScheduleResponseDto.Issue> issues = dutyAutoCheck.check(nurseShiftsDto, year, month);
+
+		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto, issues);
 	}
 
 	private boolean isInNextMonth(Integer year, Integer month) {
@@ -194,7 +198,8 @@ public class WardScheduleService {
 
 		// TODO history 구하기
 		// TODO Issues 구하기
-		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto);
+		List<WardScheduleResponseDto.Issue> issues = dutyAutoCheck.check(nurseShiftsDto, year, month);
+		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto, issues);
 	}
 
 	@Transactional(readOnly = true)

@@ -19,17 +19,18 @@ public class WardScheduleResponseDto {
 	private Integer invalidCnt;
 
 	private List<NurseShifts> duty;
-	// private List<Issue> issues;
+	private List<Issue> issues;
 	// private List<History> histories;
 
 	public static WardScheduleResponseDto of(
-		String id, Integer year, Integer month, Integer invalidCnt, List<NurseShifts> duty) {
+		String id, Integer year, Integer month, Integer invalidCnt, List<NurseShifts> duty, List<Issue> issues) {
 		return WardScheduleResponseDto.builder()
 			.id(id)
 			.year(year)
 			.month(month)
 			.invalidCnt(invalidCnt)
 			.duty(duty)
+			.issues(issues)
 			.build();
 	}
 
@@ -52,6 +53,7 @@ public class WardScheduleResponseDto {
 	}
 
 	@Data
+	@Builder
 	public static class Issue {
 
 		private String name;
@@ -59,6 +61,7 @@ public class WardScheduleResponseDto {
 		private Integer endDate;
 		private Shift endDateShift;
 		private String message;
+
 	}
 
 	@Data
