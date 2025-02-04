@@ -15,32 +15,46 @@ const Playgrounds: React.FC = () => {
 					<div className="space-y-8">
 						{/* Button Colors */}
 						<div>
-							<h4 className="text-sm font-medium text-base-muted mb-2">Button Colors</h4>
+							<h4 className="text-sm font-medium text-base-muted mb-2">
+								Button Colors
+							</h4>
 							<div className="flex flex-col space-y-4">
 								{/* Primary Buttons */}
 								<div>
-									<h5 className="text-sm font-medium text-base-muted mb-2">Primary Button</h5>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Primary Button
+									</h5>
 									<div className="flex flex-wrap gap-4">
 										<Button color="primary">Active</Button>
-										<Button color="primary" disabled>Disabled</Button>
+										<Button color="primary" disabled>
+											Disabled
+										</Button>
 									</div>
 								</div>
 
 								{/* Secondary Buttons */}
 								<div>
-									<h5 className="text-sm font-medium text-base-muted mb-2">Secondary Button</h5>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Secondary Button
+									</h5>
 									<div className="flex flex-wrap gap-4">
 										<Button color="secondary">Active</Button>
-										<Button color="secondary" disabled>Disabled</Button>
+										<Button color="secondary" disabled>
+											Disabled
+										</Button>
 									</div>
 								</div>
 
 								{/* Tertiary Buttons */}
 								<div>
-									<h5 className="text-sm font-medium text-base-muted mb-2">Tertiary Button</h5>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Tertiary Button
+									</h5>
 									<div className="flex flex-wrap gap-4">
 										<Button color="tertiary">Active</Button>
-										<Button color="tertiary" disabled>Disabled</Button>
+										<Button color="tertiary" disabled>
+											Disabled
+										</Button>
 									</div>
 								</div>
 							</div>

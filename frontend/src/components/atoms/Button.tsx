@@ -39,7 +39,10 @@ const widthStyles: Record<ButtonWidth, Record<ButtonSize, string>> = {
 	},
 };
 
-const colorStyles: Record<ButtonColor, { active: string; hover: string; pressed: string }> = {
+const colorStyles: Record<
+	ButtonColor,
+	{ active: string; hover: string; pressed: string }
+> = {
 	primary: {
 		active: "bg-primary-bg text-primary",
 		hover: "hover:bg-primary hover:text-white",
@@ -74,10 +77,11 @@ export function Button({
 			className={`
         ${sizeStyles[size]} 
         ${fullWidth ? "w-full" : widthStyles[width][size]}
-        ${disabled 
-          ? "bg-base-muted text-white cursor-not-allowed" 
-          : `${colorStyles[color].active} ${colorStyles[color].hover} ${colorStyles[color].pressed}`
-        }
+        ${
+					disabled
+						? "bg-base-muted text-white cursor-not-allowed"
+						: `${colorStyles[color].active} ${colorStyles[color].hover} ${colorStyles[color].pressed}`
+				}
         font-semibold 
         shadow-xs 
         focus-visible:outline-2 
