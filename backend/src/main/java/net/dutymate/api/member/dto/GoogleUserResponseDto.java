@@ -1,7 +1,5 @@
 package net.dutymate.api.member.dto;
 
-import java.sql.Timestamp;
-
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.enumclass.Provider;
 
@@ -26,7 +24,6 @@ public class GoogleUserResponseDto {
 			.name(name)
 			.profileImg(picture)
 			.provider(Provider.GOOGLE)
-			.createdAt(new Timestamp(System.currentTimeMillis()))
 			.build();
 	}
 }

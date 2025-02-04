@@ -2,10 +2,12 @@ package net.dutymate.api.member.service;
 
 import java.util.Objects;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -22,12 +24,13 @@ import net.dutymate.api.member.dto.GoogleTokenResponseDto;
 import net.dutymate.api.member.dto.GoogleUserResponseDto;
 import net.dutymate.api.member.dto.KakaoTokenResponseDto;
 import net.dutymate.api.member.dto.KakaoUserResponseDto;
+import net.dutymate.api.member.dto.LoginRequestDto;
 import net.dutymate.api.member.dto.LoginResponseDto;
+import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.member.util.JwtUtil;
 
 import io.netty.handler.codec.http.HttpHeaderValues;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -56,6 +59,42 @@ public class MemberService {
 	private String googleUserUri;
 	@Value("${google.redirect.uri}")
 	private String googleRedirectUri;
+
+	@Transactional
+	public LoginResponseDto signUp(SignUpRequestDto signUpRequestDto) {
+		if (!signUpRequestDto.getPassword().equals(signUpRequestDto.getPasswordConfirm())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+		}
+
+		Member newMember = signUpRequestDto.toMember();
+		memberRepository.save(newMember);
+		return login(signUpRequestDto.toLoginRequestDto());
+	}
+
+	@Transactional(readOnly = true)
+	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+		Member member = memberRepository.findMemberByEmail(loginRequestDto.getEmail())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "아이디 또는 비밀번호 오류입니다."));
+
+		// 만약 소셜 로그인한 이력이 있는 경우 예외 처리
+		if (!member.getProvider().equals(Provider.NONE)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 다른 경로로 가입한 회원입니다.");
+		}
+
+		if (!BCrypt.checkpw(loginRequestDto.getPassword(), member.getPassword())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "아이디 또는 비밀번호 오류입니다.");
+		}
+
+		// memberId로 AccessToken 생성
+		String accessToken = jwtUtil.createToken(member.getMemberId());
+
+		boolean existAdditionalInfo =
+			member.getGrade() != null && member.getGender() != null && member.getRole() != null;
+
+		// TODO 병동 입장 여부 확인
+
+		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, false);
+	}
 
 	@Transactional
 	public LoginResponseDto kakaoLogin(String code) {

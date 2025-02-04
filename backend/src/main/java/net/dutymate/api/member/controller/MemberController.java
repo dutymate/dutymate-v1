@@ -12,7 +12,9 @@ import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.member.dto.AdditionalInfoRequestDto;
 import net.dutymate.api.member.dto.AdditionalInfoResponseDto;
+import net.dutymate.api.member.dto.LoginRequestDto;
 import net.dutymate.api.member.dto.LoginResponseDto;
+import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,18 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService memberService;
+
+	@PostMapping
+	public ResponseEntity<?> signUp(@RequestBody SignUpRequestDto signUpRequestDto) {
+		LoginResponseDto loginResponseDto = memberService.signUp(signUpRequestDto);
+		return ResponseEntity.ok(loginResponseDto);
+	}
+
+	@GetMapping("/login")
+	public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
+		LoginResponseDto loginResponseDto = memberService.login(loginRequestDto);
+		return ResponseEntity.ok(loginResponseDto);
+	}
 
 	@GetMapping("/login/kakao")
 	public ResponseEntity<?> kakaoLogin(@RequestParam String code) {
