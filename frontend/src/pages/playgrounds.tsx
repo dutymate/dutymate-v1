@@ -1,9 +1,145 @@
 import React from "react";
+import { Button } from "@/components/atoms/Button";
 
 const Playgrounds: React.FC = () => {
 	return (
 		<div className="p-8 font-pretendard">
 			<h1 className="text-3xl font-black mb-8">Component Playgrounds</h1>
+			{/* Atoms Section */}
+			<section className="mb-12">
+				<h2 className="text-2xl font-semibold mb-4">Atoms</h2>
+
+				{/* Buttons */}
+				<div className="mb-8">
+					<h3 className="text-xl font-semibold mb-4">Buttons</h3>
+					<div className="space-y-8">
+						{/* Button Colors */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-2">Button Colors</h4>
+							<div className="flex flex-col space-y-4">
+								{/* Primary Buttons */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">Primary Button</h5>
+									<div className="flex flex-wrap gap-4">
+										<Button color="primary">Active</Button>
+										<Button color="primary" disabled>Disabled</Button>
+									</div>
+								</div>
+
+								{/* Secondary Buttons */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">Secondary Button</h5>
+									<div className="flex flex-wrap gap-4">
+										<Button color="secondary">Active</Button>
+										<Button color="secondary" disabled>Disabled</Button>
+									</div>
+								</div>
+
+								{/* Tertiary Buttons */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">Tertiary Button</h5>
+									<div className="flex flex-wrap gap-4">
+										<Button color="tertiary">Active</Button>
+										<Button color="tertiary" disabled>Disabled</Button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* Short Buttons */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-2">
+								Short Buttons (SM: 70/112px, MD: 75/120px, LG: 80/128px)
+							</h4>
+							<p className="text-xs text-base-muted mb-4">
+								Text Size - SM: 11px/12px, MD/LG: 12px/14px
+							</p>
+							<div className="flex flex-col space-y-4">
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										SM Size
+									</h5>
+									<Button size="sm" width="short">
+										Button
+									</Button>
+								</div>
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										MD Size
+									</h5>
+									<Button size="md" width="short">
+										Button
+									</Button>
+								</div>
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										LG Size
+									</h5>
+									<Button size="lg" width="short">
+										Button
+									</Button>
+								</div>
+							</div>
+						</div>
+
+						{/* Long Buttons */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-2">
+								Long Buttons (SM: 180/330px, MD: 188/350px, LG: 200/370px)
+							</h4>
+							<p className="text-xs text-base-muted mb-4">
+								Text Size - SM: 11px/12px, MD/LG: 12px/14px
+							</p>
+							<div className="flex flex-col space-y-4">
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										SM Size
+									</h5>
+									<Button size="sm" width="long">
+										Longer Button
+									</Button>
+								</div>
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										MD Size
+									</h5>
+									<Button size="md" width="long">
+										Longer Button
+									</Button>
+								</div>
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										LG Size
+									</h5>
+									<Button size="lg" width="long">
+										Longer Button
+									</Button>
+								</div>
+							</div>
+						</div>
+
+						{/* Full Width Button */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-2">
+								Full Width Button
+							</h4>
+							<Button size="md" fullWidth>
+								Full Width Button
+							</Button>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			{/* Organisms Section */}
+			<section className="mb-12">
+				<h2 className="text-2xl font-semibold mb-4">Organisms</h2>
+			</section>
+
+			{/* Templates Section */}
+			<section className="mb-12">
+				<h2 className="text-2xl font-semibold mb-4">Templates</h2>
+			</section>
 
 			{/* Font Weight Showcase */}
 			<section className="mb-12">
@@ -178,21 +314,6 @@ const Playgrounds: React.FC = () => {
 						</div>
 					</div>
 				</div>
-			</section>
-
-			{/* Atoms Section */}
-			<section className="mb-12">
-				<h2 className="text-2xl font-semibold mb-4">Atoms</h2>
-			</section>
-
-			{/* Organisms Section */}
-			<section className="mb-12">
-				<h2 className="text-2xl font-semibold mb-4">Organisms</h2>
-			</section>
-
-			{/* Templates Section */}
-			<section className="mb-12">
-				<h2 className="text-2xl font-semibold mb-4">Templates</h2>
 			</section>
 		</div>
 	);
