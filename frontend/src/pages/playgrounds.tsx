@@ -1,4 +1,5 @@
 import React from "react";
+import Sidebar from "../components/organisms/HNWSidebar";
 
 const Playgrounds: React.FC = () => {
 	return (
@@ -188,6 +189,14 @@ const Playgrounds: React.FC = () => {
 			{/* Organisms Section */}
 			<section className="mb-12">
 				<h2 className="text-2xl font-semibold mb-4">Organisms</h2>
+
+				{/* Sidebar Showcase */}
+				<div className="mb-8">
+					<h3 className="text-xl font-semibold mb-4">Sidebar</h3>
+					<div className="relative h-[800px] border rounded-lg overflow-hidden">
+						<Sidebar />
+					</div>
+				</div>
 			</section>
 
 			{/* Templates Section */}
