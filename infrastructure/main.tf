@@ -10,5 +10,5 @@ module "s3" {
 
 module "ecr" {
   source           = "./Modules/ECR"
-  repository_names = toset(["backend", "frontend"])
+  repository_names = toset(["dutymate-backend", "dutymate-frontend"])
 }
