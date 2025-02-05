@@ -1,7 +1,5 @@
 package net.dutymate.api.wardschedules.controller;
 
-import java.time.LocalDate;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardschedules.dto.AllWardDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.EditDutyRequestDto;
 import net.dutymate.api.wardschedules.dto.MyDutyResponseDto;
@@ -33,13 +32,8 @@ public class WardScheduleController {
 		@Auth Member member,
 		@RequestParam(required = false) Integer year,
 		@RequestParam(required = false) Integer month) {
-
-		// 현재 연, 월 초기화
-		if (year == null || month == null) {
-			year = LocalDate.now().getYear();
-			month = LocalDate.now().getMonthValue();
-		}
-		WardScheduleResponseDto wardScheduleResponseDto = wardScheduleService.getWardSchedule(member, year, month);
+		WardScheduleResponseDto wardScheduleResponseDto =
+			wardScheduleService.getWardSchedule(member, new YearMonth(year, month));
 		return ResponseEntity.ok(wardScheduleResponseDto);
 	}
 
@@ -59,13 +53,7 @@ public class WardScheduleController {
 		@RequestParam(required = false) Integer year,
 		@RequestParam(required = false) Integer month
 	) {
-		// 현재 연, 월 초기화
-		if (year == null || month == null) {
-			year = LocalDate.now().getYear();
-			month = LocalDate.now().getMonthValue();
-		}
-
-		MyDutyResponseDto myDutyResponseDto = wardScheduleService.getMyDuty(member, year, month);
+		MyDutyResponseDto myDutyResponseDto = wardScheduleService.getMyDuty(member, new YearMonth(year, month));
 		return ResponseEntity.ok(myDutyResponseDto);
 	}
 

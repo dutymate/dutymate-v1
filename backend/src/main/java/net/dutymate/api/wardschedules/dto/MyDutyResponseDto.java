@@ -1,5 +1,7 @@
 package net.dutymate.api.wardschedules.dto;
 
+import net.dutymate.api.records.YearMonth;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,10 +16,10 @@ public class MyDutyResponseDto {
 	private String shifts;
 
 	public static MyDutyResponseDto of(
-		Integer year, Integer month, String prevShifts, String nextShifts, String shifts) {
+		YearMonth yearMonth, String prevShifts, String nextShifts, String shifts) {
 		return MyDutyResponseDto.builder()
-			.year(year)
-			.month(month)
+			.year(yearMonth.year())
+			.month(yearMonth.month())
 			.prevShifts(prevShifts)
 			.nextShifts(nextShifts)
 			.shifts(shifts)

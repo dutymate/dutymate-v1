@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.enumclass.Shift;
+import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 
 import lombok.Builder;
@@ -23,11 +24,11 @@ public class WardScheduleResponseDto {
 	// private List<History> histories;
 
 	public static WardScheduleResponseDto of(
-		String id, Integer year, Integer month, Integer invalidCnt, List<NurseShifts> duty, List<Issue> issues) {
+		String id, YearMonth yearMonth, Integer invalidCnt, List<NurseShifts> duty, List<Issue> issues) {
 		return WardScheduleResponseDto.builder()
 			.id(id)
-			.year(year)
-			.month(month)
+			.year(yearMonth.year())
+			.month(yearMonth.month())
 			.invalidCnt(invalidCnt)
 			.duty(duty)
 			.issues(issues)

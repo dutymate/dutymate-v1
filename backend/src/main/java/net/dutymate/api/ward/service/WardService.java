@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
+import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
 import net.dutymate.api.ward.repository.WardRepository;
@@ -89,19 +90,16 @@ public class WardService {
 
 		// 4. 병동 Id로 MongoDB에 추가된 현재달과 다음달 듀티 확인
 		// 4-1. 이번달 듀티
-		LocalDate currentDate = LocalDate.now();
-		int year = currentDate.getYear();
-		int month = currentDate.getMonthValue();
+		YearMonth yearMonth = YearMonth.nowYearMonth();
 
 		WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
-			ward.getWardId(), year, month).orElse(null);
+			ward.getWardId(), yearMonth.year(), yearMonth.month()).orElse(null);
 
 		// 4-2. 다음달 듀티
-		int nextMonth = (month == 12) ? 1 : month + 1;
-		int nextYear = (month == 12) ? year + 1 : year;
+		YearMonth nextYearMonth = yearMonth.nextYearMonth();
 
 		WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
-			ward.getWardId(), nextYear, nextMonth).orElse(null);
+			ward.getWardId(), nextYearMonth.year(), nextYearMonth.month()).orElse(null);
 
 		// 5. 기존 스케줄이 존재한다면, 새로운 스냅샷 생성 및 초기화된 duty 추가하기
 		if (currMonthSchedule != null) {
@@ -115,7 +113,7 @@ public class WardService {
 		// 6. 기존 스케줄이 없다면, 입장한 멤버의 듀티표 초기화하여 저장하기
 		// 사실 이미 병동이 생성된 이상, 무조건 기존 스케줄이 있어야만 함
 		if (currMonthSchedule == null && nextMonthSchedule == null) {
-			initialDutyGenerator.initalizeDuty(newWardMember, year, month);
+			initialDutyGenerator.initalizeDuty(newWardMember, yearMonth.year(), yearMonth.month());
 		}
 	}
 

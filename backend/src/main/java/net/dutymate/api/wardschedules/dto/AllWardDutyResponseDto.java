@@ -2,6 +2,8 @@ package net.dutymate.api.wardschedules.dto;
 
 import java.util.List;
 
+import net.dutymate.api.records.YearMonth;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -34,11 +36,11 @@ public class AllWardDutyResponseDto {
 
 	}
 
-	public static AllWardDutyResponseDto of(String id, Integer year, Integer month, List<AllNurseShift> duty) {
+	public static AllWardDutyResponseDto of(String id, YearMonth yearMonth, List<AllNurseShift> duty) {
 		return AllWardDutyResponseDto.builder()
 			.id(id)
-			.year(year)
-			.month(month)
+			.year(yearMonth.year())
+			.month(yearMonth.month())
 			.duty(duty)
 			.build();
 	}

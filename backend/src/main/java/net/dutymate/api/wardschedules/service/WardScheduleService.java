@@ -1,8 +1,6 @@
 package net.dutymate.api.wardschedules.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +16,7 @@ import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.member.repository.MemberRepository;
+import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.dto.AllWardDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.EditDutyRequestDto;
@@ -38,29 +37,26 @@ public class WardScheduleService {
 	private final DutyAutoCheck dutyAutoCheck;
 
 	@Transactional
-	public WardScheduleResponseDto getWardSchedule(Member member, final Integer year, final Integer month) {
+	public WardScheduleResponseDto getWardSchedule(Member member, final YearMonth yearMonth) {
 		// 조회하려는 달이 (현재 달 + 1달) 안에 포함되지 않는 경우 예외 처리
-		if (!isInNextMonth(year, month)) {
+		if (!isInNextMonth(yearMonth)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무표는 최대 다음달 까지만 조회가 가능합니다.");
 		}
 
 		// 현재 달의 일 수 계산 (28, 29, 30, 31일 중)
-		int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
-		String initializedShifts = "X".repeat(daysInMonth);
+		String initializedShifts = yearMonth.initializeShifts();
 
 		// 이전 연, 월 초기화
-		int prevMonth = (month == 1) ? 12 : month - 1;
-		int prevYear = (month == 1) ? year - 1 : year;
+		YearMonth prevYearMonth = yearMonth.prevYearMonth();
 
 		// 현재 속한 병동 정보 가져오기
-		if (member.getWardMember() == null) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않는 회원입니다.");
-		}
-		Ward ward = member.getWardMember().getWard();
+		Ward ward = Optional.of(member.getWardMember())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."))
+			.getWard();
 
 		// 몽고 DB에서 병동 스케줄 가져오기
 		WardSchedule wardSchedule =
-			wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(), year, month)
+			wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(), yearMonth.year(), yearMonth.month())
 				.orElseGet(() -> {
 					// 이번달 듀티표가 없으면 새로 생성하기
 					WardSchedule.Duty duty = WardSchedule.Duty.builder()
@@ -75,8 +71,8 @@ public class WardScheduleService {
 					// 병동 스케줄 도큐먼트 만들기
 					WardSchedule newWardSchedule = WardSchedule.builder()
 						.wardId(ward.getWardId())
-						.year(year)
-						.month(month)
+						.year(yearMonth.year())
+						.month(yearMonth.month())
 						.duties(List.of(duty))
 						.build();
 
@@ -85,9 +81,9 @@ public class WardScheduleService {
 				});
 
 		// 몽고 DB에서 전달 병동 스케줄 가져오기
-		WardSchedule prevWardSchedule =
-			wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(), prevYear, prevMonth)
-				.orElse(null);
+		WardSchedule prevWardSchedule = wardScheduleRepository
+			.findByWardIdAndYearAndMonth(ward.getWardId(), prevYearMonth.year(), prevYearMonth.month())
+			.orElse(null);
 
 		// 이번달 듀티표 가져오기
 		List<WardSchedule.NurseShift> recentNurseShifts = wardSchedule.getDuties().getLast().getDuty();
@@ -129,28 +125,27 @@ public class WardScheduleService {
 		// TODO history 구하기
 		// TODO Issues 구하기
 
-		List<WardScheduleResponseDto.Issue> issues = dutyAutoCheck.check(nurseShiftsDto, year, month);
+		List<WardScheduleResponseDto.Issue> issues =
+			dutyAutoCheck.check(nurseShiftsDto, yearMonth.year(), yearMonth.month());
 
-		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto, issues);
+		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues);
 	}
 
-	private boolean isInNextMonth(Integer year, Integer month) {
+	private boolean isInNextMonth(YearMonth yearMonth) {
 		int serverMonth = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")));
-		int inputMonth = Integer.parseInt(year + String.format("%02d", month));
+		int inputMonth = Integer.parseInt(yearMonth.year() + String.format("%02d", yearMonth.month()));
 		return inputMonth <= serverMonth + 1;
 	}
 
 	@Transactional
 	public WardScheduleResponseDto editWardSchedule(Member member, EditDutyRequestDto editDutyRequestDto) {
 		// 연, 월, 수정일, 수정할 멤버 변수 초기화
-		final Integer year = editDutyRequestDto.getYear();
-		final Integer month = editDutyRequestDto.getMonth();
+		final YearMonth yearMonth = new YearMonth(editDutyRequestDto.getYear(), editDutyRequestDto.getMonth());
 		final int modifiedIndex = editDutyRequestDto.getHistory().getModifiedDay() - 1;
 		final Long modifiedMemberId = editDutyRequestDto.getHistory().getMemberId();
 
 		// 이전 연, 월 초기화
-		int prevMonth = (month == 1) ? 12 : month - 1;
-		int prevYear = (month == 1) ? year - 1 : year;
+		YearMonth prevYearMonth = yearMonth.prevYearMonth();
 
 		// 병동멤버와 병동 초기화
 		WardMember wardMember = Optional.ofNullable(member.getWardMember())
@@ -158,13 +153,14 @@ public class WardScheduleService {
 		Ward ward = wardMember.getWard();
 
 		// 몽고 DB에서 이번달 병동 스케줄 불러오기
-		WardSchedule wardSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(), year, month)
+		WardSchedule wardSchedule = wardScheduleRepository
+			.findByWardIdAndYearAndMonth(ward.getWardId(), yearMonth.year(), yearMonth.month())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무표가 생성되지 않았습니다."));
 
 		// 몽고 DB에서 전달 병동 스케줄 가져오기
-		WardSchedule prevWardSchedule =
-			wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(), prevYear, prevMonth)
-				.orElse(null);
+		WardSchedule prevWardSchedule = wardScheduleRepository
+			.findByWardIdAndYearAndMonth(ward.getWardId(), prevYearMonth.year(), prevYearMonth.month())
+			.orElse(null);
 
 		// 전달 듀티표 가져오기
 		List<WardSchedule.NurseShift> prevNurseShifts;
@@ -228,36 +224,35 @@ public class WardScheduleService {
 
 		// TODO history 구하기
 		// TODO Issues 구하기
-		List<WardScheduleResponseDto.Issue> issues = dutyAutoCheck.check(nurseShiftsDto, year, month);
-		return WardScheduleResponseDto.of(wardSchedule.getId(), year, month, 0, nurseShiftsDto, issues);
+		List<WardScheduleResponseDto.Issue> issues =
+			dutyAutoCheck.check(nurseShiftsDto, yearMonth.year(), yearMonth.month());
+		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues);
 	}
 
 	@Transactional(readOnly = true)
-	public MyDutyResponseDto getMyDuty(Member member, final Integer year, final Integer month) {
+	public MyDutyResponseDto getMyDuty(Member member, final YearMonth yearMonth) {
 		// 병동멤버와 병동 초기화
 		WardMember wardMember = Optional.ofNullable(member.getWardMember())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."));
 		Ward ward = wardMember.getWard();
 
 		// 이전 연, 월 초기화
-		int prevMonth = (month == 1) ? 12 : month - 1;
-		int prevYear = (month == 1) ? year - 1 : year;
+		YearMonth prevYearMonth = yearMonth.prevYearMonth();
 
 		// 다음 연, 월 초기화
-		int nextMonth = (month == 12) ? 1 : month + 1;
-		int nextYear = (month == 12) ? year + 1 : year;
+		YearMonth nextYearMonth = yearMonth.nextYearMonth();
 
 		// 현재 달의 일 수 계산 (28, 29, 30, 31일 중)
-		int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
+		int daysInMonth = yearMonth.daysInMonth();
 		final int daysInAWeek = 7;
 
 		// 현재 달, 이전 달, 다음 달 병동 스케줄 불러오기
 		WardSchedule wardSchedule = wardScheduleRepository
-			.findByWardIdAndYearAndMonth(ward.getWardId(), year, month).orElse(null);
+			.findByWardIdAndYearAndMonth(ward.getWardId(), yearMonth.year(), yearMonth.month()).orElse(null);
 		WardSchedule prevWardSchedule = wardScheduleRepository
-			.findByWardIdAndYearAndMonth(ward.getWardId(), prevYear, prevMonth).orElse(null);
+			.findByWardIdAndYearAndMonth(ward.getWardId(), prevYearMonth.year(), prevYearMonth.month()).orElse(null);
 		WardSchedule nextWardSchedule = wardScheduleRepository
-			.findByWardIdAndYearAndMonth(ward.getWardId(), nextYear, nextMonth).orElse(null);
+			.findByWardIdAndYearAndMonth(ward.getWardId(), nextYearMonth.year(), nextYearMonth.month()).orElse(null);
 
 		// 듀티 기본값 초기화
 		String shifts = "X".repeat(daysInMonth);
@@ -271,7 +266,7 @@ public class WardScheduleService {
 
 		if (prevWardSchedule != null) {
 			prevShifts = getShifts(member, prevWardSchedule, daysInAWeek)
-				.substring(YearMonth.of(prevYear, prevMonth).lengthOfMonth() - daysInAWeek);
+				.substring(prevYearMonth.daysInMonth() - daysInAWeek);
 		}
 
 		if (nextWardSchedule != null) {
@@ -279,7 +274,7 @@ public class WardScheduleService {
 				.substring(0, daysInAWeek);
 		}
 
-		return MyDutyResponseDto.of(year, month, prevShifts, nextShifts, shifts);
+		return MyDutyResponseDto.of(yearMonth, prevShifts, nextShifts, shifts);
 	}
 
 	// 병동 스케줄에서 현재 로그인한 멤버의 듀티 구하기
@@ -292,8 +287,9 @@ public class WardScheduleService {
 	}
 
 	@Transactional(readOnly = true)
-	public TodayDutyResponseDto getTodayDuty(Member member, final Integer year, final Integer month,
-		final Integer date) {
+	public TodayDutyResponseDto getTodayDuty(
+		Member member, final Integer year, final Integer month, final Integer date) {
+
 		// 병동멤버와 병동 불러오기
 		WardMember wardMember = Optional.ofNullable(member.getWardMember())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."));
@@ -330,13 +326,11 @@ public class WardScheduleService {
 		WardMember wardMember = member.getWardMember();
 
 		// 1. 현재 연도와 월 가져오기
-		LocalDate today = LocalDate.now();
-		int year = today.getYear();
-		int month = today.getMonthValue();
+		YearMonth yearMonth = YearMonth.nowYearMonth();
 
 		// 2. 병동 정보 조회
 		WardSchedule wardSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
-				wardMember.getWard().getWardId(), year, month)
+				wardMember.getWard().getWardId(), yearMonth.year(), yearMonth.month())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 해당하는 듀티가 없습니다."));
 
 		// 3. 가장 최신 duty 가져오기
@@ -353,7 +347,7 @@ public class WardScheduleService {
 
 			}).toList();
 
-		return AllWardDutyResponseDto.of(wardSchedule.getId(), year, month, nurseShiftList);
+		return AllWardDutyResponseDto.of(wardSchedule.getId(), yearMonth, nurseShiftList);
 	}
 }
 
