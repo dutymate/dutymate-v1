@@ -1,4 +1,4 @@
-import { ExclamationCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/16/solid";
+import { HiExclamationCircle, HiMagnifyingGlass } from "react-icons/hi2";
 
 export interface InputProps {
 	id: string;
@@ -68,7 +68,7 @@ export const Input = ({
 					className={inputClasses}
 				/>
 				{error && (
-					<ExclamationCircleIcon
+					<HiExclamationCircle
 						aria-hidden="true"
 						className="pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-red-500 sm:size-6"
 					/>
@@ -213,16 +213,17 @@ export const TextArea = ({
 	);
 };
 
-export const SearchInput = (props: Omit<InputProps, 'type' | 'label'>) => {
-	const searchInputClasses = "block w-full rounded-full bg-white pl-10 pr-3 py-2.5 text-[1rem] text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:py-3 sm:text-[1.125rem]"
+export const SearchInput = (props: Omit<InputProps, "type" | "label">) => {
+	const searchInputClasses =
+		"block w-full rounded-full bg-white pl-10 pr-3 py-2.5 text-[1rem] text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:py-3 sm:text-[1.125rem]";
 
 	return (
 		<div>
 			<div className="relative">
 				<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-					<MagnifyingGlassIcon 
-						className="size-5 text-gray-400 sm:size-6" 
-						aria-hidden="true" 
+					<HiMagnifyingGlass
+						className="size-5 text-gray-400 sm:size-6"
+						aria-hidden="true"
 					/>
 				</div>
 				<input
@@ -236,13 +237,13 @@ export const SearchInput = (props: Omit<InputProps, 'type' | 'label'>) => {
 				/>
 			</div>
 			{props.helpText && (
-				<p 
-					id={`${props.id}-description`} 
+				<p
+					id={`${props.id}-description`}
 					className="mt-2 text-[0.875rem] text-gray-500 sm:text-[1rem]"
 				>
 					{props.helpText}
 				</p>
 			)}
 		</div>
-	)
-}
+	);
+};
