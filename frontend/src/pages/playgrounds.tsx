@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/atoms/Button";
 import {
 	Input,
@@ -10,8 +10,25 @@ import {
 	SearchInput,
 } from "@/components/atoms/Input";
 import { WardCodeInput } from "@/components/atoms/WardCodeInput";
+import { Icon } from "@/components/atoms/Icon";
+import { CheckBox } from "@/components/atoms/CheckBox";
+import { SortButton, FilterButton } from "@/components/atoms/SubButton";
+import { ToggleButton } from "@/components/atoms/ToggleButton";
+import { Dropdown } from "@/components/atoms/Dropdown";
+import { ApprovalBtn } from "@/components/atoms/ApprovalBtn";
 
 const Playgrounds: React.FC = () => {
+	const [genderIndex, setGenderIndex] = useState(0);
+	const [nurseIndex, setNurseIndex] = useState(0);
+	const [requestIndex, setRequestIndex] = useState(0);
+	const [approvalIndex, setApprovalIndex] = useState(0);
+	const [selectedNumber, setSelectedNumber] = useState<number | null>(0);
+	const [selectedPriority, setSelectedPriority] = useState<string | null>(null);
+	const [selectedAuthority, setSelectedAuthority] = useState<string | null>(
+		null,
+	);
+	const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
+
 	return (
 		<div className="p-8 font-pretendard bg-base-background">
 			<h1 className="text-3xl font-black mb-8">Component Playgrounds</h1>
@@ -163,6 +180,116 @@ const Playgrounds: React.FC = () => {
 							<Button size="md" fullWidth>
 								Full Width Button
 							</Button>
+						</div>
+
+						{/* Sub Buttons */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-2">
+								Sub Buttons
+							</h4>
+							<div className="flex flex-col space-y-4">
+								{/* Sort Buttons */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Sort Button
+									</h5>
+									<div className="flex flex-wrap gap-4">
+										<SortButton
+											label="정렬"
+											onClick={() => console.log("Sort clicked")}
+										/>
+										<SortButton
+											label="정렬 활성화"
+											active
+											onClick={() => console.log("Active sort clicked")}
+										/>
+										<SortButton label="정렬 비활성화" disabled />
+									</div>
+								</div>
+
+								{/* Filter Buttons */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Filter Button
+									</h5>
+									<div className="flex flex-wrap gap-4">
+										<FilterButton
+											label="필터"
+											onClick={() => console.log("Filter clicked")}
+										/>
+										<FilterButton
+											label="필터 활성화"
+											active
+											onClick={() => console.log("Active filter clicked")}
+										/>
+										<FilterButton label="필터 비활성화" disabled />
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* Toggle Buttons */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-2">
+								Toggle Buttons
+							</h4>
+							<div className="flex flex-col space-y-4">
+								{/* Gender Toggle */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Gender Toggle
+									</h5>
+									<ToggleButton
+										options={[
+											{ icon: "♀", text: "여자" },
+											{ icon: "♂", text: "남자" },
+										]}
+										selectedIndex={genderIndex}
+										onChange={(index: number) => setGenderIndex(index)}
+										variant="gender"
+									/>
+								</div>
+
+								{/* Nurse Toggle */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Nurse Toggle
+									</h5>
+									<ToggleButton
+										options={[{ text: "평간호사" }, { text: "수간호사" }]}
+										selectedIndex={nurseIndex}
+										onChange={(index: number) => setNurseIndex(index)}
+										variant="nurse"
+									/>
+								</div>
+
+								{/* Request Toggle */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Request Toggle
+									</h5>
+									<ToggleButton
+										options={[
+											{ text: "근무 요청하기" },
+											{ text: "요청 내역 확인하기" },
+										]}
+										selectedIndex={requestIndex}
+										onChange={(index: number) => setRequestIndex(index)}
+										variant="request"
+									/>
+								</div>
+
+								{/* Approval Toggle */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Approval Toggle
+									</h5>
+									<ApprovalBtn
+										selectedIndex={approvalIndex}
+										onChange={(index: number) => setApprovalIndex(index)}
+									/>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -341,19 +468,124 @@ const Playgrounds: React.FC = () => {
 
 						{/* Search Input */}
 						<div>
-							<h4 className="text-sm font-medium text-base-muted mb-4">Search Input</h4>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Search Input
+							</h4>
 							<div className="space-y-4">
-								<SearchInput 
+								<SearchInput
 									id="search-input"
 									name="search"
 									placeholder="이름으로 검색하기"
 								/>
-								<SearchInput 
+								<SearchInput
 									id="search-input-disabled"
 									name="search-disabled"
 									placeholder="이름으로 검색하기"
 									disabled
 								/>
+							</div>
+						</div>
+
+						{/* Checkbox Input */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Checkbox Input
+							</h4>
+							<div className="space-y-4">
+								<CheckBox
+									id="checkbox-basic"
+									name="checkbox-basic"
+									label="기본 체크박스"
+									onChange={(checked) =>
+										console.log("Checkbox changed:", checked)
+									}
+								/>
+								<CheckBox
+									id="checkbox-checked"
+									name="checkbox-checked"
+									label="체크된 상태"
+									checked={true}
+								/>
+								<CheckBox
+									id="checkbox-disabled"
+									name="checkbox-disabled"
+									label="비활성화 상태"
+									disabled
+								/>
+							</div>
+						</div>
+
+						{/* Dropdowns */}
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Dropdowns
+							</h4>
+							<div className="space-y-4 max-w-xs">
+								{/* Number Dropdown */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Number Dropdown
+									</h5>
+									<Dropdown
+										variant="number"
+										value={selectedNumber}
+										onChange={(value) => setSelectedNumber(value as number)}
+										label="0"
+									/>
+								</div>
+
+								{/* Priority Dropdown */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Priority Dropdown
+									</h5>
+									<Dropdown
+										variant="priority"
+										value={selectedPriority}
+										onChange={(value) => setSelectedPriority(value as string)}
+										label="중요도"
+									/>
+								</div>
+
+								{/* Authority Dropdown */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Authority Dropdown (3-Dot Menu)
+									</h5>
+									<Dropdown
+										variant="authority"
+										value={selectedAuthority}
+										onChange={(value) => setSelectedAuthority(value as string)}
+										label="권한"
+									/>
+								</div>
+
+								{/* Skill Dropdown */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Skill Dropdown
+									</h5>
+									<Dropdown
+										variant="skill"
+										value={selectedSkill}
+										onChange={(value) => setSelectedSkill(value as string)}
+										label="숙련도"
+									/>
+								</div>
+
+								{/* Disabled Dropdown */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Disabled Dropdown
+									</h5>
+									<Dropdown
+										variant="number"
+										value={0}
+										onChange={() => {}}
+										label="비활성화 상태"
+										disabled
+									/>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -551,19 +783,23 @@ const Playgrounds: React.FC = () => {
 				<div className="space-y-8">
 					{/* Default */}
 					<div>
-						<h3 className="text-sm font-medium text-base-muted mb-4">Default</h3>
-						<WardCodeInput 
+						<h3 className="text-sm font-medium text-base-muted mb-4">
+							Default
+						</h3>
+						<WardCodeInput
 							id="ward-code"
 							name="wardCode"
 							label="병동 코드"
-							onChange={(value) => console.log('Ward Code:', value)}
+							onChange={(value) => console.log("Ward Code:", value)}
 						/>
 					</div>
 
 					{/* With Error */}
 					<div>
-						<h3 className="text-sm font-medium text-base-muted mb-4">With Error</h3>
-						<WardCodeInput 
+						<h3 className="text-sm font-medium text-base-muted mb-4">
+							With Error
+						</h3>
+						<WardCodeInput
 							id="ward-code-error"
 							name="wardCode"
 							label="병동 코드"
@@ -573,8 +809,10 @@ const Playgrounds: React.FC = () => {
 
 					{/* Disabled */}
 					<div>
-						<h3 className="text-sm font-medium text-base-muted mb-4">Disabled</h3>
-						<WardCodeInput 
+						<h3 className="text-sm font-medium text-base-muted mb-4">
+							Disabled
+						</h3>
+						<WardCodeInput
 							id="ward-code-disabled"
 							name="wardCode"
 							label="병동 코드"
@@ -583,6 +821,109 @@ const Playgrounds: React.FC = () => {
 					</div>
 				</div>
 			</section>
+
+			{/* Icons */}
+			<div className="mb-8">
+				<h3 className="text-xl font-semibold mb-4">Icons</h3>
+				<div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="alert" size={24} />
+						<span className="text-sm mt-2">alert</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="search" size={24} />
+						<span className="text-sm mt-2">search</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="calendar" size={24} />
+						<span className="text-sm mt-2">calendar</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="hospital" size={24} />
+						<span className="text-sm mt-2">hospital</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="schedule" size={24} />
+						<span className="text-sm mt-2">schedule</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="userPin" size={24} />
+						<span className="text-sm mt-2">userPin</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="group" size={24} />
+						<span className="text-sm mt-2">group</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="chat" size={24} />
+						<span className="text-sm mt-2">chat</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="user" size={24} />
+						<span className="text-sm mt-2">user</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="female" size={24} />
+						<span className="text-sm mt-2">female</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="male" size={24} />
+						<span className="text-sm mt-2">male</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="idCard" size={24} />
+						<span className="text-sm mt-2">idCard</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="low" size={24} />
+						<span className="text-sm mt-2">low</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="mid" size={24} />
+						<span className="text-sm mt-2">mid</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="high" size={24} />
+						<span className="text-sm mt-2">high</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="edit" size={24} />
+						<span className="text-sm mt-2">edit</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="menu" size={24} />
+						<span className="text-sm mt-2">menu</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="sort" size={24} />
+						<span className="text-sm mt-2">sort</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="filter" size={24} />
+						<span className="text-sm mt-2">filter</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="copy" size={24} />
+						<span className="text-sm mt-2">copy</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="door" size={24} />
+						<span className="text-sm mt-2">door</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="right" size={24} />
+						<span className="text-sm mt-2">right</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="left" size={24} />
+						<span className="text-sm mt-2">left</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="undo" size={24} />
+						<span className="text-sm mt-2">undo</span>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 };
