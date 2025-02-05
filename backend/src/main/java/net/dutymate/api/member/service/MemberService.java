@@ -75,14 +75,14 @@ public class MemberService {
 
 	@Transactional(readOnly = true)
 	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+		// 아이디 확인
 		Member member = memberRepository.findMemberByEmail(loginRequestDto.getEmail())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "아이디 또는 비밀번호 오류입니다."));
 
 		// 만약 소셜 로그인한 이력이 있는 경우 예외 처리
-		if (!member.getProvider().equals(Provider.NONE)) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 다른 경로로 가입한 회원입니다.");
-		}
+		checkAnotherSocialLogin(member, Provider.NONE);
 
+		// 비밀번호 확인
 		if (!BCrypt.checkpw(loginRequestDto.getPassword(), member.getPassword())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "아이디 또는 비밀번호 오류입니다.");
 		}
@@ -109,9 +109,7 @@ public class MemberService {
 			.orElseGet(() -> signUp(kakaoAccount));
 
 		// 만약 다른 경로(일반 이메일, GOOGLE) 회원가입한 이력이 있는 경우 예외 처리
-		if (!member.getProvider().equals(Provider.KAKAO)) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 다른 경로로 가입한 회원입니다.");
-		}
+		checkAnotherSocialLogin(member, Provider.KAKAO);
 
 		// memberId로 AccessToken 생성
 		String accessToken = jwtUtil.createToken(member.getMemberId());
@@ -135,9 +133,7 @@ public class MemberService {
 			.orElseGet(() -> signUp(googleUserInfo));
 
 		// 만약 다른 경로(일반 이메일, KAKAO) 회원가입한 이력이 있는 경우 예외 처리
-		if (!member.getProvider().equals(Provider.GOOGLE)) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 다른 경로로 가입한 회원입니다.");
-		}
+		checkAnotherSocialLogin(member, Provider.GOOGLE);
 
 		// memberId로 AccessToken 생성
 		String accessToken = jwtUtil.createToken(member.getMemberId());
@@ -163,6 +159,12 @@ public class MemberService {
 		return AdditionalInfoResponseDto.of(member);
 	}
 
+	private void checkAnotherSocialLogin(Member member, Provider loginProvider) {
+		if (!member.getProvider().equals(loginProvider)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 다른 경로로 가입한 회원입니다.");
+		}
+	}
+
 	// 인가 코드로 KAKAO로부터 액세스 토큰을 받아오는 메서드
 	private String getKakaoAccessToken(String code) {
 		// 요청 Param 설정
@@ -173,26 +175,16 @@ public class MemberService {
 		params.add("code", code);
 
 		// WebClient 인스턴스 생성 후 토큰 받기 POST 요청
-		KakaoTokenResponseDto kakaoTokenResponseDto = WebClient.create().post()
-			.uri(kakaoTokenUri)
-			.body(BodyInserters.fromFormData(params))
-			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
-			.retrieve()
-			.bodyToMono(KakaoTokenResponseDto.class)
-			.block();
+		KakaoTokenResponseDto kakaoTokenResponseDto =
+			requestApiByPost(kakaoTokenUri, params, KakaoTokenResponseDto.class);
 		return Objects.requireNonNull(kakaoTokenResponseDto).getAccessToken();
 	}
 
 	// 액세스 토큰으로 KAKAO로부터 사용자 정보를 가져오는 메서드
 	public KakaoUserResponseDto.KakaoAccount getKakaoUserInfo(String kakaoAccessToken) {
 		// WebClient 인스턴스 생성 후 사용자 정보 가져오기 POST 요청
-		KakaoUserResponseDto kakaoUserResponseDto = WebClient.create().post()
-			.uri(kakaoUserUri)
-			.header(HttpHeaders.AUTHORIZATION, "Bearer " + kakaoAccessToken)
-			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
-			.retrieve()
-			.bodyToMono(KakaoUserResponseDto.class)
-			.block();
+		KakaoUserResponseDto kakaoUserResponseDto
+			= requestApiByPostWithAuthHeader(kakaoUserUri, kakaoAccessToken, KakaoUserResponseDto.class);
 		return Objects.requireNonNull(kakaoUserResponseDto).getKakaoAccount();
 	}
 
@@ -206,14 +198,7 @@ public class MemberService {
 		params.add("code", code);
 
 		// WebClient 인스턴스 생성 후 토큰 받기 POST 요청
-		GoogleTokenResponseDto googleTokenResponseDto = WebClient.create().post()
-			.uri(googleTokenUri)
-			.body(BodyInserters.fromFormData(params))
-			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
-			.retrieve()
-			.bodyToMono(GoogleTokenResponseDto.class)
-			.block();
-		return Objects.requireNonNull(googleTokenResponseDto).getIdToken();
+		return requestApiByPost(googleTokenUri, params, GoogleTokenResponseDto.class).getIdToken();
 	}
 
 	private GoogleUserResponseDto getGoogleUserInfo(String googleIdToken) {
@@ -222,13 +207,7 @@ public class MemberService {
 		params.add("id_token", googleIdToken);
 
 		// WebClient 인스턴스 생성 후 사용자 정보 가져오기 POST 요청
-		return WebClient.create().post()
-			.uri(googleUserUri)
-			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
-			.body(BodyInserters.fromFormData(params))
-			.retrieve()
-			.bodyToMono(GoogleUserResponseDto.class)
-			.block();
+		return requestApiByPost(googleUserUri, params, GoogleUserResponseDto.class);
 	}
 
 	// KAKAO 계정으로 회원가입
@@ -243,5 +222,28 @@ public class MemberService {
 		Member newMember = googleUserInfo.toMember();
 		memberRepository.save(newMember);
 		return newMember;
+	}
+
+	// API POST 요청 with params
+	private <T> T requestApiByPost(
+		String uri, MultiValueMap<String, String> params, Class<T> classType) {
+		return WebClient.create().post()
+			.uri(uri)
+			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
+			.body(BodyInserters.fromFormData(params))
+			.retrieve()
+			.bodyToMono(classType)
+			.block();
+	}
+
+	// API POST 요청 with params, header
+	private <T> T requestApiByPostWithAuthHeader(String uri, String token, Class<T> classType) {
+		return WebClient.create().post()
+			.uri(uri)
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
+			.retrieve()
+			.bodyToMono(classType)
+			.block();
 	}
 }
