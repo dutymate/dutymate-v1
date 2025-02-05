@@ -66,4 +66,10 @@ public class WardMember {
 	@Column(columnDefinition = "tinyint(1)", nullable = false)
 	private Boolean isSynced;
 
+	public void updateWardMemberInfo(String shiftType, SkillLevel skillLevel, String memo, String role) {
+		this.shiftType = ShiftType.valueOf(shiftType);
+		this.skillLevel = skillLevel;
+		this.memo = memo;
+		this.member.updateRole(String.valueOf(role));
+	}
 }

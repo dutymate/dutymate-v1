@@ -81,4 +81,8 @@ public class Member {
 		this.gender = gender;
 		this.role = role;
 	}
+
+	public void updateRole(String role) {
+		this.role = Role.valueOf(role);
+	}
 }
