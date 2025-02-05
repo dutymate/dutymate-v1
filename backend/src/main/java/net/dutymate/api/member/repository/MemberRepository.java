@@ -11,6 +11,4 @@ import net.dutymate.api.entity.Member;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	Optional<Member> findMemberByEmail(String email);
-
-	Optional<Member> findByMemberId(Long memberId);
 }

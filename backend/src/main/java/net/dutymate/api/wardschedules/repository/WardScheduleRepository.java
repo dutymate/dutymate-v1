@@ -9,7 +9,5 @@ import net.dutymate.api.wardschedules.collections.WardSchedule;
 public interface WardScheduleRepository
 	extends MongoRepository<WardSchedule, String> {
 
-	Boolean existsByWardIdAndYearAndMonth(Long wardId, int year, int month);
-
 	Optional<WardSchedule> findByWardIdAndYearAndMonth(Long wardId, int year, int month);
 }

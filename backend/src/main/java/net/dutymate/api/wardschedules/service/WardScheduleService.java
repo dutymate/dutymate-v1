@@ -345,7 +345,7 @@ public class WardScheduleService {
 		// 4. NurseShift를 AllNurseShift로 변환
 		List<AllWardDutyResponseDto.AllNurseShift> nurseShiftList = latestSchedule.getDuty().stream()
 			.map(nurseShift -> {
-				Member nurse = memberRepository.findByMemberId(nurseShift.getMemberId())
+				Member nurse = memberRepository.findById(nurseShift.getMemberId())
 					.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 멤버 ID 입니다."));
 
 				return AllWardDutyResponseDto.AllNurseShift.of(nurse.getMemberId(), nurse.getName(),
