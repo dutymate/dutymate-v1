@@ -10,15 +10,17 @@ const Profile = () => {
 					<BiSolidUserCircle className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500" />
 					<span className="text-sm font-semibold">마이페이지</span>
 				</div>
-				
+
 				{/* 가운데 정렬된 선 */}
 				<div className="mx-2 mb-8">
 					<div className="border-t border-gray-200 w-full"></div>
 				</div>
-				
+
 				{/* 회사명과 사이트 주소 */}
 				<div className="flex flex-col gap-y-1 px-[1.5rem]">
-					<span className="text-xs text-gray-600">(주) 듀티메이트</span>
+					<span className="text-xs font-bold text-gray-600">
+						(주)듀티메이트
+					</span>
 					<span className="text-xs text-gray-400">www.dutymate.net</span>
 				</div>
 			</div>
