@@ -1,1 +1,72 @@
 // Icon.tsx
+
+import { HiExclamationCircle, HiMagnifyingGlass } from "react-icons/hi2";
+import { SlCalender } from "react-icons/sl";
+import { FaHospital, FaUserCircle, FaDoorOpen } from "react-icons/fa";
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa6";
+import { AiFillSchedule, AiOutlineIdcard } from "react-icons/ai";
+import { BiSolidUserPin } from "react-icons/bi";
+import { HiOutlineUsers } from "react-icons/hi2";
+import { IoIosChatboxes } from "react-icons/io";
+import { IoFemale, IoMale } from "react-icons/io5";
+import {
+	MdSignalCellular1Bar,
+	MdSignalCellular3Bar,
+	MdSignalCellular4Bar,
+	MdModeEdit,
+	MdOutlineSort,
+	MdContentCopy,
+} from "react-icons/md";
+import { BsThreeDotsVertical, BsFunnel } from "react-icons/bs";
+import { GrUndo } from "react-icons/gr";
+
+const iconComponents = {
+	alert: HiExclamationCircle,
+	search: HiMagnifyingGlass,
+	calendar: SlCalender,
+	hospital: FaHospital,
+	schedule: AiFillSchedule,
+	userPin: BiSolidUserPin,
+	group: HiOutlineUsers,
+	chat: IoIosChatboxes,
+	user: FaUserCircle,
+	female: IoFemale,
+	male: IoMale,
+	idCard: AiOutlineIdcard,
+	low: MdSignalCellular1Bar,
+	mid: MdSignalCellular3Bar,
+	high: MdSignalCellular4Bar,
+	edit: MdModeEdit,
+	menu: BsThreeDotsVertical,
+	sort: MdOutlineSort,
+	filter: BsFunnel,
+	copy: MdContentCopy,
+	door: FaDoorOpen,
+	right: FaChevronRight,
+	left: FaChevronLeft,
+	undo: GrUndo,
+};
+
+export type IconName = keyof typeof iconComponents;
+
+interface IconProps {
+	name: IconName;
+	className?: string;
+	size?: number;
+	onClick?: () => void;
+}
+
+export const Icon = ({
+	name,
+	className = "",
+	size = 24,
+	onClick,
+}: IconProps) => {
+	const IconComponent = iconComponents[name];
+
+	if (!IconComponent) {
+		return null;
+	}
+
+	return <IconComponent className={className} size={size} onClick={onClick} />;
+};
