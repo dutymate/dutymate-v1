@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
-import net.dutymate.api.ward.dto.RequestWardDto;
+import net.dutymate.api.ward.dto.WardRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.service.WardService;
 
@@ -26,7 +26,7 @@ public class WardController {
 
 	// 병동 생성하기 (관리자)
 	@PostMapping
-	public ResponseEntity<?> addWard(@RequestBody RequestWardDto requestWardDto, @Auth Member member) {
+	public ResponseEntity<?> addWard(@RequestBody WardRequestDto requestWardDto, @Auth Member member) {
 		wardService.createWard(requestWardDto, member);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

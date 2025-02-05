@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
-import net.dutymate.api.ward.dto.RequestWardDto;
+import net.dutymate.api.ward.dto.WardRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.repository.WardRepository;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
@@ -32,7 +32,7 @@ public class WardService {
 	private final InitialDutyGenerator initialDutyGenerator;
 
 	@Transactional
-	public void createWard(RequestWardDto requestWardDto, Member member) {
+	public void createWard(WardRequestDto requestWardDto, Member member) {
 		// 1. 로그인한 member가 이미 병동을 생성했다면, 400(BAD_REQUEST)
 		boolean exists = wardMemberRepository.existsByMember(member);
 

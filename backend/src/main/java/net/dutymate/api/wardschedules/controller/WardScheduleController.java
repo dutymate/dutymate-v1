@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.wardschedules.dto.AllWardDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.EditDutyRequestDto;
 import net.dutymate.api.wardschedules.dto.MyDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.TodayDutyResponseDto;
@@ -77,5 +78,11 @@ public class WardScheduleController {
 	) {
 		TodayDutyResponseDto todayDutyResponseDto = wardScheduleService.getTodayDuty(member, year, month, date);
 		return ResponseEntity.ok(todayDutyResponseDto);
+	}
+
+	@GetMapping("/ward")
+	public ResponseEntity<?> getAllWardDuty(@Auth Member member) {
+		AllWardDutyResponseDto allWardDutyResponseDto = wardScheduleService.getAllWardDuty(member);
+		return ResponseEntity.ok(allWardDutyResponseDto);
 	}
 }

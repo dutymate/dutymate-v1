@@ -1,5 +1,6 @@
 package net.dutymate.api.wardschedules.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -18,6 +19,7 @@ import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
+import net.dutymate.api.wardschedules.dto.AllWardDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.EditDutyRequestDto;
 import net.dutymate.api.wardschedules.dto.MyDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.TodayDutyResponseDto;
@@ -322,4 +324,36 @@ public class WardScheduleService {
 
 		return TodayDutyResponseDto.of(myShift.getShifts().charAt(date - 1), otherShifts);
 	}
+
+	@Transactional(readOnly = true)
+	public AllWardDutyResponseDto getAllWardDuty(Member member) {
+		WardMember wardMember = member.getWardMember();
+
+		// 1. 현재 연도와 월 가져오기
+		LocalDate today = LocalDate.now();
+		int year = today.getYear();
+		int month = today.getMonthValue();
+
+		// 2. 병동 정보 조회
+		WardSchedule wardSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
+				wardMember.getWard().getWardId(), year, month)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 해당하는 듀티가 없습니다."));
+
+		// 3. 가장 최신 duty 가져오기
+		WardSchedule.Duty latestSchedule = wardSchedule.getDuties().getLast();
+
+		// 4. NurseShift를 AllNurseShift로 변환
+		List<AllWardDutyResponseDto.AllNurseShift> nurseShiftList = latestSchedule.getDuty().stream()
+			.map(nurseShift -> {
+				Member nurse = memberRepository.findByMemberId(nurseShift.getMemberId())
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 멤버 ID 입니다."));
+
+				return AllWardDutyResponseDto.AllNurseShift.of(nurse.getMemberId(), nurse.getName(),
+					nurseShift.getShifts());
+
+			}).toList();
+
+		return AllWardDutyResponseDto.of(wardSchedule.getId(), year, month, nurseShiftList);
+	}
 }
+
