@@ -1,5 +1,5 @@
 import React from "react";
-import { BiSolidUserCircle } from "react-icons/bi";
+import { FaUserCircle } from "react-icons/fa";
 
 const Profile = () => {
 	return (
@@ -7,7 +7,7 @@ const Profile = () => {
 			<div className="flex flex-col">
 				{/* 마이페이지 텍스트와 아이콘 */}
 				<div className="flex items-center gap-x-6 px-[1.5rem] mb-8">
-					<BiSolidUserCircle className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500" />
+					<FaUserCircle className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500" />
 					<span className="text-sm font-semibold">마이페이지</span>
 				</div>
 

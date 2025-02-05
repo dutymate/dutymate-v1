@@ -1,9 +1,7 @@
+import StartTemplate from "../components/templates/StartTemplate";
+
 const Landing = () => {
-	return (
-		<div>
-			<h1>Landing Page</h1>
-		</div>
-	);
+	return <StartTemplate />;
 };
 
 export default Landing;
