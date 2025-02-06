@@ -140,7 +140,8 @@ public class WardService {
 		Random random = new Random();
 		StringBuilder code = new StringBuilder();
 		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-		for (int i = 0; i < 6; i++) {
+		int wardCodeLength = 6;
+		while (wardCodeLength-- > 0) {
 			code.append(characters.charAt(random.nextInt(characters.length())));
 		}
 		return code.toString();

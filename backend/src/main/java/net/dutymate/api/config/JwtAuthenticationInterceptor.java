@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 
 	private final JwtUtil jwtUtil;
+	private static final int TOKEN_BEGIN_INDEX = 7;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -45,7 +46,7 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 	private String resolveToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader("Authorization");
 		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring(7);
+			return bearerToken.substring(TOKEN_BEGIN_INDEX);
 		}
 		return null;
 	}
