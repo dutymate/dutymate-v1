@@ -106,7 +106,7 @@ public class WardMemberService {
 		WardMember authWardMember = authMember.getWardMember();
 		Ward authWard = authWardMember.getWard();
 
-		if (!member.getWardMember().getWard().getWardId().equals(authWard.getWardId())) {
+		if (member.getWardMember().getWard() != authWard) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 회원이 아닙니다.");
 		}
 	}
