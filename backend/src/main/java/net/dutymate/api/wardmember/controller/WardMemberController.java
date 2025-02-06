@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.dutymate.api.annotation.Auth;
+import net.dutymate.api.entity.Member;
 import net.dutymate.api.wardmember.dto.NurseInfoRequestDto;
 import net.dutymate.api.wardmember.service.WardMemberService;
 
@@ -23,17 +25,17 @@ public class WardMemberController {
 	// 간호사 정보 수정하기
 	@PutMapping("/member/{memberId}")
 	public ResponseEntity<?> updateWardMemberInfo(@PathVariable Long memberId,
-		@RequestBody NurseInfoRequestDto nurseInfoRequestDto) {
+		@RequestBody NurseInfoRequestDto nurseInfoRequestDto, @Auth Member member) {
 
-		wardMemberService.updateWardMember(memberId, nurseInfoRequestDto);
+		wardMemberService.updateWardMember(memberId, nurseInfoRequestDto, member);
 		return ResponseEntity.ok().build();
 	}
 
 	// 병동 간호사 내보내기
 	@DeleteMapping("/member/{memberId}")
-	public ResponseEntity<?> deleteWardMemberInfo(@PathVariable Long memberId) {
+	public ResponseEntity<?> deleteWardMemberInfo(@PathVariable Long memberId, @Auth Member member) {
 
-		wardMemberService.deleteWardMember(memberId);
+		wardMemberService.deleteWardMember(memberId, member);
 		return ResponseEntity.ok().build();
 	}
 }

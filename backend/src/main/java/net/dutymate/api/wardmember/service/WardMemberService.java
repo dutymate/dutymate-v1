@@ -27,14 +27,14 @@ public class WardMemberService {
 	private final WardScheduleRepository wardScheduleRepository;
 
 	@Transactional
-	public void updateWardMember(Long memberId, NurseInfoRequestDto nurseInfoRequestDto) {
+	public void updateWardMember(Long memberId, NurseInfoRequestDto nurseInfoRequestDto, Member authMember) {
 
 		// memberId로 Member 찾기
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> new ResponseStatusException(
-			HttpStatus.BAD_REQUEST, "유효한 회원이 아닙니다."));
+			HttpStatus.BAD_REQUEST, "유효하지 않은 memberId 입니다."));
 
-		// TODO 수정하려는 멤버가 관리자가 속한 병동의 병동 멤버인지 아닌지 check하는 로직
-		// member가 속해있는 병동에 속한 memberId가 맞는지 확인
+		// TODO member가 병동 회원인지 체크하는 로직
+		validateWardMember(member, authMember);
 
 		// 멤버와 1:1 매핑 되어 있는 wardMember 정보 수정
 		member.getWardMember().updateWardMemberInfo(
@@ -46,13 +46,14 @@ public class WardMemberService {
 	}
 
 	@Transactional
-	public void deleteWardMember(Long memberId) {
+	public void deleteWardMember(Long memberId, Member authMember) {
 
 		// 내보내려는 멤버 찾기
 		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 회원입니다."));
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 memberId 입니다."));
 
 		// TODO member가 병동 회원인지 체크하는 로직
+		validateWardMember(member, authMember);
 
 		WardMember wardMemeber = member.getWardMember();
 		Ward ward = wardMemeber.getWard();
@@ -96,5 +97,17 @@ public class WardMemberService {
 			.build();
 
 		wardScheduleRepository.save(deletedSchedule);
+	}
+
+	/**
+	 * member가 관리자(authMember)가 속한 병동 회원인지 체크하는 로직
+	 */
+	private void validateWardMember(Member member, Member authMember) {
+		WardMember authWardMember = authMember.getWardMember();
+		Ward authWard = authWardMember.getWard();
+
+		if (!member.getWardMember().getWard().getWardId().equals(authWard.getWardId())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 회원이 아닙니다.");
+		}
 	}
 }
