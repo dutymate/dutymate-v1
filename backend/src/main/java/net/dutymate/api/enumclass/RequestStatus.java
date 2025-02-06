@@ -1,5 +1,12 @@
 package net.dutymate.api.enumclass;
 
+import java.util.Arrays;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import lombok.Getter;
 
 @Getter
@@ -15,4 +22,12 @@ public enum RequestStatus {
 		this.value = value;
 	}
 
+	// JSON -> Enum 변환
+	@JsonCreator
+	public static RequestStatus from(String status) {
+		return Arrays.stream(values())
+			.filter(value -> value.getValue().equals(status))
+			.findAny()
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 상태 값입니다."));
+	}
 }

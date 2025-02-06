@@ -50,4 +50,7 @@ public class Request {
 	@Enumerated(EnumType.STRING)
 	private RequestStatus status;
 
+	public void changeStatus(RequestStatus status) {
+		this.status = status;
+	}
 }

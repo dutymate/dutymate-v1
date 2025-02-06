@@ -11,6 +11,7 @@ import lombok.Data;
 @Builder
 public class WardRequestResponseDto {
 
+	private Long requestId;
 	private Long memberId;
 	private String name;
 	private Date date;
@@ -20,6 +21,7 @@ public class WardRequestResponseDto {
 
 	public static WardRequestResponseDto of(Request request) {
 		return WardRequestResponseDto.builder()
+			.requestId(request.getRequestId())
 			.memberId(request.getWardMember().getMember().getMemberId())
 			.name(request.getWardMember().getMember().getName())
 			.date(request.getRequestDate())
