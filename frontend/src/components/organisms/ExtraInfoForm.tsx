@@ -1,15 +1,50 @@
 import { NumberInput } from "../atoms/Input";
 import { ToggleButton } from "../atoms/ToggleButton";
 import { Button } from "../atoms/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const ExtraInfoForm = () => {
-	const [genderIndex, setGenderIndex] = useState(0);
-	const [positionIndex, setPositionIndex] = useState(0);
-	const [career, setCareer] = useState<string>("");
+interface FormData {
+	genderIndex: number;
+	positionIndex: number;
+	career: string;
+}
+
+interface ExtraInfoFormProps {
+	initialData: FormData;
+	onSubmit: (data: FormData) => void;
+}
+
+const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
+	const [formState, setFormState] = useState<FormData>(initialData);
+
+	// initialData가 변경될 때 formState 업데이트
+	useEffect(() => {
+		setFormState(initialData);
+	}, [initialData]);
 
 	const handleCareerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setCareer(e.target.value);
+		setFormState((prev) => ({
+			...prev,
+			career: e.target.value,
+		}));
+	};
+
+	const handleGenderChange = (index: number) => {
+		setFormState((prev) => ({
+			...prev,
+			genderIndex: index,
+		}));
+	};
+
+	const handlePositionChange = (index: number) => {
+		setFormState((prev) => ({
+			...prev,
+			positionIndex: index,
+		}));
+	};
+
+	const handleSubmit = () => {
+		onSubmit(formState);
 	};
 
 	return (
@@ -22,7 +57,7 @@ const ExtraInfoForm = () => {
 					label="간호사 연차"
 					placeholder="연차는 숫자로 입력해주세요."
 					min={0}
-					defaultValue={career}
+					value={formState.career}
 					onChange={handleCareerChange}
 				/>
 			</div>
@@ -37,8 +72,8 @@ const ExtraInfoForm = () => {
 						{ text: "여자", icon: "♀" },
 						{ text: "남자", icon: "♂" },
 					]}
-					selectedIndex={genderIndex}
-					onChange={setGenderIndex}
+					selectedIndex={formState.genderIndex}
+					onChange={handleGenderChange}
 					variant="gender"
 				/>
 			</div>
@@ -50,14 +85,14 @@ const ExtraInfoForm = () => {
 				</label>
 				<ToggleButton
 					options={[{ text: "수간호사" }, { text: "평간호사" }]}
-					selectedIndex={positionIndex}
-					onChange={setPositionIndex}
+					selectedIndex={formState.positionIndex}
+					onChange={handlePositionChange}
 					variant="nurse"
 				/>
 			</div>
 
 			{/* 작성 완료 버튼 */}
-			<Button size="lg" width="long" fullWidth>
+			<Button size="lg" width="long" fullWidth onClick={handleSubmit}>
 				작성 완료
 			</Button>
 		</div>

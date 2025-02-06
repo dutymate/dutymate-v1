@@ -120,10 +120,17 @@ export const PasswordInput = (props: Omit<InputProps, "type">) => {
 interface NumberInputProps extends Omit<InputProps, "type"> {
 	min?: number;
 	max?: number;
+	value?: string;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const NumberInput = ({ min, max, ...props }: NumberInputProps) => {
+export const NumberInput = ({
+	min,
+	max,
+	value,
+	onChange,
+	...props
+}: NumberInputProps) => {
 	const numberInputClasses =
 		"block w-full rounded-md bg-white px-3 py-2.5 text-base font-bold text-primary text-center outline outline-[0.125rem] outline-gray-300/50 placeholder:text-gray-400 placeholder:font-normal focus:text-gray-900 focus:font-normal focus:outline-[0.125rem] focus:outline-primary/50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200/50 sm:py-3 sm:text-lg";
 
@@ -152,7 +159,8 @@ export const NumberInput = ({ min, max, ...props }: NumberInputProps) => {
 					type="number"
 					min={min}
 					max={max}
-					defaultValue={props.defaultValue || "0"}
+					value={value}
+					onChange={onChange}
 					placeholder={props.placeholder || "0"}
 					disabled={props.disabled}
 					aria-invalid={props.error ? "true" : undefined}
