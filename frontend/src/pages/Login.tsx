@@ -1,8 +1,11 @@
+import LoginForm from "../components/organisms/LoginForm";
+import StartTemplate from "../components/templates/StartTemplate";
+
 const Login = () => {
 	return (
-		<div>
-			<h1>Login Page</h1>
-		</div>
+		<StartTemplate>
+			<LoginForm />
+		</StartTemplate>
 	);
 };
 

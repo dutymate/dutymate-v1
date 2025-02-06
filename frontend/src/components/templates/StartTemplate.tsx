@@ -3,14 +3,18 @@
 import dutyMateLogo from "../../assets/logo.svg";
 import notebookImage from "../../assets/notebook.svg";
 
-const StartTemplate = () => {
+interface StartTemplateProps {
+	children: React.ReactNode;
+}
+
+const StartTemplate: React.FC<StartTemplateProps> = ({ children }) => {
 	return (
 		<div className="w-full h-screen grid grid-cols-2">
 			{/* 왼쪽 영역 */}
 			<div className="relative w-full h-full">
 				{/* 배경 색상 레이어 */}
 				<div className="absolute inset-0">
-					<div className="h-[70%] bg-muted-30"></div>
+					<div className="h-[70%] bg-muted"></div>
 					<div className="h-[30%] bg-primary-20 z-0"></div>
 				</div>
 				{/* 콘텐츠 래퍼 - 전체 세로 중앙 정렬 */}
@@ -54,8 +58,13 @@ const StartTemplate = () => {
 					<div className="h-[30%] bg-primary-20"></div>
 				</div>
 				{/* 로고 영역 */}
-				<div className="relative z-10 h-full flex items-center justify-center -translate-y-[5vh]">
-					<img src={dutyMateLogo} alt="DutyMate Logo" className="w-[40%]" />
+				<div className="relative z-10 h-full flex flex-col items-center justify-center translate-y-[2vh]">
+					<img
+						src={dutyMateLogo}
+						alt="DutyMate Logo"
+						className="w-[35%] mb-8"
+					/>
+					{children}
 				</div>
 			</div>
 		</div>
