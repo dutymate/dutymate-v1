@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 
 	private final JwtUtil jwtUtil;
-	private static final int TOKEN_BEGIN_INDEX = 7;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -32,23 +31,13 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 		}
 
 		// 토큰이 유효하면 Http Request에 memberId 삽입
-		String token = resolveToken(request);
+		String token = jwtUtil.resolveToken(request.getHeader("Authorization"));
 		if (token != null && jwtUtil.validateToken(token)) {
-			// TODO 로그아웃한 유저 예외 처리 (MVP 아님)
-
 			request.setAttribute("memberId", jwtUtil.getMemberId(token));
 			return true;
 		}
 
 		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다.");
-	}
-
-	private String resolveToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader("Authorization");
-		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring(TOKEN_BEGIN_INDEX);
-		}
-		return null;
 	}
 
 }

@@ -39,8 +39,8 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
-	private final JwtUtil jwtUtil;
 	private final WardMemberRepository wardMemberRepository;
+	private final JwtUtil jwtUtil;
 
 	@Value("${kakao.client.id}")
 	private String kakaoClientId;
@@ -245,5 +245,14 @@ public class MemberService {
 			.retrieve()
 			.bodyToMono(classType)
 			.block();
+	}
+
+	public void logout(String bearerToken) {
+		String token = jwtUtil.resolveToken(bearerToken);
+		// 토큰 유효기간이 남아있으면 블랙리스트에 추가
+		long remainingTime = jwtUtil.getRemainingTime(token);
+		if (remainingTime > 0) {
+			jwtUtil.addToBlacklist(token, remainingTime);
+		}
 	}
 }
