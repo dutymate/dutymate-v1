@@ -52,8 +52,8 @@ export const WardCodeInput = ({
 	};
 
 	const singleInputClass = error
-		? "w-8 h-10 sm:w-9 sm:h-12 rounded-md bg-white text-center text-[1rem] sm:text-[1.125rem] text-red-900 outline-1 -outline-offset-1 outline-red-300 focus:outline-2 focus:-outline-offset-2 focus:outline-red-600"
-		: "w-8 h-10 sm:w-9 sm:h-12 rounded-md bg-white text-center text-[1rem] sm:text-[1.125rem] text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200";
+		? "w-8 h-10 sm:w-9 sm:h-12 rounded-md bg-white text-center text-[1rem] sm:text-[1.125rem] text-red-900 border border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+		: "w-8 h-10 sm:w-9 sm:h-12 rounded-md bg-white text-center text-[1rem] sm:text-[1.125rem] text-gray-900 border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:border-gray-200 disabled:cursor-not-allowed";
 
 	return (
 		<div>
