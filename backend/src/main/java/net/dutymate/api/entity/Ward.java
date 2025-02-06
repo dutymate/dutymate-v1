@@ -34,7 +34,7 @@ public class Ward {
 
 	// OneToMany => Ward : WardMember = 1 : N
 	@OneToMany(mappedBy = "ward", cascade = CascadeType.ALL)
-	private List<WardMember> wardMemberList = new ArrayList<>();
+	private List<WardMember> wardMemberList;
 
 	// OneToOne => Ward : Rule = 1 : 1
 	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)

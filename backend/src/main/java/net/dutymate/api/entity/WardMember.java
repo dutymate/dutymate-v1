@@ -1,6 +1,5 @@
 package net.dutymate.api.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.dutymate.api.enumclass.ShiftType;
@@ -48,7 +47,7 @@ public class WardMember {
 
 	// OneToMany => wardMember : Request = 1 : N
 	@OneToMany(mappedBy = "wardMember", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Request> requestList = new ArrayList<>();
+	private List<Request> requestList;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "shift")

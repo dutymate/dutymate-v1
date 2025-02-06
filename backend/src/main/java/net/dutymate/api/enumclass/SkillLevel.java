@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+
 import lombok.Getter;
 
 @Getter
@@ -24,7 +25,7 @@ public enum SkillLevel {
 	@JsonCreator
 	public static SkillLevel from(String level) {
 		return Arrays.stream(values())
-			.filter(v -> v.getValue().equals(level))
+			.filter(value -> value.getValue().equals(level))
 			.findAny()
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 SkillLevel 값입니다."));
 	}
