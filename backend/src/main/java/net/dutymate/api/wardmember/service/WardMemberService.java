@@ -52,8 +52,5 @@ public class WardMemberService {
 		Ward ward = wardMemeber.getWard();
 
 		ward.removeWardMember(wardMemeber); // 리스트에서 제거(연관관계 제거)
-
-		// DB에서 제거 -> orphanRemoval=true 설정 시, 이 코드 없어도 삭제됨
-		// wardMemberRepository.delete(wardMemeber);
 	}
 }
