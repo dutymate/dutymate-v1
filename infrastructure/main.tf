@@ -3,19 +3,19 @@ provider "aws" {
   region  = var.aws_region
 }
 
+locals {
+  service_names = toset(["backend", "frontend"])
+}
+
 module "networking" {
-  source                 = "./Modules/Networking"
-  availability_zone      = "ap-northeast-2a"
-  cidr_block             = "10.0.0.0/16"
-  destination_cidr_block = "0.0.0.0/0"
+  source = "./Modules/Networking"
 }
 
 module "s3" {
-  source      = "./Modules/S3"
-  bucket_name = "dutymate-bucket-${terraform.workspace}"
+  source = "./Modules/S3"
 }
 
 module "ecr" {
-  source           = "./Modules/ECR"
-  repository_names = toset(["dutymate-backend", "dutymate-frontend"])
+  source        = "./Modules/ECR"
+  service_names = local.service_names
 }

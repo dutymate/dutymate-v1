@@ -1,11 +1,15 @@
 resource "aws_ecr_repository" "ecr_repository" {
-  for_each             = var.repository_names
-  name                 = each.value
+  for_each             = var.service_names
+  name                 = "dutymate-${each.value}"
   image_tag_mutability = "MUTABLE"
+
+  tags = {
+    Service = each.value
+  }
 }
 
 resource "aws_ecr_lifecycle_policy" "lifecycle_policy" {
-  for_each   = var.repository_names
+  for_each   = var.service_names
   repository = aws_ecr_repository.ecr_repository[each.key].name
 
   policy = <<EOF
