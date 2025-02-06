@@ -7,8 +7,8 @@ import { FaChevronRight, FaChevronLeft } from "react-icons/fa6";
 import { AiFillSchedule, AiOutlineIdcard } from "react-icons/ai";
 import { BiSolidUserPin } from "react-icons/bi";
 import { HiOutlineUsers } from "react-icons/hi2";
-import { IoIosChatboxes } from "react-icons/io";
-import { IoFemale, IoMale } from "react-icons/io5";
+import { IoIosChatboxes, IoMdMenu } from "react-icons/io";
+import { IoFemale, IoMale, IoCloseOutline } from "react-icons/io5";
 import {
 	MdSignalCellular1Bar,
 	MdSignalCellular3Bar,
@@ -37,7 +37,7 @@ const iconComponents = {
 	mid: MdSignalCellular3Bar,
 	high: MdSignalCellular4Bar,
 	edit: MdModeEdit,
-	menu: BsThreeDotsVertical,
+	dots: BsThreeDotsVertical,
 	sort: MdOutlineSort,
 	filter: BsFunnel,
 	copy: MdContentCopy,
@@ -45,6 +45,8 @@ const iconComponents = {
 	right: FaChevronRight,
 	left: FaChevronLeft,
 	undo: GrUndo,
+	menu: IoMdMenu,
+	close: IoCloseOutline,
 };
 
 export type IconName = keyof typeof iconComponents;

@@ -927,8 +927,8 @@ const Playgrounds: React.FC = () => {
 						<span className="text-sm mt-2">edit</span>
 					</div>
 					<div className="flex flex-col items-center p-4 border rounded-lg">
-						<Icon name="menu" size={24} />
-						<span className="text-sm mt-2">menu</span>
+						<Icon name="dots" size={24} />
+						<span className="text-sm mt-2">dots</span>
 					</div>
 					<div className="flex flex-col items-center p-4 border rounded-lg">
 						<Icon name="sort" size={24} />
@@ -957,6 +957,14 @@ const Playgrounds: React.FC = () => {
 					<div className="flex flex-col items-center p-4 border rounded-lg">
 						<Icon name="undo" size={24} />
 						<span className="text-sm mt-2">undo</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="menu" size={24} />
+						<span className="text-sm mt-2">menu</span>
+					</div>
+					<div className="flex flex-col items-center p-4 border rounded-lg">
+						<Icon name="close" size={24} />
+						<span className="text-sm mt-2">close</span>
 					</div>
 				</div>
 			</div>
