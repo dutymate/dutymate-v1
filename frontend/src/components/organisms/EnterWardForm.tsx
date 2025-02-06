@@ -14,6 +14,7 @@ const EnterWardForm = () => {
 		// TODO: 병동 입장 로직 구현
 		try {
 			// API 호출 로직 추가 예정
+			console.log("입력된 병동 코드:", wardCode);
 			navigate("/ward"); // 성공 시 병동 페이지로 이동
 		} catch (error) {
 			console.error("병동 입장 실패:", error);
