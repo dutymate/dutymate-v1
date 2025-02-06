@@ -26,8 +26,8 @@ export const Input = ({
 	defaultValue,
 }: InputProps) => {
 	const inputClasses = error
-		? "col-start-1 row-start-1 block w-full rounded-md bg-white py-2.5 pr-10 pl-3 text-base text-red-900 outline-1 -outline-offset-1 outline-red-300 placeholder:text-red-300 focus:outline-2 focus:-outline-offset-2 focus:outline-red-600 sm:py-3 sm:text-lg"
-		: "block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:py-3 sm:text-lg";
+		? "col-start-1 row-start-1 block w-full rounded-md bg-white py-2.5 pr-10 pl-3 text-base text-red-900 outline outline-[0.125rem] outline-red-300/50 placeholder:text-red-300 focus:outline-[0.125rem] focus:outline-red-600/50 sm:py-3 sm:text-lg"
+		: "block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline outline-[0.125rem] outline-gray-300/50 placeholder:text-gray-400 focus:outline-[0.125rem] focus:outline-primary/50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200/50 sm:py-3 sm:text-lg";
 
 	return (
 		<div>
@@ -120,13 +120,67 @@ interface NumberInputProps extends Omit<InputProps, "type"> {
 }
 
 export const NumberInput = ({ min, max, ...props }: NumberInputProps) => {
+	const numberInputClasses =
+		"block w-full rounded-md bg-white px-3 py-2.5 text-base font-bold text-primary text-center outline outline-[0.125rem] outline-gray-300/50 placeholder:text-gray-400 placeholder:font-normal focus:text-gray-900 focus:font-normal focus:outline-[0.125rem] focus:outline-primary/50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200/50 sm:py-3 sm:text-lg";
+
 	return (
-		<Input
-			{...props}
-			type="number"
-			placeholder={props.placeholder || "0"}
-			defaultValue={props.defaultValue || "0"}
-		/>
+		<div>
+			<div className="flex justify-between">
+				<label
+					htmlFor={props.id}
+					className="block text-base font-medium text-gray-900 sm:text-lg"
+				>
+					{props.label}
+				</label>
+				{props.optional && (
+					<span
+						id={`${props.id}-optional`}
+						className="text-sm text-gray-500 sm:text-base"
+					>
+						Optional
+					</span>
+				)}
+			</div>
+			<div className="mt-2 sm:mt-3">
+				<input
+					id={props.id}
+					name={props.name}
+					type="number"
+					min={min}
+					max={max}
+					defaultValue={props.defaultValue || "0"}
+					placeholder={props.placeholder || "0"}
+					disabled={props.disabled}
+					aria-invalid={props.error ? "true" : undefined}
+					aria-describedby={
+						props.error
+							? `${props.id}-error`
+							: props.helpText
+								? `${props.id}-description`
+								: props.optional
+									? `${props.id}-optional`
+									: undefined
+					}
+					className={numberInputClasses}
+				/>
+			</div>
+			{props.helpText && !props.error && (
+				<p
+					id={`${props.id}-description`}
+					className="mt-2 text-base text-gray-500 sm:text-lg"
+				>
+					{props.helpText}
+				</p>
+			)}
+			{props.error && (
+				<p
+					id={`${props.id}-error`}
+					className="mt-2 text-base text-red-600 sm:text-lg"
+				>
+					{props.error}
+				</p>
+			)}
+		</div>
 	);
 };
 
@@ -160,8 +214,8 @@ export const TextArea = ({
 	rows = 4,
 }: TextAreaProps) => {
 	const textAreaClasses = error
-		? "block w-full rounded-md bg-white py-1.5 text-base text-red-900 outline-1 -outline-offset-1 outline-red-300 placeholder:text-red-300 focus:outline-2 focus:-outline-offset-2 focus:outline-red-600 sm:text-sm/6"
-		: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:text-sm/6";
+		? "block w-full rounded-md bg-white py-1.5 text-base text-red-900 outline outline-[0.125rem] outline-red-300/50 placeholder:text-red-300 focus:outline-[0.125rem] focus:outline-red-600/50 sm:text-sm/6"
+		: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-[0.125rem] outline-gray-300/50 placeholder:text-gray-400 focus:outline-[0.125rem] focus:outline-primary/50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200/50 sm:text-sm/6";
 
 	return (
 		<div>
@@ -215,7 +269,7 @@ export const TextArea = ({
 
 export const SearchInput = (props: Omit<InputProps, "type" | "label">) => {
 	const searchInputClasses =
-		"block w-full rounded-full bg-white pl-10 pr-3 py-2.5 text-[1rem] text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:py-3 sm:text-[1.125rem]";
+		"block w-full rounded-full bg-white pl-10 pr-3 py-2.5 text-[1rem] text-gray-900 outline outline-[0.125rem] outline-gray-300/50 placeholder:text-gray-400 focus:outline-[0.125rem] focus:outline-primary/50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200/50 sm:py-3 sm:text-[1.125rem]";
 
 	return (
 		<div>

@@ -1,55 +1,68 @@
-// ApprovalBtn.tsx
+import React, { useState } from "react";
 
-import React from "react";
+type ApprovalStatus = "approve" | "hold" | "deny";
 
 interface ApprovalBtnProps {
-	selectedIndex: number;
-	onChange: (index: number) => void;
+	onChange?: (status: ApprovalStatus) => void;
+	initialStatus?: ApprovalStatus;
 }
 
 export const ApprovalBtn: React.FC<ApprovalBtnProps> = ({
-	selectedIndex,
 	onChange,
+	initialStatus = "hold",
 }) => {
-	const options = [{ text: "승인" }, { text: "거절" }];
+	const [status, setStatus] = useState<ApprovalStatus>(initialStatus);
 
-	const getButtonStyle = (isSelected: boolean, index: number) => {
-		return isSelected
-			? `bg-base-white border ${index === 0 ? "border-duty-day text-duty-day" : "border-duty-evening text-duty-evening"}`
-			: "bg-transparent border border-transparent text-base-foreground";
+	const handleClick = (newStatus: ApprovalStatus) => {
+		// If clicking the same button that's already active, switch to hold
+		if (status === newStatus) {
+			setStatus("hold");
+			onChange?.("hold");
+		} else {
+			setStatus(newStatus);
+			onChange?.(newStatus);
+		}
 	};
 
-	const getHoverStyle = (isSelected: boolean, index: number) => {
-		return isSelected
-			? `${index === 0 ? "text-duty-day-dark border-duty-day-dark" : "text-duty-evening-dark border-duty-evening-dark"}`
-			: "bg-base-muted";
+	const getButtonStyle = (buttonStatus: ApprovalStatus) => {
+		const isActive = status === buttonStatus;
+
+		switch (buttonStatus) {
+			case "approve":
+				return isActive
+					? "bg-duty-day-bg text-duty-day font-bold"
+					: "bg-base-muted text-white";
+			case "deny":
+				return isActive
+					? "bg-duty-evening-bg text-duty-evening font-bold"
+					: "bg-base-muted text-white";
+			case "hold":
+				return isActive
+					? "bg-duty-off-bg text-duty-off font-bold"
+					: "bg-base-muted text-white";
+		}
 	};
 
 	return (
-		<div className="flex bg-base-muted-30 rounded-lg p-1 w-fit text-xs">
-			{options.map((option, index) => {
-				const isSelected = selectedIndex === index;
-				return (
-					<button
-						key={index}
-						className={`
-              flex-1
-              px-3 py-1.5
-              rounded-md
-              ${getButtonStyle(isSelected, index)}
-              cursor-pointer
-              transition-all duration-300
-              text-xs
-              flex items-center justify-center gap-2
-              hover:${getHoverStyle(isSelected, index)}
-              min-w-[48px]
-            `}
-						onClick={() => onChange(index)}
-					>
-						{option.text}
-					</button>
-				);
-			})}
+		<div className="inline-flex rounded-[9px] overflow-hidden">
+			<button
+				onClick={() => handleClick("approve")}
+				className={`px-4 py-2 ${getButtonStyle("approve")} transition-colors`}
+			>
+				승인
+			</button>
+			<button
+				onClick={() => handleClick("hold")}
+				className={`px-4 py-2 ${getButtonStyle("hold")} transition-colors`}
+			>
+				대기
+			</button>
+			<button
+				onClick={() => handleClick("deny")}
+				className={`px-4 py-2 ${getButtonStyle("deny")} transition-colors`}
+			>
+				거절
+			</button>
 		</div>
 	);
 };

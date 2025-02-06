@@ -11,6 +11,7 @@ import CreateWard from "../pages/CreateWard";
 import EnterWard from "../pages/EnterWard";
 import ExtraInfo from "../pages/ExtraInfo";
 import MobilePractice from "../pages/MobilePractice";
+import NewPlaygrounds from "../pages/newplaygrounds";
 
 const Router = () => {
 	return (
@@ -27,6 +28,7 @@ const Router = () => {
 			<Route path="/extra-info" element={<ExtraInfo />} />
 			<Route path="/playgrounds" element={<Playgrounds />} />
 			<Route path="/mobile" element={<MobilePractice />} />
+			<Route path="/newplaygrounds" element={<NewPlaygrounds />} />
 		</Routes>
 	);
 };

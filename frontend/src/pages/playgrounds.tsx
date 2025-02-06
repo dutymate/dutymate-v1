@@ -15,7 +15,6 @@ import { CheckBox } from "@/components/atoms/CheckBox";
 import { SortButton, FilterButton } from "@/components/atoms/SubButton";
 import { ToggleButton } from "@/components/atoms/ToggleButton";
 import { Dropdown } from "@/components/atoms/Dropdown";
-import { ApprovalBtn } from "@/components/atoms/ApprovalBtn";
 import { Badge } from "@/components/atoms/Badge";
 import { ProgressChecker } from "@/components/atoms/ProgressChecker";
 import { DutyBadgeKor } from "../components/atoms/DutyBadgeKor";
@@ -24,7 +23,6 @@ const Playgrounds: React.FC = () => {
 	const [genderIndex, setGenderIndex] = useState(0);
 	const [nurseIndex, setNurseIndex] = useState(0);
 	const [requestIndex, setRequestIndex] = useState(0);
-	const [approvalIndex, setApprovalIndex] = useState(0);
 	const [selectedNumber, setSelectedNumber] = useState<number | null>(0);
 	const [selectedPriority, setSelectedPriority] = useState<string | null>(null);
 	const [selectedAuthority, setSelectedAuthority] = useState<string | null>(
@@ -313,17 +311,6 @@ const Playgrounds: React.FC = () => {
 										selectedIndex={requestIndex}
 										onChange={(index: number) => setRequestIndex(index)}
 										variant="request"
-									/>
-								</div>
-
-								{/* Approval Toggle */}
-								<div>
-									<h5 className="text-sm font-medium text-base-muted mb-2">
-										Approval Toggle
-									</h5>
-									<ApprovalBtn
-										selectedIndex={approvalIndex}
-										onChange={(index: number) => setApprovalIndex(index)}
 									/>
 								</div>
 							</div>
