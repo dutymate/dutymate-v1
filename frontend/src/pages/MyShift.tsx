@@ -10,7 +10,7 @@ const MyShift = () => {
 			</div>
 
 			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 px-24 py-6">
+			<div className="flex-1 min-w-0 px-8 py-6">
 				{/* ✅ Title 컴포넌트 적용 */}
 				<Title title="듀티표 관리" subtitle="부제목을 입력하세요" />
 			</div>

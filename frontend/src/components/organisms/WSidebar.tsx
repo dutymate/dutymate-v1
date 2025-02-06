@@ -39,21 +39,21 @@ const staffNurseNavigation: NavigationItem[] = [
 
 const NavigationItem = React.memo(
 	({ item, isActive }: { item: NavigationItem; isActive: boolean }) => (
-		<li className="flex justify-center px-[1.875rem]">
+		<li className="flex justify-center px-[1.3rem]">
 			<Link
 				to={item.href}
 				className={`
-        flex items-center gap-x-6 px-[1.5rem] py-2.5 w-full rounded-lg
-        font-['Pretendard Variable'] text-xs group
-        ${
-					isActive
-						? "text-primary-dark bg-primary-10"
-						: "text-gray-700 hover:text-primary hover:bg-primary-10"
-				}
-      `}
+					flex items-center gap-x-3 px-4 py-2.5 w-full rounded-lg
+					font-['Pretendard Variable'] text-[0.9rem] group
+					${
+						isActive
+							? "text-primary-dark bg-primary-10"
+							: "text-gray-700 hover:text-primary hover:bg-primary-10"
+					}
+				`}
 			>
 				{React.createElement(item.icon, {
-					className: `w-[1.125rem] h-[1.125rem] min-w-[1.125rem] ${
+					className: `w-4 h-4 min-w-4 ${
 						isActive
 							? "text-primary-dark"
 							: "text-gray-500 group-hover:text-primary"
@@ -66,7 +66,7 @@ const NavigationItem = React.memo(
 );
 
 interface SidebarProps {
-	userType: "head" | "staff"; // 수간호사 또는 평간호사
+	userType: "head" | "staff";
 }
 
 const Sidebar = ({ userType }: SidebarProps) => {
@@ -77,16 +77,18 @@ const Sidebar = ({ userType }: SidebarProps) => {
 	return (
 		<div className="fixed inset-y-0 left-0 z-40 flex flex-col bg-white w-[238px] border-r border-gray-200 rounded-tr-[18.47px] rounded-br-[18.47px] shadow-[0_4.62px_18.47px_rgba(0,0,0,0.05)]">
 			{/* Logo */}
-			<div className="flex items-center justify-center px-[1.875rem] pt-30 pb-20">
-				<img
-					alt="듀티메이트"
-					src="/src/assets/logo.svg"
-					className="w-[70%] h-[1.78rem]"
-				/>
+			<div className="flex items-center justify-center px-[1.875rem] pt-7">
+				<div className="w-[140px]">
+					<img
+						alt="듀티메이트"
+						src="/src/assets/logo.svg"
+						className="w-full"
+					/>
+				</div>
 			</div>
 
 			{/* Navigation */}
-			<nav className="flex-1 py-4">
+			<nav className="flex-1 py-4 mt-4">
 				<div className="flex flex-col space-y-[0.325rem] mb-5">
 					{navigation.map((item, index) => (
 						<NavigationItem

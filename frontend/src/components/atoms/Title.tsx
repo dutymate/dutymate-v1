@@ -12,10 +12,10 @@ const Title = ({ title, subtitle, className }: TitleProps) => {
 				<h1 className="text-[0.875rem] md:text-[1rem] lg:text-[1.125rem] font-bold text-base-foreground whitespace-nowrap">
 					{title}
 				</h1>
-				<div className="flex-1 border-b border-gray-300 ml-8"></div>
+				<div className="flex-1 border-b border-gray-300 ml-4"></div>
 			</div>
 			{/* 부제목을 제목과 동일한 시작점에서 정렬 */}
-			<p className="text-[0.75rem] md:text-[0.875rem] text-gray-500 mt-4">
+			<p className="text-[0.75rem] md:text-[0.875rem] text-gray-500 py-1">
 				{subtitle}
 			</p>
 		</div>
