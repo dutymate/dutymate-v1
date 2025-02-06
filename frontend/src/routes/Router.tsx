@@ -10,6 +10,7 @@ import WardAdmin from "../pages/WardAdmin";
 import CreateWard from "../pages/CreateWard";
 import EnterWard from "../pages/EnterWard";
 import ExtraInfo from "../pages/ExtraInfo";
+import MobilePractice from "../pages/MobilePractice";
 
 const Router = () => {
 	return (
@@ -25,6 +26,7 @@ const Router = () => {
 			<Route path="/enter-ward" element={<EnterWard />} />
 			<Route path="/extra-info" element={<ExtraInfo />} />
 			<Route path="/playgrounds" element={<Playgrounds />} />
+			<Route path="/mobile" element={<MobilePractice />} />
 		</Routes>
 	);
 };

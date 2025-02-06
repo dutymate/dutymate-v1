@@ -1,5 +1,3 @@
-//아직 카피만 함!!
-
 "use client";
 
 import React from "react";
@@ -11,7 +9,9 @@ import { BiSolidUserPin } from "react-icons/bi";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { IoIosChatboxes } from "react-icons/io";
 import { PiLightbulbFilamentFill } from "react-icons/pi";
+import { IoCloseOutline } from "react-icons/io5";
 import Profile from "../atoms/Profile";
+import { Link } from "react-router-dom";
 
 interface NavigationItem {
 	name: string;
@@ -19,7 +19,8 @@ interface NavigationItem {
 	icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
-const navigation: NavigationItem[] = [
+// 수간호사용 네비게이션
+const headNurseNavigation: NavigationItem[] = [
 	{ name: "듀티표 관리", href: "/duty-management", icon: SlCalender },
 	{ name: "병동 관리", href: "/ward-management", icon: FaHospital },
 	{ name: "요청 근무 관리", href: "/request-management", icon: AiFillSchedule },
@@ -29,56 +30,83 @@ const navigation: NavigationItem[] = [
 	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
 ];
 
+// 평간호사용 네비게이션
+const staffNurseNavigation: NavigationItem[] = [
+	{ name: "나의 듀티표", href: "/my-duty", icon: BiSolidUserPin },
+	{ name: "병동 듀티표", href: "/ward-duty", icon: HiOutlineUsers },
+	{ name: "커뮤니티", href: "/community", icon: IoIosChatboxes },
+	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
+];
+
 const NavigationItem = React.memo(
 	({ item, isActive }: { item: NavigationItem; isActive: boolean }) => (
-		<li className="flex justify-center">
-			<a
-				href={item.href}
+		<li className="flex justify-center px-[1.3rem]">
+			<Link
+				to={item.href}
 				className={`
-        flex items-center gap-x-6 px-6 py-4 w-full rounded-lg text-lg
-        ${
-					isActive
-						? "text-primary-dark bg-primary-10"
-						: "text-gray-700 hover:text-primary hover:bg-primary-10"
-				}
-      `}
+					flex items-center gap-x-3 px-4 py-2.5 w-full rounded-lg
+					font-['Pretendard Variable'] text-[0.9rem] group
+					${
+						isActive
+							? "text-primary-dark bg-primary-10"
+							: "text-gray-700 hover:text-primary hover:bg-primary-10"
+					}
+				`}
 			>
 				{React.createElement(item.icon, {
-					className: `w-[1.2em] h-[1.2em] ${isActive ? "text-primary-dark" : "text-gray-500"}`,
+					className: `w-4 h-4 min-w-4 ${
+						isActive
+							? "text-primary-dark"
+							: "text-gray-500 group-hover:text-primary"
+					}`,
 				})}
 				<span className="font-semibold">{item.name}</span>
-			</a>
+			</Link>
 		</li>
 	),
 );
 
-const Sidebar = () => {
+interface SidebarProps {
+	userType: "head" | "staff";
+	onClose: () => void;
+}
+
+const Sidebar = ({ userType, onClose }: SidebarProps) => {
 	const location = useLocation();
+	const navigation =
+		userType === "head" ? headNurseNavigation : staffNurseNavigation;
 
 	return (
-		<div className="fixed inset-y-0 left-0 z-40 flex flex-col bg-white w-[280px] border-r border-gray-200">
-			{/* Logo */}
-			<div className="flex items-center justify-center px-6 py-8">
-				<img
-					alt="듀티메이트"
-					src="/src/assets/logo.svg"
-					className="w-[75%] h-auto"
-				/>
+		<div className="fixed inset-y-0 left-0 z-40 flex flex-col bg-white w-[238px] border-r border-gray-200 rounded-tr-[18.47px] rounded-br-[18.47px] shadow-[0_4.62px_18.47px_rgba(0,0,0,0.05)]">
+			{/* Logo와 닫기 버튼 */}
+			<div className="flex items-center justify-between px-[1.875rem] pt-7">
+				<div className="w-[140px]">
+					<img
+						alt="듀티메이트"
+						src="/src/assets/logo.svg"
+						className="w-full"
+					/>
+				</div>
+				<button 
+					onClick={onClose}
+					className="text-gray-500 hover:text-gray-700"
+				>
+					<IoCloseOutline className="w-6 h-6" />
+				</button>
 			</div>
 
 			{/* Navigation */}
-			<nav className="flex-1 px-4 py-4">
-				<ul className="space-y-3">
-					{navigation.map((item) => (
+			<nav className="flex-1 py-4 mt-4">
+				<div className="flex flex-col space-y-[0.325rem] mb-5">
+					{navigation.map((item, index) => (
 						<NavigationItem
-							key={item.name}
+							key={index}
 							item={item}
 							isActive={location.pathname === item.href}
 						/>
 					))}
-				</ul>
+				</div>
 			</nav>
-
 			<Profile />
 		</div>
 	);
