@@ -18,6 +18,7 @@ import { Dropdown } from "@/components/atoms/Dropdown";
 import { ApprovalBtn } from "@/components/atoms/ApprovalBtn";
 import { Badge } from "@/components/atoms/Badge";
 import { ProgressChecker } from "@/components/atoms/ProgressChecker";
+import { DutyBadgeKor } from "../components/atoms/DutyBadgeKor";
 
 const Playgrounds: React.FC = () => {
 	const [genderIndex, setGenderIndex] = useState(0);
@@ -622,6 +623,51 @@ const Playgrounds: React.FC = () => {
 										disabled
 									/>
 								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* Duty Badges */}
+				<div className="mb-8">
+					<h2 className="text-xl font-semibold mb-4">Duty Badges</h2>
+					<div className="space-y-8">
+						{/* Extra Small */}
+						<div>
+							<h3 className="text-sm font-medium text-base-muted mb-4">
+								Extra Small (xs)
+							</h3>
+							<div className="flex gap-4">
+								<DutyBadgeKor type="day" size="xs" />
+								<DutyBadgeKor type="evening" size="xs" />
+								<DutyBadgeKor type="night" size="xs" />
+								<DutyBadgeKor type="off" size="xs" />
+							</div>
+						</div>
+
+						{/* Small */}
+						<div>
+							<h3 className="text-sm font-medium text-base-muted mb-4">
+								Small (sm)
+							</h3>
+							<div className="flex gap-4">
+								<DutyBadgeKor type="day" size="sm" />
+								<DutyBadgeKor type="evening" size="sm" />
+								<DutyBadgeKor type="night" size="sm" />
+								<DutyBadgeKor type="off" size="sm" />
+							</div>
+						</div>
+
+						{/* Medium */}
+						<div>
+							<h3 className="text-sm font-medium text-base-muted mb-4">
+								Medium (md)
+							</h3>
+							<div className="flex gap-4">
+								<DutyBadgeKor type="day" size="md" />
+								<DutyBadgeKor type="evening" size="md" />
+								<DutyBadgeKor type="night" size="md" />
+								<DutyBadgeKor type="off" size="md" />
 							</div>
 						</div>
 					</div>
