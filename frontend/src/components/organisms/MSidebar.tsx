@@ -81,16 +81,9 @@ const Sidebar = ({ userType, onClose }: SidebarProps) => {
 			{/* Logo와 닫기 버튼 */}
 			<div className="flex items-center justify-between px-[1.875rem] pt-7">
 				<div className="w-[140px]">
-					<img
-						alt="듀티메이트"
-						src="/src/assets/logo.svg"
-						className="w-full"
-					/>
+					<img alt="듀티메이트" src="/src/assets/logo.svg" className="w-full" />
 				</div>
-				<button 
-					onClick={onClose}
-					className="text-gray-500 hover:text-gray-700"
-				>
+				<button onClick={onClose} className="text-gray-500 hover:text-gray-700">
 					<IoCloseOutline className="w-6 h-6" />
 				</button>
 			</div>

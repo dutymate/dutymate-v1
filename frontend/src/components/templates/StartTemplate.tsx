@@ -55,11 +55,7 @@ const StartTemplate = () => {
 				</div>
 				{/* 로고 영역 */}
 				<div className="relative z-10 h-full flex items-center justify-center -translate-y-[5vh]">
-					<img 
-						src={dutyMateLogo} 
-						alt="DutyMate Logo" 
-						className="w-[40%]" 
-					/>
+					<img src={dutyMateLogo} alt="DutyMate Logo" className="w-[40%]" />
 				</div>
 			</div>
 		</div>
