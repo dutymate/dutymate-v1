@@ -14,7 +14,6 @@ import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardmember.dto.NurseInfoRequestDto;
-import net.dutymate.api.wardmember.repository.WardMemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
@@ -24,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WardMemberService {
 
-	private final WardMemberRepository wardMemberRepository;
 	private final MemberRepository memberRepository;
 	private final WardScheduleRepository wardScheduleRepository;
 
@@ -85,9 +83,7 @@ public class WardMemberService {
 
 	private void deleteWardMemberDuty(WardSchedule existingSchedule, Member member) {
 
-		WardSchedule.Duty lastDuty = existingSchedule.getDuties().isEmpty()
-			? WardSchedule.Duty.builder().duty(new ArrayList<>()).build()
-			: existingSchedule.getDuties().getLast();
+		WardSchedule.Duty lastDuty = existingSchedule.getDuties().getLast();
 
 		lastDuty.getDuty().removeIf(nurseShift -> nurseShift.getMemberId().equals(member.getMemberId()));
 
@@ -96,7 +92,7 @@ public class WardMemberService {
 			.wardId(existingSchedule.getWardId())
 			.year(existingSchedule.getYear())
 			.month(existingSchedule.getMonth())
-			.duties(new ArrayList<>(List.of(lastDuty)))
+			.duties(new ArrayList<>(List.of(lastDuty))) // 기존 duties 초기화 시키고, 나간 멤버가 삭제된 duty 하나만 남기기
 			.build();
 
 		wardScheduleRepository.save(deletedSchedule);
