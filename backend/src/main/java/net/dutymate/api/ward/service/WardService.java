@@ -1,6 +1,5 @@
 package net.dutymate.api.ward.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 
@@ -57,12 +56,10 @@ public class WardService {
 		ward.addWardMember(wardMember);
 
 		// 4. 현재 날짜 기준으로  year, month 생성
-		LocalDate currentDate = LocalDate.now();
-		int year = currentDate.getYear();
-		int month = currentDate.getMonthValue();
+		YearMonth yearMonth = YearMonth.nowYearMonth();
 
 		// 5. 병동 생성하는 멤버의 듀티표 초기화하여 mongodb에 저장하기
-		initialDutyGenerator.initalizeDuty(wardMember, year, month);
+		initialDutyGenerator.initalizeDuty(wardMember, yearMonth);
 	}
 
 	@Transactional
@@ -113,7 +110,7 @@ public class WardService {
 		// 6. 기존 스케줄이 없다면, 입장한 멤버의 듀티표 초기화하여 저장하기
 		// 사실 이미 병동이 생성된 이상, 무조건 기존 스케줄이 있어야만 함
 		if (currMonthSchedule == null && nextMonthSchedule == null) {
-			initialDutyGenerator.initalizeDuty(newWardMember, yearMonth.year(), yearMonth.month());
+			initialDutyGenerator.initalizeDuty(newWardMember, yearMonth);
 		}
 	}
 
