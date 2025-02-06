@@ -16,6 +16,7 @@ import { SortButton, FilterButton } from "@/components/atoms/SubButton";
 import { ToggleButton } from "@/components/atoms/ToggleButton";
 import { Dropdown } from "@/components/atoms/Dropdown";
 import { ApprovalBtn } from "@/components/atoms/ApprovalBtn";
+import { Badge } from "@/components/atoms/Badge";
 
 const Playgrounds: React.FC = () => {
 	const [genderIndex, setGenderIndex] = useState(0);
@@ -35,6 +36,15 @@ const Playgrounds: React.FC = () => {
 			{/* Atoms Section */}
 			<section className="mb-12">
 				<h2 className="text-2xl font-semibold mb-4">Atoms</h2>
+
+				{/* Badges */}
+				<div className="mb-8">
+					<h3 className="text-xl font-semibold mb-4">Badges</h3>
+					<div className="flex flex-wrap gap-4">
+						<Badge type="admin" />
+						<Badge type="worker" />
+					</div>
+				</div>
 
 				{/* Buttons */}
 				<div className="mb-8">
