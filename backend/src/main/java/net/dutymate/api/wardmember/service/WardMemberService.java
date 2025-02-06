@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.entity.Ward;
+import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.wardmember.dto.NurseInfoRequestDto;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
@@ -36,5 +38,22 @@ public class WardMemberService {
 			nurseInfoRequestDto.getMemo(),
 			nurseInfoRequestDto.getRole()
 		);
+	}
+
+	@Transactional
+	public void deleteWardMember(Long memberId) {
+
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 회원입니다."));
+
+		// TODO member가 병동 회원인지 체크하는 로직
+
+		WardMember wardMemeber = member.getWardMember();
+		Ward ward = wardMemeber.getWard();
+
+		ward.removeWardMember(wardMemeber); // 리스트에서 제거(연관관계 제거)
+
+		// DB에서 제거 -> orphanRemoval=true 설정 시, 이 코드 없어도 삭제됨
+		// wardMemberRepository.delete(wardMemeber);
 	}
 }

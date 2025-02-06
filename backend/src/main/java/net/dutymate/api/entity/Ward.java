@@ -33,7 +33,7 @@ public class Ward {
 	private Long wardId;
 
 	// OneToMany => Ward : WardMember = 1 : N
-	@OneToMany(mappedBy = "ward", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<WardMember> wardMemberList;
 
 	// OneToOne => Ward : Rule = 1 : 1
@@ -66,5 +66,9 @@ public class Ward {
 	// Ward 생성하는 사람을 첫 번째 병동 멤버로 추가
 	public void addWardMember(WardMember wardMember) {
 		this.wardMemberList.add(wardMember);
+	}
+
+	public void removeWardMember(WardMember wardMember) {
+		this.wardMemberList.remove(wardMember);
 	}
 }
