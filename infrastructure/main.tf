@@ -12,7 +12,8 @@ module "networking" {
 }
 
 module "s3" {
-  source = "./Modules/S3"
+  source     = "./Modules/S3"
+  vpce_s3_id = module.networking.vpce_s3_id
 }
 
 module "ecr" {
