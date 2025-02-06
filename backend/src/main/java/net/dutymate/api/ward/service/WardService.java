@@ -59,7 +59,7 @@ public class WardService {
 		YearMonth yearMonth = YearMonth.nowYearMonth();
 
 		// 5. 병동 생성하는 멤버의 듀티표 초기화하여 mongodb에 저장하기
-		initialDutyGenerator.initalizeDuty(wardMember, yearMonth);
+		initialDutyGenerator.initializedDuty(wardMember, yearMonth);
 	}
 
 	@Transactional
@@ -110,7 +110,7 @@ public class WardService {
 		// 6. 기존 스케줄이 없다면, 입장한 멤버의 듀티표 초기화하여 저장하기
 		// 사실 이미 병동이 생성된 이상, 무조건 기존 스케줄이 있어야만 함
 		if (currMonthSchedule == null && nextMonthSchedule == null) {
-			initialDutyGenerator.initalizeDuty(newWardMember, yearMonth);
+			initialDutyGenerator.initializedDuty(newWardMember, yearMonth);
 		}
 	}
 

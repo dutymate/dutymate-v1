@@ -22,16 +22,7 @@ public class InitialDutyGenerator {
 	/**
 	 * Duty 초기화 메서드 (병동 생성 시에만 사용)
 	 */
-	public void initalizeDuty(WardMember wardMember, YearMonth yearMonth) {
-
-		// 1. 현재 달의 일 수 계산 (28, 29, 30, 31일 중)
-		// int daysInMonth = YearMonth.of(year, month).lengthOfMonth();
-
-		// 2. shifts를 해당 달의 날짜 수 만큼 'X'로 초기화
-		// String initializedShifts = "X".repeat(daysInMonth);
-
-		// 3. 멤버 한 명의 초기 Duty 생성
-		// WardSchedule.NurseShift nurseShift = createNurseShift(wardMember, yearMonth.initializeShifts());
+	public void initializedDuty(WardMember wardMember, YearMonth yearMonth) {
 		createNewWardSchedule(wardMember.getWard(), List.of(wardMember), yearMonth);
 	}
 
