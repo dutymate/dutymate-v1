@@ -44,7 +44,6 @@ module.exports = {
           'muted-30': '#F4F4F4',      // muted-30 (rgb(244, 244, 244))
           transparent: '#D9D9D900',    // transparent (rgba(217, 217, 217, 0))
           white: '#FFFFFF',            // white (rgb(255, 255, 255))
-          black: '#000000',           // 가장 어두운 검정색 추가
         }
       },
       fontFamily: {

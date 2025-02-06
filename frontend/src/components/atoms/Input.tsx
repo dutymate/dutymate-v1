@@ -11,6 +11,7 @@ export interface InputProps {
 	disabled?: boolean;
 	optional?: boolean;
 	defaultValue?: string;
+	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const Input = ({
@@ -24,6 +25,7 @@ export const Input = ({
 	disabled,
 	optional,
 	defaultValue,
+	onChange,
 }: InputProps) => {
 	const inputClasses = error
 		? "col-start-1 row-start-1 block w-full rounded-md bg-white py-2.5 pr-10 pl-3 text-base text-red-900 outline outline-[0.125rem] outline-red-300/50 placeholder:text-red-300 focus:outline-[0.125rem] focus:outline-red-600/50 sm:py-3 sm:text-lg"
@@ -55,6 +57,7 @@ export const Input = ({
 					defaultValue={defaultValue}
 					placeholder={placeholder}
 					disabled={disabled}
+					onChange={onChange}
 					aria-invalid={error ? "true" : undefined}
 					aria-describedby={
 						error
@@ -117,6 +120,7 @@ export const PasswordInput = (props: Omit<InputProps, "type">) => {
 interface NumberInputProps extends Omit<InputProps, "type"> {
 	min?: number;
 	max?: number;
+	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const NumberInput = ({ min, max, ...props }: NumberInputProps) => {

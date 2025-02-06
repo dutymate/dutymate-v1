@@ -4,7 +4,7 @@ import googleIcon from "../../assets/google.svg";
 
 const LoginForm = () => {
 	return (
-		<div className="bg-white rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 w-[25rem]">
+		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 w-[25rem]">
 			<form>
 				<EmailInput
 					id="email"

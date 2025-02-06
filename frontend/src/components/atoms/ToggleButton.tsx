@@ -24,8 +24,8 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
 
 	const getHoverStyle = (isSelected: boolean) => {
 		return isSelected
-			? "text-primary-dark border-primary-dark"
-			: "bg-base-muted";
+			? "hover:text-primary-dark hover:border-primary-dark"
+			: "hover:bg-base-muted";
 	};
 
 	return (
@@ -35,17 +35,21 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
 				return (
 					<button
 						key={index}
-						className={`
-              flex-1
-              ${variant === "request" ? "p-4" : "p-3"}
-              rounded-md
-              ${getButtonStyle(isSelected)}
-              cursor-pointer
-              transition-all duration-300
-              ${variant === "request" ? "text-base" : "text-sm"}
-              flex items-center justify-center gap-2
-              hover:${getHoverStyle(isSelected)}
-            `}
+						className={[
+							"flex-1",
+							variant === "request" ? "p-4" : "p-3",
+							"rounded-md",
+							getButtonStyle(isSelected),
+							"cursor-pointer",
+							"transition-all",
+							"duration-300",
+							variant === "request" ? "text-base" : "text-sm",
+							"flex",
+							"items-center",
+							"justify-center",
+							"gap-2",
+							getHoverStyle(isSelected),
+						].join(" ")}
 						onClick={() => onChange(index)}
 					>
 						{option.icon && (
