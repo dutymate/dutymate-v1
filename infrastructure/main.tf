@@ -3,6 +3,13 @@ provider "aws" {
   region  = var.aws_region
 }
 
+module "networking" {
+  source                 = "./Modules/Networking"
+  availability_zone      = "ap-northeast-2a"
+  cidr_block             = "10.0.0.0/16"
+  destination_cidr_block = "0.0.0.0/0"
+}
+
 module "s3" {
   source      = "./Modules/S3"
   bucket_name = "dutymate-bucket-${terraform.workspace}"
