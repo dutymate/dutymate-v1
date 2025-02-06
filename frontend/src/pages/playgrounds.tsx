@@ -17,6 +17,7 @@ import { ToggleButton } from "@/components/atoms/ToggleButton";
 import { Dropdown } from "@/components/atoms/Dropdown";
 import { ApprovalBtn } from "@/components/atoms/ApprovalBtn";
 import { Badge } from "@/components/atoms/Badge";
+import { ProgressChecker } from "@/components/atoms/ProgressChecker";
 
 const Playgrounds: React.FC = () => {
 	const [genderIndex, setGenderIndex] = useState(0);
@@ -36,6 +37,31 @@ const Playgrounds: React.FC = () => {
 			{/* Atoms Section */}
 			<section className="mb-12">
 				<h2 className="text-2xl font-semibold mb-4">Atoms</h2>
+
+				{/* Progress Checker */}
+				<div className="mb-8">
+					<h3 className="text-xl font-semibold mb-4">Progress Checker</h3>
+					<div className="flex flex-wrap gap-8">
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Default (90%)
+							</h4>
+							<ProgressChecker value={90} />
+						</div>
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Custom Size (50%)
+							</h4>
+							<ProgressChecker value={50} size={80} strokeWidth={6} />
+						</div>
+						<div>
+							<h4 className="text-sm font-medium text-base-muted mb-4">
+								Without Label (75%)
+							</h4>
+							<ProgressChecker value={75} showLabel={false} />
+						</div>
+					</div>
+				</div>
 
 				{/* Badges */}
 				<div className="mb-8">
