@@ -66,8 +66,6 @@ public class InitialDutyGenerator {
 
 		WardSchedule.NurseShift nurseShift = createNurseShift(newWardMember, initializedShifts);
 
-		//List<WardSchedule.Duty> newDuties = new ArrayList<>(); // Duties를 초기화
-
 		// 1. 기존의 duty 마지막에 새로운 멤버 추가
 		WardSchedule.Duty lastDuty =
 			existingSchedule.getDuties().isEmpty()

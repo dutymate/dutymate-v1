@@ -1,5 +1,8 @@
 package net.dutymate.api.wardmember.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,8 +12,11 @@ import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.member.repository.MemberRepository;
+import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardmember.dto.NurseInfoRequestDto;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
+import net.dutymate.api.wardschedules.collections.WardSchedule;
+import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +26,7 @@ public class WardMemberService {
 
 	private final WardMemberRepository wardMemberRepository;
 	private final MemberRepository memberRepository;
+	private final WardScheduleRepository wardScheduleRepository;
 
 	@Transactional
 	public void updateWardMember(Long memberId, NurseInfoRequestDto nurseInfoRequestDto) {
@@ -43,6 +50,7 @@ public class WardMemberService {
 	@Transactional
 	public void deleteWardMember(Long memberId) {
 
+		// 내보내려는 멤버 찾기
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 회원입니다."));
 
@@ -51,6 +59,46 @@ public class WardMemberService {
 		WardMember wardMemeber = member.getWardMember();
 		Ward ward = wardMemeber.getWard();
 
+		// RDB에서 wardMember 삭제하기
 		ward.removeWardMember(wardMemeber); // 리스트에서 제거(연관관계 제거)
+
+		// MongoDB 에서 내보내는 wardmember 찾아서 삭제 (이전 달은 상관 X)
+		// 이번달 듀티에서 삭제
+		YearMonth yearMonth = YearMonth.nowYearMonth();
+
+		WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(),
+			yearMonth.year(), yearMonth.month()).orElse(null);
+
+		if (currMonthSchedule != null) {
+			deleteWardMemberDuty(currMonthSchedule, member);
+		}
+
+		// 다음달 듀티에서 삭제
+		YearMonth nextYearMonth = yearMonth.nextYearMonth();
+		WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(),
+			nextYearMonth.year(), nextYearMonth.month()).orElse(null);
+
+		if (nextMonthSchedule != null) {
+			deleteWardMemberDuty(nextMonthSchedule, member);
+		}
+	}
+
+	private void deleteWardMemberDuty(WardSchedule existingSchedule, Member member) {
+
+		WardSchedule.Duty lastDuty = existingSchedule.getDuties().isEmpty()
+			? WardSchedule.Duty.builder().duty(new ArrayList<>()).build()
+			: existingSchedule.getDuties().getLast();
+
+		lastDuty.getDuty().removeIf(nurseShift -> nurseShift.getMemberId().equals(member.getMemberId()));
+
+		WardSchedule deletedSchedule = WardSchedule.builder()
+			.id(existingSchedule.getId())
+			.wardId(existingSchedule.getWardId())
+			.year(existingSchedule.getYear())
+			.month(existingSchedule.getMonth())
+			.duties(new ArrayList<>(List.of(lastDuty)))
+			.build();
+
+		wardScheduleRepository.save(deletedSchedule);
 	}
 }
