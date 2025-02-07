@@ -45,6 +45,25 @@ resource "aws_internet_gateway" "internet_gateway" {
   }
 }
 
+resource "aws_eip" "nat_eip" {
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    Name = "dutymate-nat-eip"
+  }
+}
+
+resource "aws_nat_gateway" "nat_gateway" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.public_subnet.id
+
+  tags = {
+    Name = "dutymate-nat-gateway"
+  }
+}
+
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.vpc.id
 
