@@ -54,7 +54,6 @@ public class WardSchedule {
 
 		public void addNurseShift(NurseShift nurseShift) {
 			this.duty.add(nurseShift);
-
 		}
 	}
 
