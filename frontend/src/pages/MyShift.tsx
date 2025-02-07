@@ -1,5 +1,6 @@
 import Sidebar from "../components/organisms/WSidebar";
 import Title from "../components/atoms/Title";
+import MyShiftCalendar from "../components/organisms/MyShiftCalendar";
 
 const MyShift = () => {
 	return (
@@ -11,8 +12,13 @@ const MyShift = () => {
 
 			{/* 메인 컨텐츠 영역 */}
 			<div className="flex-1 min-w-0 px-8 py-6">
-				{/* ✅ Title 컴포넌트 적용 */}
-				<Title title="듀티표 관리" subtitle="부제목을 입력하세요" />
+				<div className="mb-3">
+					<Title
+						title="나의 근무표 보기"
+						subtitle="나의 근무 일정을 확인해보세요"
+					/>
+				</div>
+				<MyShiftCalendar />
 			</div>
 		</div>
 	);
