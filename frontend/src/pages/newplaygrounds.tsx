@@ -120,6 +120,18 @@ const NewPlaygrounds = () => {
 								))}
 							</div>
 						</div>
+
+						{/* Letter Style */}
+						<div>
+							<h3 className="text-sm font-medium text-base-muted mb-2">
+								Letter Style
+							</h3>
+							<div className="flex gap-4">
+								{badgeTypes.map((type) => (
+									<DutyBadgeEng key={type} type={type} variant="letter" />
+								))}
+							</div>
+						</div>
 					</div>
 				</div>
 

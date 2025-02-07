@@ -5,7 +5,7 @@ interface DutyBadgeEngProps {
 	size?: "sm" | "md" | "lg";
 	isSelected?: boolean;
 	onClick?: () => void;
-	variant?: "filled" | "outline";
+	variant?: "filled" | "outline" | "letter";
 }
 
 const DutyBadgeEng = ({
@@ -37,6 +37,14 @@ const DutyBadgeEng = ({
 			O: "bg-white text-duty-off border-2 border-duty-off",
 			All: "bg-white text-base-foreground border-2 border-base-foreground",
 			default: "bg-white text-base-muted border-2 border-base-muted font-bold",
+		},
+		letter: {
+			D: "text-duty-day",
+			E: "text-duty-evening",
+			N: "text-duty-night",
+			O: "text-duty-off",
+			All: "text-base-foreground",
+			default: "text-base-muted font-bold",
 		},
 	};
 
