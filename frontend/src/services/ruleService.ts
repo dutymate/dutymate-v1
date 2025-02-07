@@ -1,0 +1,40 @@
+import axiosInstance from "../lib/axios";
+
+// 타입 정의
+interface WardRule {
+	// 평일/주말 근무 개수
+	wdayDCnt: number; // 평일 D 근무 개수
+	wdayECnt: number; // 평일 E 근무 개수
+	wdayNCnt: number; // 평일 N 근무 개수
+	wendDCnt: number; // 주말 D 근무 개수
+	wendECnt: number; // 주말 E 근무 개수
+	wendNCnt: number; // 주말 N 근무 개수
+
+	// 나이트 근무 규칙
+	maxN: number; // 최대 연속 N 근무
+	prioMaxN: number; // 최대 연속 N 근무 중요도
+	minN: number; // 최소 연속 N 근무
+	prioMinN: number; // 최소 연속 N 근무 중요도
+	offCntAfterN: number; // N 후 최소 오프 개수
+	prioOffCntAfterN: number; // N 후 최소 오프 개수 중요도
+
+	// 연속 근무 규칙
+	maxShift: number; // 최대 연속 근무일
+	prioMaxShift: number; // 최대 연속 근무일 중요도
+	offCntAfterMaxShift: number; // 최대 연속 근무일 후 오프 개수
+	prioOffCntAfterMaxShift: number; // 최대 연속 근무일 후 오프 개수 중요도
+}
+
+// API 서비스
+export const ruleService = {
+	/**
+	 * 병동 규칙 조회
+	 * 평일/주말 근무 개수, 나이트 근무 규칙, 연속 근무 규칙 등을 포함
+	 * @returns 병동의 모든 근무 규칙
+	 * @throws {Error} 404: 병동 ID가 유효하지 않을 경우
+	 */
+	getWardRules: async (): Promise<WardRule> => {
+		const response = await axiosInstance.get("/ward/rule");
+		return response.data;
+	},
+};
