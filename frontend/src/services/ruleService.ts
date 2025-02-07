@@ -33,18 +33,19 @@ export const ruleService = {
 	 * @returns 병동의 모든 근무 규칙
 	 */
 	getWardRules: () => {
-		return axiosInstance.get("/ward/rule")
-			.then(response => {
+		return axiosInstance
+			.get("/ward/rule")
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;

@@ -132,6 +132,32 @@ const Playgrounds: React.FC = () => {
 										</Button>
 									</div>
 								</div>
+
+								{/* Off Buttons */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Off Button
+									</h5>
+									<div className="flex flex-wrap gap-4">
+										<Button color="off">Active</Button>
+										<Button color="off" disabled>
+											Disabled
+										</Button>
+									</div>
+								</div>
+
+								{/* Muted Buttons */}
+								<div>
+									<h5 className="text-sm font-medium text-base-muted mb-2">
+										Muted Button
+									</h5>
+									<div className="flex flex-wrap gap-4">
+										<Button color="muted">Active</Button>
+										<Button color="muted" disabled>
+											Disabled
+										</Button>
+									</div>
+								</div>
 							</div>
 						</div>
 

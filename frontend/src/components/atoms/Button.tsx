@@ -1,6 +1,6 @@
 type ButtonSize = "sm" | "md" | "lg";
 type ButtonWidth = "short" | "long";
-type ButtonColor = "primary" | "evening" | "night" | "day";
+type ButtonColor = "primary" | "evening" | "night" | "day" | "off" | "muted";
 
 interface ButtonProps {
 	size?: ButtonSize;
@@ -15,13 +15,13 @@ interface ButtonProps {
 const sizeStyles: Record<ButtonSize, string> = {
 	sm: `h-[1.5625rem] sm:h-[2.5rem] 
       rounded-[9px] px-2 py-1 
-      text-[0.6875rem] sm:text-xs`, // 모바일: 11px, 데스크톱: 12px
+      text-[0.6875rem] sm:text-sm`, // 모바일: 11px, 데스크톱: 12px
 	md: `h-[1.5625rem] sm:h-[2.5rem] 
       rounded-[9px] px-2 py-1 
-      text-xs sm:text-sm`, // 모바일: 12px, 데스크톱: 14px
+      text-xs sm:text-base`, // 모바일: 12px, 데스크톱: 14px
 	lg: `h-[1.875rem] sm:h-[3rem] 
       rounded-[9px] px-2.5 py-1.5 
-      text-xs sm:text-sm`, // 모바일: 12px, 데스크톱: 14px
+      text-xs sm:text-lg`, // 모바일: 12px, 데스크톱: 14px
 };
 
 const widthStyles: Record<ButtonWidth, Record<ButtonSize, string>> = {
@@ -62,6 +62,16 @@ const colorStyles: Record<
 		active: "bg-duty-day-bg text-duty-day",
 		hover: "hover:bg-duty-day hover:text-white",
 		pressed: "active:bg-duty-day-dark active:text-white",
+	},
+	off: {
+		active: "bg-duty-off-bg text-duty-off",
+		hover: "hover:bg-duty-off hover:text-white",
+		pressed: "active:bg-duty-off-dark active:text-white",
+	},
+	muted: {
+		active: "bg-base-muted-30 text-base-muted",
+		hover: "hover:bg-base-muted hover:text-white",
+		pressed: "active:bg-base-foreground active:text-white",
 	},
 };
 

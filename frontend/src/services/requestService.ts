@@ -32,18 +32,19 @@ export const requestService = {
 	 * @returns 병동의 모든 근무 요청 내역
 	 */
 	getWardRequests: () => {
-		return axiosInstance.get("/ward/request")
-			.then(response => {
+		return axiosInstance
+			.get("/ward/request")
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
@@ -55,18 +56,19 @@ export const requestService = {
 	 * @returns 내가 신청한 근무 요청 내역
 	 */
 	getMyRequests: () => {
-		return axiosInstance.get("/request")
-			.then(response => {
+		return axiosInstance
+			.get("/request")
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
@@ -78,18 +80,19 @@ export const requestService = {
 	 * @param data - 요청할 근무 정보 (날짜, 근무 유형, 메모)
 	 */
 	createRequest: (data: CreateRequestDto) => {
-		return axiosInstance.post("/request", data)
-			.then(response => {
+		return axiosInstance
+			.post("/request", data)
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;

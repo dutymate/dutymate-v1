@@ -74,20 +74,21 @@ export const dutyService = {
 	 * @param date - 일
 	 */
 	getDayDuty: (year: number, month: number, date: number) => {
-		return axiosInstance.get("/duty/mobile/day-duty", {
-			params: { year, month, date },
-		})
-			.then(response => {
+		return axiosInstance
+			.get("/duty/mobile/day-duty", {
+				params: { year, month, date },
+			})
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
@@ -101,18 +102,19 @@ export const dutyService = {
 	 */
 	getMyDuty: (year?: number, month?: number) => {
 		const params = year && month ? { year, month } : {};
-		return axiosInstance.get("/duty/mobile/my-duty", { params })
-			.then(response => {
+		return axiosInstance
+			.get("/duty/mobile/my-duty", { params })
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
@@ -123,18 +125,19 @@ export const dutyService = {
 	 * 병동 근무표 조회
 	 */
 	getWardDuty: () => {
-		return axiosInstance.get("/duty/ward")
-			.then(response => {
+		return axiosInstance
+			.get("/duty/ward")
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
@@ -147,20 +150,21 @@ export const dutyService = {
 	 * @param month - 월
 	 */
 	autoCreateDuty: (year: number, month: number) => {
-		return axiosInstance.get("/duty/auto-create", {
-			params: { year, month },
-		})
-			.then(response => {
+		return axiosInstance
+			.get("/duty/auto-create", {
+				params: { year, month },
+			})
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
@@ -172,18 +176,19 @@ export const dutyService = {
 	 * @param data - 수정할 근무 정보
 	 */
 	updateDuty: (data: DutyUpdateRequest) => {
-		return axiosInstance.put("/duty", data)
-			.then(response => {
+		return axiosInstance
+			.put("/duty", data)
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
@@ -199,18 +204,19 @@ export const dutyService = {
 		month?: number;
 		history?: number;
 	}) => {
-		return axiosInstance.get("/duty", { params })
-			.then(response => {
+		return axiosInstance
+			.get("/duty", { params })
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;

@@ -39,18 +39,19 @@ export const wardService = {
 	 * @returns 병동 정보 및 소속 간호사 목록
 	 */
 	getWardInfo: () => {
-		return axiosInstance.get("/ward")
-			.then(response => {
+		return axiosInstance
+			.get("/ward")
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
@@ -63,18 +64,19 @@ export const wardService = {
 	 * @returns 생성된 병동 정보
 	 */
 	createWard: (data: CreateWardRequest) => {
-		return axiosInstance.post("/ward", data)
-			.then(response => {
+		return axiosInstance
+			.post("/ward", data)
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
@@ -87,20 +89,21 @@ export const wardService = {
 	 * @returns 병동 코드 유효성 여부
 	 */
 	checkWardCode: (code: string) => {
-		return axiosInstance.get(`/ward/check-code`, {
-			params: { code },
-		})
+		return axiosInstance
+			.get(`/ward/check-code`, {
+				params: { code },
+			})
 			.then(() => true)
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						case 404:
 							return false;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				return false;
@@ -113,18 +116,19 @@ export const wardService = {
 	 * @param data - 수정할 정보 (숙련도, 근무 유형, 메모, 권한)
 	 */
 	updateNurseInfo: (memberId: number, data: NurseUpdateRequest) => {
-		return axiosInstance.put(`/ward/member/${memberId}`, data)
-			.then(response => {
+		return axiosInstance
+			.put(`/ward/member/${memberId}`, data)
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
@@ -136,18 +140,19 @@ export const wardService = {
 	 * @param memberId - 내보낼 간호사 ID
 	 */
 	removeNurse: (memberId: number) => {
-		return axiosInstance.delete(`/ward/member/${memberId}`)
-			.then(response => {
+		return axiosInstance
+			.delete(`/ward/member/${memberId}`)
+			.then((response) => {
 				return response.data;
 			})
-			.catch(error => {
+			.catch((error) => {
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
-							window.location.href = '/login';
+							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = '/error';
+							window.location.href = "/error";
 					}
 				}
 				throw error;
