@@ -37,11 +37,32 @@ resource "aws_subnet" "private_subnets" {
   }
 }
 
+resource "aws_default_route_table" "route_table_default" {
+  default_route_table_id = aws_vpc.vpc.default_route_table_id
+
+  tags = {
+    Name = "dutymate-rtb-default"
+  }
+}
+
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "dutymate-internet-gateway"
+    Name = "dutymate-igw"
+  }
+}
+
+resource "aws_route_table" "route_table_public" {
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block = local.open_cidr
+    gateway_id = aws_internet_gateway.internet_gateway.id
+  }
+
+  tags = {
+    Name = "dutymate-rtb-public"
   }
 }
 
@@ -60,38 +81,52 @@ resource "aws_nat_gateway" "nat_gateway" {
   subnet_id     = aws_subnet.public_subnet.id
 
   tags = {
-    Name = "dutymate-nat-gateway"
+    Name = "dutymate-ngw"
   }
 }
 
-resource "aws_route_table" "public_route_table" {
+resource "aws_route_table" "route_table_private1" {
   vpc_id = aws_vpc.vpc.id
 
   route {
-    cidr_block = local.open_cidr
-    gateway_id = aws_internet_gateway.internet_gateway.id
+    cidr_block     = local.open_cidr
+    nat_gateway_id = aws_nat_gateway.nat_gateway.id
   }
 
   tags = {
-    Name = "dutymate-public-route-table"
+    Name = "dutymate-rtb-private1"
   }
 }
 
-resource "aws_route_table_association" "public_route_table_subnet_association" {
-  subnet_id      = aws_subnet.public_subnet.id
-  route_table_id = aws_route_table.public_route_table.id
+resource "aws_route_table" "route_table_private2" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name = "dutymate-rtb-private2"
+  }
 }
 
-resource "aws_route" "internet_access" {
-  route_table_id         = aws_route_table.public_route_table.id
-  destination_cidr_block = local.open_cidr
-  gateway_id             = aws_internet_gateway.internet_gateway.id
+resource "aws_route_table_association" "route_table_public_subnet_association" {
+  subnet_id      = aws_subnet.public_subnet.id
+  route_table_id = aws_route_table.route_table_public.id
+}
+
+resource "aws_route_table_association" "route_table_private_subnet1_association" {
+  subnet_id      = aws_subnet.private_subnets[0].id
+  route_table_id = aws_route_table.route_table_private1.id
+}
+
+resource "aws_route_table_association" "route_table_private_subnet2_association" {
+  subnet_id      = aws_subnet.private_subnets[1].id
+  route_table_id = aws_route_table.route_table_private2.id
+
 }
 
 resource "aws_vpc_endpoint" "vpce_s3" {
-  vpc_id       = aws_vpc.vpc.id
-  subnet_ids   = [aws_subnet.private_subnets[0].id]
-  service_name = "com.amazonaws.ap-northeast-2.s3"
+  vpc_id            = aws_vpc.vpc.id
+  vpc_endpoint_type = "Gateway"
+  service_name      = "com.amazonaws.ap-northeast-2.s3"
+  route_table_ids   = [aws_route_table.route_table_private1.id]
 
   tags = {
     Name = "dutymate-vpce-s3"
