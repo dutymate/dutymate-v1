@@ -3,145 +3,19 @@
 import { useState, useEffect } from "react";
 import { DutyBadgeKor } from "../atoms/DutyBadgeKor";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
-// 상수를 컴포넌트 외부로 이동
 const weekDays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] as const;
-type WeekDay = (typeof weekDays)[number];
 
-// 한글 요일 매핑
-const koreanWeekDays: Record<WeekDay, string> = {
-	SUN: "일요일",
-	MON: "월요일",
-	TUE: "화요일",
-	WED: "수요일",
-	THU: "목요일",
-	FRI: "금요일",
-	SAT: "토요일",
-};
-
-interface DayPanelProps {
-	date: Date | null;
-	duty: "day" | "evening" | "night" | "off";
-	isMobile: boolean;
-	onClose?: () => void;
-	onDateChange: (newDate: Date) => void;
+interface MyShiftCalendarProps {
+	onDateSelect: (date: Date, duty: "day" | "evening" | "night" | "off") => void;
+	selectedDate: Date | null;
 }
 
-const DayPanel = ({
-	date,
-	duty,
-	isMobile,
-	onClose,
-	onDateChange,
-}: DayPanelProps) => {
-	if (!date) return null;
-
-	const formatMonth = (month: number) => {
-		return month < 10 ? `0${month}` : month;
-	};
-
-	// 듀티별 간호사 데이터
-	const nurses = [
-		...Array(3).fill({ name: "김간호", year: "5년차", duty: "day" }),
-		...Array(2).fill({ name: "김간호", year: "5년차", duty: "evening" }),
-		...Array(2).fill({ name: "김간호", year: "5년차", duty: "night" }),
-		...Array(3).fill({ name: "김간호", year: "5년차", duty: "off" }),
-	];
-
-	const handlePrevDay = () => {
-		const newDate = new Date(date);
-		newDate.setDate(date.getDate() - 1);
-		onDateChange(newDate);
-	};
-
-	const handleNextDay = () => {
-		const newDate = new Date(date);
-		newDate.setDate(date.getDate() + 1);
-		onDateChange(newDate);
-	};
-
-	const panelContent = (
-		<div className="bg-white rounded-2xl p-6 w-[400px] shadow-sm">
-			{/* 날짜와 근무 타입 */}
-			<div className="text-center mb-4">
-				<div className="flex items-center justify-center gap-16 mb-2">
-					<button onClick={handlePrevDay}>
-						<IoChevronBack className="w-6 h-6 text-base-muted hover:text-gray-600" />
-					</button>
-					<h3 className="text-base-foreground text-lg font-medium">
-						{formatMonth(date.getMonth() + 1)}월 {date.getDate()}일{" "}
-						{koreanWeekDays[weekDays[date.getDay()]]}
-					</h3>
-					<button onClick={handleNextDay}>
-						<IoChevronForward className="w-6 h-6 text-base-muted hover:text-gray-600" />
-					</button>
-				</div>
-				<div className="inline-block">
-					<p className="text-base-foreground text-base mb-2">
-						오늘의 근무 일정은{" "}
-						<span className={`text-duty-${duty} font-medium`}>
-							{duty.toUpperCase()}
-						</span>{" "}
-						입니다!
-					</p>
-					<div className={`h-1 bg-duty-${duty}-bg w-full`} />
-				</div>
-			</div>
-
-			{/* 구분선 */}
-			<div className="border-t border-gray-900 mb-2" />
-
-			{/* 근무자 목록 */}
-			<div className="space-y-0.5">
-				{nurses.map((nurse, index) => (
-					<div
-						key={index}
-						className="flex items-center justify-between py-[2px]"
-					>
-						<div className="flex items-center gap-2 flex-1">
-							<span className="text-base-foreground w-16">{nurse.name}</span>
-							<span className="text-base-foreground text-center flex-1">
-								{nurse.year}
-							</span>
-						</div>
-						<DutyBadgeKor type={nurse.duty} size="xs" />
-					</div>
-				))}
-			</div>
-
-			{/* 하단 구분선 */}
-			<div className="border-t border-gray-900 mt-2" />
-
-			{/* 추가 컴포넌트를 위한 공간 */}
-			<div className="h-4" />
-		</div>
-	);
-
-	if (isMobile) {
-		return (
-			<div
-				className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50"
-				onClick={(e) => {
-					if (e.target === e.currentTarget && onClose) {
-						onClose();
-					}
-				}}
-			>
-				{panelContent}
-			</div>
-		);
-	}
-
-	return panelContent;
-};
-
-const MyShiftCalendar = () => {
+const MyShiftCalendar = ({
+	onDateSelect,
+	selectedDate: externalSelectedDate,
+}: MyShiftCalendarProps) => {
 	const [currentDate, setCurrentDate] = useState(new Date());
-	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-	const [selectedDuty, setSelectedDuty] = useState<
-		"day" | "evening" | "night" | "off"
-	>("day");
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024); // lg 브레이크포인트
 
 	// 화면 크기 변경 감지
@@ -166,10 +40,11 @@ const MyShiftCalendar = () => {
 		);
 	};
 
-	// 랜덤 듀티 생성 함수
-	const getRandomDuty = () => {
+	// 날짜별 고정 듀티 생성 (월별로 동일한 패턴 유지)
+	const getFixedDuty = (day: number) => {
 		const duties = ["day", "evening", "night", "off"] as const;
-		return duties[Math.floor(Math.random() * duties.length)];
+		// 날짜를 4로 나눈 나머지를 인덱스로 사용하여 고정된 듀티 반환
+		return duties[day % 4];
 	};
 
 	const firstDay = new Date(
@@ -202,15 +77,6 @@ const MyShiftCalendar = () => {
 		{ length: lastDay.getDate() },
 		(_, i) => i + 1,
 	);
-
-	const handleDateChange = (newDate: Date) => {
-		setSelectedDate(newDate);
-		setSelectedDuty(getRandomDuty());
-	};
-
-	const handleClosePanel = () => {
-		setSelectedDate(null);
-	};
 
 	return (
 		<div className={`${isMobile ? "" : "flex gap-8"}`}>
@@ -260,20 +126,19 @@ const MyShiftCalendar = () => {
 					{prevMonthDays.map((day) => (
 						<div
 							key={`prev-${day}`}
-							onClick={() =>
-								handleDateChange(
-									new Date(
-										currentDate.getFullYear(),
-										currentDate.getMonth() - 1,
-										day,
-									),
-								)
-							}
+							onClick={() => {
+								const newDate = new Date(
+									currentDate.getFullYear(),
+									currentDate.getMonth() - 1,
+									day,
+								);
+								onDateSelect(newDate, getFixedDuty(day));
+							}}
 							className={`min-h-[120px] p-3 relative bg-gray-50 cursor-pointer hover:bg-gray-100
 								${
-									selectedDate &&
-									selectedDate.getDate() === day &&
-									selectedDate.getMonth() === currentDate.getMonth() - 1
+									externalSelectedDate &&
+									externalSelectedDate.getDate() === day &&
+									externalSelectedDate.getMonth() === currentDate.getMonth() - 1
 										? "ring-2 ring-primary ring-inset"
 										: ""
 								}`}
@@ -282,7 +147,7 @@ const MyShiftCalendar = () => {
 								{day}
 							</span>
 							<div className="absolute bottom-0.5 right-0.5 scale-75">
-								<DutyBadgeKor type={getRandomDuty()} size="xs" />
+								<DutyBadgeKor type={getFixedDuty(day)} size="xs" />
 							</div>
 						</div>
 					))}
@@ -291,20 +156,19 @@ const MyShiftCalendar = () => {
 					{currentMonthDays.map((day) => (
 						<div
 							key={day}
-							onClick={() =>
-								handleDateChange(
-									new Date(
-										currentDate.getFullYear(),
-										currentDate.getMonth(),
-										day,
-									),
-								)
-							}
+							onClick={() => {
+								const newDate = new Date(
+									currentDate.getFullYear(),
+									currentDate.getMonth(),
+									day,
+								);
+								onDateSelect(newDate, getFixedDuty(day));
+							}}
 							className={`min-h-[120px] p-3 relative cursor-pointer hover:bg-gray-50
 								${
-									selectedDate &&
-									selectedDate.getDate() === day &&
-									selectedDate.getMonth() === currentDate.getMonth()
+									externalSelectedDate &&
+									externalSelectedDate.getDate() === day &&
+									externalSelectedDate.getMonth() === currentDate.getMonth()
 										? "ring-2 ring-primary ring-inset"
 										: ""
 								}`}
@@ -313,7 +177,7 @@ const MyShiftCalendar = () => {
 								{day}
 							</span>
 							<div className="absolute bottom-0.5 right-0.5 scale-75">
-								<DutyBadgeKor type={getRandomDuty()} size="xs" />
+								<DutyBadgeKor type={getFixedDuty(day)} size="xs" />
 							</div>
 						</div>
 					))}
@@ -322,20 +186,19 @@ const MyShiftCalendar = () => {
 					{nextMonthDays.map((day) => (
 						<div
 							key={`next-${day}`}
-							onClick={() =>
-								handleDateChange(
-									new Date(
-										currentDate.getFullYear(),
-										currentDate.getMonth() + 1,
-										day,
-									),
-								)
-							}
+							onClick={() => {
+								const newDate = new Date(
+									currentDate.getFullYear(),
+									currentDate.getMonth() + 1,
+									day,
+								);
+								onDateSelect(newDate, getFixedDuty(day));
+							}}
 							className={`min-h-[120px] p-3 relative bg-gray-50 cursor-pointer hover:bg-gray-100
 								${
-									selectedDate &&
-									selectedDate.getDate() === day &&
-									selectedDate.getMonth() === currentDate.getMonth() + 1
+									externalSelectedDate &&
+									externalSelectedDate.getDate() === day &&
+									externalSelectedDate.getMonth() === currentDate.getMonth() + 1
 										? "ring-2 ring-primary ring-inset"
 										: ""
 								}`}
@@ -344,22 +207,12 @@ const MyShiftCalendar = () => {
 								{day}
 							</span>
 							<div className="absolute bottom-1 right-1 scale-75">
-								<DutyBadgeKor type={getRandomDuty()} size="xs" />
+								<DutyBadgeKor type={getFixedDuty(day)} size="xs" />
 							</div>
 						</div>
 					))}
 				</div>
 			</div>
-
-			{selectedDate && (
-				<DayPanel
-					date={selectedDate}
-					duty={selectedDuty}
-					isMobile={isMobile}
-					onClose={handleClosePanel}
-					onDateChange={handleDateChange}
-				/>
-			)}
 		</div>
 	);
 };
