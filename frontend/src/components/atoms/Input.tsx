@@ -313,3 +313,28 @@ export const SearchInput = (props: Omit<InputProps, "type" | "label">) => {
 		</div>
 	);
 };
+
+export const SmallSearchInput = (props: Omit<InputProps, "type" | "label">) => {
+	const smallSearchInputClasses =
+		"block w-full rounded-full bg-white pl-8 pr-3 py-[0.4rem] text-sm text-gray-900 outline outline-[0.125rem] outline-gray-300/50 placeholder:text-gray-400 focus:outline-[0.125rem] focus:outline-primary/50";
+
+	return (
+		<div className="relative">
+			<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+				<HiMagnifyingGlass
+					className="size-4 text-gray-400"
+					aria-hidden="true"
+				/>
+			</div>
+			<input
+				id={props.id}
+				name={props.name}
+				type="search"
+				defaultValue={props.defaultValue}
+				placeholder={props.placeholder || "이름으로 검색하기"}
+				disabled={props.disabled}
+				className={smallSearchInputClasses}
+			/>
+		</div>
+	);
+};

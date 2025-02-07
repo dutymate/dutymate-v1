@@ -12,6 +12,10 @@ import EnterWard from "../pages/EnterWard";
 import ExtraInfo from "../pages/ExtraInfo";
 import MobilePractice from "../pages/MobilePractice";
 import NewPlaygrounds from "../pages/newplaygrounds";
+import Community from "../pages/Community";
+import WardDuty from "../pages/WardDuty";
+import RequestManagement from "../pages/RequestManagement";
+import DutyManagement from "../pages/DutyManagement";
 
 const Router = () => {
 	return (
@@ -29,6 +33,10 @@ const Router = () => {
 			<Route path="/playgrounds" element={<Playgrounds />} />
 			<Route path="/mobile" element={<MobilePractice />} />
 			<Route path="/newplaygrounds" element={<NewPlaygrounds />} />
+			<Route path="/community" element={<Community />} />
+			<Route path="/ward-duty" element={<WardDuty />} />
+			<Route path="/request-management" element={<RequestManagement />} />
+			<Route path="/duty-management" element={<DutyManagement />} />
 		</Routes>
 	);
 };

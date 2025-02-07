@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SearchInput } from "../atoms/Input";
+import { SmallSearchInput } from "../atoms/Input";
 import { SortButton, FilterButton } from "../atoms/SubButton";
 import { Icon } from "../atoms/Icon";
 import { FaUserCircle } from "react-icons/fa";
@@ -18,10 +18,6 @@ const WardAdminForm = () => {
 			.fill(null)
 			.map(() => new Set()),
 	);
-	const [hoveredDuty, setHoveredDuty] = useState<{
-		index: number;
-		duty: string;
-	} | null>(null);
 
 	const skillOptions = [
 		{ icon: "high" as const, label: "상급" },
@@ -39,19 +35,19 @@ const WardAdminForm = () => {
 		setOpenSkillDropdown(null);
 	};
 
-	const handleDutyClick = (index: number, duty: "D" | "E" | "N" | "O") => {
+	const handleDutyClick = (index: number, duty: "D" | "E" | "N" | "All") => {
 		const newSelectedDuties = [...selectedDuties];
-		const nurseDuties = new Set(newSelectedDuties[index]);
+		const nurseDuties = new Set<string>();
 
 		if (nurseDuties.has(duty)) {
 			nurseDuties.delete(duty);
 		} else {
+			nurseDuties.clear();
 			nurseDuties.add(duty);
 		}
 
 		newSelectedDuties[index] = nurseDuties;
 		setSelectedDuties(newSelectedDuties);
-		setHoveredDuty(null);
 	};
 
 	return (
@@ -115,7 +111,7 @@ const WardAdminForm = () => {
 					<div className="flex justify-between items-center">
 						<h2 className="text-lg font-semibold">간호사 관리</h2>
 						<div className="flex items-center gap-2">
-							<SearchInput
+							<SmallSearchInput
 								id="search-nurse"
 								name="searchNurse"
 								placeholder="이름으로 검색하기"
@@ -199,7 +195,7 @@ const WardAdminForm = () => {
 													{nurseSkills[index]
 														? nurseSkills[index]?.label
 														: "숙련도"}{" "}
-													▼
+													<span className="text-xs relative -top-[1px]">▼</span>
 												</span>
 											</div>
 
@@ -226,7 +222,7 @@ const WardAdminForm = () => {
 
 										{/* 듀티 뱃지 그룹 */}
 										<div className="flex gap-2 min-w-[120px]">
-											{(["D", "E", "N", "O"] as const).map((duty) => (
+											{(["D", "E", "N", "All"] as const).map((duty) => (
 												<DutyBadgeEng
 													key={duty}
 													type={duty}
