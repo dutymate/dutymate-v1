@@ -7,7 +7,7 @@ const WardDuty = () => {
 			<div className="w-[238px] shrink-0">
 				<Sidebar userType="head" />
 			</div>
-			<div className="flex-1 min-w-0 px-8 py-6">
+			<div className="flex-1 min-w-0 px-8 py-6 overflow-y-auto">
 				<div className="mb-3">
 					<Title
 						title="병동 듀티표"

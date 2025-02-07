@@ -62,15 +62,15 @@ const TeamShiftTable = () => {
 
 	return (
 		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6">
-			<div className="flex items-center justify-between mb-4">
-				<div className="w-[180px]">{/* 왼쪽 여백 공간 */}</div>
-				<div className="flex items-center gap-14">
+			<div className="flex flex-col sm:flex-row items-center justify-between mb-4">
+				<div className="w-[180px] hidden sm:block">{/* 왼쪽 여백 공간 */}</div>
+				<div className="flex items-center gap-4 sm:gap-14 mb-4 sm:mb-0">
 					<Icon
 						name="left"
 						size={24}
 						className="cursor-pointer text-gray-300 hover:text-gray-400"
 					/>
-					<div className="text-lg font-medium">
+					<div className="text-[0.9rem] lg:text-lg font-medium whitespace-nowrap">
 						{dutyData.year}년 {dutyData.month}월
 					</div>
 					<Icon
@@ -79,7 +79,7 @@ const TeamShiftTable = () => {
 						className="cursor-pointer text-gray-300 hover:text-gray-400"
 					/>
 				</div>
-				<div className="flex gap-2 w-[180px] justify-end shrink-0">
+				<div className="flex gap-2 w-full sm:w-[180px] justify-center sm:justify-end shrink-0">
 					<Button
 						text-size="lg"
 						size="sm"
@@ -100,12 +100,12 @@ const TeamShiftTable = () => {
 					</Button>
 				</div>
 			</div>
-			<div className="overflow-x-auto relative">
-				<table className="min-w-full">
+			<div className="overflow-x-auto relative max-w-full md:max-w-none -mx-6 md:mx-0 px-6 md:px-0">
+				<table className="min-w-full w-[800px] md:w-full border-separate border-spacing-0">
 					<thead>
 						<tr className="bg-gray-50">
-							<th className="px-4 py-2 min-w-[80px] sticky left-0 bg-gray-50 z-10">
-								<span className="text-gray-50">이름</span>
+							<th className="px-4 py-2 min-w-[80px] sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white">
+								<span className="text-gray-50"></span>
 							</th>
 							{days.map((day) => (
 								<th
@@ -125,11 +125,11 @@ const TeamShiftTable = () => {
 						{dutyData.duty.map((member) => (
 							<tr key={member.memberId} className="border-b border-gray-100">
 								<td
-									className={`pl-2 pr-2 py-2 font-medium sticky left-0 bg-white z-10 text-center ${
+									className={`pl-2 pr-2 py-2 font-medium sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white text-center ${
 										member.name.length > 3 ? "text-xs" : "text-sm"
 									}`}
 								>
-									<div className="bg-gray-50 rounded-lg px-2 py-0.5">
+									<div className="bg-gray-50 rounded-lg px-2 py-0.5 relative">
 										{member.name}
 									</div>
 								</td>

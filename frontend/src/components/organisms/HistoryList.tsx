@@ -21,17 +21,17 @@ const HistoryList = () => {
 			<div className="space-y-3">
 				{historyData.map((item) => (
 					<div key={item.id} className="flex items-center justify-between">
-						<div className="flex items-center gap-3">
-							<div className="w-2 h-2 rounded-full bg-primary"></div>
-							<span className="text-gray-900">
+						<div className="flex items-center gap-3 min-w-0 flex-1">
+							<div className="w-2 h-2 rounded-full bg-primary flex-shrink-0"></div>
+							<span className="text-gray-900 truncate">
 								[ {item.name} ] {item.date}
 							</span>
-							<span className="font-semibold text-primary-dark">
+							<span className="font-semibold text-primary-dark whitespace-nowrap">
 								{item.change}
 							</span>
 						</div>
-						<div className="flex items-center gap-1 text-gray-400 hover:text-gray-600">
-							<span className="text-sm">되돌리기</span>
+						<div className="flex items-center gap-1 text-gray-400 hover:text-gray-600 flex-shrink-0 ml-2">
+							<span className="text-sm whitespace-nowrap">되돌리기</span>
 							<Icon name="undo" size={16} />
 						</div>
 					</div>

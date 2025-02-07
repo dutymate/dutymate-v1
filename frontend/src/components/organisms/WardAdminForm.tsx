@@ -54,7 +54,7 @@ const WardAdminForm = () => {
 		<div className="w-full">
 			<div className="bg-white rounded-[1.154375rem] p-4">
 				{/* 상단 정보 영역 */}
-				<div className="grid grid-cols-4 gap-3 mb-3">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
 					{/* 병동 정보 */}
 					<div className="bg-white rounded-xl p-2.5 col-span-1 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
 						<h3 className="text-[0.95rem] text-gray-600 mb-1 font-medium">
@@ -108,23 +108,27 @@ const WardAdminForm = () => {
 
 				{/* 검색 및 필터 영역 */}
 				<div className="mb-3">
-					<div className="flex justify-between items-center">
+					<div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 lg:gap-0">
 						<h2 className="text-lg font-semibold">간호사 관리</h2>
-						<div className="flex items-center gap-2">
-							<SmallSearchInput
-								id="search-nurse"
-								name="searchNurse"
-								placeholder="이름으로 검색하기"
-							/>
-							<SortButton label="정렬" onClick={() => {}} />
-							<FilterButton label="필터" onClick={() => {}} />
+						<div className="flex items-center gap-2 w-full lg:w-auto">
+							<div className="flex-1 lg:flex-initial">
+								<SmallSearchInput
+									id="search-nurse"
+									name="searchNurse"
+									placeholder="이름으로 검색하기"
+								/>
+							</div>
+							<div className="flex gap-2 flex-shrink-0">
+								<SortButton label="정렬" onClick={() => {}} />
+								<FilterButton label="필터" onClick={() => {}} />
+							</div>
 						</div>
 					</div>
 				</div>
 
-				{/* 간호사 목록 테이블 - 스크롤 추가 */}
-				<div className="max-h-[calc(100vh-320px)] overflow-y-auto pr-2 custom-scrollbar">
-					<div className="flex flex-col gap-2">
+				{/* 간호사 목록 테이블 */}
+				<div className="overflow-x-auto">
+					<div className="flex flex-col gap-2 min-w-[900px]">
 						{Array(8)
 							.fill(0)
 							.map((_, index) => (
@@ -132,10 +136,9 @@ const WardAdminForm = () => {
 									key={index}
 									className="flex items-center p-2.5 bg-white rounded-[0.578125rem] border border-gray-200"
 								>
-									{/* 체크박스 */}
 									<input
 										type="checkbox"
-										className="mr-3"
+										className="mr-3 flex-shrink-0"
 										onChange={(e) => {
 											if (e.target.checked) {
 												setSelectedNurses([
@@ -152,34 +155,31 @@ const WardAdminForm = () => {
 										}}
 									/>
 
-									<div className="flex items-center justify-between flex-1">
-										{/* 프로필 영역 */}
-										<div className="flex items-center gap-2 min-w-[140px]">
-											<FaUserCircle className="w-6 h-6 text-gray-500" />
-											<span className="font-medium">채성아 간호사</span>
+									<div className="flex items-center justify-between flex-1 min-w-0">
+										<div className="flex items-center gap-2 min-w-[140px] flex-shrink-0">
+											<FaUserCircle className="w-6 h-6 text-gray-500 flex-shrink-0" />
+											<span className="font-medium truncate">
+												채성아 간호사
+											</span>
 										</div>
 
-										{/* 근무자 뱃지 */}
-										<span className="bg-gray-100 px-2 py-0.5 rounded text-sm min-w-[50px] text-center">
+										<span className="bg-gray-100 px-2 py-0.5 rounded text-sm min-w-[50px] text-center flex-shrink-0">
 											근무자
 										</span>
 
-										{/* 성별 정보 */}
-										<div className="flex items-center gap-1 min-w-[60px]">
+										<div className="flex items-center gap-1 min-w-[60px] flex-shrink-0">
 											<Icon name="female" size={16} className="text-gray-500" />
 											<span>여자</span>
 										</div>
 
-										{/* 경력 정보 */}
-										<div className="flex items-center gap-1 min-w-[70px]">
+										<div className="flex items-center gap-1 min-w-[70px] flex-shrink-0">
 											<Icon name="idCard" size={16} className="text-gray-500" />
 											<span>10년차</span>
 										</div>
 
-										{/* 숙련도 정보 */}
-										<div className="relative">
+										<div className="relative flex-shrink-0">
 											<div
-												className="flex items-center gap-1 min-w-[80px] cursor-pointer"
+												className="flex items-center gap-1 min-w-[80px] cursor-pointer flex-shrink-0"
 												onClick={() =>
 													setOpenSkillDropdown(
 														openSkillDropdown === index ? null : index,
@@ -220,8 +220,7 @@ const WardAdminForm = () => {
 											)}
 										</div>
 
-										{/* 듀티 뱃지 그룹 */}
-										<div className="flex gap-2 min-w-[120px]">
+										<div className="flex gap-2 min-w-[120px] flex-shrink-0">
 											{(["D", "E", "N", "All"] as const).map((duty) => (
 												<DutyBadgeEng
 													key={duty}
@@ -238,14 +237,12 @@ const WardAdminForm = () => {
 											))}
 										</div>
 
-										{/* 메모 입력창 */}
 										<input
 											type="text"
 											placeholder="메모를 남겨주세요"
 											className="w-[180px] rounded px-3 py-1 text-sm -ml-4 placeholder:text-gray-300 text-gray-500"
 										/>
 
-										{/* 편집 아이콘과 dots */}
 										<div className="flex items-center gap-2">
 											<Icon name="edit" size={18} className="cursor-pointer" />
 											<Icon name="dots" size={18} className="cursor-pointer" />

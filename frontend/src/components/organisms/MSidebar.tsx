@@ -2,9 +2,7 @@
 
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { SlCalender } from "react-icons/sl";
 import { FaHospital } from "react-icons/fa";
-import { AiFillSchedule } from "react-icons/ai";
 import { BiSolidUserPin } from "react-icons/bi";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { IoIosChatboxes } from "react-icons/io";
@@ -21,9 +19,9 @@ interface NavigationItem {
 
 // 수간호사용 네비게이션
 const headNurseNavigation: NavigationItem[] = [
-	{ name: "듀티표 관리", href: "/duty-management", icon: SlCalender },
+	{ name: "듀티표 관리", href: "/shift-admin", icon: BiSolidUserPin },
 	{ name: "병동 관리", href: "/ward-admin", icon: FaHospital },
-	{ name: "요청 근무 관리", href: "/request-management", icon: AiFillSchedule },
+	{ name: "요청 근무 관리", href: "/req-admin", icon: HiOutlineUsers },
 	{ name: "나의 듀티표", href: "/my-shift", icon: BiSolidUserPin },
 	{ name: "병동 듀티표", href: "/team-shift", icon: HiOutlineUsers },
 	{ name: "커뮤니티", href: "/community", icon: IoIosChatboxes },
@@ -45,7 +43,8 @@ const NavigationItem = React.memo(
 				to={item.href}
 				className={`
 					flex items-center gap-x-3 px-4 py-2.5 w-full rounded-lg
-					font-['Pretendard Variable'] text-[0.9rem] group
+					text-[0.85rem] lg:text-[0.9rem] group
+					font-['Pretendard Variable']
 					${
 						isActive
 							? "text-primary-dark bg-primary-10"
@@ -67,41 +66,71 @@ const NavigationItem = React.memo(
 );
 
 interface SidebarProps {
-	userType: "head" | "staff";
+	userType: "head" | "nurse";
+	isOpen: boolean;
 	onClose: () => void;
 }
 
-const Sidebar = ({ userType, onClose }: SidebarProps) => {
+const Sidebar = ({ userType, isOpen, onClose }: SidebarProps) => {
 	const location = useLocation();
 	const navigation =
 		userType === "head" ? headNurseNavigation : staffNurseNavigation;
 
 	return (
-		<div className="fixed inset-y-0 left-0 z-40 flex flex-col bg-white w-[238px] border-r border-gray-200 rounded-tr-[18.47px] rounded-br-[18.47px] shadow-[0_4.62px_18.47px_rgba(0,0,0,0.05)]">
-			{/* Logo와 닫기 버튼 */}
-			<div className="flex items-center justify-between px-[1.875rem] pt-7">
-				<div className="w-[140px]">
-					<img alt="듀티메이트" src="/src/assets/logo.svg" className="w-full" />
-				</div>
-				<button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-					<IoCloseOutline className="w-6 h-6" />
-				</button>
-			</div>
+		<>
+			{/* Backdrop */}
+			{isOpen && (
+				<div
+					className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+					onClick={onClose}
+				/>
+			)}
 
-			{/* Navigation */}
-			<nav className="flex-1 py-4 mt-4">
-				<div className="flex flex-col space-y-[0.325rem] mb-5">
-					{navigation.map((item, index) => (
-						<NavigationItem
-							key={index}
-							item={item}
-							isActive={location.pathname === item.href}
+			{/* Sidebar */}
+			<div
+				className={`
+					fixed inset-y-0 left-0 z-40 
+					flex flex-col bg-white w-[238px] 
+					border-r border-gray-200 
+					rounded-tr-[18.47px] rounded-br-[18.47px] 
+					shadow-[0_4.62px_18.47px_rgba(0,0,0,0.05)]
+					transform transition-transform duration-300 ease-in-out
+					${isOpen ? "translate-x-0" : "-translate-x-full"}
+					lg:hidden
+				`}
+			>
+				{/* Logo와 닫기 버튼 */}
+				<div className="flex items-center justify-between px-[1.875rem] pt-7">
+					<div className="w-[140px]">
+						<img
+							alt="듀티메이트"
+							src="/src/assets/logo.svg"
+							className="w-full"
 						/>
-					))}
+					</div>
+					<button
+						onClick={onClose}
+						className="text-gray-500 hover:text-gray-700"
+					>
+						<IoCloseOutline className="w-6 h-6" />
+					</button>
 				</div>
-			</nav>
-			<Profile />
-		</div>
+
+				{/* Navigation */}
+				<nav className="flex-1 py-4 mt-4">
+					<div className="flex flex-col space-y-[0.325rem] mb-5">
+						{navigation.map((item, index) => (
+							<NavigationItem
+								key={index}
+								item={item}
+								isActive={location.pathname === item.href}
+							/>
+						))}
+					</div>
+				</nav>
+				<Profile />
+			</div>
+		</>
 	);
 };
 

@@ -1,8 +1,10 @@
 import Sidebar from "../components/organisms/WSidebar";
+import MSidebar from "../components/organisms/MSidebar";
 import Title from "../components/atoms/Title";
 import MyShiftCalendar from "../components/organisms/MyShiftCalendar";
 import TodayShiftModal from "../components/organisms/TodayShiftModal";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { IoMdMenu } from "react-icons/io";
 
 const getFixedDuty = (day: number) => {
 	const duties = ["day", "evening", "night", "off"] as const;
@@ -14,15 +16,7 @@ const MyShift = () => {
 	const [selectedDuty, setSelectedDuty] = useState<
 		"day" | "evening" | "night" | "off"
 	>("day");
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMobile(window.innerWidth < 1024);
-		};
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 	const handleDateSelect = (
 		date: Date,
@@ -34,20 +28,32 @@ const MyShift = () => {
 
 	return (
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
-			{/* Sidebar 영역 - userType prop 전달 */}
-			<div className="w-[238px] shrink-0">
-				<Sidebar userType="head" /> {/* 또는 userType="staff" */}
+			{/* 데스크톱 Sidebar */}
+			<div className="hidden lg:block w-[238px] shrink-0">
+				<Sidebar userType="head" />
 			</div>
 
+			{/* 모바일 Sidebar */}
+			<MSidebar
+				userType="head"
+				isOpen={isSidebarOpen}
+				onClose={() => setIsSidebarOpen(false)}
+			/>
+
 			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 px-8 py-6">
+			<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 overflow-y-auto">
+				{/* 모바일 메뉴 버튼 */}
+				<button
+					onClick={() => setIsSidebarOpen(true)}
+					className="lg:hidden mb-4 p-2 hover:bg-gray-100 rounded-lg"
+				>
+					<IoMdMenu className="w-6 h-6 text-gray-600" />
+				</button>
+
 				<div className="mb-3">
-					<Title
-						title="나의 근무표 보기"
-						subtitle="나의 근무 일정을 확인해보세요"
-					/>
+					<Title title="나의 근무표" subtitle="나의 근무 일정을 확인해보세요" />
 				</div>
-				<div className={`${isMobile ? "" : "flex gap-8"}`}>
+				<div className="block lg:flex lg:gap-8">
 					<MyShiftCalendar
 						onDateSelect={handleDateSelect}
 						selectedDate={selectedDate}
@@ -56,7 +62,7 @@ const MyShift = () => {
 						<TodayShiftModal
 							date={selectedDate}
 							duty={selectedDuty}
-							isMobile={isMobile}
+							isMobile={window.innerWidth < 1024}
 							onClose={() => setSelectedDate(null)}
 							onDateChange={(newDate) => {
 								setSelectedDate(newDate);

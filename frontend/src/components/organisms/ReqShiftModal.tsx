@@ -151,14 +151,14 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 							color="primary"
 							onClick={handleSubmit}
 							disabled={!selectedDate || !selectedDuty}
-							className="whitespace-nowrap px-3"
+							className="min-w-[100px] min-h-[40px]"
 						>
 							요청하기
 						</Button>
 						<Button
 							color="off"
 							onClick={onClose}
-							className="border border-gray-900 bg-white text-gray-900"
+							className="border border-gray-900 bg-white text-gray-900 min-w-[100px] min-h-[40px]"
 						>
 							닫기
 						</Button>
@@ -188,7 +188,7 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 						<Button
 							color="off"
 							onClick={onClose}
-							className="border border-gray-900 bg-white text-gray-900"
+							className="border border-gray-900 bg-white text-gray-900 min-w-[100px] min-h-[40px]"
 						>
 							닫기
 						</Button>

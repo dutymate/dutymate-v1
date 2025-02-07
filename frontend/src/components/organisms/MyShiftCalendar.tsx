@@ -134,19 +134,23 @@ const MyShiftCalendar = ({
 								);
 								onDateSelect(newDate, getFixedDuty(day));
 							}}
-							className={`min-h-[120px] p-3 relative bg-gray-50 cursor-pointer hover:bg-gray-100
+							className={`
+								min-h-[80px] lg:min-h-[120px] 
+								p-2 lg:p-3 
+								relative bg-gray-50 cursor-pointer hover:bg-gray-100
 								${
 									externalSelectedDate &&
 									externalSelectedDate.getDate() === day &&
 									externalSelectedDate.getMonth() === currentDate.getMonth() - 1
 										? "ring-2 ring-primary ring-inset"
 										: ""
-								}`}
+								}
+							`}
 						>
-							<span className="text-base-muted text-sm absolute top-2 left-2">
+							<span className="text-base-muted text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
 								{day}
 							</span>
-							<div className="absolute bottom-0.5 right-0.5 scale-75">
+							<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
 								<DutyBadgeKor type={getFixedDuty(day)} size="xs" />
 							</div>
 						</div>
@@ -164,19 +168,23 @@ const MyShiftCalendar = ({
 								);
 								onDateSelect(newDate, getFixedDuty(day));
 							}}
-							className={`min-h-[120px] p-3 relative cursor-pointer hover:bg-gray-50
+							className={`
+								min-h-[80px] lg:min-h-[120px] 
+								p-2 lg:p-3 
+								relative cursor-pointer hover:bg-gray-50
 								${
 									externalSelectedDate &&
 									externalSelectedDate.getDate() === day &&
 									externalSelectedDate.getMonth() === currentDate.getMonth()
 										? "ring-2 ring-primary ring-inset"
 										: ""
-								}`}
+								}
+							`}
 						>
-							<span className="text-base-foreground text-sm absolute top-2 left-2">
+							<span className="text-base-foreground text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
 								{day}
 							</span>
-							<div className="absolute bottom-0.5 right-0.5 scale-75">
+							<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
 								<DutyBadgeKor type={getFixedDuty(day)} size="xs" />
 							</div>
 						</div>
@@ -194,19 +202,23 @@ const MyShiftCalendar = ({
 								);
 								onDateSelect(newDate, getFixedDuty(day));
 							}}
-							className={`min-h-[120px] p-3 relative bg-gray-50 cursor-pointer hover:bg-gray-100
+							className={`
+								min-h-[80px] lg:min-h-[120px] 
+								p-2 lg:p-3 
+								relative bg-gray-50 cursor-pointer hover:bg-gray-100
 								${
 									externalSelectedDate &&
 									externalSelectedDate.getDate() === day &&
 									externalSelectedDate.getMonth() === currentDate.getMonth() + 1
 										? "ring-2 ring-primary ring-inset"
 										: ""
-								}`}
+								}
+							`}
 						>
-							<span className="text-base-muted text-sm absolute top-2 left-2">
+							<span className="text-base-muted text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
 								{day}
 							</span>
-							<div className="absolute bottom-1 right-1 scale-75">
+							<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
 								<DutyBadgeKor type={getFixedDuty(day)} size="xs" />
 							</div>
 						</div>
