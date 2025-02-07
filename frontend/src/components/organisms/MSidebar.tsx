@@ -25,7 +25,7 @@ const headNurseNavigation: NavigationItem[] = [
 	{ name: "병동 관리", href: "/ward-admin", icon: FaHospital },
 	{ name: "요청 근무 관리", href: "/request-management", icon: AiFillSchedule },
 	{ name: "나의 듀티표", href: "/my-shift", icon: BiSolidUserPin },
-	{ name: "병동 듀티표", href: "/ward-duty", icon: HiOutlineUsers },
+	{ name: "병동 듀티표", href: "/team-shift", icon: HiOutlineUsers },
 	{ name: "커뮤니티", href: "/community", icon: IoIosChatboxes },
 	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
 ];
@@ -33,7 +33,7 @@ const headNurseNavigation: NavigationItem[] = [
 // 평간호사용 네비게이션
 const staffNurseNavigation: NavigationItem[] = [
 	{ name: "나의 듀티표", href: "/my-shift", icon: BiSolidUserPin },
-	{ name: "병동 듀티표", href: "/ward-duty", icon: HiOutlineUsers },
+	{ name: "병동 듀티표", href: "/team-shift", icon: HiOutlineUsers },
 	{ name: "커뮤니티", href: "/community", icon: IoIosChatboxes },
 	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
 ];

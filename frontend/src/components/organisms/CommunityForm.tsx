@@ -1,13 +1,11 @@
-// ReqAdminTable.tsx
-
-const ReqAdminTable = () => {
+const CommunityForm = () => {
 	return (
 		<div className="bg-white rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.1)] h-[400px]">
 			<div className="flex justify-center items-center">
-				<h2 className="text-lg font-semibold">요청 근무 테이블</h2>
+				<h2 className="text-lg font-semibold">커뮤니티 오가니즘</h2>
 			</div>
 		</div>
 	);
 };
 
-export default ReqAdminTable;
+export default CommunityForm;

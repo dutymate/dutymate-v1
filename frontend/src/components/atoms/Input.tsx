@@ -11,6 +11,7 @@ export interface InputProps {
 	disabled?: boolean;
 	optional?: boolean;
 	defaultValue?: string;
+	value?: string;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -25,6 +26,7 @@ export const Input = ({
 	disabled,
 	optional,
 	defaultValue,
+	value,
 	onChange,
 }: InputProps) => {
 	const inputClasses = error
@@ -55,6 +57,7 @@ export const Input = ({
 					name={name}
 					type={type}
 					defaultValue={defaultValue}
+					value={value}
 					placeholder={placeholder}
 					disabled={disabled}
 					onChange={onChange}
@@ -211,6 +214,9 @@ interface TextAreaProps {
 	optional?: boolean;
 	defaultValue?: string;
 	rows?: number;
+	value?: string;
+	onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+	className?: string;
 }
 
 export const TextArea = ({
@@ -224,6 +230,9 @@ export const TextArea = ({
 	optional,
 	defaultValue,
 	rows = 4,
+	value,
+	onChange,
+	className,
 }: TextAreaProps) => {
 	const textAreaClasses = error
 		? "block w-full rounded-md bg-white py-1.5 text-base text-red-900 outline outline-[0.125rem] outline-red-300/50 placeholder:text-red-300 focus:outline-[0.125rem] focus:outline-red-600/50 sm:text-sm/6"
@@ -250,8 +259,10 @@ export const TextArea = ({
 					name={name}
 					rows={rows}
 					defaultValue={defaultValue}
+					value={value}
 					placeholder={placeholder}
 					disabled={disabled}
+					onChange={onChange}
 					aria-invalid={error ? "true" : undefined}
 					aria-describedby={
 						error
@@ -262,7 +273,7 @@ export const TextArea = ({
 									? `${id}-optional`
 									: undefined
 					}
-					className={textAreaClasses}
+					className={`${textAreaClasses} ${className || ""}`}
 				/>
 			</div>
 			{helpText && !error && (

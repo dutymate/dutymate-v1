@@ -10,6 +10,7 @@ interface ButtonProps {
 	onClick?: () => void;
 	fullWidth?: boolean;
 	disabled?: boolean;
+	className?: string;
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -83,6 +84,7 @@ export function Button({
 	onClick,
 	fullWidth,
 	disabled,
+	className,
 }: ButtonProps) {
 	return (
 		<button
@@ -104,6 +106,7 @@ export function Button({
         focus-visible:outline-indigo-600
         flex items-center justify-center
         transition-colors
+        ${className || ""}
       `}
 		>
 			{children}

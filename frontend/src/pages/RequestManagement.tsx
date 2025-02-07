@@ -1,5 +1,6 @@
 import Sidebar from "../components/organisms/WSidebar";
 import Title from "../components/atoms/Title";
+import ReqAdminTable from "../components/organisms/ReqAdminTable";
 
 const RequestManagement = () => {
 	return (
@@ -13,6 +14,9 @@ const RequestManagement = () => {
 						title="요청 근무 관리"
 						subtitle="간호사들의 근무 요청을 관리해보세요"
 					/>
+				</div>
+				<div className="mt-6">
+					<ReqAdminTable />
 				</div>
 			</div>
 		</div>

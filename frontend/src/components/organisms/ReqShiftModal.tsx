@@ -1,1 +1,202 @@
 // ReqShiftModal.tsx
+
+import { useState } from "react";
+import { Button } from "../atoms/Button";
+import { DateInput, TextArea } from "../atoms/Input";
+import DutyBadgeEng from "../atoms/DutyBadgeEng";
+import { ToggleButton } from "../atoms/ToggleButton";
+
+interface ReqShiftModalProps {
+	onClose: () => void;
+}
+
+interface Request {
+	date: string;
+	duty: "D" | "E" | "N" | "O";
+	status: string;
+	memo: string;
+}
+
+// 임시 요청 내역 데이터
+const requestHistory = [
+	{
+		date: "2025-01-26",
+		duty: "E" as const,
+		status: "승인",
+		memo: "한종우 간호사님과 듀티 상호 변경합니다.",
+	},
+	{
+		date: "2025-01-27",
+		duty: "O" as const,
+		status: "승인 대기중",
+		memo: "OFF 신청합니다.",
+	},
+	{
+		date: "2025-01-28",
+		duty: "O" as const,
+		status: "거절",
+		memo: "OFF 신청합니다.",
+	},
+];
+
+const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
+	const [selectedDate, setSelectedDate] = useState("");
+	const [selectedDuty, setSelectedDuty] = useState<
+		"D" | "E" | "N" | "O" | null
+	>(null);
+	const [memo, setMemo] = useState("");
+	const [activeTab, setActiveTab] = useState(0);
+	const [requests, setRequests] = useState<Request[]>(requestHistory);
+
+	const handleSubmit = () => {
+		// 새로운 요청 추가
+		const newRequest = {
+			date: selectedDate,
+			duty: selectedDuty!,
+			status: "승인 대기중",
+			memo: memo,
+		};
+
+		// 최신 요청이 위에 표시되도록 배열 앞에 추가
+		setRequests([newRequest, ...requests]);
+
+		// 입력 필드 초기화
+		setSelectedDate("");
+		setSelectedDuty(null);
+		setMemo("");
+
+		// 요청 내역 탭으로 전환
+		setActiveTab(1);
+	};
+
+	const getStatusColor = (status: string) => {
+		switch (status) {
+			case "승인":
+				return "text-duty-day font-bold";
+			case "승인 대기중":
+				return "text-duty-night font-bold";
+			case "거절":
+				return "text-duty-evening font-bold";
+			default:
+				return "text-gray-700";
+		}
+	};
+
+	return (
+		<div className="bg-white rounded-xl p-6 w-[400px]">
+			<div className="flex justify-between items-center mb-6">
+				<ToggleButton
+					options={[{ text: "근무 요청하기" }, { text: "요청 내역 확인하기" }]}
+					selectedIndex={activeTab}
+					variant="request"
+					onChange={setActiveTab}
+				/>
+			</div>
+
+			{activeTab === 0 ? (
+				<div className="space-y-4">
+					{/* 근무 날짜 */}
+					<div>
+						<div className="flex items-center gap-2 mb-1">
+							<label className="text-sm font-medium text-gray-700">
+								근무 날짜
+							</label>
+							<span className="text-xs text-gray-400">
+								요청 보낸 날짜를 선택해주세요.
+							</span>
+						</div>
+						<DateInput
+							id="req-date"
+							name="reqDate"
+							label=""
+							value={selectedDate}
+							onChange={(e) => setSelectedDate(e.target.value)}
+						/>
+					</div>
+
+					{/* 근무 유형 */}
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">
+							근무 유형
+						</label>
+						<div className="flex gap-2">
+							{(["D", "E", "N", "O"] as const).map((duty) => (
+								<DutyBadgeEng
+									key={duty}
+									type={duty}
+									variant={selectedDuty === duty ? "filled" : "outline"}
+									size="md"
+									onClick={() => setSelectedDuty(duty)}
+								/>
+							))}
+						</div>
+					</div>
+
+					{/* 메모 */}
+					<div>
+						<TextArea
+							id="req-memo"
+							name="reqMemo"
+							label="메모"
+							placeholder="요청 사유를 입력해주세요"
+							value={memo}
+							onChange={(e) => setMemo(e.target.value)}
+							className="h-[100px]"
+						/>
+					</div>
+
+					{/* 버튼 */}
+					<div className="flex justify-center gap-2 pt-4">
+						<Button
+							color="primary"
+							onClick={handleSubmit}
+							disabled={!selectedDate || !selectedDuty}
+							className="whitespace-nowrap px-3"
+						>
+							요청하기
+						</Button>
+						<Button
+							color="off"
+							onClick={onClose}
+							className="border border-gray-900 bg-white text-gray-900"
+						>
+							닫기
+						</Button>
+					</div>
+				</div>
+			) : (
+				<div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+					{requests.map((request, index) => (
+						<div key={index} className="border-b border-gray-100 pb-4">
+							<div className="flex items-center gap-4">
+								<DutyBadgeEng type={request.duty} variant="outline" size="md" />
+								<div className="flex-1">
+									<div className="flex justify-between items-center mb-2">
+										<span className="text-sm font-medium">{request.date}</span>
+										<span
+											className={`text-sm ${getStatusColor(request.status)}`}
+										>
+											{request.status}
+										</span>
+									</div>
+									<span className="text-sm text-gray-600">{request.memo}</span>
+								</div>
+							</div>
+						</div>
+					))}
+					<div className="flex justify-center pt-4">
+						<Button
+							color="off"
+							onClick={onClose}
+							className="border border-gray-900 bg-white text-gray-900"
+						>
+							닫기
+						</Button>
+					</div>
+				</div>
+			)}
+		</div>
+	);
+};
+
+export default ReqShiftModal;

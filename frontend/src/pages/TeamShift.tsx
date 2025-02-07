@@ -7,7 +7,7 @@ const TeamShift = () => {
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
 			{/* Sidebar 영역 */}
 			<div className="w-[238px] shrink-0">
-				<Sidebar userType="staff" />
+				<Sidebar userType="head" />
 			</div>
 
 			{/* 메인 컨텐츠 영역 */}
