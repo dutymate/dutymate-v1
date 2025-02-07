@@ -1,4 +1,4 @@
-package net.dutymate.api.member.util;
+package net.dutymate.api.wardschedules.util;
 
 import java.util.ArrayList;
 import java.util.List;

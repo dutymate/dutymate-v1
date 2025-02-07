@@ -29,11 +29,11 @@ public class InitialDutyGenerator {
 	/**
 	 * 새로운 WardSchedule 생성 (병동 생성 시)
 	 */
-	public WardSchedule createNewWardSchedule(Ward ward, List<WardMember> wardMemberList, YearMonth yearMonth) {
+	public WardSchedule createNewWardSchedule(Ward ward, List<WardMember> wardMemberList,
+		YearMonth yearMonth) {
 
-		WardSchedule.Duty duty = WardSchedule.Duty.builder()
-			.duty(new ArrayList<>())
-			.build();
+		// 병동 생성 시, 초기화된 duty 생성
+		WardSchedule.Duty duty = createInitialDuty();
 
 		wardMemberList.forEach(nurse -> duty.addNurseShift(
 			createNurseShift(nurse, yearMonth.initializeShifts())));
@@ -42,6 +42,7 @@ public class InitialDutyGenerator {
 			.wardId(ward.getWardId())
 			.year(yearMonth.year())
 			.month(yearMonth.month())
+			.nowIdx(0)
 			.duties(List.of(duty)) // 초기 duty 리스트 추가
 			.build();
 
@@ -60,25 +61,59 @@ public class InitialDutyGenerator {
 		WardSchedule.NurseShift nurseShift = createNurseShift(newWardMember, initializedShifts);
 
 		// 1. 기존의 duty 마지막에 새로운 멤버 추가
-		WardSchedule.Duty lastDuty =
+		WardSchedule.Duty currentDuty =
 			existingSchedule.getDuties().isEmpty()
-				? WardSchedule.Duty.builder().duty(new ArrayList<>()).build()
-				: existingSchedule.getDuties().getLast();
+				? WardSchedule.Duty.builder()
+				.idx(0)
+				.duty(new ArrayList<>())
+				.history(createInitialHistory())
+				.build()
+				: existingSchedule.getDuties().get(existingSchedule.getNowIdx());
 
-		// 2. 마지막 duty에 새로운 멤버 초기화된 값 추가
-		lastDuty.addNurseShift(nurseShift);
+		// 2. 새로운 Duty 생성 (idx = 0, duty = nowIdx에 해당하는 duty 복사, history = 초기화)
+		WardSchedule.Duty newDuty = WardSchedule.Duty.builder()
+			.idx(0)
+			.duty(new ArrayList<>(currentDuty.getDuty()))
+			.history(createInitialHistory())
+			.build();
 
-		// 3. 기존 duties 초기화 후, 새 멤버 추가된 duty 추가하기
+		// 마지막 duty에 새로운 멤버 초기화된 값 추가
+		newDuty.addNurseShift(nurseShift);
+
+		// 3. 기존 duties 초기화 후, 새 멤버 추가된 Duty 추가하기
 		WardSchedule updatedSchedule = WardSchedule.builder()
 			.id(existingSchedule.getId())
 			.wardId(newWardMember.getWard().getWardId())
 			.year(existingSchedule.getYear())
 			.month(existingSchedule.getMonth())
-			.duties(new ArrayList<>(List.of(lastDuty)))
+			.nowIdx(0)
+			.duties(new ArrayList<>(List.of(newDuty)))
 			.build();
 
 		// mongodb 저장
 		wardScheduleRepository.save(updatedSchedule);
+	}
+
+	// duty 초기화하기
+	private WardSchedule.Duty createInitialDuty() {
+
+		return WardSchedule.Duty.builder()
+			.idx(0) // 병동 생성 시, idx는 0으로 입력
+			.duty(new ArrayList<>())
+			.history(createInitialHistory())
+			.build();
+	}
+
+	// 초기화된 history 생성
+	public WardSchedule.History createInitialHistory() {
+		return WardSchedule.History.builder()
+			.memberId(0L)
+			.name("")
+			.before("")
+			.after("")
+			.modifiedDay(0)
+			.isAutoCreated(false)
+			.build();
 	}
 
 	// 초기 duty 생성을 위한 NurseShift 생성 메서드

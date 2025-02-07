@@ -16,6 +16,7 @@ import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardmember.dto.NurseInfoRequestDto;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
+import net.dutymate.api.wardschedules.util.InitialDutyGenerator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +26,7 @@ public class WardMemberService {
 
 	private final MemberRepository memberRepository;
 	private final WardScheduleRepository wardScheduleRepository;
+	private final InitialDutyGenerator initialDutyGenerator;
 
 	@Transactional
 	public void updateWardMember(Long memberId, NurseInfoRequestDto nurseInfoRequestDto, Member authMember) {
@@ -33,7 +35,7 @@ public class WardMemberService {
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> new ResponseStatusException(
 			HttpStatus.BAD_REQUEST, "유효하지 않은 memberId 입니다."));
 
-		// TODO member가 병동 회원인지 체크하는 로직
+		// member가 병동 회원인지 체크하는 로직
 		validateWardMember(member, authMember);
 
 		// 멤버와 1:1 매핑 되어 있는 wardMember 정보 수정
@@ -52,7 +54,7 @@ public class WardMemberService {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 memberId 입니다."));
 
-		// TODO member가 병동 회원인지 체크하는 로직
+		// member가 병동 회원인지 체크하는 로직
 		validateWardMember(member, authMember);
 
 		WardMember wardMemeber = member.getWardMember();
@@ -84,16 +86,23 @@ public class WardMemberService {
 
 	private void deleteWardMemberDuty(WardSchedule existingSchedule, Member member) {
 
-		WardSchedule.Duty lastDuty = existingSchedule.getDuties().getLast();
+		// 마지막 nowIdx가 가리키는 Duty 가져오기
+		WardSchedule.Duty currDuty = existingSchedule.getDuties().get(existingSchedule.getNowIdx());
 
-		lastDuty.getDuty().removeIf(nurseShift -> nurseShift.getMemberId().equals(member.getMemberId()));
+		WardSchedule.Duty newDuty = WardSchedule.Duty.builder()
+			.idx(0)
+			.duty(new ArrayList<>(currDuty.getDuty()))
+			.history(initialDutyGenerator.createInitialHistory())
+			.build();
+
+		newDuty.getDuty().removeIf(nurseShift -> nurseShift.getMemberId().equals(member.getMemberId()));
 
 		WardSchedule deletedSchedule = WardSchedule.builder()
 			.id(existingSchedule.getId())
 			.wardId(existingSchedule.getWardId())
 			.year(existingSchedule.getYear())
 			.month(existingSchedule.getMonth())
-			.duties(new ArrayList<>(List.of(lastDuty))) // 기존 duties 초기화 시키고, 나간 멤버가 삭제된 duty 하나만 남기기
+			.duties(new ArrayList<>(List.of(newDuty))) // 기존 duties 초기화 시키고, 나간 멤버가 삭제된 duty 하나만 남기기
 			.build();
 
 		wardScheduleRepository.save(deletedSchedule);

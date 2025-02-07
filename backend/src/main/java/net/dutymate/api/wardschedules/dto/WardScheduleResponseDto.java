@@ -21,10 +21,11 @@ public class WardScheduleResponseDto {
 
 	private List<NurseShifts> duty;
 	private List<Issue> issues;
-	// private List<History> histories;
+	private List<History> histories;
 
 	public static WardScheduleResponseDto of(
-		String id, YearMonth yearMonth, Integer invalidCnt, List<NurseShifts> duty, List<Issue> issues) {
+		String id, YearMonth yearMonth, Integer invalidCnt, List<NurseShifts> duty, List<Issue> issues,
+		List<History> histories) {
 		return WardScheduleResponseDto.builder()
 			.id(id)
 			.year(yearMonth.year())
@@ -32,6 +33,7 @@ public class WardScheduleResponseDto {
 			.invalidCnt(invalidCnt)
 			.duty(duty)
 			.issues(issues)
+			.histories(histories)
 			.build();
 	}
 
@@ -66,9 +68,10 @@ public class WardScheduleResponseDto {
 	}
 
 	@Data
+	@Builder
 	public static class History {
 
-		private Integer index;
+		private Integer idx; // history가 속해 있는 idx 값
 		private Long memberId;
 		private String name;
 		private Shift before;

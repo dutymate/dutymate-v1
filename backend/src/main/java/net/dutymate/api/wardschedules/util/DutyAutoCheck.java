@@ -89,8 +89,9 @@ public class DutyAutoCheck {
 	private void maxShiftsIssuesGenerator(String name, int prevShiftsDay,
 		String shifts, RuleResponseDto rule, List<WardScheduleResponseDto.Issue> issues) {
 		int index = prevShiftsDay;
-		while (shifts.charAt(index) == 'X'
-			|| shifts.charAt(index) == 'O') {
+		while (index < shifts.length()
+			&& (shifts.charAt(index) == 'X'
+			|| shifts.charAt(index) == 'O')) {
 			index++;
 		}
 		while (index != -1) {

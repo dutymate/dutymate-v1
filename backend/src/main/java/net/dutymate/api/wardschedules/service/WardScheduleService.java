@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
+import net.dutymate.api.enumclass.Shift;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
@@ -39,7 +40,9 @@ public class WardScheduleService {
 	private final InitialDutyGenerator initialDutyGenerator;
 
 	@Transactional
-	public WardScheduleResponseDto getWardSchedule(Member member, final YearMonth yearMonth) {
+	public WardScheduleResponseDto getWardSchedule(Member member, final YearMonth yearMonth, Integer nowIdx) {
+		System.out.println("nowIdx1 = " + nowIdx);
+
 		// 조회하려는 달이 (현재 달 + 1달) 안에 포함되지 않는 경우 예외 처리
 		if (!isInNextMonth(yearMonth)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무표는 최대 다음달 까지만 조회가 가능합니다.");
@@ -63,15 +66,26 @@ public class WardScheduleService {
 			.findByWardIdAndYearAndMonth(ward.getWardId(), prevYearMonth.year(), prevYearMonth.month())
 			.orElse(null);
 
+		if (nowIdx == null) {
+			System.out.println("nowIdx2 = " + nowIdx);
+			nowIdx = wardSchedule.getNowIdx();
+		}
+
+		System.out.println("nowIdx3 = " + nowIdx);
+
 		// 이번달 듀티표 가져오기
-		List<WardSchedule.NurseShift> recentNurseShifts = wardSchedule.getDuties().getLast().getDuty();
+		List<WardSchedule.NurseShift> recentNurseShifts = wardSchedule.getDuties().get(nowIdx).getDuty();
 		// 전달 듀티표 가져오기
 		List<WardSchedule.NurseShift> prevNurseShifts;
 		if (prevWardSchedule != null) {
-			prevNurseShifts = prevWardSchedule.getDuties().getLast().getDuty();
+			prevNurseShifts = prevWardSchedule.getDuties().get(prevWardSchedule.getNowIdx()).getDuty();
 		} else {
 			prevNurseShifts = null;
 		}
+
+		wardSchedule.setNowIdx(nowIdx);
+
+		wardScheduleRepository.save(wardSchedule);
 
 		// recentNurseShifts -> DTO 변환
 		List<WardScheduleResponseDto.NurseShifts> nurseShiftsDto = recentNurseShifts.stream()
@@ -100,11 +114,14 @@ public class WardScheduleService {
 		// TODO invalidCnt 구하기
 		// int invalidCnt = calcInvalidCnt(recentNurseShifts);
 
-		// TODO history 구하기
-		// TODO Issues 구하기
+		// Issues 구하기
 		List<WardScheduleResponseDto.Issue> issues =
 			dutyAutoCheck.check(nurseShiftsDto, yearMonth.year(), yearMonth.month());
-		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues);
+
+		// History 구하기
+		List<WardScheduleResponseDto.History> histories = findHistory(wardSchedule.getDuties());
+
+		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues, histories);
 	}
 
 	private boolean isInNextMonth(YearMonth yearMonth) {
@@ -141,15 +158,21 @@ public class WardScheduleService {
 		// 전달 듀티표 가져오기
 		List<WardSchedule.NurseShift> prevNurseShifts;
 		if (prevWardSchedule != null) {
-			prevNurseShifts = prevWardSchedule.getDuties().getLast().getDuty();
+			prevNurseShifts = prevWardSchedule.getDuties().get(prevWardSchedule.getNowIdx()).getDuty();
 		} else {
 			prevNurseShifts = null;
 		}
 
+		// PUT 요청 : 히스토리로 nowIdx가 중간으로 돌아간 상황에서 수동 수정이 일어난 경우,
+		List<WardSchedule.Duty> recentDuties = wardSchedule.getDuties();
+		int nowIdx = wardSchedule.getNowIdx();
+
 		// 가장 최근 스냅샷
-		List<WardSchedule.NurseShift> recentDuty = wardSchedule.getDuties().getLast().getDuty();
+		List<WardSchedule.NurseShift> recentDuty = wardSchedule.getDuties().get(nowIdx).getDuty();
+
 		// 새로 만들 스냅샷
 		List<WardSchedule.NurseShift> newDuty = new ArrayList<>();
+
 		// 가장 최근 스냅샷 -> 새로 만들 스냅샷 복사 (깊은 복사)
 		recentDuty.forEach(nurseShift -> newDuty.add(WardSchedule.NurseShift.builder()
 			.memberId(nurseShift.getMemberId())
@@ -167,9 +190,33 @@ public class WardScheduleService {
 				prev.changeShifts(after);
 			});
 
+		// 히스토리 포인트로 돌아 갔을 때, 수정 요청이 들어오면, 히스토리 이후 데이터 날리기
+		List<WardSchedule.Duty> duties = recentDuties.subList(0, nowIdx + 1);// nowIdx 이후 데이터 제거
+
 		// 기존 병동 스케줄에 새로운 스냅샷 추가 및 저장
-		wardSchedule.getDuties().add(WardSchedule.Duty.builder().duty(newDuty).build());
-		wardScheduleRepository.save(wardSchedule);
+		duties.add(WardSchedule.Duty.builder()
+			.idx(nowIdx + 1)
+			.duty(newDuty)
+			.history(WardSchedule.History.builder()
+				.memberId(editDutyRequestDto.getHistory().getMemberId())
+				.name(editDutyRequestDto.getHistory().getName())
+				.before(editDutyRequestDto.getHistory().getBefore())
+				.after(editDutyRequestDto.getHistory().getAfter())
+				.modifiedDay(editDutyRequestDto.getHistory().getModifiedDay())
+				.isAutoCreated(editDutyRequestDto.getHistory().getIsAutoCreated())
+				.build())
+			.build());
+
+		WardSchedule updatedWardSchedule = WardSchedule.builder()
+			.id(wardSchedule.getId())
+			.wardId(wardSchedule.getWardId())
+			.year(yearMonth.year())
+			.month(yearMonth.month())
+			.nowIdx(nowIdx + 1)
+			.duties(duties)
+			.build();
+
+		wardScheduleRepository.save(updatedWardSchedule);
 
 		// newDuty -> DTO 변환
 		List<WardScheduleResponseDto.NurseShifts> nurseShiftsDto = newDuty.stream()
@@ -195,14 +242,37 @@ public class WardScheduleService {
 			}
 		});
 
-		// TODO invalidCnt 구하기
+		// TODO invalidCnt 구하기 (퍼센트 %)
 		// int invalidCnt = calcInvalidCnt(recentNurseShifts);
 
-		// TODO history 구하기
-		// TODO Issues 구하기
+		// Issues 구하기
 		List<WardScheduleResponseDto.Issue> issues =
 			dutyAutoCheck.check(nurseShiftsDto, yearMonth.year(), yearMonth.month());
-		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues);
+
+		// history 구하기
+		// nowIdx 이하의 모든 history 찾아서 List로 반환
+		List<WardScheduleResponseDto.History> histories = findHistory(duties);
+
+		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues, histories);
+	}
+
+	private List<WardScheduleResponseDto.History> findHistory(List<WardSchedule.Duty> duties) {
+		List<WardScheduleResponseDto.History> histories = new ArrayList<>();
+
+		for (WardSchedule.Duty duty : duties) {
+			if (duty.getHistory().getMemberId() != 0) {
+				histories.add(WardScheduleResponseDto.History.builder()
+					.idx(duty.getIdx())
+					.memberId(duty.getHistory().getMemberId())
+					.name(duty.getHistory().getName())
+					.before(Shift.valueOf(duty.getHistory().getBefore()))
+					.after(Shift.valueOf(duty.getHistory().getAfter()))
+					.modifiedDay(duty.getHistory().getModifiedDay())
+					.isAutoCreated(duty.getHistory().getIsAutoCreated())
+					.build());
+			}
+		}
+		return histories;
 	}
 
 	@Transactional(readOnly = true)

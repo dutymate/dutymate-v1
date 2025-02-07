@@ -31,9 +31,10 @@ public class WardScheduleController {
 	public ResponseEntity<?> getWardSchedule(
 		@Auth Member member,
 		@RequestParam(required = false) Integer year,
-		@RequestParam(required = false) Integer month) {
+		@RequestParam(required = false) Integer month,
+		@RequestParam(required = false) Integer history) {
 		WardScheduleResponseDto wardScheduleResponseDto =
-			wardScheduleService.getWardSchedule(member, new YearMonth(year, month));
+			wardScheduleService.getWardSchedule(member, new YearMonth(year, month), history);
 		return ResponseEntity.ok(wardScheduleResponseDto);
 	}
 
