@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Playgrounds from "../pages/playgrounds";
 import Landing from "../pages/Landing";
 import Login from "../pages/Login";
+import KakaoRedirect from "../pages/KakaoRedirect";
 import MyShift from "../pages/MyShift";
 import TeamShift from "../pages/TeamShift";
 import WardAdmin from "../pages/WardAdmin";
@@ -20,6 +21,7 @@ const Router = () => {
 		<Routes>
 			<Route path="/" element={<Landing />} />
 			<Route path="/login" element={<Login />} />
+			<Route path="/oauth/kakao" element={<KakaoRedirect />} />
 			<Route path="/my-shift" element={<MyShift />} />
 			<Route path="/team-shift" element={<TeamShift />} />
 			<Route path="/ward-admin" element={<WardAdmin />} />

@@ -3,6 +3,10 @@ import kakaoIcon from "../../assets/kakaotalk.svg";
 import googleIcon from "../../assets/google.svg";
 
 const LoginForm = () => {
+	const handleKakaoLogin = () => {
+		window.location.href = import.meta.env.VITE_KAKAO_LOGIN_URL;
+	};
+
 	return (
 		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 w-[25rem]">
 			<form>
@@ -40,6 +44,7 @@ const LoginForm = () => {
 					<button
 						type="button"
 						className="w-full px-3 py-2 text-sm font-medium text-[#000000] bg-[#FEE500] rounded-md hover:bg-[#e6cf00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] relative"
+						onClick={handleKakaoLogin}
 					>
 						<img
 							src={kakaoIcon}

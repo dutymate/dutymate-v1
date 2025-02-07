@@ -1,13 +1,14 @@
 import axiosInstance from "../lib/axios";
+import axios from "axios";
 
 // Response Types
-interface LoginResponse {
+export interface LoginResponse {
 	token: string;
 	memberId: number;
 	name: string;
 	role: string;
 	profileImg: string;
-	existAdditinalInfo: boolean;
+	existAdditionalInfo: boolean;
 	existMyWard: boolean;
 }
 
@@ -19,6 +20,12 @@ interface AdditionalInfoRequest {
 
 interface AdditionalInfoResponse {
 	role: string;
+}
+
+export interface ApiErrorResponse {
+	message: string;
+	timestamp: string;
+	status: string;
 }
 
 // API Functions
@@ -45,11 +52,21 @@ export const userService = {
 	 * @param code - Kakao OAuth 인증 코드
 	 * @returns LoginResponse - 로그인 응답 데이터
 	 */
-	kakaoLogin: async (code: string): Promise<LoginResponse> => {
-		const response = await axiosInstance.get(`/member/login/kakao`, {
-			params: { code },
-		});
-		return response.data;
+	kakaoLogin: async (
+		code: string,
+		success: (data: LoginResponse) => void,
+		fail: (error: ApiErrorResponse) => void,
+	) => {
+		try {
+			const response = await axiosInstance.get(`/member/login/kakao`, {
+				params: { code },
+			});
+			success(response.data);
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				fail(error.response?.data);
+			}
+		}
 	},
 
 	/**
