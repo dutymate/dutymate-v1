@@ -39,8 +39,8 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
-	private final WardMemberRepository wardMemberRepository;
 	private final JwtUtil jwtUtil;
+	private final WardMemberRepository wardMemberRepository;
 
 	@Value("${kakao.client.id}")
 	private String kakaoClientId;
@@ -254,5 +254,10 @@ public class MemberService {
 		if (remainingTime > 0) {
 			jwtUtil.addToBlacklist(token, remainingTime);
 		}
+	}
+
+	public Member getMemberById(Long memberId) {
+		return memberRepository.findById(memberId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원을 찾을 수 없습니다."));
 	}
 }

@@ -7,12 +7,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 
+import net.dutymate.api.entity.Member;
 import net.dutymate.api.enumclass.Shift;
+import net.dutymate.api.member.service.MemberService;
+import net.dutymate.api.rule.dto.RuleResponseDto;
 import net.dutymate.api.rule.service.RuleService;
 import net.dutymate.api.wardschedules.dto.WardScheduleResponseDto;
 
@@ -23,10 +25,16 @@ import lombok.RequiredArgsConstructor;
 public class DutyAutoCheck {
 
 	private final RuleService ruleService;
+	private final MemberService memberService;
+	private static final String[] SHIFTS = {"D", "E", "N"};
+	private static final String NIGHT_SHIFT_VIOLATION_MESSAGE = "Night 근무 규칙을 위반했습니다.";
+	private static final String MAX_SHIFT_VIOLATION_MESSAGE = "최대 근무일 규칙을 위반했습니다.";
+	private static final String[] FORBIDDEN_PATTERNS = {"ND", "NE", "ED", "NOD"};
 
 	public List<WardScheduleResponseDto.Issue> check(List<WardScheduleResponseDto.NurseShifts> nurseShiftsDto, int year,
 		int month) {
 		List<WardScheduleResponseDto.Issue> issues = new ArrayList<>();
+
 		for (WardScheduleResponseDto.NurseShifts ns : nurseShiftsDto) {
 			List<WardScheduleResponseDto.Issue> personalIssues = checkPersonalDuty(ns);
 			if (!personalIssues.isEmpty()) {
@@ -39,32 +47,105 @@ public class DutyAutoCheck {
 
 	private List<WardScheduleResponseDto.Issue> checkPersonalDuty(WardScheduleResponseDto.NurseShifts ns) {
 
+		List<WardScheduleResponseDto.Issue> result = new ArrayList<>();
 		String shifts = ns.getPrevShifts().concat(ns.getShifts());
-		String[] hardPatterns = {"DDDDDD", "EEEEEE", "NNNN", "NOD", "ND", "NE", "ED"};
+		Member member = memberService.getMemberById(ns.getMemberId());
+		RuleResponseDto rule = ruleService.getRule(member);
+		String name = ns.getName();
+		int prevShfitsDay = ns.getPrevShifts().length();
 
-		// 추후 패턴 분리 예정
-		// String[] softPatterns = {"NOD", "ED"};
+		nightIssuesGenerator(name, prevShfitsDay, shifts, rule, result);
+		maxShiftsIssuesGenerator(name, prevShfitsDay, shifts, rule, result);
+		specificPatternIssuesGenerator(name, prevShfitsDay, shifts, result);
+		return result;
+	}
 
-		int prevShifts = ns.getPrevShifts().length();
+	private void nightIssuesGenerator(String name, int prevShiftsDay,
+		String shifts, RuleResponseDto rule, List<WardScheduleResponseDto.Issue> issues) {
 
-		return Arrays.stream(hardPatterns)
-			.flatMap(pattern -> {
-				List<Integer> indices = new ArrayList<>();
-				int index = shifts.indexOf(pattern);
-				while (index != -1) {
-					indices.add(index);
-					index = shifts.indexOf(pattern, index + 1);
-				}
-				return indices.stream().map(idx -> WardScheduleResponseDto.Issue.builder()
-					.name(ns.getName())
-					.startDate(idx + 1 - prevShifts)
-					.endDate(idx + pattern.length() - prevShifts)
-					.endDateShift(Shift.valueOf(String.valueOf(shifts.charAt(idx + pattern.length() - 1))))
-					.message(pattern + " 형태의 근무는 불가능 합니다.")
+		int index = shifts.indexOf(Shift.N.getValue(), prevShiftsDay);
+		while (index != -1) {
+			int nightCnt = 0;
+
+			while (index + nightCnt < shifts.length() && shifts.charAt(index + nightCnt) == 'N') {
+				nightCnt++;
+			}
+
+			if (nightCnt < rule.getMinN() || nightCnt > rule.getMaxN()) {
+				issues.add(WardScheduleResponseDto.Issue.builder()
+					.name(name)
+					.startDate(index + 1 - prevShiftsDay)
+					.endDate(index + nightCnt - prevShiftsDay)
+					.endDateShift(Shift.N)
+					.message(NIGHT_SHIFT_VIOLATION_MESSAGE)
 					.build());
-			})
-			.collect(Collectors.toList());                                     // 16
+			}
 
+			index = shifts.indexOf(Shift.N.getValue(), index + nightCnt);
+
+		}
+	}
+
+	private void maxShiftsIssuesGenerator(String name, int prevShiftsDay,
+		String shifts, RuleResponseDto rule, List<WardScheduleResponseDto.Issue> issues) {
+		int index = prevShiftsDay;
+		while (shifts.charAt(index) == 'X'
+			|| shifts.charAt(index) == 'O') {
+			index++;
+		}
+		while (index != -1) {
+			int shiftCnt = 0;
+
+			while (index + shiftCnt < shifts.length()
+				&& (shifts.charAt(index + shiftCnt) == 'D'
+				|| shifts.charAt(index + shiftCnt) == 'E'
+				|| shifts.charAt(index + shiftCnt) == 'N')) {
+				shiftCnt++;
+			}
+
+			if (shiftCnt > rule.getMaxShift()) {
+				issues.add(WardScheduleResponseDto.Issue.builder()
+					.name(name)
+					.startDate(index + 1 - prevShiftsDay)
+					.endDate(index + shiftCnt - prevShiftsDay)
+					.endDateShift(Shift.valueOf(String.valueOf(shifts.charAt(index + shiftCnt - 1))))
+					.message(MAX_SHIFT_VIOLATION_MESSAGE)
+					.build());
+			}
+
+			final int searchStart = index + shiftCnt;
+			index = Arrays.asList(Shift.D, Shift.E, Shift.N).stream()
+				.mapToInt(shift -> shifts.indexOf(shift.getValue(), searchStart))
+				.min()
+				.orElse(-1);
+		}
+	}
+
+	private void specificPatternIssuesGenerator(String name, int prevShiftsDay,
+		String shifts, List<WardScheduleResponseDto.Issue> issues) {
+
+		for (String pattern : FORBIDDEN_PATTERNS) {
+
+			int index = shifts.indexOf(pattern, prevShiftsDay);
+
+			while (index != -1) {
+
+				int startDate = index + 1 - prevShiftsDay;
+				int endDate = index + pattern.length() - prevShiftsDay;
+
+				if (startDate > 0 && endDate <= shifts.length() - prevShiftsDay) {
+					issues.add(WardScheduleResponseDto.Issue.builder()
+						.name(name)
+						.startDate(startDate)
+						.endDate(endDate)
+						.endDateShift(Shift.valueOf(String.valueOf(pattern.charAt(pattern.length() - 1))))
+						.message(pattern + "형태의 근무는 허용되지 않습니다.")
+						.build());
+				}
+
+				index = shifts.indexOf(pattern, index + 1);
+			}
+		}
 	}
 
 	private Map<Integer, Boolean> getWeekendDays(int year, int month) {
@@ -118,4 +199,21 @@ public class DutyAutoCheck {
 		return result;
 	}
 
+	public List<String> generateAllCombinations(int maxShift) {
+		List<String> result = new ArrayList<>();
+		generateCombinations("", maxShift, result);
+		return result;
+	}
+
+	private void generateCombinations(String current, int remaining, List<String> result) {
+		// 기저 조건: 원하는 길이에 도달했을 때
+		if (remaining == 0) {
+			result.add(current);
+			return;
+		}
+
+		for (String shift : SHIFTS) {
+			generateCombinations(current + shift, remaining - 1, result);
+		}
+	}
 }
