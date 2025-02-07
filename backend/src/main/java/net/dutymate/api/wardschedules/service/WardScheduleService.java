@@ -41,7 +41,6 @@ public class WardScheduleService {
 
 	@Transactional
 	public WardScheduleResponseDto getWardSchedule(Member member, final YearMonth yearMonth, Integer nowIdx) {
-		System.out.println("nowIdx1 = " + nowIdx);
 
 		// 조회하려는 달이 (현재 달 + 1달) 안에 포함되지 않는 경우 예외 처리
 		if (!isInNextMonth(yearMonth)) {
@@ -67,11 +66,8 @@ public class WardScheduleService {
 			.orElse(null);
 
 		if (nowIdx == null) {
-			System.out.println("nowIdx2 = " + nowIdx);
 			nowIdx = wardSchedule.getNowIdx();
 		}
-
-		System.out.println("nowIdx3 = " + nowIdx);
 
 		// 이번달 듀티표 가져오기
 		List<WardSchedule.NurseShift> recentNurseShifts = wardSchedule.getDuties().get(nowIdx).getDuty();
@@ -191,7 +187,7 @@ public class WardScheduleService {
 			});
 
 		// 히스토리 포인트로 돌아 갔을 때, 수정 요청이 들어오면, 히스토리 이후 데이터 날리기
-		List<WardSchedule.Duty> duties = recentDuties.subList(0, nowIdx + 1);// nowIdx 이후 데이터 제거
+		List<WardSchedule.Duty> duties = recentDuties.subList(0, nowIdx + 1); // nowIdx 이후 데이터 제거
 
 		// 기존 병동 스케줄에 새로운 스냅샷 추가 및 저장
 		duties.add(WardSchedule.Duty.builder()
@@ -396,4 +392,3 @@ public class WardScheduleService {
 		return AllWardDutyResponseDto.of(wardSchedule.getId(), yearMonth, nurseShiftList);
 	}
 }
-
