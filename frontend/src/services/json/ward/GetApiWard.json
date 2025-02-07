@@ -1,0 +1,18 @@
+{
+	"wardCode": "PJUMMZ",
+	"wardName": "76병동",
+	"hospitalName": "강남 연세 세브란스",
+	"nursesTotalCnt": 1,
+	"nurses": [
+		{
+			"memberId": 22,
+			"name": "홍길동",
+			"gender": "M",
+			"role": "HN",
+			"grade": 5,
+			"shift": "ALL",
+			"skillLevel": "MID",
+			"memo": "E 선호"
+		}
+	]
+}
