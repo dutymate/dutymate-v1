@@ -37,11 +37,11 @@ resource "aws_subnet" "private_subnets" {
   }
 }
 
-resource "aws_default_route_table" "route_table_default" {
+resource "aws_default_route_table" "default_route_table" {
   default_route_table_id = aws_vpc.vpc.default_route_table_id
 
   tags = {
-    Name = "dutymate-rtb-default"
+    Name = "dutymate-default-rtb"
   }
 }
 
@@ -53,7 +53,7 @@ resource "aws_internet_gateway" "internet_gateway" {
   }
 }
 
-resource "aws_route_table" "route_table_public" {
+resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.vpc.id
 
   route {
@@ -62,7 +62,7 @@ resource "aws_route_table" "route_table_public" {
   }
 
   tags = {
-    Name = "dutymate-rtb-public"
+    Name = "dutymate-public-rtb"
   }
 }
 
@@ -85,7 +85,7 @@ resource "aws_nat_gateway" "nat_gateway" {
   }
 }
 
-resource "aws_route_table" "route_table_private1" {
+resource "aws_route_table" "private_route_table1" {
   vpc_id = aws_vpc.vpc.id
 
   route {
@@ -94,31 +94,31 @@ resource "aws_route_table" "route_table_private1" {
   }
 
   tags = {
-    Name = "dutymate-rtb-private1"
+    Name = "dutymate-private-rtb1"
   }
 }
 
-resource "aws_route_table" "route_table_private2" {
+resource "aws_route_table" "private_route_table2" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "dutymate-rtb-private2"
+    Name = "dutymate-private-rtb2"
   }
 }
 
 resource "aws_route_table_association" "route_table_public_subnet_association" {
   subnet_id      = aws_subnet.public_subnet.id
-  route_table_id = aws_route_table.route_table_public.id
+  route_table_id = aws_route_table.public_route_table.id
 }
 
 resource "aws_route_table_association" "route_table_private_subnet1_association" {
   subnet_id      = aws_subnet.private_subnets[0].id
-  route_table_id = aws_route_table.route_table_private1.id
+  route_table_id = aws_route_table.private_route_table1.id
 }
 
 resource "aws_route_table_association" "route_table_private_subnet2_association" {
   subnet_id      = aws_subnet.private_subnets[1].id
-  route_table_id = aws_route_table.route_table_private2.id
+  route_table_id = aws_route_table.private_route_table2.id
 
 }
 
@@ -126,7 +126,7 @@ resource "aws_vpc_endpoint" "vpce_s3" {
   vpc_id            = aws_vpc.vpc.id
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.ap-northeast-2.s3"
-  route_table_ids   = [aws_route_table.route_table_private1.id]
+  route_table_ids   = [aws_route_table.private_route_table1.id]
 
   tags = {
     Name = "dutymate-vpce-s3"
