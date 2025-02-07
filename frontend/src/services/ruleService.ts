@@ -31,10 +31,23 @@ export const ruleService = {
 	 * 병동 규칙 조회
 	 * 평일/주말 근무 개수, 나이트 근무 규칙, 연속 근무 규칙 등을 포함
 	 * @returns 병동의 모든 근무 규칙
-	 * @throws {Error} 404: 병동 ID가 유효하지 않을 경우
 	 */
-	getWardRules: async (): Promise<WardRule> => {
-		const response = await axiosInstance.get("/ward/rule");
-		return response.data;
+	getWardRules: () => {
+		return axiosInstance.get("/ward/rule")
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = '/login';
+							break;
+						default:
+							window.location.href = '/error';
+					}
+				}
+				throw error;
+			});
 	},
 };

@@ -38,9 +38,23 @@ export const wardService = {
 	 * 병동 정보 조회
 	 * @returns 병동 정보 및 소속 간호사 목록
 	 */
-	getWardInfo: async (): Promise<WardInfo> => {
-		const response = await axiosInstance.get("/ward");
-		return response.data;
+	getWardInfo: () => {
+		return axiosInstance.get("/ward")
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = '/login';
+							break;
+						default:
+							window.location.href = '/error';
+					}
+				}
+				throw error;
+			});
 	},
 
 	/**
@@ -48,9 +62,23 @@ export const wardService = {
 	 * @param data - 병원명, 병동명
 	 * @returns 생성된 병동 정보
 	 */
-	createWard: async (data: CreateWardRequest): Promise<WardInfo> => {
-		const response = await axiosInstance.post("/ward", data);
-		return response.data;
+	createWard: (data: CreateWardRequest) => {
+		return axiosInstance.post("/ward", data)
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = '/login';
+							break;
+						default:
+							window.location.href = '/error';
+					}
+				}
+				throw error;
+			});
 	},
 
 	/**
@@ -58,15 +86,25 @@ export const wardService = {
 	 * @param code - 확인할 병동 코드
 	 * @returns 병동 코드 유효성 여부
 	 */
-	checkWardCode: async (code: string): Promise<boolean> => {
-		try {
-			await axiosInstance.get(`/ward/check-code`, {
-				params: { code },
+	checkWardCode: (code: string) => {
+		return axiosInstance.get(`/ward/check-code`, {
+			params: { code },
+		})
+			.then(() => true)
+			.catch(error => {
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = '/login';
+							break;
+						case 404:
+							return false;
+						default:
+							window.location.href = '/error';
+					}
+				}
+				return false;
 			});
-			return true;
-		} catch (error) {
-			return false;
-		}
 	},
 
 	/**
@@ -74,18 +112,45 @@ export const wardService = {
 	 * @param memberId - 수정할 간호사 ID
 	 * @param data - 수정할 정보 (숙련도, 근무 유형, 메모, 권한)
 	 */
-	updateNurseInfo: async (
-		memberId: number,
-		data: NurseUpdateRequest,
-	): Promise<void> => {
-		await axiosInstance.put(`/ward/member/${memberId}`, data);
+	updateNurseInfo: (memberId: number, data: NurseUpdateRequest) => {
+		return axiosInstance.put(`/ward/member/${memberId}`, data)
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = '/login';
+							break;
+						default:
+							window.location.href = '/error';
+					}
+				}
+				throw error;
+			});
 	},
 
 	/**
 	 * 병동 간호사 내보내기
 	 * @param memberId - 내보낼 간호사 ID
 	 */
-	removeNurse: async (memberId: number): Promise<void> => {
-		await axiosInstance.delete(`/ward/member/${memberId}`);
+	removeNurse: (memberId: number) => {
+		return axiosInstance.delete(`/ward/member/${memberId}`)
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = '/login';
+							break;
+						default:
+							window.location.href = '/error';
+					}
+				}
+				throw error;
+			});
 	},
 };

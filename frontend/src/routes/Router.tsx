@@ -16,6 +16,7 @@ import Community from "../pages/Community";
 import WardDuty from "../pages/WardDuty";
 import RequestManagement from "../pages/RequestManagement";
 import DutyManagement from "../pages/DutyManagement";
+import Error from "../pages/Error";
 
 const Router = () => {
 	return (
@@ -37,6 +38,8 @@ const Router = () => {
 			<Route path="/ward-duty" element={<WardDuty />} />
 			<Route path="/request-management" element={<RequestManagement />} />
 			<Route path="/duty-management" element={<DutyManagement />} />
+			<Route path="/error" element={<Error />} />
+			<Route path="*" element={<Error />} />
 		</Routes>
 	);
 };

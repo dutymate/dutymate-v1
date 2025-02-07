@@ -1,46 +1,35 @@
 import { useEffect, useState } from "react";
 //import axios from 'axios';
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
+// 임시 데이터 import
+import mockData from "../../services/response-json/duty/GetApiDutyWard.json";
 
-interface Duty {
+interface DutyMember {
 	memberId: number;
 	name: string;
 	shifts: string;
 }
 
-interface DutyData {
-	_id: string;
+interface DutyInfo {
+	id: string;  // _id에서 id로 변경
 	year: number;
 	month: number;
-	duty: Duty[];
+	duty: DutyMember[];
 }
 
 const TeamShiftTable = () => {
-	const [dutyData, setDutyData] = useState<DutyData | null>(null);
+	const [dutyData, setDutyData] = useState<DutyInfo | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchDutyData = async () => {
 			try {
-				// API 구현 전 임시 데이터
-				const mockData: DutyData = {
-					_id: "1",
-					year: 2025,
-					month: 1,
-					duty: [
-						{ memberId: 1, name: "김민지", shifts: "DDENNODDDENNODDDENNODD" },
-						{ memberId: 2, name: "이서연", shifts: "EENNODDDEENNODDDEENNOD" },
-						{ memberId: 3, name: "박지현", shifts: "NNODDDEENNODDDEENNODD" },
-						{ memberId: 4, name: "최수아", shifts: "ODDDEENNODDDEENNODDDE" },
-						{ memberId: 5, name: "정유진", shifts: "DDEENNODDDEENNODDDEEN" },
-						{ memberId: 6, name: "한소희", shifts: "EENNODDDEENNODDDEENNO" },
-						{ memberId: 7, name: "강다희", shifts: "NNODDDEENNODDDEENNOD" },
-						{ memberId: 8, name: "윤서아", shifts: "ODDDEENNODDDEENNODDDE" },
-						{ memberId: 9, name: "송지원", shifts: "DDEENNODDDEENNODDDEEN" },
-						{ memberId: 10, name: "임하늘", shifts: "EENNODDDEENNODDDEENNO" },
-					],
-				};
+				// 실제 API 호출 (현재는 주석 처리)
+				// const response = await dutyService.getWardDuty();
+				// setDutyData(response);
+
+				// 임시 데이터 사용
 				setDutyData(mockData);
 			} catch (err) {
 				setError("근무표를 불러오는데 실패했습니다.");
@@ -56,8 +45,9 @@ const TeamShiftTable = () => {
 	if (error) return <div>{error}</div>;
 	if (!dutyData) return null;
 
-	// 날짜 배열 생성 (1-31)
-	const days = Array.from({ length: 31 }, (_, i) => i + 1);
+	// 해당 월의 실제 일수 계산
+	const daysInMonth = new Date(dutyData.year, dutyData.month, 0).getDate();
+	const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
 	return (
 		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6">
@@ -87,7 +77,7 @@ const TeamShiftTable = () => {
 								{member.shifts.split("").map((shift, index) => (
 									<td key={index} className="border px-2 py-2 text-center">
 										<DutyBadgeEng
-											type={shift as "D" | "E" | "N" | "O"}
+											type={(shift === "X" ? "default" : shift) as "D" | "E" | "N" | "O" | "default"}
 											variant="letter"
 											size="sm"
 										/>
