@@ -11,6 +11,7 @@ interface ButtonProps {
 	fullWidth?: boolean;
 	disabled?: boolean;
 	className?: string;
+	type?: "button" | "submit" | "reset";
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -85,10 +86,11 @@ export function Button({
 	fullWidth,
 	disabled,
 	className,
+	type = "button",
 }: ButtonProps) {
 	return (
 		<button
-			type="button"
+			type={type}
 			onClick={onClick}
 			disabled={disabled}
 			className={`

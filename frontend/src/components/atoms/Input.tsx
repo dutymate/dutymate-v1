@@ -13,6 +13,9 @@ export interface InputProps {
 	defaultValue?: string;
 	value?: string;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	required?: boolean;
+	onInvalid?: (e: React.InvalidEvent<HTMLInputElement>) => void;
+	onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
 export const Input = ({
@@ -28,6 +31,9 @@ export const Input = ({
 	defaultValue,
 	value,
 	onChange,
+	required,
+	onInvalid,
+	onInput,
 }: InputProps) => {
 	const inputClasses = error
 		? "col-start-1 row-start-1 block w-full rounded-md bg-white py-2.5 pr-10 pl-3 text-base text-red-900 outline outline-[0.125rem] outline-red-300/50 placeholder:text-red-300 focus:outline-[0.125rem] focus:outline-red-600/50 sm:py-3 sm:text-lg"
@@ -35,13 +41,16 @@ export const Input = ({
 
 	return (
 		<div>
-			<div className="flex justify-between">
+			<div className="flex justify-between items-center">
 				<label
 					htmlFor={id}
 					className="block text-base font-medium text-gray-900 sm:text-lg"
 				>
 					{label}
 				</label>
+				{error && (
+					<span className="text-sm text-red-600 sm:text-base">{error}</span>
+				)}
 				{optional && (
 					<span
 						id={`${id}-optional`}
@@ -61,6 +70,9 @@ export const Input = ({
 					placeholder={placeholder}
 					disabled={disabled}
 					onChange={onChange}
+					required={required}
+					onInvalid={onInvalid}
+					onInput={onInput}
 					aria-invalid={error ? "true" : undefined}
 					aria-describedby={
 						error
@@ -86,14 +98,6 @@ export const Input = ({
 					className="mt-2 text-base text-gray-500 sm:text-lg"
 				>
 					{helpText}
-				</p>
-			)}
-			{error && (
-				<p
-					id={`${id}-error`}
-					className="mt-2 text-base text-red-600 sm:text-lg"
-				>
-					{error}
 				</p>
 			)}
 		</div>
@@ -379,13 +383,16 @@ export const Select = ({
 
 	return (
 		<div>
-			<div className="flex justify-between">
+			<div className="flex justify-between items-center">
 				<label
 					htmlFor={id}
 					className="block text-base font-medium text-gray-900 sm:text-lg"
 				>
 					{label}
 				</label>
+				{error && (
+					<span className="text-sm text-red-600 sm:text-base">{error}</span>
+				)}
 				{optional && (
 					<span className="text-sm text-gray-500 sm:text-base">Optional</span>
 				)}
@@ -417,9 +424,6 @@ export const Select = ({
 					))}
 				</select>
 			</div>
-			{error && (
-				<p className="mt-2 text-base text-red-600 sm:text-lg">{error}</p>
-			)}
 		</div>
 	);
 };

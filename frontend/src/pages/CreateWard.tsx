@@ -1,14 +1,70 @@
 import StartTemplate from "../components/templates/StartTemplate";
 import CreateWardForm from "../components/organisms/CreateWardForm";
+import { useNavigate } from "react-router-dom";
+import useUserAuthStore from "../store/userAuthStore";
+import { wardService } from "../services/wardService";
+import { AxiosError } from "axios";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 const CreateWard = () => {
+	const navigate = useNavigate();
+	const userAuthStore = useUserAuthStore();
+	const [error, setError] = useState<string>("");
+
+	const handleCreateWard = async (hospitalName: string, wardName: string) => {
+		console.log("handleCreateWard 함수 호출됨:", { hospitalName, wardName });
+		setError(""); // 에러 메시지 초기화
+
+		try {
+			console.log("wardService.createWard 호출 전");
+			await wardService.createWard({
+				hospitalName,
+				wardName,
+			});
+			console.log("wardService.createWard 호출 성공");
+
+			userAuthStore.setUserInfo({
+				...userAuthStore.userInfo!,
+				existMyWard: true,
+			});
+
+			// 성공 토스트 메시지 표시
+			toast.success("병동이 생성되었습니다", {
+				position: "top-center",
+				autoClose: 3000,
+			});
+
+			// 잠시 후 페이지 이동
+			setTimeout(() => {
+				navigate("/ward-admin");
+			}, 1000);
+		} catch (error) {
+			console.error("병동 생성 실패:", error);
+			if (error instanceof Error) {
+				if (error.message === "서버 연결 실패") {
+					toast.error("잠시 후 다시 시도해주세요.");
+					return;
+				}
+			}
+			if ((error as AxiosError)?.response?.status === 400) {
+				toast.error("병동 생성에 실패했습니다");
+				navigate("/ward-admin");
+			} else if (error instanceof Error && error.message === "UNAUTHORIZED") {
+				navigate("/login");
+			} else {
+				navigate("/error");
+			}
+		}
+	};
+
 	return (
 		<StartTemplate>
 			<div className="flex flex-col items-center">
 				<p className="text-gray-600 text-base mb-8">
 					병동 생성을 위한 기본 정보를 입력해주세요.
 				</p>
-				<CreateWardForm />
+				<CreateWardForm onSubmit={handleCreateWard} />
 			</div>
 		</StartTemplate>
 	);
