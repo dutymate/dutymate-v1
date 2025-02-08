@@ -34,7 +34,7 @@ resource "aws_subnet" "private_subnets" {
   count             = 2
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = cidrsubnet(local.cidr, 4, count.index + 8) # 10.0.128.0/20, 10.0.144.0/20
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  availability_zone = data.aws_availability_zones.available.names[0]
 
   tags = {
     Name = "dutymate-subnet-private${count.index + 1}"
