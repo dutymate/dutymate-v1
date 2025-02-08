@@ -1,8 +1,3 @@
-data "aws_availability_zones" "available" {
-  state         = "available"
-  exclude_names = ["ap-northeast-2b", "ap-northeast-2c", "ap-northeast-2d"]
-}
-
 resource "aws_vpc" "vpc" {
   cidr_block           = var.vpc_cidr
   instance_tenancy     = "default"
@@ -16,8 +11,8 @@ resource "aws_vpc" "vpc" {
 
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = cidrsubnet(var.vpc_cidr, 4, 0) # 10.0.0.0/20 (4096 IPs)
-  availability_zone       = data.aws_availability_zones.available.names[0]
+  cidr_block              = var.public_subnets[0]
+  availability_zone       = var.availability_zones[0]
   map_public_ip_on_launch = true
 
   tags = {
@@ -27,8 +22,8 @@ resource "aws_subnet" "public_subnet" {
 
 resource "aws_subnet" "private_subnet" {
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = cidrsubnet(var.vpc_cidr, 4, 8) # 10.0.128.0/20 (4096 IPs)
-  availability_zone = data.aws_availability_zones.available.names[0]
+  cidr_block        = var.private_subnets[0]
+  availability_zone = var.availability_zones[0]
 
   tags = {
     Name = "dutymate-private-subnet"
@@ -37,8 +32,8 @@ resource "aws_subnet" "private_subnet" {
 
 resource "aws_subnet" "database_subnet" {
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = cidrsubnet(var.vpc_cidr, 4, 9) # 10.0.144.0/20 (4096 IPs)
-  availability_zone = data.aws_availability_zones.available.names[0]
+  cidr_block        = var.database_subnets[0]
+  availability_zone = var.availability_zones[0]
 
   tags = {
     Name = "dutymate-database-subnet"

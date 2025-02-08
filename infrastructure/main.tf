@@ -1,10 +1,11 @@
-locals {
-  service_names = toset(["backend", "frontend"])
-}
 
 module "networking" {
-  source   = "./Modules/Networking"
-  vpc_cidr = "10.0.0.0/16"
+  source             = "./Modules/Networking"
+  vpc_cidr           = var.vpc_cidr
+  availability_zones = var.availability_zones
+  public_subnets     = var.public_subnets
+  private_subnets    = var.private_subnets
+  database_subnets   = var.database_subnets
 }
 
 module "s3" {
@@ -13,6 +14,5 @@ module "s3" {
 }
 
 module "ecr" {
-  source        = "./Modules/ECR"
-  service_names = local.service_names
+  source = "./Modules/ECR"
 }
