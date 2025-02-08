@@ -37,13 +37,13 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
 						key={index}
 						className={[
 							"flex-1",
-							variant === "request" ? "p-4" : "p-3",
+							variant === "request" ? "p-3" : "p-3",
 							"rounded-md",
 							getButtonStyle(isSelected),
 							"cursor-pointer",
 							"transition-all",
 							"duration-300",
-							variant === "request" ? "text-base" : "text-sm",
+							variant === "request" ? "text-base" : "text-base",
 							"flex",
 							"items-center",
 							"justify-center",

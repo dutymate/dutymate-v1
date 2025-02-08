@@ -111,7 +111,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 								/>
 							)}
 						{variant === "authority" ? (
-							<Icon name="menu" size={20} className="text-primary" />
+							<Icon name="dots" size={20} className="text-primary" />
 						) : (
 							<span
 								className={`text-base ${variant === "number" && value ? "font-bold" : ""} ${!value ? "text-base-muted" : ""}`}
