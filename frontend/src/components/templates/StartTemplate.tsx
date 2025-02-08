@@ -14,7 +14,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({ children }) => {
 			<div className="relative w-full h-full">
 				{/* 배경 색상 레이어 */}
 				<div className="absolute inset-0">
-					<div className="h-[70%] bg-muted"></div>
+					<div className="h-[70%] bg-base-muted-30"></div>
 					<div className="h-[30%] bg-primary-20 z-0"></div>
 				</div>
 				{/* 콘텐츠 래퍼 - 전체 세로 중앙 정렬 */}
@@ -54,7 +54,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({ children }) => {
 			<div className="relative w-full h-full">
 				{/* 배경 색상 레이어 */}
 				<div className="absolute inset-0">
-					<div className="h-[70%] bg-muted-30"></div>
+					<div className="h-[70%] bg-base-muted-30"></div>
 					<div className="h-[30%] bg-primary-20"></div>
 				</div>
 				{/* 로고 영역 */}

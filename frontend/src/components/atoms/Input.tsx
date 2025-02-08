@@ -355,7 +355,7 @@ interface SelectOption {
 	label: string;
 }
 
-interface SelectProps extends Omit<InputProps, 'type' | 'onChange'> {
+interface SelectProps extends Omit<InputProps, "type" | "onChange"> {
 	options: SelectOption[];
 	onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
@@ -374,8 +374,8 @@ export const Select = ({
 }: SelectProps) => {
 	const selectClasses = error
 		? "block w-full rounded-md bg-white py-2.5 pl-3 pr-10 text-base text-red-900 outline outline-[0.125rem] outline-red-300/50 focus:outline-[0.125rem] focus:outline-red-600/50 sm:py-3 sm:text-lg"
-		: "block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline outline-[0.125rem] outline-gray-300/50 focus:outline-[0.125rem] focus:outline-primary/50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200/50 sm:py-3 sm:text-lg " + 
-		  (value ? "text-center font-bold text-primary" : "");
+		: "block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline outline-[0.125rem] outline-gray-300/50 focus:outline-[0.125rem] focus:outline-primary/50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200/50 sm:py-3 sm:text-lg " +
+			(value ? "text-center font-bold text-primary" : "");
 
 	return (
 		<div>
@@ -387,9 +387,7 @@ export const Select = ({
 					{label}
 				</label>
 				{optional && (
-					<span className="text-sm text-gray-500 sm:text-base">
-						Optional
-					</span>
+					<span className="text-sm text-gray-500 sm:text-base">Optional</span>
 				)}
 			</div>
 			<div className="mt-2 sm:mt-3">
@@ -401,12 +399,16 @@ export const Select = ({
 					disabled={disabled}
 					className={selectClasses}
 				>
-					<option value="" disabled className="text-left font-normal text-gray-900">
+					<option
+						value=""
+						disabled
+						className="text-left font-normal text-gray-900"
+					>
 						{placeholder}
 					</option>
 					{options.map((option) => (
-						<option 
-							key={option.value} 
+						<option
+							key={option.value}
 							value={option.value}
 							className="text-center font-bold"
 						>
@@ -416,9 +418,7 @@ export const Select = ({
 				</select>
 			</div>
 			{error && (
-				<p className="mt-2 text-base text-red-600 sm:text-lg">
-					{error}
-				</p>
+				<p className="mt-2 text-base text-red-600 sm:text-lg">{error}</p>
 			)}
 		</div>
 	);

@@ -18,10 +18,14 @@ interface ExtraInfoFormProps {
 // 연차 옵션 배열 생성
 const careerOptions = Array.from({ length: 100 }, (_, i) => ({
 	value: String(i + 1),
-	label: String(i + 1)
+	label: String(i + 1),
 }));
 
-const ExtraInfoForm = ({ initialData, onSubmit, careerError }: ExtraInfoFormProps) => {
+const ExtraInfoForm = ({
+	initialData,
+	onSubmit,
+	careerError,
+}: ExtraInfoFormProps) => {
 	const [formState, setFormState] = useState<FormData>(initialData);
 
 	// initialData가 변경될 때 formState 업데이트
