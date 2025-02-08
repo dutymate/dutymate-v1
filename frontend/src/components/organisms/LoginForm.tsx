@@ -7,6 +7,10 @@ const LoginForm = () => {
 		window.location.href = import.meta.env.VITE_KAKAO_LOGIN_URL;
 	};
 
+	const handleGoogleLogin = () => {
+		window.location.href = import.meta.env.VITE_GOOGLE_LOGIN_URL;
+	};
+
 	return (
 		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 w-[25rem]">
 			<form>
@@ -56,6 +60,7 @@ const LoginForm = () => {
 					<button
 						type="button"
 						className="w-full px-3 py-2 text-sm font-medium text-[#000000] bg-[#F2F2F2] rounded-md hover:bg-[#E6E6E6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2F2F2] relative"
+						onClick={handleGoogleLogin}
 					>
 						<img
 							src={googleIcon}

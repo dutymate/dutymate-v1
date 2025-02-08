@@ -40,11 +40,21 @@ export const userService = {
 	 * - 토큰이 있다면 자동으로 Authorization 헤더가 포함됩니다
 	 * - 401 에러 시 자동으로 로그인 페이지로 리다이렉트됩니다
 	 */
-	googleLogin: async (code: string): Promise<LoginResponse> => {
-		const response = await axiosInstance.get(`/member/login/google`, {
-			params: { code },
-		});
-		return response.data;
+	googleLogin: async (
+		code: string,
+		success: (data: LoginResponse) => void,
+		fail: (error: ApiErrorResponse) => void,
+	) => {
+		try {
+			const response = await axiosInstance.get(`/member/login/google`, {
+				params: { code },
+			});
+			success(response.data);
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				fail(error.response?.data);
+			}
+		}
 	},
 
 	/**

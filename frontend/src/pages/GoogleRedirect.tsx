@@ -8,7 +8,7 @@ import {
 import Login from "./Login";
 import useUserAuthStore from "../store/userAuthStore";
 
-export function KakaoRedirect() {
+export function GoogleRedirect() {
 	const navigate = useNavigate();
 	const userAuthStore = useUserAuthStore();
 	const code: string | null = new URL(window.location.href).searchParams.get(
@@ -22,7 +22,7 @@ export function KakaoRedirect() {
 			return;
 		}
 
-		userService.kakaoLogin(
+		userService.googleLogin(
 			code,
 			(data: LoginResponse) => {
 				// console.log("✅ 로그인 성공:", data);
@@ -51,6 +51,7 @@ export function KakaoRedirect() {
 				}
 			},
 			(error: ApiErrorResponse) => {
+				// 인증 오류시 login 페이지로 이동동
 				navigate("/login");
 				console.error(error);
 			},
@@ -63,4 +64,4 @@ export function KakaoRedirect() {
 		</div>
 	);
 }
-export default KakaoRedirect;
+export default GoogleRedirect;

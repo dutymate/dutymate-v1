@@ -3,6 +3,7 @@ import Playgrounds from "../pages/playgrounds";
 import Landing from "../pages/Landing";
 import Login from "../pages/Login";
 import KakaoRedirect from "../pages/KakaoRedirect";
+import GoogleRedirect from "../pages/GoogleRedirect";
 import MyShift from "../pages/MyShift";
 import TeamShift from "../pages/TeamShift";
 import WardAdmin from "../pages/WardAdmin";
@@ -21,6 +22,7 @@ const Router = () => {
 			<Route path="/" element={<Landing />} />
 			<Route path="/login" element={<Login />} />
 			<Route path="/oauth/kakao" element={<KakaoRedirect />} />
+			<Route path="/oauth/google" element={<GoogleRedirect />} />
 			<Route path="/my-shift" element={<MyShift />} />
 			<Route path="/team-shift" element={<TeamShift />} />
 			<Route path="/ward-admin" element={<WardAdmin />} />
