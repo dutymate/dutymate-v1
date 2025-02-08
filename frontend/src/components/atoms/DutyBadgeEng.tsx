@@ -2,7 +2,7 @@
 
 interface DutyBadgeEngProps {
 	type: "D" | "E" | "N" | "O" | "All" | "default";
-	size?: "sm" | "md" | "lg";
+	size?: "xs" | "sm" | "md" | "lg";
 	isSelected?: boolean;
 	onClick?: () => void;
 	variant?: "filled" | "outline" | "letter";
@@ -16,6 +16,7 @@ const DutyBadgeEng = ({
 	variant = "filled",
 }: DutyBadgeEngProps) => {
 	const sizeClasses = {
+		xs: "w-5 h-5 text-sm",
 		sm: "w-6 h-6 text-base",
 		md: "w-8 h-8 text-lg",
 		lg: "w-10 h-10 text-xl",

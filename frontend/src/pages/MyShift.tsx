@@ -41,7 +41,7 @@ const MyShift = () => {
 			/>
 
 			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 overflow-y-auto">
+			<div className="flex-1 min-w-0 lg:px-8 py-6 overflow-y-auto">
 				{/* 모바일 메뉴 버튼 */}
 				<button
 					onClick={() => setIsSidebarOpen(true)}
