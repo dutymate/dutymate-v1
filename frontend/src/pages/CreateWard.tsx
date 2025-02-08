@@ -4,17 +4,14 @@ import { useNavigate } from "react-router-dom";
 import useUserAuthStore from "../store/userAuthStore";
 import { wardService } from "../services/wardService";
 import { AxiosError } from "axios";
-import { useState } from "react";
 import { toast } from "react-toastify";
 
 const CreateWard = () => {
 	const navigate = useNavigate();
 	const userAuthStore = useUserAuthStore();
-	const [error, setError] = useState<string>("");
 
 	const handleCreateWard = async (hospitalName: string, wardName: string) => {
 		console.log("handleCreateWard 함수 호출됨:", { hospitalName, wardName });
-		setError(""); // 에러 메시지 초기화
 
 		try {
 			console.log("wardService.createWard 호출 전");

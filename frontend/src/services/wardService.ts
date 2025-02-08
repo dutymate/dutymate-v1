@@ -105,26 +105,30 @@ export const wardService = {
 			.get(`/ward/check-code`, {
 				params: { code },
 			})
-			.then(() => true)
+			.then((response) => {
+				return true;
+			})
 			.catch((error) => {
 				if (error.code === "ERR_NETWORK") {
 					console.error(
 						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
 					);
-					return false;
+					throw new Error("서버 연결 실패");
 				}
 				if (error.response) {
 					switch (error.response.status) {
+						case 400:
+							throw new Error("이미 입장한 병동이 있습니다");
 						case 401:
 							window.location.href = "/login";
 							break;
 						case 404:
-							return false;
+							throw new Error("유효하지 않은 병동 코드입니다");
 						default:
 							window.location.href = "/error";
 					}
 				}
-				return false;
+				throw error;
 			});
 	},
 
