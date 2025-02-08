@@ -59,10 +59,10 @@ export const ProgressChecker: React.FC<ProgressCheckerProps> = ({
 			</svg>
 			{showLabel && (
 				<div className="absolute flex flex-col items-center justify-center">
-					<span className="text-xl font-bold text-base-foreground">
+					<span className="text-base font-bold text-base-foreground">
 						{Math.round(normalizedValue)}%
 					</span>
-					<span className="text-sm text-base-foreground">완성도</span>
+					<span className="text-xs text-base-foreground">완성도</span>
 				</div>
 			)}
 		</div>

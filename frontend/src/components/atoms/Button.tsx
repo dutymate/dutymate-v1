@@ -1,4 +1,4 @@
-type ButtonSize = "sm" | "md" | "lg";
+type ButtonSize = "xs" | "sm" | "md" | "lg";
 type ButtonWidth = "short" | "long";
 type ButtonColor = "primary" | "evening" | "night" | "day" | "off" | "muted";
 
@@ -15,6 +15,9 @@ interface ButtonProps {
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
+	xs: `h-[1.6rem] 
+      rounded-[6px] px-2.5 py-0.5 
+      text-[0.75rem]`, // 10px
 	sm: `h-[1.5625rem] sm:h-[2.5rem] 
       rounded-[9px] px-2 py-1 
       text-[0.6875rem] sm:text-sm`, // 모바일: 11px, 데스크톱: 12px
@@ -29,12 +32,14 @@ const sizeStyles: Record<ButtonSize, string> = {
 const widthStyles: Record<ButtonWidth, Record<ButtonSize, string>> = {
 	// Short 버튼: sm 사이즈 기준으로 xs는 조금 작게, md는 조금 크게
 	short: {
+		xs: "w-[4.5rem]", // 60px
 		sm: "w-[4.375rem] sm:w-[7rem]", // 모바일: 70px, 데스크톱: 112px
 		md: "w-[4.6875rem] sm:w-[7.5rem]", // 모바일: 75px, 데스크톱: 120px
 		lg: "w-[5rem] sm:w-[8rem]", // 모바일: 80px, 데스크톱: 128px
 	},
 	// Long 버튼: sm 사이즈 기준으로 xs는 조금 작게, md는 조금 크게
 	long: {
+		xs: "w-[12rem]", // 160px
 		sm: "w-[11.25rem] sm:w-[20.625rem]", // 모바일: 180px, 데스크톱: 330px
 		md: "w-[11.75rem] sm:w-[21.875rem]", // 모바일: 188px, 데스크톱: 350px
 		lg: "w-[12.5rem] sm:w-[23.125rem]", // 모바일: 200px, 데스크톱: 370px
