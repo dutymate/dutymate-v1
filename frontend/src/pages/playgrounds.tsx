@@ -18,6 +18,8 @@ import { Dropdown } from "@/components/atoms/Dropdown";
 import { Badge } from "@/components/atoms/Badge";
 import { ProgressChecker } from "@/components/atoms/ProgressChecker";
 import { DutyBadgeKor } from "../components/atoms/DutyBadgeKor";
+import { ApprovalBtn } from "../components/atoms/ApprovalBtn";
+import DutyBadgeEng from "../components/atoms/DutyBadgeEng";
 
 const Playgrounds: React.FC = () => {
 	const [genderIndex, setGenderIndex] = useState(0);
@@ -29,6 +31,11 @@ const Playgrounds: React.FC = () => {
 		null,
 	);
 	const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
+	const [selectedSmall, setSelectedSmall] = useState<string | null>(null);
+	const [selectedMedium, setSelectedMedium] = useState<string | null>(null);
+	const [selectedLarge, setSelectedLarge] = useState<string | null>(null);
+
+	const badgeTypes = ["D", "E", "N", "O", "All", "default"] as const;
 
 	return (
 		<div className="min-h-screen bg-base-background p-8">
@@ -703,6 +710,7 @@ const Playgrounds: React.FC = () => {
 									id="ward-code"
 									name="wardCode"
 									label="병동 코드"
+									showInvalidMessage={true}
 									onChange={(value) => console.log("Ward Code:", value)}
 								/>
 							</div>
@@ -714,9 +722,10 @@ const Playgrounds: React.FC = () => {
 								</h4>
 								<WardCodeInput
 									id="ward-code-error"
-									name="wardCode"
+									name="wardCodeError"
 									label="병동 코드"
-									error="올바른 병동 코드를 입력해주세요 (숫자와 영문 대문자만 가능)"
+									error="올바른 병동 코드를 입력해주세요"
+									onChange={(value) => console.log("Ward Code Error:", value)}
 								/>
 							</div>
 
@@ -842,6 +851,170 @@ const Playgrounds: React.FC = () => {
 							<div className="flex flex-col items-center p-4 border rounded-lg">
 								<Icon name="close" size={24} />
 								<span className="text-sm mt-2">close</span>
+							</div>
+						</div>
+					</div>
+
+					{/* Duty Badge English Section */}
+					<div className="bg-white p-6 rounded-lg shadow-sm mb-8">
+						<h2 className="text-lg font-semibold mb-4">Duty Badge (English)</h2>
+
+						<div className="space-y-6">
+							{/* Small Size */}
+							<div>
+								<h3 className="text-sm font-medium text-base-muted mb-2">
+									Small Size (Selectable)
+								</h3>
+								<div className="flex gap-4">
+									{badgeTypes.map((type) => (
+										<DutyBadgeEng
+											key={type}
+											type={type}
+											size="sm"
+											isSelected={selectedSmall === type}
+											onClick={() =>
+												setSelectedSmall(selectedSmall === type ? null : type)
+											}
+										/>
+									))}
+								</div>
+							</div>
+
+							{/* Medium Size */}
+							<div>
+								<h3 className="text-sm font-medium text-base-muted mb-2">
+									Medium Size (Selectable)
+								</h3>
+								<div className="flex gap-4">
+									{badgeTypes.map((type) => (
+										<DutyBadgeEng
+											key={type}
+											type={type}
+											size="md"
+											isSelected={selectedMedium === type}
+											onClick={() =>
+												setSelectedMedium(selectedMedium === type ? null : type)
+											}
+										/>
+									))}
+								</div>
+							</div>
+
+							{/* Large Size */}
+							<div>
+								<h3 className="text-sm font-medium text-base-muted mb-2">
+									Large Size (Selectable)
+								</h3>
+								<div className="flex gap-4">
+									{badgeTypes.map((type) => (
+										<DutyBadgeEng
+											key={type}
+											type={type}
+											size="lg"
+											isSelected={selectedLarge === type}
+											onClick={() =>
+												setSelectedLarge(selectedLarge === type ? null : type)
+											}
+										/>
+									))}
+								</div>
+							</div>
+
+							{/* Selected State */}
+							<div>
+								<h3 className="text-sm font-medium text-base-muted mb-2">
+									Selected State (Static)
+								</h3>
+								<div className="flex gap-4">
+									{badgeTypes.map((type) => (
+										<DutyBadgeEng key={type} type={type} isSelected />
+									))}
+								</div>
+							</div>
+
+							{/* Clickable */}
+							<div>
+								<h3 className="text-sm font-medium text-base-muted mb-2">
+									Clickable (With Console Log)
+								</h3>
+								<div className="flex gap-4">
+									{badgeTypes.map((type) => (
+										<DutyBadgeEng
+											key={type}
+											type={type}
+											onClick={() => console.log(`${type} clicked`)}
+										/>
+									))}
+								</div>
+							</div>
+
+							{/* Outline Style */}
+							<div>
+								<h3 className="text-sm font-medium text-base-muted mb-2">
+									Outline Style
+								</h3>
+								<div className="flex gap-4">
+									{badgeTypes.map((type) => (
+										<DutyBadgeEng key={type} type={type} variant="outline" />
+									))}
+								</div>
+							</div>
+
+							{/* Letter Style */}
+							<div>
+								<h3 className="text-sm font-medium text-base-muted mb-2">
+									Letter Style
+								</h3>
+								<div className="flex gap-4">
+									{badgeTypes.map((type) => (
+										<DutyBadgeEng key={type} type={type} variant="letter" />
+									))}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{/* Approval Button Section */}
+					<div className="bg-white p-6 rounded-lg shadow-sm">
+						<h2 className="text-lg font-semibold mb-4">Approval Button</h2>
+
+						<div className="space-y-6">
+							{/* Default State */}
+							<div>
+								<h3 className="text-sm font-medium text-base-muted mb-2">
+									Default (Hold)
+								</h3>
+								<ApprovalBtn
+									onChange={(status) =>
+										console.log("Status changed to:", status)
+									}
+								/>
+							</div>
+
+							{/* Initially Approved */}
+							<div>
+								<h3 className="text-sm font-medium text-base-muted mb-2">
+									Initially Approved
+								</h3>
+								<ApprovalBtn
+									initialStatus="approve"
+									onChange={(status) =>
+										console.log("Status changed to:", status)
+									}
+								/>
+							</div>
+
+							{/* Initially Denied */}
+							<div>
+								<h3 className="text-sm font-medium text-base-muted mb-2">
+									Initially Denied
+								</h3>
+								<ApprovalBtn
+									initialStatus="deny"
+									onChange={(status) =>
+										console.log("Status changed to:", status)
+									}
+								/>
 							</div>
 						</div>
 					</div>

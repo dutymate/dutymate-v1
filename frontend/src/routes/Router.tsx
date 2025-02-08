@@ -10,7 +10,6 @@ import CreateWard from "../pages/CreateWard";
 import EnterWard from "../pages/EnterWard";
 import ExtraInfo from "../pages/ExtraInfo";
 import MobilePractice from "../pages/MobilePractice";
-import NewPlaygrounds from "../pages/newplaygrounds";
 import Community from "../pages/Community";
 import RequestManagement from "../pages/RequestManagement";
 import DutyManagement from "../pages/DutyManagement";
@@ -30,7 +29,6 @@ const Router = () => {
 			<Route path="/extra-info" element={<ExtraInfo />} />
 			<Route path="/playgrounds" element={<Playgrounds />} />
 			<Route path="/mobile" element={<MobilePractice />} />
-			<Route path="/newplaygrounds" element={<NewPlaygrounds />} />
 			<Route path="/community" element={<Community />} />
 			<Route path="/req-admin" element={<RequestManagement />} />
 			<Route path="/shift-admin" element={<DutyManagement />} />

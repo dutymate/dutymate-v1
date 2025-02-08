@@ -8,6 +8,7 @@ interface WardCodeInputProps {
 	disabled?: boolean;
 	length?: number;
 	onChange?: (value: string) => void;
+	showInvalidMessage?: boolean;
 }
 
 export const WardCodeInput = ({
@@ -18,13 +19,21 @@ export const WardCodeInput = ({
 	disabled,
 	length = 6,
 	onChange,
+	showInvalidMessage = false,
 }: WardCodeInputProps) => {
 	const [values, setValues] = useState<string[]>(Array(length).fill(""));
+	const [invalidInput, setInvalidInput] = useState(false);
 	const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
 	const handleChange = (index: number, value: string) => {
 		// 영문(대소문자)과 숫자만 허용하고 대문자로 변환
 		const sanitizedValue = value.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+
+		// 입력값이 있고 영문자나 숫자가 아닌 문자가 포함된 경우
+		if (value && !/^[A-Za-z0-9]*$/.test(value)) {
+			setInvalidInput(true);
+			setTimeout(() => setInvalidInput(false), 2000); // 2초 후 메시지 숨김
+		}
 
 		if (sanitizedValue.length <= 1) {
 			const newValues = [...values];
@@ -65,31 +74,36 @@ export const WardCodeInput = ({
 					{label}
 				</label>
 			)}
-			<div className="flex gap-2 sm:gap-3">
-				{Array(length)
-					.fill(0)
-					.map((_, index) => (
-						<input
-							key={index}
-							ref={(el) => (inputRefs.current[index] = el)}
-							id={`${id}-${index}`}
-							name={`${name}-${index}`}
-							type="text"
-							maxLength={1}
-							value={values[index]}
-							onChange={(e) => handleChange(index, e.target.value)}
-							onKeyDown={(e) => handleKeyDown(index, e)}
-							disabled={disabled}
-							className={singleInputClass}
-							aria-invalid={error ? "true" : undefined}
-						/>
-					))}
+			<div className="flex flex-col gap-2">
+				<div className="flex gap-2 sm:gap-3">
+					{Array(length)
+						.fill(0)
+						.map((_, index) => (
+							<input
+								key={index}
+								ref={(el) => (inputRefs.current[index] = el)}
+								id={`${id}-${index}`}
+								name={`${name}-${index}`}
+								type="text"
+								maxLength={1}
+								value={values[index]}
+								onChange={(e) => handleChange(index, e.target.value)}
+								onKeyDown={(e) => handleKeyDown(index, e)}
+								disabled={disabled}
+								className={singleInputClass}
+								aria-invalid={error ? "true" : undefined}
+							/>
+						))}
+				</div>
+				{showInvalidMessage && invalidInput && (
+					<p className="text-[0.875rem] text-red-600 sm:text-[1rem]">
+						영문자와 숫자만 입력 가능합니다
+					</p>
+				)}
+				{error && (
+					<p className="text-[0.875rem] text-red-600 sm:text-[1rem]">{error}</p>
+				)}
 			</div>
-			{error && (
-				<p className="mt-2 text-[0.875rem] text-red-600 sm:text-[1rem]">
-					{error}
-				</p>
-			)}
 		</div>
 	);
 };
