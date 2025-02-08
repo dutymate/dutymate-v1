@@ -85,4 +85,11 @@ public class Member {
 	public void updateRole(String role) {
 		this.role = Role.valueOf(role);
 	}
+
+	public void editMember(String name, String nickname, String gender, Integer grade) {
+		this.name = name;
+		this.nickname = nickname;
+		this.gender = Gender.valueOf(gender);
+		this.grade = grade;
+	}
 }

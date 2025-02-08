@@ -3,6 +3,7 @@ package net.dutymate.api.member.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import net.dutymate.api.member.dto.AdditionalInfoRequestDto;
 import net.dutymate.api.member.dto.AdditionalInfoResponseDto;
 import net.dutymate.api.member.dto.LoginRequestDto;
 import net.dutymate.api.member.dto.LoginResponseDto;
+import net.dutymate.api.member.dto.MypageEditRequestDto;
 import net.dutymate.api.member.dto.MypageResponseDto;
 import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.service.MemberService;
@@ -71,5 +73,11 @@ public class MemberController {
 	public ResponseEntity<?> getMembers(@Auth Member member) {
 		MypageResponseDto mypageResponseDto = memberService.getMember(member);
 		return ResponseEntity.ok(mypageResponseDto);
+	}
+
+	@PutMapping
+	public ResponseEntity<?> updateMember(@Auth Member member, @RequestBody MypageEditRequestDto mypageEditRequestDto) {
+		memberService.updateMember(member, mypageEditRequestDto);
+		return ResponseEntity.ok().build();
 	}
 }

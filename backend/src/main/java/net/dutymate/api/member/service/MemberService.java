@@ -27,6 +27,7 @@ import net.dutymate.api.member.dto.KakaoTokenResponseDto;
 import net.dutymate.api.member.dto.KakaoUserResponseDto;
 import net.dutymate.api.member.dto.LoginRequestDto;
 import net.dutymate.api.member.dto.LoginResponseDto;
+import net.dutymate.api.member.dto.MypageEditRequestDto;
 import net.dutymate.api.member.dto.MypageResponseDto;
 import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.repository.MemberRepository;
@@ -267,5 +268,16 @@ public class MemberService {
 	public MypageResponseDto getMember(Member member) {
 		WardMember wardMember = getMemberById(member.getMemberId()).getWardMember();
 		return MypageResponseDto.of(wardMember, member);
+	}
+
+	public void updateMember(Member member, MypageEditRequestDto mypageEditRequestDto) {
+
+		String name = mypageEditRequestDto.getName();
+		String nickname = mypageEditRequestDto.getNickname();
+		String gender = mypageEditRequestDto.getGender();
+		Integer grade = mypageEditRequestDto.getGrade();
+
+		member.editMember(name, nickname, gender, grade);
+		memberRepository.save(member);
 	}
 }
