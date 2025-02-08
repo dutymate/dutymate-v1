@@ -32,7 +32,7 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		console.log("Form submitted with code:", wardCode);
-		
+
 		if (!validateWardCode(wardCode)) {
 			return;
 		}
@@ -76,11 +76,11 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 						/>
 					</div>
 				</div>
-				<Button 
+				<Button
 					type="submit"
-					color="primary" 
-					size="lg" 
-					fullWidth 
+					color="primary"
+					size="lg"
+					fullWidth
 					disabled={isLoading || !!error || wardCode.length !== 6}
 					className={isLoading ? "opacity-70 cursor-not-allowed" : ""}
 				>

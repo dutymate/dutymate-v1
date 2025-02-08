@@ -16,11 +16,11 @@ const EnterWard = () => {
 		try {
 			const isValid = await wardService.checkWardCode(wardCode);
 			console.log("Ward code check result:", isValid);
-			
+
 			if (!isValid) {
 				throw new Error("유효하지 않은 병동 코드입니다");
 			}
-			
+
 			userAuthStore.setUserInfo({
 				...userAuthStore.userInfo!,
 				existMyWard: true,
@@ -30,14 +30,13 @@ const EnterWard = () => {
 				position: "top-center",
 				autoClose: 3000,
 			});
-			
+
 			setTimeout(() => {
 				navigate("/ward");
 			}, 1000);
-			
 		} catch (error) {
 			console.error("병동 입장 실패:", error);
-			
+
 			if (error instanceof Error) {
 				switch (error.message) {
 					case "서버 연결 실패":
