@@ -33,12 +33,8 @@ export const userService = {
 	/**
 	 * Google 로그인 API
 	 * @param code - Google OAuth 인증 코드
-	 * @returns LoginResponse - 로그인 응답 데이터
-	 *
-	 * axiosInstance를 사용하므로:
-	 * - 자동으로 baseURL이 앞에 붙습니다 (/api/member/login/google)
-	 * - 토큰이 있다면 자동으로 Authorization 헤더가 포함됩니다
-	 * - 401 에러 시 자동으로 로그인 페이지로 리다이렉트됩니다
+	 * @param success - 성공 시 콜백 함수
+	 * @param fail - 실패 시 콜백 함수
 	 */
 	googleLogin: async (
 		code: string,
@@ -60,7 +56,8 @@ export const userService = {
 	/**
 	 * Kakao 로그인 API
 	 * @param code - Kakao OAuth 인증 코드
-	 * @returns LoginResponse - 로그인 응답 데이터
+	 * @param success - 성공 시 콜백 함수
+	 * @param fail - 실패 시 콜백 함수
 	 */
 	kakaoLogin: async (
 		code: string,
@@ -82,13 +79,22 @@ export const userService = {
 	/**
 	 * 부가정보 입력 API
 	 * @param data - 부가정보 (연차, 성별, 역할)
-	 * @returns AdditionalInfoResponse - 부가정보 입력 응답 데이터
+	 * @param success - 성공 시 콜백 함수
+	 * @param fail - 실패 시 콜백 함수
 	 */
 	submitAdditionalInfo: async (
 		data: AdditionalInfoRequest,
-	): Promise<AdditionalInfoResponse> => {
-		const response = await axiosInstance.post(`/member/info`, data);
-		return response.data;
+		success: (data: AdditionalInfoResponse) => void,
+		fail: (error: ApiErrorResponse) => void,
+	): Promise<void> => {
+		try {
+			const response = await axiosInstance.post(`/member/info`, data);
+			success(response.data);
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				fail(error.response?.data);
+			}
+		}
 	},
 };
 

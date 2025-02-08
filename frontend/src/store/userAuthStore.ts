@@ -35,7 +35,7 @@ interface UserAuthState {
 // Zustand 스토어 생성
 export const useUserAuthStore = create<UserAuthState>()(
 	persist(
-		(set) => ({
+		(set, get) => ({
 			// 초기 상태
 			isAuthenticated: false,
 			userInfo: null,
@@ -48,10 +48,21 @@ export const useUserAuthStore = create<UserAuthState>()(
 					userInfo,
 				}),
 
-			setAdditionalInfo: (additionalInfo: AdditionalInfo) =>
+			setAdditionalInfo: (additionalInfo: AdditionalInfo) => {
+				const currentState = get();
+				// userInfo가 없거나 인증되지 않은 상태라면 에러
+				if (!currentState.isAuthenticated || !currentState.userInfo) {
+					throw new Error("User must be authenticated before setting additional info");
+				}
+				
 				set({
 					additionalInfo,
-				}),
+					userInfo: {
+						...currentState.userInfo,
+						existAdditionalInfo: true,
+					},
+				});
+			},
 
 			logout: () =>
 				set({

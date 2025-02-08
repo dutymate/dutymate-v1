@@ -349,3 +349,77 @@ export const SmallSearchInput = (props: Omit<InputProps, "type" | "label">) => {
 		</div>
 	);
 };
+
+interface SelectOption {
+	value: string;
+	label: string;
+}
+
+interface SelectProps extends Omit<InputProps, 'type' | 'onChange'> {
+	options: SelectOption[];
+	onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+export const Select = ({
+	id,
+	name,
+	label,
+	placeholder,
+	options,
+	value,
+	onChange,
+	error,
+	disabled,
+	optional,
+}: SelectProps) => {
+	const selectClasses = error
+		? "block w-full rounded-md bg-white py-2.5 pl-3 pr-10 text-base text-red-900 outline outline-[0.125rem] outline-red-300/50 focus:outline-[0.125rem] focus:outline-red-600/50 sm:py-3 sm:text-lg"
+		: "block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline outline-[0.125rem] outline-gray-300/50 focus:outline-[0.125rem] focus:outline-primary/50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200/50 sm:py-3 sm:text-lg " + 
+		  (value ? "text-center font-bold text-primary" : "");
+
+	return (
+		<div>
+			<div className="flex justify-between">
+				<label
+					htmlFor={id}
+					className="block text-base font-medium text-gray-900 sm:text-lg"
+				>
+					{label}
+				</label>
+				{optional && (
+					<span className="text-sm text-gray-500 sm:text-base">
+						Optional
+					</span>
+				)}
+			</div>
+			<div className="mt-2 sm:mt-3">
+				<select
+					id={id}
+					name={name}
+					value={value}
+					onChange={onChange}
+					disabled={disabled}
+					className={selectClasses}
+				>
+					<option value="" disabled className="text-left font-normal text-gray-900">
+						{placeholder}
+					</option>
+					{options.map((option) => (
+						<option 
+							key={option.value} 
+							value={option.value}
+							className="text-center font-bold"
+						>
+							{option.label}
+						</option>
+					))}
+				</select>
+			</div>
+			{error && (
+				<p className="mt-2 text-base text-red-600 sm:text-lg">
+					{error}
+				</p>
+			)}
+		</div>
+	);
+};
