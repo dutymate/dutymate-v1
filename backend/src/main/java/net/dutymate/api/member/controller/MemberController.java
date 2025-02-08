@@ -15,6 +15,7 @@ import net.dutymate.api.member.dto.AdditionalInfoRequestDto;
 import net.dutymate.api.member.dto.AdditionalInfoResponseDto;
 import net.dutymate.api.member.dto.LoginRequestDto;
 import net.dutymate.api.member.dto.LoginResponseDto;
+import net.dutymate.api.member.dto.MypageResponseDto;
 import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.service.MemberService;
 
@@ -64,5 +65,11 @@ public class MemberController {
 	public ResponseEntity<String> logout(@RequestHeader("Authorization") String bearerToken) {
 		memberService.logout(bearerToken);
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping
+	public ResponseEntity<?> getMembers(@Auth Member member) {
+		MypageResponseDto mypageResponseDto = memberService.getMember(member);
+		return ResponseEntity.ok(mypageResponseDto);
 	}
 }

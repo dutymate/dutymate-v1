@@ -15,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.enumclass.Gender;
 import net.dutymate.api.enumclass.Provider;
 import net.dutymate.api.enumclass.Role;
@@ -26,6 +27,7 @@ import net.dutymate.api.member.dto.KakaoTokenResponseDto;
 import net.dutymate.api.member.dto.KakaoUserResponseDto;
 import net.dutymate.api.member.dto.LoginRequestDto;
 import net.dutymate.api.member.dto.LoginResponseDto;
+import net.dutymate.api.member.dto.MypageResponseDto;
 import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.member.util.JwtUtil;
@@ -259,5 +261,11 @@ public class MemberService {
 	public Member getMemberById(Long memberId) {
 		return memberRepository.findById(memberId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원을 찾을 수 없습니다."));
+	}
+
+	// 마이페이지 정보 조회하기
+	public MypageResponseDto getMember(Member member) {
+		WardMember wardMember = getMemberById(member.getMemberId()).getWardMember();
+		return MypageResponseDto.of(wardMember, member);
 	}
 }

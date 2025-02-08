@@ -392,3 +392,4 @@ public class WardScheduleService {
 		return AllWardDutyResponseDto.of(wardSchedule.getId(), yearMonth, nurseShiftList);
 	}
 }
+
