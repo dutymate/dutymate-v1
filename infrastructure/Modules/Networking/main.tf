@@ -111,9 +111,17 @@ resource "aws_route_table_association" "private_route_table_assoc" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
+resource "aws_route_table" "database_route_table" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name = "dutymate-database-route-table"
+  }
+}
+
 resource "aws_route_table_association" "database_route_table_assoc" {
   subnet_id      = aws_subnet.database_subnet.id
-  route_table_id = aws_route_table.private_route_table.id
+  route_table_id = aws_route_table.database_route_table.id
 }
 
 resource "aws_vpc_endpoint" "vpce_s3" {
