@@ -3,7 +3,8 @@ locals {
 }
 
 module "networking" {
-  source = "./Modules/Networking"
+  source   = "./Modules/Networking"
+  vpc_cidr = "10.0.0.0/16"
 }
 
 module "s3" {

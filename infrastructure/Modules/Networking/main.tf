@@ -1,15 +1,10 @@
-locals {
-  cidr      = "10.0.0.0/16"
-  open_cidr = "0.0.0.0/0"
-}
-
 data "aws_availability_zones" "available" {
   state         = "available"
   exclude_names = ["ap-northeast-2b", "ap-northeast-2c", "ap-northeast-2d"]
 }
 
 resource "aws_vpc" "vpc" {
-  cidr_block           = local.cidr # 10.0.0.0/16 (65,536 IPs)
+  cidr_block           = var.vpc_cidr
   instance_tenancy     = "default"
   enable_dns_support   = true
   enable_dns_hostnames = true
@@ -21,35 +16,36 @@ resource "aws_vpc" "vpc" {
 
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = cidrsubnet(local.cidr, 4, 0) # 10.0.0.0/20 (4,096 IPs)
+  cidr_block              = cidrsubnet(var.vpc_cidr, 4, 0) # 10.0.0.0/20 (4096 IPs)
   availability_zone       = data.aws_availability_zones.available.names[0]
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "dutymate-subnet-public1"
+    Name = "dutymate-public-subnet"
   }
 }
 
-resource "aws_subnet" "private_subnets" {
-  count             = 2
+resource "aws_subnet" "private_subnet" {
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = cidrsubnet(local.cidr, 4, count.index + 8) # 10.0.128.0/20, 10.0.144.0/20
+  cidr_block        = cidrsubnet(var.vpc_cidr, 4, 8) # 10.0.128.0/20 (4096 IPs)
   availability_zone = data.aws_availability_zones.available.names[0]
 
   tags = {
-    Name = "dutymate-subnet-private${count.index + 1}"
+    Name = "dutymate-private-subnet"
   }
 }
 
-resource "aws_default_route_table" "default_route_table" {
-  default_route_table_id = aws_vpc.vpc.default_route_table_id
+resource "aws_subnet" "database_subnet" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 4, 9) # 10.0.144.0/20 (4096 IPs)
+  availability_zone = data.aws_availability_zones.available.names[0]
 
   tags = {
-    Name = "dutymate-default-rtb"
+    Name = "dutymate-database-subnet"
   }
 }
 
-resource "aws_internet_gateway" "internet_gateway" {
+resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
@@ -57,31 +53,18 @@ resource "aws_internet_gateway" "internet_gateway" {
   }
 }
 
-resource "aws_route_table" "public_route_table" {
-  vpc_id = aws_vpc.vpc.id
-
-  route {
-    cidr_block = local.open_cidr
-    gateway_id = aws_internet_gateway.internet_gateway.id
-  }
-
-  tags = {
-    Name = "dutymate-public-rtb"
-  }
-}
-
-resource "aws_eip" "nat_eip" {
+resource "aws_eip" "ngw_eip" {
   lifecycle {
     create_before_destroy = true
   }
 
   tags = {
-    Name = "dutymate-nat-eip"
+    Name = "dutymate-ngw-eip"
   }
 }
 
-resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = aws_eip.nat_eip.id
+resource "aws_nat_gateway" "ngw" {
+  allocation_id = aws_eip.ngw_eip.id
   subnet_id     = aws_subnet.public_subnet.id
 
   tags = {
@@ -89,48 +72,60 @@ resource "aws_nat_gateway" "nat_gateway" {
   }
 }
 
-resource "aws_route_table" "private_route_table1" {
+resource "aws_default_route_table" "default_route_table" {
+  default_route_table_id = aws_vpc.vpc.default_route_table_id
+
+  tags = {
+    Name = "dutymate-default-route-table"
+  }
+}
+
+resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.vpc.id
 
   route {
-    cidr_block     = local.open_cidr
-    nat_gateway_id = aws_nat_gateway.nat_gateway.id
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
   }
 
   tags = {
-    Name = "dutymate-private-rtb1"
+    Name = "dutymate-public-route-table"
   }
 }
 
-resource "aws_route_table" "private_route_table2" {
-  vpc_id = aws_vpc.vpc.id
-
-  tags = {
-    Name = "dutymate-private-rtb2"
-  }
-}
-
-resource "aws_route_table_association" "route_table_public_subnet_association" {
+resource "aws_route_table_association" "public_route_table_assoc" {
   subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public_route_table.id
 }
 
-resource "aws_route_table_association" "route_table_private_subnet1_association" {
-  subnet_id      = aws_subnet.private_subnets[0].id
-  route_table_id = aws_route_table.private_route_table1.id
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.ngw.id
+  }
+
+  tags = {
+    Name = "dutymate-private-route-table"
+  }
 }
 
-resource "aws_route_table_association" "route_table_private_subnet2_association" {
-  subnet_id      = aws_subnet.private_subnets[1].id
-  route_table_id = aws_route_table.private_route_table2.id
+resource "aws_route_table_association" "private_route_table_assoc" {
+  subnet_id      = aws_subnet.private_subnet.id
+  route_table_id = aws_route_table.private_route_table.id
+}
 
+resource "aws_route_table_association" "database_route_table_assoc" {
+  subnet_id      = aws_subnet.database_subnet.id
+  route_table_id = aws_route_table.private_route_table.id
 }
 
 resource "aws_vpc_endpoint" "vpce_s3" {
   vpc_id            = aws_vpc.vpc.id
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.ap-northeast-2.s3"
-  route_table_ids   = [aws_route_table.private_route_table1.id]
+  route_table_ids   = [aws_route_table.private_route_table.id]
 
   tags = {
     Name = "dutymate-vpce-s3"
