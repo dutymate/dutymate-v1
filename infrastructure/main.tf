@@ -28,6 +28,14 @@ module "alb" {
   health_check_path = var.health_check_path
 }
 
+module "rds" {
+  source           = "./Modules/RDS"
+  database_subnets = module.networking.database_subnets
+  sg_mysql_id      = module.security_group.sg_mysql_id
+  mysql_username   = var.mysql_username
+  mysql_password   = var.mysql_password
+}
+
 module "s3" {
   source     = "./Modules/S3"
   vpce_s3_id = module.networking.vpce_s3_id

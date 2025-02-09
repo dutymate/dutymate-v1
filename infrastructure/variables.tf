@@ -29,3 +29,11 @@ variable "database_subnet_cidr_block" {
 variable "health_check_path" {
   type = string
 }
+
+variable "mysql_username" {
+  type = string
+}
+
+variable "mysql_password" {
+  type = string
+}
