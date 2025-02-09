@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ExtraInfoForm from "../components/organisms/ExtraInfoForm";
 import StartTemplate from "../components/templates/StartTemplate";
+import NextTemplate from "../components/templates/NextTemplate";
 import { useNavigate } from "react-router-dom";
 import userService from "../services/userService";
 import useUserAuthStore from "../store/userAuthStore";
@@ -17,11 +18,21 @@ interface FormData {
 const ExtraInfo = () => {
 	const navigate = useNavigate();
 	const { setAdditionalInfo } = useUserAuthStore();
+	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 	const [formData, setFormData] = useState<FormData>({
 		grade: 0,
 		gender: "F",
 		role: "RN",
 	});
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth < 1024);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
 
 	const handleSubmit = async (data: FormData) => {
 		console.log("ExtraInfo handleSubmit 호출됨:", data);
@@ -78,15 +89,17 @@ const ExtraInfo = () => {
 		}
 	};
 
+	const Template = isMobile ? NextTemplate : StartTemplate;
+
 	return (
-		<StartTemplate>
-			<div className="flex flex-col items-center">
+		<Template>
+			<div className="flex flex-col items-center  translate-y-[8vh] lg:translate-y-0">
 				<p className="text-base-foreground text-lg mb-8">
 					원활한 서비스 이용을 위한 부가 정보를 알려주세요.
 				</p>
 				<ExtraInfoForm initialData={formData} onSubmit={handleSubmit} />
 			</div>
-		</StartTemplate>
+		</Template>
 	);
 };
 

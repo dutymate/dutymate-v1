@@ -116,7 +116,7 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 				</div>
 
 				{/* 직책 선택 */}
-				<div className="mb-8">
+				<div className="mb-8 lg:mb-10">
 					<label className="block text-base font-medium text-gray-900 mb-3">
 						직책
 					</label>
@@ -129,15 +129,20 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 				</div>
 
 				{/* 작성 완료 버튼 */}
-				<Button
-					type="submit"
-					size="lg"
-					width="long"
-					fullWidth
-					disabled={isLoading}
-				>
-					{isLoading ? "제출 중..." : "작성 완료"}
-				</Button>
+				<div className="mt-12 lg:mt-0">
+					<Button
+						type="submit"
+						size="lg"
+						width="long"
+						fullWidth
+						disabled={isLoading}
+						className="w-full h-16 lg:h-12"
+					>
+						<span className="text-xl lg:text-sm">
+							{isLoading ? "제출 중..." : "작성 완료"}
+						</span>
+					</Button>
+				</div>
 			</form>
 		</div>
 	);

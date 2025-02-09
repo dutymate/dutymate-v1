@@ -32,6 +32,7 @@ const Router = () => {
 			<Route path="/req-admin" element={<ReqAdmin />} />
 			<Route path="/shift-admin" element={<DutyManagement />} />
 			<Route path="/error" element={<Error />} />
+			<Route path="/_playgrounds" element={<Playgrounds />} />
 			<Route path="*" element={<Error />} />
 		</Routes>
 	);
