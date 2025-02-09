@@ -1,7 +1,7 @@
 import axiosInstance from "../lib/axios";
 
 // 타입 정의
-interface WardRequest {
+export interface WardRequest {
 	requestId: number;
 	memberId: number;
 	name: string;
@@ -11,17 +11,22 @@ interface WardRequest {
 	status: "승인" | "거절" | "대기";
 }
 
-interface MyRequest {
+export interface MyRequest {
 	date: string;
 	shift: "D" | "E" | "N" | "O";
 	memo: string;
 	status: "승인" | "승인 대기중" | "거절";
 }
 
-interface CreateRequestDto {
+export interface CreateRequestDto {
 	date: string; // YYYY-MM-DD 형식
 	shift: "D" | "E" | "N" | "O";
 	memo: string;
+}
+
+export interface EditRequestStatusDto {
+	memberId: number;
+	status: "승인" | "거절" | "대기";
 }
 
 // API 서비스
@@ -82,6 +87,31 @@ export const requestService = {
 	createRequest: (data: CreateRequestDto) => {
 		return axiosInstance
 			.post(`/request`, data)
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							window.location.href = "/error";
+					}
+				}
+				throw error;
+			});
+	},
+
+	/**
+	 * 근무 요청 상태 변경
+	 * @param requestId - 요청 ID
+	 * @param data - 상태 변경 정보 (회원 ID, 변경할 상태)
+	 */
+	editRequestStatus: (requestId: number, data: EditRequestStatusDto) => {
+		return axiosInstance
+			.put(`/ward/request/${requestId}`, data)
 			.then((response) => {
 				return response.data;
 			})

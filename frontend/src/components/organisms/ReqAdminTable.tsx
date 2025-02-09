@@ -1,69 +1,77 @@
 // ReqAdminTable.tsx
 
+import { useState, useEffect } from "react";
 import { SmallSearchInput } from "../atoms/Input";
 import { SortButton, FilterButton } from "../atoms/SubButton";
 import { DutyBadgeKor } from "../atoms/DutyBadgeKor";
 import { FaUserCircle } from "react-icons/fa";
 import { ApprovalBtn } from "../atoms/ApprovalBtn";
+import { requestService } from "../../services/requestService";
+import { toast } from "react-toastify";
+import { WardRequest } from "../../services/requestService";
 
 const ReqAdminTable = () => {
-	// 더미 데이터를 다양한 근무 타입으로 수정
-	const requests = [
-		{
-			name: "봉미선 간호사",
-			date: "2025/01/01",
-			duty: "D",
-			content: "7일 데이 근무 오프 신청합니다.",
-		},
-		{
-			name: "신짱구 간호사",
-			date: "2025/01/02",
-			duty: "E",
-			content: "이브닝 근무 신청합니다.",
-		},
-		{
-			name: "김철수 간호사",
-			date: "2025/01/03",
-			duty: "N",
-			content: "나이트 근무로 변경 요청드립니다.",
-		},
-		{
-			name: "이훈이 간호사",
-			date: "2025/01/04",
-			duty: "O",
-			content: "오프 근무 신청합니다.",
-		},
-		{
-			name: "맹구 간호사",
-			date: "2025/01/05",
-			duty: "E",
-			content: "이브닝 근무 변경 부탁드립니다.",
-		},
-		{
-			name: "유리 간호사",
-			date: "2025/01/06",
-			duty: "N",
-			content: "나이트 근무 신청합니다.",
-		},
-		{
-			name: "수지 간호사",
-			date: "2025/01/07",
-			duty: "D",
-			content: "데이 근무로 변경해주세요.",
-		},
-		{
-			name: "채성아 간호사",
-			date: "2025/01/08",
-			duty: "O",
-			content: "개인 사정으로 오프 신청합니다.",
-		},
-		{
-			name: "이슬이 간호사",
-			date: "2025/01/09",
-			duty: "N",
-			content: "나이트 근무 변경 요청드립니다.",
-		},
-	];
+	const [requests, setRequests] = useState<WardRequest[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [searchTerm, setSearchTerm] = useState("");
+
+	// 요청 목록 조회
+	const fetchRequests = async () => {
+		try {
+			const data = await requestService.getWardRequests();
+			setRequests(data);
+		} catch (error) {
+			toast.error("요청 목록을 불러오는데 실패했습니다");
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	// 상태 변경 처리
+	const handleStatusChange = async (
+		requestId: number,
+		memberId: number,
+		status: "승인" | "거절" | "대기",
+	) => {
+		// 먼저 로컬 상태 업데이트
+		setRequests((prevRequests) =>
+			prevRequests.map((request) =>
+				request.requestId === requestId ? { ...request, status } : request,
+			),
+		);
+
+		try {
+			// 백그라운드에서 API 호출
+			await requestService.editRequestStatus(requestId, {
+				memberId,
+				status,
+			});
+			toast.success("요청 상태가 변경되었습니다");
+		} catch (error) {
+			// API 호출 실패 시 원래 상태로 복구
+			setRequests((prevRequests) =>
+				prevRequests.map((request) =>
+					request.requestId === requestId
+						? { ...request, status: request.status }
+						: request,
+				),
+			);
+			toast.error("상태 변경에 실패했습니다");
+		}
+	};
+
+	useEffect(() => {
+		fetchRequests();
+	}, []);
+
+	// 검색 필터링
+	const filteredRequests = requests.filter((request) =>
+		request.name.toLowerCase().includes(searchTerm.toLowerCase()),
+	);
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
 
 	return (
 		<div className="w-full">
@@ -84,6 +92,8 @@ const ReqAdminTable = () => {
 								id="search-nurse"
 								name="search-nurse"
 								placeholder="이름으로 검색하기"
+								value={searchTerm}
+								onChange={(e) => setSearchTerm(e.target.value)}
 							/>
 						</div>
 						{/* 모바일 정렬/필터 버튼 */}
@@ -133,9 +143,9 @@ const ReqAdminTable = () => {
 						</div>
 
 						{/* 기존 요청 목록 */}
-						{requests.map((request, index) => (
+						{filteredRequests.map((request) => (
 							<div
-								key={index}
+								key={request.requestId}
 								className="flex items-center justify-between p-0.5 lg:p-1 bg-white rounded-xl shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] mb-1.5 mx-1"
 							>
 								<div className="flex items-center gap-4 lg:gap-6 flex-1 min-w-0">
@@ -156,11 +166,11 @@ const ReqAdminTable = () => {
 									<div className="min-w-[66px] lg:min-w-[88px] flex justify-center scale-[0.60]">
 										<DutyBadgeKor
 											type={
-												request.duty === "D"
+												request.shift === "D"
 													? "day"
-													: request.duty === "E"
+													: request.shift === "E"
 														? "evening"
-														: request.duty === "N"
+														: request.shift === "N"
 															? "night"
 															: "off"
 											}
@@ -170,13 +180,36 @@ const ReqAdminTable = () => {
 
 									{/* 요청 내용 */}
 									<div className="flex-1 truncate text-gray-600 text-xs lg:text-sm text-center px-4">
-										{request.content}
+										{request.memo}
 									</div>
 								</div>
 
 								{/* 승인/거절 버튼 */}
 								<div className="w-[200px] lg:w-[240px] flex justify-end scale-[0.75]">
-									<ApprovalBtn />
+									<ApprovalBtn
+										onApprove={() =>
+											handleStatusChange(
+												request.requestId,
+												request.memberId,
+												"승인",
+											)
+										}
+										onReject={() =>
+											handleStatusChange(
+												request.requestId,
+												request.memberId,
+												"거절",
+											)
+										}
+										onHold={() =>
+											handleStatusChange(
+												request.requestId,
+												request.memberId,
+												"대기",
+											)
+										}
+										currentStatus={request.status}
+									/>
 								</div>
 							</div>
 						))}

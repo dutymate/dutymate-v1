@@ -11,7 +11,7 @@ import CreateWard from "../pages/CreateWard";
 import EnterWard from "../pages/EnterWard";
 import ExtraInfo from "../pages/ExtraInfo";
 import Community from "../pages/Community";
-import RequestManagement from "../pages/RequestManagement";
+import ReqAdmin from "../pages/ReqAdmin";
 import DutyManagement from "../pages/DutyManagement";
 import Error from "../pages/Error";
 
@@ -30,7 +30,7 @@ const Router = () => {
 			<Route path="/extra-info" element={<ExtraInfo />} />
 			<Route path="/playgrounds" element={<Playgrounds />} />
 			<Route path="/community" element={<Community />} />
-			<Route path="/req-admin" element={<RequestManagement />} />
+			<Route path="/req-admin" element={<ReqAdmin />} />
 			<Route path="/shift-admin" element={<DutyManagement />} />
 			<Route path="/error" element={<Error />} />
 			<Route path="*" element={<Error />} />
