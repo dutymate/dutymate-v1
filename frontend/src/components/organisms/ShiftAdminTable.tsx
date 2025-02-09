@@ -9,31 +9,29 @@ import React from "react";
 // 월별 주말과 공휴일 계산 유틸리티 함수 수정
 const getWeekendAndHolidayPairs = (year: number, month: number): number[][] => {
 	const pairs: number[][] = [];
-	const daysInMonth = new Date(year, month, 0).getDate();
 
-	// 주말 계산
-	for (let day = 1; day <= daysInMonth; day++) {
-		const date = new Date(year, month - 1, day);
-		const dayOfWeek = date.getDay();
-
-		if (dayOfWeek === 6) {
-			// 토요일
-			pairs.push([day, Math.min(day + 1, daysInMonth)]);
+	// 1월의 경우 주말과 공휴일을 직접 지정
+	if (month === 1) {
+		pairs.push(
+			[1, 2], // 첫째 주 주말
+			[8, 9], // 둘째 주 주말
+			[15, 16], // 셋째 주 주말
+			[22, 23], // 넷째 주 주말
+			[29, 30], // 설날 연휴
+		);
+	} else {
+		// 다른 달의 경우 기존 로직 사용
+		const daysInMonth = new Date(year, month, 0).getDate();
+		for (let day = 1; day <= daysInMonth; day++) {
+			const date = new Date(year, month - 1, day);
+			const dayOfWeek = date.getDay();
+			if (dayOfWeek === 6) {
+				pairs.push([day, Math.min(day + 1, daysInMonth)]);
+			}
 		}
 	}
 
-	// 1월의 공휴일 추가 (설날)
-	if (month === 1) {
-		// 29일이 토요일이므로 주말 추가 (이미 위 로직에서 추가되었을 것임)
-		pairs.push([29, 30]); // 설날 연휴
-	}
-
-	// 중복되지 않게 정렬하고 병합
-	return pairs
-		.sort((a, b) => a[0] - b[0])
-		.filter(
-			(pair, index, self) => index === 0 || pair[0] !== self[index - 1][0],
-		);
+	return pairs;
 };
 
 const ShiftAdminTable = () => {
@@ -198,30 +196,35 @@ const ShiftAdminTable = () => {
 			<div className="bg-white rounded-xl py-0.5 px-2 shadow-[0_4px_12px_rgba(0,0,0,0.1)] -mb-3">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center">
-						<div className="flex items-center gap-2 ml-4">
+						{/* 월 선택 영역 */}
+						<div className="flex items-center gap-2">
 							<Icon
 								name="left"
-								size={16}
-								className="cursor-pointer text-gray-300 hover:text-gray-400"
+								size={14}
+								className="cursor-pointer text-gray-300"
 							/>
-							<span className="text-sm font-medium">1월</span>
+							<span className="text-[12px] sm:text-base font-medium">1월</span>
 							<Icon
 								name="right"
-								size={16}
-								className="cursor-pointer text-gray-300 hover:text-gray-400"
+								size={14}
+								className="cursor-pointer text-gray-300"
 							/>
-							<span className="text-xs text-gray-400 ml-2">
+							<span className="text-[11px] sm:text-xs text-gray-400 ml-1">
 								기본 OFF{" "}
-								<span className="text-sm font-bold text-black"> 10</span> 일
+								<span className="text-[12px] sm:text-sm font-bold text-black">
+									10
+								</span>
+								<span className="text-gray-400">일</span>
 							</span>
 						</div>
 					</div>
-					<div className="flex gap-1">
+					{/* 버튼 영역 */}
+					<div className="flex gap-0.5 sm:gap-1">
 						<Button
 							text-size="xs"
 							size="xs"
 							color="primary"
-							className="py-1 px-2"
+							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
 						>
 							규칙 편집
 						</Button>
@@ -229,213 +232,222 @@ const ShiftAdminTable = () => {
 							text-size="xs"
 							size="xs"
 							color="evening"
-							className="py-1 px-2"
+							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
 						>
 							자동 생성
 						</Button>
-						<Button text-size="xs" size="xs" color="off" className="py-1 px-2">
+						<Button
+							text-size="xs"
+							size="xs"
+							color="off"
+							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
+						>
 							다운로드
 						</Button>
 					</div>
 				</div>
 			</div>
 
-			{/* 근무표 */}
+			{/* 근무표, 통계, 완성도를 하나의 상자로 통합 */}
 			<div className="bg-white rounded-xl p-2 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
 				<div className="relative">
-					{holidayPairs.map(([start, end], i) => (
-						<div
-							key={i}
-							className="absolute top-0 bottom-0 bg-[#FFF1F1] rounded-lg"
-							style={{
-								left: `${134 + (start - 2) * 29.3 + 14}px`,
-								width: `${(end - start + 1) * 29.5 - 2}px`,
-								height: "100%",
-								zIndex: 0,
-							}}
-						/>
-					))}
-
 					<div className="overflow-x-auto">
-						<table className="relative w-full border-collapse z-10">
-							<thead>
-								<tr className="text-[10px] text-gray-600 border-b border-gray-200">
-									<th className="p-0 text-center w-14">이름</th>
-									<th className="p-0 text-center w-20">전달근무</th>
-									{Array.from({ length: 31 }, (_, i) => (
-										<th
-											key={i}
-											className={`p-0 text-center w-8 ${
-												isHoliday(i + 1) ? "text-red-500" : ""
-											}`}
-										>
-											{i + 1}
+						<div className="min-w-[800px]">
+							<table className="relative w-full border-collapse z-10">
+								<thead>
+									<tr className="text-[10px] text-gray-600 border-b border-gray-200">
+										<th className="p-0 text-center w-[90px] sm:w-24 border-r border-gray-200">
+											<span className="block text-[10px] sm:text-xs px-0.5">
+												이름
+											</span>
 										</th>
-									))}
-									<th className="p-0 text-center w-5">
-										<div className="flex items-center justify-center">
-											<div className="scale-[0.65]">
-												<DutyBadgeEng type="D" size="sm" variant="filled" />
-											</div>
-										</div>
-									</th>
-									<th className="p-0 text-center w-5">
-										<div className="flex items-center justify-center">
-											<div className="scale-[0.65]">
-												<DutyBadgeEng type="E" size="sm" variant="filled" />
-											</div>
-										</div>
-									</th>
-									<th className="p-0 text-center w-5">
-										<div className="flex items-center justify-center">
-											<div className="scale-[0.65]">
-												<DutyBadgeEng type="N" size="sm" variant="filled" />
-											</div>
-										</div>
-									</th>
-									<th className="p-0 text-center w-5">
-										<div className="flex items-center justify-center">
-											<div className="scale-[0.65]">
-												<DutyBadgeEng type="O" size="sm" variant="filled" />
-											</div>
-										</div>
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{nurses.map((name, i) => (
-									<tr key={i} className="text-[10px]">
-										<td className={`p-0 text-center ${isHighlighted(i, -2)}`}>
-											{name}
-										</td>
-										<td className={`p-0 ${isHighlighted(i, -1)}`}>
-											<div className="flex justify-center -space-x-2">
-												<div className="scale-50">
+										<th className="p-0 text-center w-[90px] sm:w-24 border-r border-gray-200">
+											<span className="block text-[10px] sm:text-xs px-0.5">
+												전달근무
+											</span>
+										</th>
+										{Array.from({ length: 31 }, (_, i) => {
+											const day = i + 1;
+											return (
+												<th
+													key={i}
+													className={`p-0 text-center w-8 border-r border-gray-200 ${
+														isHoliday(day) ? "text-red-500" : ""
+													}`}
+												>
+													{day}
+												</th>
+											);
+										})}
+										<th className="p-0 text-center w-5 border-r border-gray-200">
+											<div className="flex items-center justify-center">
+												<div className="scale-[0.65]">
 													<DutyBadgeEng type="D" size="sm" variant="filled" />
 												</div>
-												<div className="scale-50">
+											</div>
+										</th>
+										<th className="p-0 text-center w-5 border-r border-gray-200">
+											<div className="flex items-center justify-center">
+												<div className="scale-[0.65]">
 													<DutyBadgeEng type="E" size="sm" variant="filled" />
 												</div>
-												<div className="scale-50">
+											</div>
+										</th>
+										<th className="p-0 text-center w-5 border-r border-gray-200">
+											<div className="flex items-center justify-center">
+												<div className="scale-[0.65]">
 													<DutyBadgeEng type="N" size="sm" variant="filled" />
 												</div>
-												<div className="scale-50">
+											</div>
+										</th>
+										<th className="p-0 text-center w-5 border-r border-gray-200">
+											<div className="flex items-center justify-center">
+												<div className="scale-[0.65]">
 													<DutyBadgeEng type="O" size="sm" variant="filled" />
 												</div>
 											</div>
-										</td>
-										{Array.from({ length: 31 }, (_, j) => (
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									{nurses.map((name, i) => (
+										<tr
+											key={i}
+											className="text-[10px] border-b border-gray-200"
+										>
 											<td
-												key={j}
-												className={`p-0 text-center ${isHighlighted(i, j)}`}
+												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, -2)}`}
 											>
-												<div
-													className="flex items-center justify-center cursor-pointer"
-													onClick={() => setSelectedCell({ row: i, col: j })}
-												>
-													<div className="scale-[0.65]">
-														<DutyBadgeEng
-															type={duties[i][j]}
-															size="sm"
-															variant="filled"
-														/>
+												<span className="block text-[10px] sm:text-xs px-1 whitespace-nowrap overflow-hidden text-ellipsis">
+													{name}
+												</span>
+											</td>
+											<td
+												className={`p-0 border-r border-gray-200 ${isHighlighted(i, -1)}`}
+											>
+												<div className="flex justify-center -space-x-2">
+													<div className="scale-50">
+														<DutyBadgeEng type="D" size="sm" variant="filled" />
+													</div>
+													<div className="scale-50">
+														<DutyBadgeEng type="E" size="sm" variant="filled" />
+													</div>
+													<div className="scale-50">
+														<DutyBadgeEng type="N" size="sm" variant="filled" />
+													</div>
+													<div className="scale-50">
+														<DutyBadgeEng type="O" size="sm" variant="filled" />
 													</div>
 												</div>
 											</td>
-										))}
-										<td className={`p-0 text-center ${isHighlighted(i, 31)}`}>
-											{getNurseDutyCounts(i).D}
-										</td>
-										<td className={`p-0 text-center ${isHighlighted(i, 32)}`}>
-											{getNurseDutyCounts(i).E}
-										</td>
-										<td className={`p-0 text-center ${isHighlighted(i, 33)}`}>
-											{getNurseDutyCounts(i).N}
-										</td>
-										<td className={`p-0 text-center ${isHighlighted(i, 34)}`}>
-											{getNurseDutyCounts(i).O}
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-
-			{/* 통계 행들과 완성도를 위한 컨테이너 */}
-			<div className="flex gap-1 -mt-3">
-				{/* 통계 행들을 위한 상자 */}
-				<div className="bg-white rounded-xl p-2 shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex-1">
-					<div className="overflow-x-auto">
-						<table className="w-full border-collapse table-fixed">
-							<colgroup>
-								<col className="w-[109.5px]" />
-								{Array(31)
-									.fill(null)
-									.map((_, i) => (
-										<col key={i} className="w-[27px]" />
-									))}
-							</colgroup>
-							<tbody>
-								{["DAY", "EVENING", "NIGHT", "OFF", "TOTAL"].map((text, i) => (
-									<tr key={`empty-${i}`} className="text-[10px] h-6">
-										<td
-											className={`p-0 font-bold text-[11px] ${
-												i === 0
-													? "text-[#318F3D]"
-													: i === 1
-														? "text-[#E55656]"
-														: i === 2
-															? "text-[#532FC8]"
-															: i === 3
-																? "text-[#726F5A]"
-																: "text-black"
-											}`}
-										>
-											<div className="flex items-center justify-center">
-												{text}
-											</div>
-										</td>
-										{Array.from({ length: 31 }, (_, j) => (
+											{Array.from({ length: 31 }, (_, j) => (
+												<td
+													key={j}
+													className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, j)}`}
+												>
+													<div
+														className="flex items-center justify-center cursor-pointer"
+														onClick={() => setSelectedCell({ row: i, col: j })}
+													>
+														<div className="scale-[0.65]">
+															<DutyBadgeEng
+																type={duties[i][j]}
+																size="sm"
+																variant="filled"
+															/>
+														</div>
+													</div>
+												</td>
+											))}
 											<td
-												key={j}
-												className={`p-0 text-center text-[11px] relative ${
-													selectedCell?.col === j
-														? "before:absolute before:inset-0 before:bg-[#FEF6F2] before:-top-2 before:bottom-0"
-														: ""
-												} ${
-													i === 4 && selectedCell?.col === j
-														? "before:rounded-b-lg"
-														: ""
-												}`}
+												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, 31)}`}
 											>
-												<div className="relative z-10 flex items-center justify-center h-6">
-													{i === 0 && dutyCounts[j].D}
-													{i === 1 && dutyCounts[j].E}
-													{i === 2 && dutyCounts[j].N}
-													{i === 3 && dutyCounts[j].O}
-													{i === 4 && dutyCounts[j].total}
-												</div>
+												{getNurseDutyCounts(i).D}
 											</td>
-										))}
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-				{/* 완성도를 위한 상자 */}
-				<div className="bg-white rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] w-[100px]">
-					<div className="flex items-center justify-center h-full py-2">
-						<div className="scale-[0.85]">
-							<ProgressChecker
-								value={75}
-								size={80}
-								strokeWidth={4}
-								showLabel={true}
-							/>
+											<td
+												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, 32)}`}
+											>
+												{getNurseDutyCounts(i).E}
+											</td>
+											<td
+												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, 33)}`}
+											>
+												{getNurseDutyCounts(i).N}
+											</td>
+											<td
+												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, 34)}`}
+											>
+												{getNurseDutyCounts(i).O}
+											</td>
+										</tr>
+									))}
+								</tbody>
+								{/* 통계 행들을 같은 테이블에 직접 추가 */}
+								<tbody>
+									{["DAY", "EVENING", "NIGHT", "OFF", "TOTAL"].map(
+										(text, i) => (
+											<tr
+												key={`empty-${i}`}
+												className="text-[10px] h-6 border-b border-gray-200"
+											>
+												<td
+													colSpan={2}
+													className={`p-0 font-bold text-[11px] border-r border-gray-200 ${
+														i === 0
+															? "text-[#318F3D]"
+															: i === 1
+																? "text-[#E55656]"
+																: i === 2
+																	? "text-[#532FC8]"
+																	: i === 3
+																		? "text-[#726F5A]"
+																		: "text-black"
+													}`}
+												>
+													<div className="flex items-center justify-center">
+														{text}
+													</div>
+												</td>
+												{Array.from({ length: 31 }, (_, j) => (
+													<td
+														key={j}
+														className={`p-0 text-center text-[11px] border-r border-gray-200 ${
+															selectedCell?.col === j ? "bg-[#FEF6F2]" : ""
+														}`}
+													>
+														<div className="flex items-center justify-center h-6">
+															{i === 0 && dutyCounts[j].D}
+															{i === 1 && dutyCounts[j].E}
+															{i === 2 && dutyCounts[j].N}
+															{i === 3 && dutyCounts[j].O}
+															{i === 4 && dutyCounts[j].total}
+														</div>
+													</td>
+												))}
+												{/* 각 행의 마지막 4개 열을 차지하는 셀 */}
+												{i === 0 && (
+													<td
+														rowSpan={5}
+														colSpan={4}
+														className="p-0 border-r border-gray-200"
+													>
+														<div className="flex justify-center items-center h-full">
+															<div className="scale-[0.85]">
+																<ProgressChecker
+																	value={75}
+																	size={80}
+																	strokeWidth={4}
+																	showLabel={true}
+																/>
+															</div>
+														</div>
+													</td>
+												)}
+											</tr>
+										),
+									)}
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
