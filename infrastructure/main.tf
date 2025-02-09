@@ -7,6 +7,11 @@ module "networking" {
   database_subnet_ips = var.database_subnet_ips
 }
 
+module "security_group" {
+  source = "./Modules/SecurityGroup"
+  vpc_id = module.networking.vpc_id
+}
+
 module "s3" {
   source     = "./Modules/S3"
   vpce_s3_id = module.networking.vpce_s3_id
