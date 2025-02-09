@@ -8,16 +8,16 @@ variable "availability_zones" {
   type        = list(string)
 }
 
-variable "public_subnet_ips" {
+variable "public_subnet_cidr_block" {
   description = "The list of public subnet IPs in which you want to deploy the resources"
 }
 
-variable "private_subnet_ips" {
+variable "private_subnet_cidr_block" {
   description = "The list of private subnet IPs in which you want to deploy the resources"
   type        = list(string)
 }
 
-variable "database_subnet_ips" {
+variable "database_subnet_cidr_block" {
   description = "The list of database subnet IPs in which you want to deploy the resources"
   type        = list(string)
 }
