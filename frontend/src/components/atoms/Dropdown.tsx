@@ -7,6 +7,7 @@ interface DropdownProps {
 	onChange: (value: string | number) => void;
 	label: string;
 	disabled?: boolean;
+	position?: "left" | "right";
 }
 
 const OPTIONS = {
@@ -30,6 +31,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 	onChange,
 	label,
 	disabled = false,
+	position = "right",
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
@@ -134,6 +136,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 				<div
 					className={`
           absolute z-10 w-max min-w-full mt-1 bg-base-white shadow-lg
+          ${position === "left" ? "right-0" : "left-0"}
           ${variant === "authority" ? "rounded-[9px] border border-base-muted" : "rounded-[9px] border border-base-muted"}
         `}
 				>

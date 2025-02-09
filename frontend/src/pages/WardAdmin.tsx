@@ -1,12 +1,32 @@
 import Sidebar from "../components/organisms/WSidebar";
 import MSidebar from "../components/organisms/MSidebar";
 import Title from "../components/atoms/Title";
-import WardAdminForm from "../components/organisms/WardAdminForm";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoMdMenu } from "react-icons/io";
+import WardAdminInfo from "../components/organisms/WardAdminInfo";
+import WardAdminTable from "../components/organisms/WardAdminTable";
+import { wardService, WardInfo } from "../services/wardService";
+import { toast } from "react-toastify";
 
 const WardAdmin = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [wardInfo, setWardInfo] = useState<WardInfo | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchWardInfo = async () => {
+			try {
+				const data = await wardService.getWardInfo();
+				setWardInfo(data);
+			} catch (error) {
+				toast.error("병동 정보를 불러오는데 실패했습니다");
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchWardInfo();
+	}, []);
 
 	return (
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
@@ -35,8 +55,13 @@ const WardAdmin = () => {
 				<div className="mb-3">
 					<Title title="병동 관리" subtitle="병동의 간호사를 관리해보세요" />
 				</div>
-				<div className="mt-6">
-					<WardAdminForm />
+				<div className="mt-6 flex flex-col gap-4">
+					{!isLoading && wardInfo && (
+						<>
+							<WardAdminInfo wardInfo={wardInfo} />
+							<WardAdminTable nurses={wardInfo.nurses} />
+						</>
+					)}
 				</div>
 			</div>
 		</div>

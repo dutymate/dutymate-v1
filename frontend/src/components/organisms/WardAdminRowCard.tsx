@@ -1,0 +1,196 @@
+import { FaUserCircle } from "react-icons/fa";
+import { Icon, IconName } from "../atoms/Icon";
+import DutyBadgeEng from "../atoms/DutyBadgeEng";
+import { Nurse } from "../../services/wardService";
+import { useState, useEffect, useRef } from "react";
+import { Badge } from "../atoms/Badge";
+import { Dropdown } from "../atoms/Dropdown";
+
+interface WardAdminRowCardProps {
+	nurse: Nurse;
+	onUpdate: (memberId: number, data: any) => void;
+	isSelected?: boolean;
+	onSelect?: (memberId: number) => void;
+}
+
+const WardAdminRowCard = ({
+	nurse,
+	onUpdate,
+	isSelected = false,
+	onSelect,
+}: WardAdminRowCardProps) => {
+	const [openSkillDropdown, setOpenSkillDropdown] = useState(false);
+	const [isEditingMemo, setIsEditingMemo] = useState(false);
+	const [memo, setMemo] = useState(nurse.memo);
+	const memoInputRef = useRef<HTMLInputElement>(null);
+
+	// Add this to verify data flow
+	useEffect(() => {
+		console.log("Nurse data:", nurse);
+	}, [nurse]);
+
+	const skillOptions = [
+		{ value: "HIGH" as "HIGH", icon: "high" as const, label: "상급" },
+		{ value: "MID" as "MID", icon: "mid" as const, label: "중급" },
+		{ value: "LOW" as "LOW", icon: "low" as const, label: "초급" },
+	];
+
+	const handleSkillChange = (skillLevel: "HIGH" | "MID" | "LOW") => {
+		onUpdate(nurse.memberId, { ...nurse, skillLevel });
+		setOpenSkillDropdown(false);
+	};
+
+	const handleShiftChange = (shift: "D" | "E" | "N" | "ALL") => {
+		onUpdate(nurse.memberId, { ...nurse, shift });
+	};
+
+	// 메모 수정 완료 핸들러
+	const handleMemoComplete = () => {
+		setIsEditingMemo(false);
+		if (memo !== nurse.memo) {
+			onUpdate(nurse.memberId, { ...nurse, memo });
+		}
+	};
+
+	// 메모 입력 중 Enter 키 처리
+	const handleMemoKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === "Enter") {
+			handleMemoComplete();
+		}
+	};
+
+	return (
+		<div className="flex items-center p-2.5 bg-white rounded-[0.578125rem] border border-gray-200">
+			<input
+				type="checkbox"
+				className="mr-3 min-w-[20px] flex-shrink-0"
+				checked={isSelected}
+				onChange={() => onSelect?.(nurse.memberId)}
+			/>
+			<div className="flex items-center justify-between flex-1">
+				<div className="flex items-center gap-6">
+					<div className="flex items-center w-[120px]">
+						<FaUserCircle className="w-6 h-6 text-gray-500 flex-shrink-0" />
+						<span className="font-medium truncate ml-2">{nurse.name}</span>
+					</div>
+					<div className="w-[60px] flex items-center">
+						<Badge type={nurse.role} className="whitespace-nowrap" />
+					</div>
+					<div className="flex items-center gap-1 w-[60px]">
+						<Icon
+							name={nurse.gender === "F" ? "female" : "male"}
+							size={16}
+							className="text-gray-500"
+						/>
+						<span>{nurse.gender === "F" ? "여자" : "남자"}</span>
+					</div>
+					<div className="flex items-center gap-1 w-[70px]">
+						<Icon name="idCard" size={16} className="text-gray-500" />
+						<span>{nurse.grade}년차</span>
+					</div>
+					<div className="relative w-[80px]">
+						<button
+							className="flex items-center gap-1 px-2 py-1 border rounded hover:bg-gray-50"
+							onClick={() => setOpenSkillDropdown(!openSkillDropdown)}
+						>
+							<Icon
+								name={nurse.skillLevel.toLowerCase() as IconName}
+								size={16}
+							/>
+							<span className="text-sm">
+								{
+									skillOptions.find((opt) => opt.value === nurse.skillLevel)
+										?.label
+								}
+							</span>
+						</button>
+
+						{openSkillDropdown && (
+							<div className="absolute top-full left-0 mt-1 bg-white border rounded-md shadow-lg z-10">
+								{skillOptions.map((option) => (
+									<button
+										key={option.value}
+										className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full"
+										onClick={() => handleSkillChange(option.value)}
+									>
+										<Icon name={option.icon} size={16} />
+										<span className="text-sm">{option.label}</span>
+									</button>
+								))}
+							</div>
+						)}
+					</div>
+					<div className="flex gap-2 w-[120px]">
+						{(["D", "E", "N", "ALL"] as const).map((duty) => (
+							<DutyBadgeEng
+								key={duty}
+								type={duty}
+								size="sm"
+								variant={nurse.shift === duty ? "filled" : "outline"}
+								onClick={() => handleShiftChange(duty)}
+								isSelected={nurse.shift === duty}
+							/>
+						))}
+					</div>
+				</div>
+				<div className="flex items-center gap-6">
+					<div className="relative w-[300px] group">
+						{isEditingMemo ? (
+							<input
+								ref={memoInputRef}
+								type="text"
+								value={memo}
+								onChange={(e) => setMemo(e.target.value)}
+								onBlur={handleMemoComplete}
+								onKeyDown={handleMemoKeyDown}
+								autoFocus
+								className="w-full rounded px-3 py-1 text-sm border border-primary-dark"
+								placeholder="메모를 입력하세요"
+							/>
+						) : (
+							<div className="flex items-center w-full">
+								<span className="flex-1 truncate text-sm text-gray-500">
+									{memo || "메모 없음"}
+								</span>
+								<button
+									onClick={() => {
+										setIsEditingMemo(true);
+										// 다음 렌더링 사이클에서 input에 포커스
+										setTimeout(() => memoInputRef.current?.focus(), 0);
+									}}
+									className="opacity-0 group-hover:opacity-100 transition-opacity"
+								>
+									<Icon
+										name="edit"
+										size={16}
+										className="text-gray-400 hover:text-primary-dark"
+									/>
+								</button>
+							</div>
+						)}
+					</div>
+					<div className="w-[60px]">
+						<Dropdown
+							variant="authority"
+							value={null}
+							onChange={(value) => {
+								if (value === "병동내보내기") {
+									onUpdate(nurse.memberId, { ...nurse, isActive: false });
+								} else if (value === "권한 넘기기") {
+									onUpdate(nurse.memberId, {
+										...nurse,
+										role: nurse.role === "HN" ? "RN" : "HN",
+									});
+								}
+							}}
+							label=""
+							position="left"
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default WardAdminRowCard;

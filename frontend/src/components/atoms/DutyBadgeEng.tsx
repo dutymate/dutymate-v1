@@ -1,11 +1,12 @@
 // DutyBadgeEng.tsx
 
 interface DutyBadgeEngProps {
-	type: "D" | "E" | "N" | "O" | "All" | "default";
+	type: "D" | "E" | "N" | "O" | "ALL" | "default";
 	size?: "xs" | "sm" | "md" | "lg";
 	isSelected?: boolean;
 	onClick?: () => void;
 	variant?: "filled" | "outline" | "letter";
+	noRing?: boolean;
 }
 
 const DutyBadgeEng = ({
@@ -14,6 +15,7 @@ const DutyBadgeEng = ({
 	isSelected = false,
 	onClick,
 	variant = "filled",
+	noRing = false,
 }: DutyBadgeEngProps) => {
 	const sizeClasses = {
 		xs: "w-5 h-5 text-sm",
@@ -28,7 +30,7 @@ const DutyBadgeEng = ({
 			E: "bg-duty-evening text-white",
 			N: "bg-duty-night text-white",
 			O: "bg-duty-off text-white",
-			All: "bg-base-foreground text-white",
+			ALL: "bg-base-foreground text-white",
 			default: "bg-base-muted text-white font-bold",
 		},
 		outline: {
@@ -36,7 +38,7 @@ const DutyBadgeEng = ({
 			E: "bg-white text-duty-evening border-2 border-duty-evening",
 			N: "bg-white text-duty-night border-2 border-duty-night",
 			O: "bg-white text-duty-off border-2 border-duty-off",
-			All: "bg-white text-base-foreground border-2 border-base-foreground",
+			ALL: "bg-white text-base-foreground border-2 border-base-foreground",
 			default: "bg-white text-base-muted border-2 border-base-muted font-bold",
 		},
 		letter: {
@@ -44,7 +46,7 @@ const DutyBadgeEng = ({
 			E: "text-duty-evening",
 			N: "text-duty-night",
 			O: "text-duty-off",
-			All: "text-base-foreground",
+			ALL: "text-base-foreground",
 			default: "text-base-muted font-bold",
 		},
 	};
@@ -57,11 +59,11 @@ const DutyBadgeEng = ({
         ${badgeStyles[variant][type]}
         flex items-center justify-center
         rounded-[9px] font-medium
-        ${isSelected ? "ring-2 ring-offset-2 ring-primary" : ""}
+        ${isSelected && !noRing ? "ring-2 ring-offset-2 ring-primary" : ""}
         ${onClick ? "cursor-pointer" : ""}
       `}
 		>
-			{type === "default" ? "-" : type}
+			{type === "default" ? "-" : type === "ALL" ? "All" : type}
 		</div>
 	);
 };

@@ -3,30 +3,30 @@
 import React from "react";
 
 interface BadgeProps {
-	type: "admin" | "worker";
+	type: "HN" | "RN";
 	className?: string;
 }
 
 export const Badge: React.FC<BadgeProps> = ({ type, className }) => {
 	const getStyles = () => {
 		switch (type) {
-			case "admin":
+			case "HN":
 				return {
 					bg: "bg-primary-bg",
 					text: "text-primary-dark",
 					label: "관리자",
 				};
-			case "worker":
+			case "RN":
 				return {
-					bg: "bg-base-muted",
+					bg: "bg-base-muted-30",
 					text: "text-base-foreground",
-					label: "근무자",
+					label: "간호사",
 				};
 			default:
 				return {
-					bg: "bg-base-muted",
+					bg: "bg-base-muted-30",
 					text: "text-base-foreground",
-					label: "근무자",
+					label: "간호사",
 				};
 		}
 	};
@@ -36,6 +36,7 @@ export const Badge: React.FC<BadgeProps> = ({ type, className }) => {
 	return (
 		<div
 			className={`
+        inline-flex items-center justify-center
         ${styles.bg} ${styles.text}
         px-3 py-1 rounded-lg
         text-sm font-medium
