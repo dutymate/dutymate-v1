@@ -28,7 +28,6 @@ const Router = () => {
 			<Route path="/create-ward" element={<CreateWard />} />
 			<Route path="/enter-ward" element={<EnterWard />} />
 			<Route path="/extra-info" element={<ExtraInfo />} />
-			<Route path="/playgrounds" element={<Playgrounds />} />
 			<Route path="/community" element={<Community />} />
 			<Route path="/req-admin" element={<ReqAdmin />} />
 			<Route path="/shift-admin" element={<DutyManagement />} />

@@ -1,43 +1,22 @@
 // ReqShiftModal.tsx
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../atoms/Button";
 import { DateInput, TextArea } from "../atoms/Input";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import { ToggleButton } from "../atoms/ToggleButton";
+import { requestService } from "../../services/requestService";
 
 interface ReqShiftModalProps {
 	onClose: () => void;
 }
 
-interface Request {
+interface MyRequest {
 	date: string;
 	duty: "D" | "E" | "N" | "O";
 	status: string;
 	memo: string;
 }
-
-// 임시 요청 내역 데이터
-const requestHistory = [
-	{
-		date: "2025-01-26",
-		duty: "E" as const,
-		status: "승인",
-		memo: "한종우 간호사님과 듀티 상호 변경합니다.",
-	},
-	{
-		date: "2025-01-27",
-		duty: "O" as const,
-		status: "승인 대기중",
-		memo: "OFF 신청합니다.",
-	},
-	{
-		date: "2025-01-28",
-		duty: "O" as const,
-		status: "거절",
-		memo: "OFF 신청합니다.",
-	},
-];
 
 const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 	const [selectedDate, setSelectedDate] = useState("");
@@ -46,27 +25,46 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 	>(null);
 	const [memo, setMemo] = useState("");
 	const [activeTab, setActiveTab] = useState(0);
-	const [requests, setRequests] = useState<Request[]>(requestHistory);
+	const [requests, setRequests] = useState<MyRequest[]>([]);
 
-	const handleSubmit = () => {
-		// 새로운 요청 추가
-		const newRequest = {
-			date: selectedDate,
-			duty: selectedDuty!,
-			status: "승인 대기중",
-			memo: memo,
+	// 요청 내역 조회
+	useEffect(() => {
+		const fetchRequests = async () => {
+			try {
+				const data = await requestService.getMyRequests();
+				setRequests(data);
+			} catch (error) {
+				console.error("Failed to fetch requests:", error);
+			}
 		};
+		fetchRequests();
+	}, []);
 
-		// 최신 요청이 위에 표시되도록 배열 앞에 추가
-		setRequests([newRequest, ...requests]);
+	// 근무 요청 제출
+	const handleSubmit = async () => {
+		if (!selectedDate || !selectedDuty) return;
 
-		// 입력 필드 초기화
-		setSelectedDate("");
-		setSelectedDuty(null);
-		setMemo("");
+		try {
+			await requestService.createRequest({
+				date: selectedDate,
+				shift: selectedDuty,
+				memo: memo,
+			});
 
-		// 요청 내역 탭으로 전환
-		setActiveTab(1);
+			// 요청 성공 후 요청 내역 다시 조회
+			const updatedRequests = await requestService.getMyRequests();
+			setRequests(updatedRequests);
+
+			// 입력 필드 초기화
+			setSelectedDate("");
+			setSelectedDuty(null);
+			setMemo("");
+
+			// 요청 내역 탭으로 전환
+			setActiveTab(1);
+		} catch (error) {
+			console.error("Failed to create request:", error);
+		}
 	};
 
 	const getStatusColor = (status: string) => {
