@@ -1,39 +1,31 @@
 variable "aws_profile" {
-  description = "The profile name that you have configured in the file .aws/credentials"
-  type        = string
+  type = string
 }
 
 variable "aws_region" {
-  description = "The AWS Region in which you want to deploy the resources"
-  type        = string
+  type = string
 }
 
 variable "vpc_cidr" {
-  description = "The CIDR block for the VPC"
-  type        = string
+  type = string
 }
 
 variable "availability_zones" {
-  description = "The list of Availability Zones in which you want to deploy the resources"
-  type        = list(string)
+  type = list(string)
 }
 
 variable "public_subnet_cidr_block" {
-  description = "The list of public subnet IPs in which you want to deploy the resources"
-  type        = list(string)
+  type = list(string)
 }
 
 variable "private_subnet_cidr_block" {
-  description = "The list of private subnet IPs in which you want to deploy the resources"
-  type        = list(string)
+  type = list(string)
 }
 
 variable "database_subnet_cidr_block" {
-  description = "The list of database subnet IPs in which you want to deploy the resources"
-  type        = list(string)
+  type = list(string)
 }
 
 variable "health_check_path" {
-  description = "The path for the health check"
-  type        = string
+  type = string
 }
