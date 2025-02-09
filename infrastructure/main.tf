@@ -8,8 +8,10 @@ module "networking" {
 }
 
 module "security_group" {
-  source = "./Modules/SecurityGroup"
-  vpc_id = module.networking.vpc_id
+  source              = "./Modules/SecurityGroup"
+  vpc_id              = module.networking.vpc_id
+  private_subnet_ips  = var.private_subnet_ips
+  database_subnet_ips = var.database_subnet_ips
 }
 
 module "alb" {
