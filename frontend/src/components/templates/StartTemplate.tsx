@@ -15,9 +15,9 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 	return (
 		<div className="w-full h-screen lg:grid lg:grid-cols-2">
 			{/* 모바일 레이아웃 */}
-			<div className="lg:hidden flex flex-col min-h-screen">
+			<div className="lg:hidden flex flex-col h-screen overflow-hidden">
 				{/* 로고 영역 */}
-				<div className="flex-1 bg-base-muted-30 flex flex-col">
+				<div className="flex-1 bg-base-muted-30 flex flex-col relative">
 					<div className="flex justify-center mt-20 mb-8">
 						<img
 							src={dutyMateLogo}
@@ -28,7 +28,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 
 					{/* 텍스트 영역과 버튼 - 로그인 페이지가 아닐 때만 표시 */}
 					{!isLoginPage && (
-						<div className="px-10 py-20 mb-12">
+						<div className="px-10 py-20">
 							<div className="flex flex-col gap-2 mb-8 lg:text-left text-center">
 								<h1 className="text-2xl font-bold text-gray-800">
 									"듀티표의 마침표, 듀티메이트."
@@ -50,20 +50,21 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 							{children}
 						</div>
 					)}
-				</div>
 
-				{/* 노트북 이미지 영역 - 로그인 페이지가 아닐 때만 표시 */}
-				{!isLoginPage && (
-					<div className="relative h-[35vh] bg-primary-20">
-						<div className="absolute -top-32 right-[-40%] w-[130%]">
+					{/* 노트북 이미지 - 상단에 겹치도록 배치 */}
+					{!isLoginPage && (
+						<div className="absolute -bottom-[17vh] right-[-40%] w-[130%] z-10">
 							<img
 								src={notebookImage}
 								alt="Notebook Preview"
 								className="w-full"
 							/>
 						</div>
-					</div>
-				)}
+					)}
+				</div>
+
+				{/* 하단 배경색 영역 */}
+				{!isLoginPage && <div className="h-[35vh] bg-primary-20" />}
 			</div>
 
 			{/* 데스크톱 레이아웃 - 기존 코드 유지 */}
