@@ -75,7 +75,7 @@ export const dutyService = {
 	 */
 	getDayDuty: (year: number, month: number, date: number) => {
 		return axiosInstance
-			.get("/duty/mobile/day-duty", {
+			.get("/duty/my/date", {
 				params: { year, month, date },
 			})
 			.then((response) => {
@@ -103,7 +103,7 @@ export const dutyService = {
 	 */
 	getMyDayDuty: (year: number, month: number, date: number) => {
 		return axiosInstance
-			.get("/duty/mobile/my-day-duty", {
+			.get("/duty/my/date", {
 				params: { year, month, date },
 			})
 			.then((response) => {
@@ -131,7 +131,7 @@ export const dutyService = {
 	getMyDuty: (year?: number, month?: number) => {
 		const params = year && month ? { year, month } : {};
 		return axiosInstance
-			.get("/duty/mobile/my-duty", { params })
+			.get("/duty/my", { params })
 			.then((response) => {
 				return response.data as MyDuty;
 			})

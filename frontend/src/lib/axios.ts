@@ -22,8 +22,13 @@ export const axiosInstance = axios.create({
  */
 axiosInstance.interceptors.request.use(
 	(config) => {
-		// localStorage에서 토큰을 가져옵니다.
-		const token = localStorage.getItem("token");
+		// sessionStorage에서 토큰을 가져옵니다.
+		// const token = userAuthStore.userInfo?.token;
+		const userAuthStorage = sessionStorage.getItem("user-auth-storage");
+		if (userAuthStorage === null) {
+			return config;
+		}
+		const token = JSON.parse(userAuthStorage).state.userInfo.token;
 
 		// 토큰이 존재하면 Authorization 헤더에 추가합니다.
 		if (token) {
