@@ -32,3 +32,8 @@ variable "database_subnet_ips" {
   description = "The list of database subnet IPs in which you want to deploy the resources"
   type        = list(string)
 }
+
+variable "health_check_path" {
+  description = "The path for the health check"
+  type        = string
+}
