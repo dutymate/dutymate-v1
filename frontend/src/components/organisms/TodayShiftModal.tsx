@@ -2,6 +2,7 @@
 
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { DutyBadgeKor } from "../atoms/DutyBadgeKor";
+import { convertDutyType } from "../../utils/dutyUtils";
 
 // 상수를 컴포넌트 외부로 이동
 const weekDays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] as const;
@@ -21,31 +22,34 @@ const koreanWeekDays: Record<WeekDay, string> = {
 interface TodayShiftModalProps {
 	date: Date | null;
 	duty: "day" | "evening" | "night" | "off";
+	dutyData: {
+		myShift: "D" | "E" | "N" | "O";
+		otherShifts: {
+			grade: number;
+			name: string;
+			shift: "D" | "E" | "N" | "O";
+		}[];
+	};
 	isMobile: boolean;
 	onClose?: () => void;
 	onDateChange: (newDate: Date) => void;
+	loading?: boolean;
 }
 
 const TodayShiftModal = ({
 	date,
 	duty,
+	dutyData,
 	isMobile,
 	onClose,
 	onDateChange,
+	loading = false,
 }: TodayShiftModalProps) => {
-	if (!date) return null;
+	if (!date || !dutyData) return null;
 
 	const formatMonth = (month: number) => {
 		return month < 10 ? `0${month}` : month;
 	};
-
-	// 듀티별 간호사 데이터
-	const nurses = [
-		...Array(3).fill({ name: "김간호", year: "5년차", duty: "day" }),
-		...Array(2).fill({ name: "김간호", year: "5년차", duty: "evening" }),
-		...Array(2).fill({ name: "김간호", year: "5년차", duty: "night" }),
-		...Array(3).fill({ name: "김간호", year: "5년차", duty: "off" }),
-	];
 
 	const handlePrevDay = () => {
 		const newDate = new Date(date);
@@ -60,53 +64,71 @@ const TodayShiftModal = ({
 	};
 
 	const modalContent = (
-		<div className="bg-white rounded-2xl p-6 w-[400px] shadow-sm">
-			<div className="text-center mb-4">
-				<div className="flex items-center justify-center gap-16 mb-2">
-					<button onClick={handlePrevDay}>
-						<IoChevronBack className="w-6 h-6 text-base-muted hover:text-gray-600" />
-					</button>
-					<h3 className="text-base-foreground text-lg font-medium">
-						{formatMonth(date.getMonth() + 1)}월 {date.getDate()}일{" "}
-						{koreanWeekDays[weekDays[date.getDay()]]}
-					</h3>
-					<button onClick={handleNextDay}>
-						<IoChevronForward className="w-6 h-6 text-base-muted hover:text-gray-600" />
-					</button>
+		<div className="bg-white rounded-2xl p-6 w-full max-w-[400px] shadow-sm">
+			{loading ? (
+				<div className="flex justify-center items-center h-[300px]">
+					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
 				</div>
-				<div className="inline-block">
-					<p className="text-base-foreground text-base mb-2">
-						오늘의 근무 일정은{" "}
-						<span className={`text-duty-${duty} font-medium`}>
-							{duty.toUpperCase()}
-						</span>{" "}
-						입니다!
-					</p>
-					<div className={`h-1 bg-duty-${duty}-bg w-full`} />
-				</div>
-			</div>
-
-			<div className="border-t border-gray-900 mb-2" />
-
-			<div className="space-y-0.5">
-				{nurses.map((nurse, index) => (
-					<div
-						key={index}
-						className="flex items-center justify-between py-[2px]"
-					>
-						<div className="flex items-center gap-2 flex-1">
-							<span className="text-base-foreground w-16">{nurse.name}</span>
-							<span className="text-base-foreground text-center flex-1">
-								{nurse.year}
-							</span>
+			) : (
+				<>
+					<div className="sticky top-0 bg-white pb-4">
+						<div className="text-center mb-4">
+							<div className="flex items-center justify-center gap-16 mb-2">
+								<button onClick={handlePrevDay}>
+									<IoChevronBack className="w-6 h-6 text-base-muted hover:text-gray-600" />
+								</button>
+								<h3 className="text-base-foreground text-lg font-medium">
+									{formatMonth(date.getMonth() + 1)}월 {date.getDate()}일{" "}
+									{koreanWeekDays[weekDays[date.getDay()]]}
+								</h3>
+								<button onClick={handleNextDay}>
+									<IoChevronForward className="w-6 h-6 text-base-muted hover:text-gray-600" />
+								</button>
+							</div>
+							<div className="inline-block">
+								<p className="text-base-foreground text-base mb-2">
+									오늘의 근무 일정은{" "}
+									<span className={`text-duty-${duty} font-medium`}>
+										{duty.toUpperCase()}
+									</span>{" "}
+									입니다!
+								</p>
+								<div className={`h-1 bg-duty-${duty}-bg w-full`} />
+							</div>
 						</div>
-						<DutyBadgeKor type={nurse.duty} size="xs" />
+						<div className="border-t border-gray-900 mb-2" />
 					</div>
-				))}
-			</div>
 
-			<div className="border-t border-gray-900 mt-2" />
-			<div className="h-4" />
+					<div className="max-h-[400px] overflow-y-auto">
+						<div className="space-y-0.5">
+							{dutyData.otherShifts
+								.sort((a, b) => b.grade - a.grade)
+								.map((nurse, index) => (
+									<div
+										key={index}
+										className="flex items-center justify-between py-[2px]"
+									>
+										<div className="flex items-center gap-2 flex-1 min-w-0">
+											<span
+												className="text-base-foreground w-24 truncate text-sm"
+												title={nurse.name}
+											>
+												{nurse.name}
+											</span>
+											<span className="text-base-foreground text-center flex-1 text-sm whitespace-nowrap">
+												{nurse.grade}년차
+											</span>
+										</div>
+										<DutyBadgeKor
+											type={convertDutyType(nurse.shift)}
+											size="xs"
+										/>
+									</div>
+								))}
+						</div>
+					</div>
+				</>
+			)}
 		</div>
 	);
 

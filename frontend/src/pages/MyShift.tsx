@@ -3,12 +3,21 @@ import MSidebar from "../components/organisms/MSidebar";
 import Title from "../components/atoms/Title";
 import MyShiftCalendar from "../components/organisms/MyShiftCalendar";
 import TodayShiftModal from "../components/organisms/TodayShiftModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoMdMenu } from "react-icons/io";
+import { dutyService } from "../services/dutyService";
 
-const getFixedDuty = (day: number) => {
-	const duties = ["day", "evening", "night", "off"] as const;
-	return duties[day % 4];
+// Duty 타입 변환 유틸리티 함수
+const convertDutyType = (
+	duty: "D" | "E" | "N" | "O",
+): "day" | "evening" | "night" | "off" => {
+	const dutyMap = {
+		D: "day",
+		E: "evening",
+		N: "night",
+		O: "off",
+	} as const;
+	return dutyMap[duty];
 };
 
 const MyShift = () => {
@@ -17,13 +26,67 @@ const MyShift = () => {
 		"day" | "evening" | "night" | "off"
 	>("day");
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [myDutyData, setMyDutyData] = useState<{
+		year: number;
+		month: number;
+		shifts: string;
+		prevShifts: string;
+		nextShifts: string;
+	} | null>(null);
+	const [dayDutyData, setDayDutyData] = useState<{
+		myShift: "D" | "E" | "N" | "O";
+		otherShifts: {
+			grade: number;
+			name: string;
+			shift: "D" | "E" | "N" | "O";
+		}[];
+	} | null>(null);
+	const [loading, setLoading] = useState(false);
 
-	const handleDateSelect = (
-		date: Date,
-		duty: "day" | "evening" | "night" | "off",
-	) => {
+	// 초기 데이터 로딩
+	useEffect(() => {
+		const fetchMyDuty = async () => {
+			try {
+				const today = new Date();
+				const data = await dutyService.getMyDuty(
+					today.getFullYear(),
+					today.getMonth() + 1,
+				);
+				setMyDutyData(data);
+			} catch (error) {
+				console.error("Failed to fetch duty data:", error);
+			}
+		};
+		fetchMyDuty();
+	}, []);
+
+	// 날짜 선택 시 해당 날짜의 근무 데이터 로딩
+	const handleDateSelect = async (date: Date) => {
 		setSelectedDate(date);
-		setSelectedDuty(duty);
+		setLoading(true);
+		try {
+			const data = await dutyService.getMyDayDuty(
+				date.getFullYear(),
+				date.getMonth() + 1,
+				date.getDate(),
+			);
+			setDayDutyData(data);
+			setSelectedDuty(convertDutyType(data.myShift));
+		} catch (error) {
+			console.error("Failed to fetch day duty data:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	// MyShiftCalendar에서 월 변경 시 호출할 핸들러 추가
+	const handleMonthChange = async (year: number, month: number) => {
+		try {
+			const data = await dutyService.getMyDuty(year, month);
+			setMyDutyData(data);
+		} catch (error) {
+			console.error("Failed to fetch duty data:", error);
+		}
 	};
 
 	return (
@@ -57,17 +120,18 @@ const MyShift = () => {
 					<MyShiftCalendar
 						onDateSelect={handleDateSelect}
 						selectedDate={selectedDate}
+						dutyData={myDutyData}
+						onMonthChange={handleMonthChange}
 					/>
-					{selectedDate && (
+					{selectedDate && dayDutyData && (
 						<TodayShiftModal
 							date={selectedDate}
 							duty={selectedDuty}
+							dutyData={dayDutyData}
 							isMobile={window.innerWidth < 1024}
 							onClose={() => setSelectedDate(null)}
-							onDateChange={(newDate) => {
-								setSelectedDate(newDate);
-								setSelectedDuty(getFixedDuty(newDate.getDate()));
-							}}
+							onDateChange={(newDate) => handleDateSelect(newDate)}
+							loading={loading}
 						/>
 					)}
 				</div>

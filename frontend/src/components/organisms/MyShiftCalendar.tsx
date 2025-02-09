@@ -7,13 +7,23 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 const weekDays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] as const;
 
 interface MyShiftCalendarProps {
-	onDateSelect: (date: Date, duty: "day" | "evening" | "night" | "off") => void;
+	onDateSelect: (date: Date) => void;
 	selectedDate: Date | null;
+	dutyData: {
+		year: number;
+		month: number;
+		prevShifts: string;
+		nextShifts: string;
+		shifts: string;
+	} | null;
+	onMonthChange?: (year: number, month: number) => void;
 }
 
 const MyShiftCalendar = ({
 	onDateSelect,
 	selectedDate: externalSelectedDate,
+	dutyData,
+	onMonthChange,
 }: MyShiftCalendarProps) => {
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024); // lg 브레이크포인트
@@ -29,23 +39,70 @@ const MyShiftCalendar = ({
 	}, []);
 
 	const handlePrevMonth = () => {
-		setCurrentDate(
-			new Date(currentDate.getFullYear(), currentDate.getMonth() - 1),
+		const newDate = new Date(
+			currentDate.getFullYear(),
+			currentDate.getMonth() - 1,
 		);
+		setCurrentDate(newDate);
+		onMonthChange?.(newDate.getFullYear(), newDate.getMonth() + 1);
 	};
 
 	const handleNextMonth = () => {
-		setCurrentDate(
-			new Date(currentDate.getFullYear(), currentDate.getMonth() + 1),
+		const newDate = new Date(
+			currentDate.getFullYear(),
+			currentDate.getMonth() + 1,
 		);
+		setCurrentDate(newDate);
+		onMonthChange?.(newDate.getFullYear(), newDate.getMonth() + 1);
 	};
 
-	// 날짜별 고정 듀티 생성 (월별로 동일한 패턴 유지)
-	const getFixedDuty = (day: number) => {
-		const duties = ["day", "evening", "night", "off"] as const;
-		// 날짜를 4로 나눈 나머지를 인덱스로 사용하여 고정된 듀티 반환
-		return duties[day % 4];
+	// 실제 근무 데이터로부터 듀티 가져오기
+	const getDutyFromShifts = (
+		date: Date,
+		day: number,
+	): "day" | "evening" | "night" | "off" => {
+		if (!dutyData) return "off";
+
+		const currentMonth = currentDate.getMonth() + 1;
+		const targetMonth = date.getMonth() + 1;
+		const prevMonthLastDate = new Date(
+			currentDate.getFullYear(),
+			currentDate.getMonth(),
+			0,
+		).getDate();
+
+		let shift: string;
+		if (targetMonth < currentMonth) {
+			// 이전 달의 마지막 주
+			shift =
+				dutyData.prevShifts[
+					day - (prevMonthLastDate - dutyData.prevShifts.length)
+				];
+		} else if (targetMonth > currentMonth) {
+			// 다음 달의 첫 주
+			shift = dutyData.nextShifts[day - 1];
+		} else {
+			// 현재 달
+			shift = dutyData.shifts[day - 1];
+		}
+
+		const dutyMap: Record<string, "day" | "evening" | "night" | "off"> = {
+			D: "day",
+			E: "evening",
+			N: "night",
+			O: "off",
+			X: "off",
+		};
+
+		return dutyMap[shift] || "off";
 	};
+
+	// getFixedDuty 함수를 getDutyFromShifts로 교체
+	useEffect(() => {
+		if (dutyData) {
+			setCurrentDate(new Date(dutyData.year, dutyData.month - 1));
+		}
+	}, [dutyData?.year, dutyData?.month]);
 
 	const firstDay = new Date(
 		currentDate.getFullYear(),
@@ -132,7 +189,7 @@ const MyShiftCalendar = ({
 									currentDate.getMonth() - 1,
 									day,
 								);
-								onDateSelect(newDate, getFixedDuty(day));
+								onDateSelect(newDate);
 							}}
 							className={`
 								min-h-[80px] lg:min-h-[120px] 
@@ -151,7 +208,17 @@ const MyShiftCalendar = ({
 								{day}
 							</span>
 							<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
-								<DutyBadgeKor type={getFixedDuty(day)} size="xs" />
+								<DutyBadgeKor
+									type={getDutyFromShifts(
+										new Date(
+											currentDate.getFullYear(),
+											currentDate.getMonth() - 1,
+											day,
+										),
+										day,
+									)}
+									size="xs"
+								/>
 							</div>
 						</div>
 					))}
@@ -166,7 +233,7 @@ const MyShiftCalendar = ({
 									currentDate.getMonth(),
 									day,
 								);
-								onDateSelect(newDate, getFixedDuty(day));
+								onDateSelect(newDate);
 							}}
 							className={`
 								min-h-[80px] lg:min-h-[120px] 
@@ -185,7 +252,17 @@ const MyShiftCalendar = ({
 								{day}
 							</span>
 							<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
-								<DutyBadgeKor type={getFixedDuty(day)} size="xs" />
+								<DutyBadgeKor
+									type={getDutyFromShifts(
+										new Date(
+											currentDate.getFullYear(),
+											currentDate.getMonth(),
+											day,
+										),
+										day,
+									)}
+									size="xs"
+								/>
 							</div>
 						</div>
 					))}
@@ -200,7 +277,7 @@ const MyShiftCalendar = ({
 									currentDate.getMonth() + 1,
 									day,
 								);
-								onDateSelect(newDate, getFixedDuty(day));
+								onDateSelect(newDate);
 							}}
 							className={`
 								min-h-[80px] lg:min-h-[120px] 
@@ -219,7 +296,17 @@ const MyShiftCalendar = ({
 								{day}
 							</span>
 							<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
-								<DutyBadgeKor type={getFixedDuty(day)} size="xs" />
+								<DutyBadgeKor
+									type={getDutyFromShifts(
+										new Date(
+											currentDate.getFullYear(),
+											currentDate.getMonth(),
+											day,
+										),
+										day,
+									)}
+									size="xs"
+								/>
 							</div>
 						</div>
 					))}

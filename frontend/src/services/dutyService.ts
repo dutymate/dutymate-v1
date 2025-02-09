@@ -96,6 +96,34 @@ export const dutyService = {
 	},
 
 	/**
+	 * 나의 특정 날짜 근무 조회
+	 * @param year - 년도
+	 * @param month - 월
+	 * @param date - 일
+	 */
+	getMyDayDuty: (year: number, month: number, date: number) => {
+		return axiosInstance
+			.get("/duty/mobile/my-day-duty", {
+				params: { year, month, date },
+			})
+			.then((response) => {
+				return response.data as DayDuty;
+			})
+			.catch((error) => {
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							window.location.href = "/error";
+					}
+				}
+				throw error;
+			});
+	},
+
+	/**
 	 * 나의 근무표 조회
 	 * @param year - 년도 (선택)
 	 * @param month - 월 (선택)
@@ -105,7 +133,7 @@ export const dutyService = {
 		return axiosInstance
 			.get("/duty/mobile/my-duty", { params })
 			.then((response) => {
-				return response.data;
+				return response.data as MyDuty;
 			})
 			.catch((error) => {
 				if (error.response) {
