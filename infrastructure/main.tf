@@ -1,11 +1,10 @@
-
 module "networking" {
-  source             = "./Modules/Networking"
-  vpc_cidr           = var.vpc_cidr
-  availability_zones = var.availability_zones
-  public_subnets     = var.public_subnets
-  private_subnets    = var.private_subnets
-  database_subnets   = var.database_subnets
+  source              = "./Modules/Networking"
+  vpc_cidr            = var.vpc_cidr
+  availability_zones  = var.availability_zones
+  public_subnet_ips   = var.public_subnet_ips
+  private_subnet_ips  = var.private_subnet_ips
+  database_subnet_ips = var.database_subnet_ips
 }
 
 module "s3" {

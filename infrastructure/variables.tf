@@ -18,17 +18,17 @@ variable "availability_zones" {
   type        = list(string)
 }
 
-variable "public_subnets" {
-  description = "The list of public subnets in which you want to deploy the resources"
+variable "public_subnet_ips" {
+  description = "The list of public subnet IPs in which you want to deploy the resources"
   type        = list(string)
 }
 
-variable "private_subnets" {
-  description = "The list of private subnets in which you want to deploy the resources"
+variable "private_subnet_ips" {
+  description = "The list of private subnet IPs in which you want to deploy the resources"
   type        = list(string)
 }
 
-variable "database_subnets" {
-  description = "The list of database subnets in which you want to deploy the resources"
+variable "database_subnet_ips" {
+  description = "The list of database subnet IPs in which you want to deploy the resources"
   type        = list(string)
 }
