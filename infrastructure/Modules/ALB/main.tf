@@ -1,6 +1,6 @@
 resource "aws_alb" "alb" {
   name               = "dutymate-alb"
-  subnets            = [var.public_subnet_id]
+  subnets            = var.public_subnets
   security_groups    = [var.sg_alb_id]
   load_balancer_type = "application"
   internal           = false

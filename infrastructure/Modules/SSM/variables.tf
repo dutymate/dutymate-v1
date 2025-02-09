@@ -1,5 +1,5 @@
-variable "database_subnet_id" {
-  type = string
+variable "database_subnets" {
+  type = list(string)
 }
 
 variable "sg_db_ssm_access_id" {

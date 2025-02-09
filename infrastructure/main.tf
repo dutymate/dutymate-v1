@@ -16,14 +16,14 @@ module "security_group" {
 
 module "ssm" {
   source              = "./Modules/SSM"
-  database_subnet_id  = module.networking.database_subnet_id
+  database_subnets    = module.networking.database_subnets
   sg_db_ssm_access_id = module.security_group.sg_db_ssm_access_id
 }
 
 module "alb" {
   source            = "./Modules/ALB"
   vpc_id            = module.networking.vpc_id
-  public_subnet_id  = module.networking.public_subnet_id
+  public_subnets    = module.networking.public_subnets
   sg_alb_id         = module.security_group.sg_alb_id
   health_check_path = var.health_check_path
 }

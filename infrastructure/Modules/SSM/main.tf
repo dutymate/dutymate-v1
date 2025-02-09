@@ -41,7 +41,7 @@ resource "aws_iam_instance_profile" "ssm_instance_profile" {
 resource "aws_instance" "db_access_instance" {
   ami                         = data.aws_ami.amazonlinux2.id
   instance_type               = "t2.micro"
-  subnet_id                   = var.database_subnet_id
+  subnet_id                   = var.database_subnets[0]
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.ssm_instance_profile.name
   vpc_security_group_ids      = [var.sg_db_ssm_access_id]

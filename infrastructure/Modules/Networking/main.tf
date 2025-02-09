@@ -9,34 +9,37 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-resource "aws_subnet" "public_subnet" {
+resource "aws_subnet" "public_subnets" {
+  count                   = 2
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = var.public_subnet_cidr_block[0]
-  availability_zone       = var.availability_zones[0]
+  cidr_block              = var.public_subnet_cidr_block[count.index]
+  availability_zone       = var.availability_zones[count.index]
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "dutymate-public-subnet"
+    Name = "dutymate-public-subnet${count.index + 1}"
   }
 }
 
-resource "aws_subnet" "private_subnet" {
+resource "aws_subnet" "private_subnets" {
+  count             = 2
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = var.private_subnet_cidr_block[0]
-  availability_zone = var.availability_zones[0]
+  cidr_block        = var.private_subnet_cidr_block[count.index]
+  availability_zone = var.availability_zones[count.index]
 
   tags = {
-    Name = "dutymate-private-subnet"
+    Name = "dutymate-private-subnet${count.index + 1}"
   }
 }
 
-resource "aws_subnet" "database_subnet" {
+resource "aws_subnet" "database_subnets" {
+  count             = 2
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = var.database_subnet_cidr_block[0]
-  availability_zone = var.availability_zones[0]
+  cidr_block        = var.database_subnet_cidr_block[count.index]
+  availability_zone = var.availability_zones[count.index]
 
   tags = {
-    Name = "dutymate-database-subnet"
+    Name = "dutymate-database-subnet${count.index + 1}"
   }
 }
 
@@ -60,7 +63,7 @@ resource "aws_eip" "ngw_eip" {
 
 resource "aws_nat_gateway" "ngw" {
   allocation_id = aws_eip.ngw_eip.id
-  subnet_id     = aws_subnet.public_subnet.id
+  subnet_id     = aws_subnet.public_subnets[0].id
 
   tags = {
     Name = "dutymate-ngw"
@@ -89,7 +92,8 @@ resource "aws_route_table" "public_route_table" {
 }
 
 resource "aws_route_table_association" "public_route_table_assoc" {
-  subnet_id      = aws_subnet.public_subnet.id
+  count          = 2
+  subnet_id      = aws_subnet.public_subnets[count.index].id
   route_table_id = aws_route_table.public_route_table.id
 }
 
@@ -107,7 +111,8 @@ resource "aws_route_table" "private_route_table" {
 }
 
 resource "aws_route_table_association" "private_route_table_assoc" {
-  subnet_id      = aws_subnet.private_subnet.id
+  count          = 2
+  subnet_id      = aws_subnet.private_subnets[count.index].id
   route_table_id = aws_route_table.private_route_table.id
 }
 
@@ -120,7 +125,8 @@ resource "aws_route_table" "database_route_table" {
 }
 
 resource "aws_route_table_association" "database_route_table_assoc" {
-  subnet_id      = aws_subnet.database_subnet.id
+  count          = 2
+  subnet_id      = aws_subnet.database_subnets[count.index].id
   route_table_id = aws_route_table.database_route_table.id
 }
 

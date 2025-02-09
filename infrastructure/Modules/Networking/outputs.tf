@@ -2,16 +2,16 @@ output "vpc_id" {
   value = aws_vpc.vpc.id
 }
 
-output "public_subnet_id" {
-  value = aws_subnet.public_subnet.id
+output "public_subnets" {
+  value = [for subnet in aws_subnet.public_subnets : subnet.id]
 }
 
-output "private_subnet_id" {
-  value = aws_subnet.private_subnet.id
+output "private_subnets" {
+  value = [for subnet in aws_subnet.private_subnets : subnet.id]
 }
 
-output "database_subnet_id" {
-  value = aws_subnet.database_subnet.id
+output "database_subnets" {
+  value = [for subnet in aws_subnet.database_subnets : subnet.id]
 }
 
 output "vpce_s3_id" {
