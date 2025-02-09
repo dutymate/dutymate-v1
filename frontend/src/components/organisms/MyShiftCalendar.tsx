@@ -60,8 +60,8 @@ const MyShiftCalendar = ({
 	const getDutyFromShifts = (
 		date: Date,
 		day: number,
-	): "day" | "evening" | "night" | "off" => {
-		if (!dutyData) return "off";
+	): "day" | "evening" | "night" | "off" | null => {
+		if (!dutyData) return null;
 
 		const currentMonth = currentDate.getMonth() + 1;
 		const targetMonth = date.getMonth() + 1;
@@ -86,15 +86,16 @@ const MyShiftCalendar = ({
 			shift = dutyData.shifts[day - 1];
 		}
 
-		const dutyMap: Record<string, "day" | "evening" | "night" | "off"> = {
-			D: "day",
-			E: "evening",
-			N: "night",
-			O: "off",
-			X: "off",
-		};
+		const dutyMap: Record<string, "day" | "evening" | "night" | "off" | null> =
+			{
+				D: "day",
+				E: "evening",
+				N: "night",
+				O: "off",
+				X: null,
+			};
 
-		return dutyMap[shift] || "off";
+		return dutyMap[shift] || null;
 	};
 
 	// getFixedDuty 함수를 getDutyFromShifts로 교체
@@ -207,19 +208,30 @@ const MyShiftCalendar = ({
 							<span className="text-base-muted text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
 								{day}
 							</span>
-							<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
-								<DutyBadgeKor
-									type={getDutyFromShifts(
-										new Date(
-											currentDate.getFullYear(),
-											currentDate.getMonth() - 1,
-											day,
-										),
-										day,
-									)}
-									size="xs"
-								/>
-							</div>
+							{getDutyFromShifts(
+								new Date(
+									currentDate.getFullYear(),
+									currentDate.getMonth() - 1,
+									day,
+								),
+								day,
+							) && (
+								<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
+									<DutyBadgeKor
+										type={
+											getDutyFromShifts(
+												new Date(
+													currentDate.getFullYear(),
+													currentDate.getMonth() - 1,
+													day,
+												),
+												day,
+											)!
+										}
+										size="xs"
+									/>
+								</div>
+							)}
 						</div>
 					))}
 
@@ -251,19 +263,30 @@ const MyShiftCalendar = ({
 							<span className="text-base-foreground text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
 								{day}
 							</span>
-							<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
-								<DutyBadgeKor
-									type={getDutyFromShifts(
-										new Date(
-											currentDate.getFullYear(),
-											currentDate.getMonth(),
-											day,
-										),
-										day,
-									)}
-									size="xs"
-								/>
-							</div>
+							{getDutyFromShifts(
+								new Date(
+									currentDate.getFullYear(),
+									currentDate.getMonth(),
+									day,
+								),
+								day,
+							) && (
+								<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
+									<DutyBadgeKor
+										type={
+											getDutyFromShifts(
+												new Date(
+													currentDate.getFullYear(),
+													currentDate.getMonth(),
+													day,
+												),
+												day,
+											)!
+										}
+										size="xs"
+									/>
+								</div>
+							)}
 						</div>
 					))}
 
@@ -295,19 +318,30 @@ const MyShiftCalendar = ({
 							<span className="text-base-muted text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
 								{day}
 							</span>
-							<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
-								<DutyBadgeKor
-									type={getDutyFromShifts(
-										new Date(
-											currentDate.getFullYear(),
-											currentDate.getMonth(),
-											day,
-										),
-										day,
-									)}
-									size="xs"
-								/>
-							</div>
+							{getDutyFromShifts(
+								new Date(
+									currentDate.getFullYear(),
+									currentDate.getMonth(),
+									day,
+								),
+								day,
+							) && (
+								<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
+									<DutyBadgeKor
+										type={
+											getDutyFromShifts(
+												new Date(
+													currentDate.getFullYear(),
+													currentDate.getMonth(),
+													day,
+												),
+												day,
+											)!
+										}
+										size="xs"
+									/>
+								</div>
+							)}
 						</div>
 					))}
 				</div>
