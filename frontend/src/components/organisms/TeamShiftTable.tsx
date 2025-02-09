@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-//import axios from 'axios';
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import { Button } from "../atoms/Button";
 import { Icon } from "../atoms/Icon";
 import ReqShiftModal from "./ReqShiftModal";
-// import { dutyService } from "../../services/dutyService"; //실제 API 호출에 필요한 axios import
-// 임시 데이터 import
-import mockData from "../../services/response-json/duty/GetApiDutyWard.json";
+import { dutyService } from "../../services/dutyService"; //실제 API 호출에 필요한 axios import
+// import mockData from "../../services/response-json/duty/GetApiDutyWard.json"; // 임시 데이터 import
 
 interface DutyMember {
 	memberId: number;
@@ -15,7 +13,7 @@ interface DutyMember {
 }
 
 interface DutyInfo {
-	id: string; // _id에서 id로 변경
+	id: string;
 	year: number;
 	month: number;
 	duty: DutyMember[];
@@ -30,12 +28,10 @@ const TeamShiftTable = () => {
 	useEffect(() => {
 		const fetchDutyData = async () => {
 			try {
-				// 실제 API 호출 (현재는 주석 처리)
-				// const response = await dutyService.getWardDuty();
-				// setDutyData(response);
-
-				// 임시 데이터 사용
-				setDutyData(mockData);
+				// 실제 API 호출
+				const response = await dutyService.getWardDuty();
+				setDutyData(response);
+				// setDutyData(mockData); // 임시 데이터 사용
 			} catch (err) {
 				setError("근무표를 불러오는데 실패했습니다.");
 			} finally {

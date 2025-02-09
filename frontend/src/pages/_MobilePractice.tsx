@@ -8,7 +8,11 @@ const MobilePractice = () => {
 	return (
 		<div className="flex min-h-screen bg-gray-50">
 			{showSidebar && (
-				<MSidebar userType="head" onClose={() => setShowSidebar(false)} />
+				<MSidebar
+					userType="head"
+					onClose={() => setShowSidebar(false)}
+					isOpen={showSidebar}
+				/>
 			)}
 			<main className={`flex-1 p-8 ${showSidebar ? "ml-[238px]" : ""}`}>
 				{/* 메뉴 아이콘 */}

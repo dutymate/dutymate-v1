@@ -41,16 +41,18 @@ export const userService = {
 		success: (data: LoginResponse) => void,
 		fail: (error: ApiErrorResponse) => void,
 	) => {
-		try {
-			const response = await axiosInstance.get(`/member/login/google`, {
+		return axiosInstance
+			.get(`/member/login/google`, {
 				params: { code },
+			})
+			.then((response) => {
+				success(response.data);
+			})
+			.catch((error) => {
+				if (axios.isAxiosError(error)) {
+					fail(error.response?.data);
+				}
 			});
-			success(response.data);
-		} catch (error) {
-			if (axios.isAxiosError(error)) {
-				fail(error.response?.data);
-			}
-		}
 	},
 
 	/**
@@ -84,16 +86,15 @@ export const userService = {
 	 */
 	submitAdditionalInfo: async (
 		data: AdditionalInfoRequest,
-		success: (data: AdditionalInfoResponse) => void,
-		fail: (error: ApiErrorResponse) => void,
-	): Promise<void> => {
+	): Promise<AdditionalInfoResponse> => {
 		try {
-			const response = await axiosInstance.post(`/member/info`, data);
-			success(response.data);
+			const response = await axiosInstance.post("/member/info", data);
+			return response.data;
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
-				fail(error.response?.data);
+				throw error.response?.data;
 			}
+			throw error;
 		}
 	},
 };

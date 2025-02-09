@@ -205,7 +205,7 @@ export const dutyService = {
 	 */
 	updateDuty: (data: DutyUpdateRequest) => {
 		return axiosInstance
-			.put("/duty", data)
+			.put(`/duty`, data)
 			.then((response) => {
 				return response.data;
 			})

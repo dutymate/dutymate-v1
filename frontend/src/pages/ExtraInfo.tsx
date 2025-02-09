@@ -4,8 +4,9 @@ import StartTemplate from "../components/templates/StartTemplate";
 import { useNavigate } from "react-router-dom";
 import userService from "../services/userService";
 import useUserAuthStore from "../store/userAuthStore";
-// Mock 응답 데이터 import
-import mockResponse from "../services/response-json/user/PostApiMemberInfo.json";
+import { toast } from "react-toastify";
+// Mock 응답 데이터 import (임시로 주석 처리)
+// import mockResponse from "../services/response-json/user/PostApiMemberInfo.json";
 
 interface FormData {
 	grade: number;
@@ -37,11 +38,11 @@ const ExtraInfo = () => {
 
 			console.log("API 요청 데이터:", apiData);
 
-			// 실제 API 호출 (백엔드 연결 시 주석 해제)
-			// const response = await userService.submitAdditionalInfo(apiData);
+			// 실제 API 호출
+			const response = await userService.submitAdditionalInfo(apiData);
 
-			// Mock 응답 사용 (백엔드 연결 시 제거)
-			const response = mockResponse;
+			// Mock 응답 사용 (임시로 주석 처리)
+			// const response = mockResponse;
 			console.log("API 응답:", response);
 
 			// Update global state with the same data
@@ -53,17 +54,31 @@ const ExtraInfo = () => {
 
 			console.log("전역 상태 업데이트 완료");
 
-			// Navigate based on role (mock 응답의 role 사용)
-			if (response.role === "HN") {
-				console.log("수간호사로 병동 생성 페이지로 이동");
-				navigate("/create-ward");
-			} else {
-				console.log("평간호사로 병동 입장 페이지로 이동");
-				navigate("/enter-ward");
-			}
+			toast.success("회원 가입이 완료되었습니다.", {
+				position: "top-center",
+				autoClose: 3000,
+			});
+
+			// Navigate based on role
+			setTimeout(() => {
+				if (response.role === "HN") {
+					console.log("수간호사로 병동 생성 페이지로 이동");
+					navigate("/create-ward");
+				} else {
+					console.log("평간호사로 병동 입장 페이지로 이동");
+					navigate("/enter-ward");
+				}
+			}, 1000);
 		} catch (error) {
 			console.error("부가 정보 제출 중 에러 발생:", error);
-			// TODO: Add error handling UI
+
+			if (error instanceof Error) {
+				if (error.message === "서버 연결 실패") {
+					toast.error("잠시 후 다시 시도해주세요");
+					return;
+				}
+			}
+			toast.error("부가 정보 저장에 실패했습니다");
 		}
 	};
 

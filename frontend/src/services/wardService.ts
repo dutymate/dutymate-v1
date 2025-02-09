@@ -1,5 +1,5 @@
 import axiosInstance from "../lib/axios";
-import mockWardData from "./response-json/ward/GetApiWard.json";
+// import mockWardData from "./response-json/ward/GetApiWard.json";
 
 /**
  * 병동 정보를 나타내는 인터페이스
@@ -87,35 +87,29 @@ export const wardService = {
 	 * @returns 병동 정보 및 소속 간호사 목록
 	 */
 	getWardInfo: () => {
-		// return axiosInstance
-		// 	.get("/ward")
-		// 	.then((response) => {
-		// 		return response.data;
-		// 	})
-		// 	.catch((error) => {
-		// 		if (error.code === "ERR_NETWORK") {
-		// 			console.error(
-		// 				"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
-		// 			);
-		// 			throw new Error("서버 연결 실패");
-		// 		}
-		// 		if (error.response) {
-		// 			switch (error.response.status) {
-		// 				case 401:
-		// 					window.location.href = "/login";
-		// 					break;
-		// 				default:
-		// 					window.location.href = "/error";
-		// 			}
-		// 		}
-		// 		throw error;
-		// 	});
-		// Return mock data with a promise to simulate API call
-		return new Promise<WardInfo>((resolve) => {
-			setTimeout(() => {
-				resolve(mockWardData as WardInfo);
-			}, 500); // Simulate network delay
-		});
+		return axiosInstance
+			.get("/ward")
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							window.location.href = "/error";
+					}
+				}
+				throw error;
+			});
 	},
 
 	/**
@@ -192,35 +186,29 @@ export const wardService = {
 	 * @param data - 수정할 정보 (숙련도, 근무 유형, 메모, 권한)
 	 */
 	updateNurseInfo: (memberId: number, data: NurseUpdateRequest) => {
-		// return axiosInstance
-		// 	.put(`/ward/member/${memberId}`, data)
-		// 	.then((response) => {
-		// 		return response.data;
-		// 	})
-		// 	.catch((error) => {
-		// 		if (error.code === "ERR_NETWORK") {
-		// 			console.error(
-		// 				"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
-		// 			);
-		// 			throw new Error("서버 연결 실패");
-		// 		}
-		// 		if (error.response) {
-		// 			switch (error.response.status) {
-		// 				case 401:
-		// 					window.location.href = "/login";
-		// 					break;
-		// 				default:
-		// 					window.location.href = "/error";
-		// 			}
-		// 		}
-		// 		throw error;
-		// 	});
-		// Simulate successful update
-		return new Promise((resolve) => {
-			setTimeout(() => {
-				resolve({ success: true });
-			}, 300);
-		});
+		return axiosInstance
+			.put(`/ward/member/${memberId}`, data)
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							window.location.href = "/error";
+					}
+				}
+				throw error;
+			});
 	},
 
 	/**
@@ -228,34 +216,34 @@ export const wardService = {
 	 * @param memberId - 내보낼 간호사 ID
 	 */
 	removeNurse: (memberId: number) => {
-		// return axiosInstance
-		// 	.delete(`/ward/member/${memberId}`)
-		// 	.then((response) => {
-		// 		return response.data;
-		// 	})
-		// 	.catch((error) => {
-		// 		if (error.code === "ERR_NETWORK") {
-		// 			console.error(
-		// 				"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
-		// 			);
-		// 			throw new Error("서버 연결 실패");
-		// 		}
-		// 		if (error.response) {
-		// 			switch (error.response.status) {
-		// 				case 401:
-		// 					window.location.href = "/login";
-		// 					break;
-		// 				default:
-		// 					window.location.href = "/error";
-		// 			}
-		// 		}
-		// 		throw error;
-		// 	});
-		// Simulate successful removal
-		return new Promise((resolve) => {
-			setTimeout(() => {
-				resolve({ success: true });
-			}, 300);
-		});
+		return axiosInstance
+			.delete(`/ward/member/${memberId}`)
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							window.location.href = "/error";
+					}
+				}
+				throw error;
+			});
+		// // Simulate successful removal
+		// return new Promise((resolve) => {
+		// 	setTimeout(() => {
+		// 		resolve({ success: true });
+		// 	}, 300);
+		// });
 	},
 };

@@ -81,7 +81,7 @@ export const requestService = {
 	 */
 	createRequest: (data: CreateRequestDto) => {
 		return axiosInstance
-			.post("/request", data)
+			.post(`/request`, data)
 			.then((response) => {
 				return response.data;
 			})

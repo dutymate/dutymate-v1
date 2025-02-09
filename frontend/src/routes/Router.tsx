@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Playgrounds from "../pages/playgrounds";
+import Playgrounds from "../pages/_playgrounds";
 import Landing from "../pages/Landing";
 import Login from "../pages/Login";
 import KakaoRedirect from "../pages/KakaoRedirect";
@@ -10,7 +10,7 @@ import WardAdmin from "../pages/WardAdmin";
 import CreateWard from "../pages/CreateWard";
 import EnterWard from "../pages/EnterWard";
 import ExtraInfo from "../pages/ExtraInfo";
-import MobilePractice from "../pages/MobilePractice";
+import MobilePractice from "../pages/_MobilePractice";
 import Community from "../pages/Community";
 import RequestManagement from "../pages/RequestManagement";
 import DutyManagement from "../pages/DutyManagement";
