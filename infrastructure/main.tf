@@ -14,6 +14,12 @@ module "security_group" {
   database_subnet_cidr_block = var.database_subnet_cidr_block
 }
 
+module "ssm" {
+  source              = "./Modules/SSM"
+  database_subnet_id  = module.networking.database_subnet_id
+  sg_db_ssm_access_id = module.security_group.sg_db_ssm_access_id
+}
+
 module "alb" {
   source            = "./Modules/ALB"
   vpc_id            = module.networking.vpc_id

@@ -135,3 +135,18 @@ resource "aws_security_group" "sg_mongodb" {
     Name = "dutymate-sg-mongodb"
   }
 }
+
+resource "aws_security_group" "sg_db_ssm_access" {
+  vpc_id = var.vpc_id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = var.database_subnet_cidr_block
+  }
+
+  tags = {
+    Name = "dutymate-sg-db-ssm-access"
+  }
+}
