@@ -265,11 +265,13 @@ public class MemberService {
 	}
 
 	// 마이페이지 정보 조회하기
+	@Transactional(readOnly = true)
 	public MypageResponseDto getMember(Member member) {
 		WardMember wardMember = getMemberById(member.getMemberId()).getWardMember();
 		return MypageResponseDto.of(wardMember, member);
 	}
 
+	@Transactional
 	public void updateMember(Member member, MypageEditRequestDto mypageEditRequestDto) {
 
 		String name = mypageEditRequestDto.getName();
@@ -277,7 +279,27 @@ public class MemberService {
 		String gender = mypageEditRequestDto.getGender();
 		Integer grade = mypageEditRequestDto.getGrade();
 
+		// 닉네임이 변경되었을 경우만 중복 체크
+		if (nickname != null && !nickname.equals(member.getNickname())) {
+			validateNickname(nickname);
+		}
+
 		member.editMember(name, nickname, gender, grade);
 		memberRepository.save(member);
+	}
+
+	public void validateNickname(String nickname) {
+		boolean isExisted = memberRepository.existsByNickname(nickname);
+		if (isExisted) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "중복된 닉네임이 존재합니다.");
+		}
+	}
+
+	@Transactional
+	public void checkNickname(Member member, String nickname) {
+		if (member.getNickname().equals(nickname)) {
+			return;
+		}
+		validateNickname(nickname);
 	}
 }

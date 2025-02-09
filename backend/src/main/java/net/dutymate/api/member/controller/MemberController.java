@@ -14,6 +14,7 @@ import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.member.dto.AdditionalInfoRequestDto;
 import net.dutymate.api.member.dto.AdditionalInfoResponseDto;
+import net.dutymate.api.member.dto.CheckNicknameRequestDto;
 import net.dutymate.api.member.dto.LoginRequestDto;
 import net.dutymate.api.member.dto.LoginResponseDto;
 import net.dutymate.api.member.dto.MypageEditRequestDto;
@@ -79,5 +80,12 @@ public class MemberController {
 	public ResponseEntity<?> updateMember(@Auth Member member, @RequestBody MypageEditRequestDto mypageEditRequestDto) {
 		memberService.updateMember(member, mypageEditRequestDto);
 		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/check-nickname")
+	public ResponseEntity<?> checkNickname(@Auth Member member,
+		@RequestBody CheckNicknameRequestDto checkNicknameRequestDto) {
+		memberService.checkNickname(member, checkNicknameRequestDto.getNickname());
+		return ResponseEntity.ok().body("사용 가능한 닉네임입니다.");
 	}
 }
