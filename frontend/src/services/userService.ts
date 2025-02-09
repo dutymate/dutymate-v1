@@ -19,7 +19,7 @@ interface AdditionalInfoRequest {
 }
 
 interface AdditionalInfoResponse {
-	role: string;
+	role: "HN" | "RN"; // 명확한 타입 지정
 }
 
 export interface ApiErrorResponse {

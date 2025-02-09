@@ -29,7 +29,6 @@ const ExtraInfo = () => {
 		try {
 			setFormData(data);
 
-			// Convert form data to API request format with correct types
 			const apiData = {
 				grade: data.grade,
 				gender: data.gender,
@@ -38,14 +37,9 @@ const ExtraInfo = () => {
 
 			console.log("API 요청 데이터:", apiData);
 
-			// 실제 API 호출
 			const response = await userService.submitAdditionalInfo(apiData);
-
-			// Mock 응답 사용 (임시로 주석 처리)
-			// const response = mockResponse;
 			console.log("API 응답:", response);
 
-			// Update global state with the same data
 			setAdditionalInfo({
 				grade: apiData.grade,
 				gender: apiData.gender,
@@ -59,19 +53,21 @@ const ExtraInfo = () => {
 				autoClose: 3000,
 			});
 
-			// Navigate based on role
+			// 명확한 타입 체크 추가
 			setTimeout(() => {
-				if (response.role === "HN") {
+				if (response && response.role === "HN") {
 					console.log("수간호사로 병동 생성 페이지로 이동");
 					navigate("/create-ward");
-				} else {
+				} else if (response && response.role === "RN") {
 					console.log("평간호사로 병동 입장 페이지로 이동");
 					navigate("/enter-ward");
+				} else {
+					console.error("Invalid role in response:", response);
+					toast.error("역할 정보가 올바르지 않습니다");
 				}
 			}, 1000);
 		} catch (error) {
 			console.error("부가 정보 제출 중 에러 발생:", error);
-
 			if (error instanceof Error) {
 				if (error.message === "서버 연결 실패") {
 					toast.error("잠시 후 다시 시도해주세요");
