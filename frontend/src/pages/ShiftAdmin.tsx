@@ -3,7 +3,7 @@ import MSidebar from "../components/organisms/MSidebar";
 import Title from "../components/atoms/Title";
 import ShiftAdminTable from "../components/organisms/ShiftAdminTable";
 import HistoryList from "../components/organisms/HistoryList";
-import WardAdminForm from "../components/organisms/WardAdminForm";
+import RuleCheckList from "../components/organisms/RuleCheckList";
 import { useState } from "react";
 import { IoMdMenu } from "react-icons/io";
 
@@ -39,20 +39,18 @@ const ShiftAdmin = () => {
 					subtitle="간호사들의 근무표를 관리해보세요"
 				/>
 
-				{/* 근무표와 히스토리 영역 */}
-				<div className="mt-3 flex flex-col gap-3">
-					{/* 근무표 */}
-					<ShiftAdminTable />
-
-					{/* 히스토리와 병동 관리 영역 */}
-					<div className="flex flex-col lg:flex-row gap-3">
-						<div className="w-full lg:w-1/2">
-							<HistoryList />
-						</div>
-						<div className="w-full lg:w-1/2">
-							<WardAdminForm />
-						</div>
+				{/* 히스토리와 규칙 체크 영역으로 변경 */}
+				<div className="flex flex-col lg:flex-row gap-3">
+					<div className="w-full lg:w-1/2">
+						<HistoryList />
 					</div>
+					<div className="w-full lg:w-1/2">
+						<RuleCheckList />
+					</div>
+				</div>
+
+				<div className="mt-3 flex flex-col gap-3">
+					<ShiftAdminTable />
 				</div>
 			</div>
 		</div>

@@ -5,13 +5,69 @@ import notebookImage from "../../assets/notebook.svg";
 
 interface StartTemplateProps {
 	children: React.ReactNode;
+	isLoginPage?: boolean;
 }
 
-const StartTemplate: React.FC<StartTemplateProps> = ({ children }) => {
+const StartTemplate: React.FC<StartTemplateProps> = ({
+	children,
+	isLoginPage,
+}) => {
 	return (
-		<div className="w-full h-screen grid grid-cols-2">
-			{/* 왼쪽 영역 */}
-			<div className="relative w-full h-full">
+		<div className="w-full h-screen lg:grid lg:grid-cols-2">
+			{/* 모바일 레이아웃 */}
+			<div className="lg:hidden flex flex-col min-h-screen">
+				{/* 로고 영역 */}
+				<div className="flex-1 bg-base-muted-30 flex flex-col">
+					<div className="flex justify-center mt-20 mb-8">
+						<img
+							src={dutyMateLogo}
+							alt="DutyMate Logo"
+							className="w-[60%] max-w-[280px]"
+						/>
+					</div>
+
+					{/* 텍스트 영역과 버튼 - 로그인 페이지가 아닐 때만 표시 */}
+					{!isLoginPage && (
+						<div className="px-10 py-20 mb-12">
+							<div className="flex flex-col gap-2 mb-8 lg:text-left text-center">
+								<h1 className="text-2xl font-bold text-gray-800">
+									"듀티표의 마침표, 듀티메이트."
+								</h1>
+								<p className="text-base text-gray-600">
+									간호사 업무의 효율성과 공정성을 높이는
+									<br />
+									자동화 듀티표 생성 서비스.
+								</p>
+							</div>
+							{/* 시작하기 버튼 */}
+							<div className="flex justify-center">{children}</div>
+						</div>
+					)}
+
+					{/* 로그인 폼 - 로그인 페이지일 때만 표시 */}
+					{isLoginPage && (
+						<div className="flex-1 flex items-center justify-center">
+							{children}
+						</div>
+					)}
+				</div>
+
+				{/* 노트북 이미지 영역 - 로그인 페이지가 아닐 때만 표시 */}
+				{!isLoginPage && (
+					<div className="relative h-[35vh] bg-primary-20">
+						<div className="absolute -top-32 right-[-40%] w-[130%]">
+							<img
+								src={notebookImage}
+								alt="Notebook Preview"
+								className="w-full"
+							/>
+						</div>
+					</div>
+				)}
+			</div>
+
+			{/* 데스크톱 레이아웃 - 기존 코드 유지 */}
+			<div className="hidden lg:block relative w-full h-full">
 				{/* 배경 색상 레이어 */}
 				<div className="absolute inset-0">
 					<div className="h-[70%] bg-base-muted-30"></div>
@@ -50,14 +106,12 @@ const StartTemplate: React.FC<StartTemplateProps> = ({ children }) => {
 				</div>
 			</div>
 
-			{/* 오른쪽 영역 */}
-			<div className="relative w-full h-full">
-				{/* 배경 색상 레이어 */}
+			{/* 데스크톱 오른쪽 영역 */}
+			<div className="hidden lg:block relative w-full h-full">
 				<div className="absolute inset-0">
 					<div className="h-[70%] bg-base-muted-30"></div>
 					<div className="h-[30%] bg-primary-20"></div>
 				</div>
-				{/* 로고 영역 */}
 				<div className="relative z-10 h-full flex flex-col items-center justify-center translate-y-[2vh]">
 					<img
 						src={dutyMateLogo}

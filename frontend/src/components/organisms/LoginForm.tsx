@@ -12,18 +12,20 @@ const LoginForm = () => {
 	};
 
 	return (
-		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 w-[25rem]">
-			<form>
-				<EmailInput
-					id="email"
-					name="email"
-					label="아이디"
-					placeholder="ssafynurse@dutymate.com"
-				/>
-				<div className="mt-2">
+		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 w-[25rem] lg:w-[25rem]">
+			<form className="lg:block">
+				<div className="lg:mt-0 mt-8">
+					<EmailInput
+						id="email"
+						name="email"
+						label="아이디"
+						placeholder="ssafynurse@dutymate.com"
+					/>
+				</div>
+				<div className="lg:mt-2 mt-6">
 					<PasswordInput id="password" name="password" label="비밀번호" />
 				</div>
-				<div className="mt-4">
+				<div className="lg:mt-4 mt-8">
 					<button
 						type="submit"
 						className="w-full px-3 py-2 text-sm font-medium text-white bg-base-black rounded-md hover:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-base-black"
@@ -31,7 +33,7 @@ const LoginForm = () => {
 						로그인
 					</button>
 				</div>
-				<div className="mt-3 text-[0.9rem] text-gray-600 flex justify-center gap-2">
+				<div className="lg:mt-3 mt-6 text-[0.9rem] text-gray-600 flex justify-center gap-2">
 					<button type="button" className="underline">
 						회원 가입
 					</button>
@@ -44,7 +46,7 @@ const LoginForm = () => {
 						아이디 찾기
 					</button>
 				</div>
-				<div className="mt-8 space-y-2 mb-3">
+				<div className="lg:mt-8 mt-12 lg:space-y-2 space-y-4 mb-3">
 					<button
 						type="button"
 						className="w-full px-3 py-2 text-sm font-medium text-[#000000] bg-[#FEE500] rounded-md hover:bg-[#e6cf00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] relative"

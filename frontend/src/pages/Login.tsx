@@ -3,7 +3,7 @@ import StartTemplate from "../components/templates/StartTemplate";
 
 const Login = () => {
 	return (
-		<StartTemplate>
+		<StartTemplate isLoginPage>
 			<LoginForm />
 		</StartTemplate>
 	);

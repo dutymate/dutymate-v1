@@ -19,6 +19,10 @@ const WardAdminRowCard = ({
 	isSelected = false,
 	onSelect,
 }: WardAdminRowCardProps) => {
+	if (!nurse) {
+		return null;
+	}
+
 	const [openSkillDropdown, setOpenSkillDropdown] = useState(false);
 	const [isEditingMemo, setIsEditingMemo] = useState(false);
 	const [memo, setMemo] = useState(nurse.memo);
@@ -94,7 +98,7 @@ const WardAdminRowCard = ({
 							onClick={() => setOpenSkillDropdown(!openSkillDropdown)}
 						>
 							<Icon
-								name={nurse.skillLevel.toLowerCase() as IconName}
+								name={(nurse.skillLevel?.toLowerCase() ?? "low") as IconName}
 								size={16}
 							/>
 							<span className="text-sm">
