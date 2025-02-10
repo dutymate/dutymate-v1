@@ -17,7 +17,7 @@ resource "aws_alb_target_group" "alb_target_group" {
   port                 = 8080
   protocol             = "HTTP"
   vpc_id               = var.vpc_id
-  target_type          = "instance"
+  target_type          = "ip"
   deregistration_delay = 5
 
   health_check {

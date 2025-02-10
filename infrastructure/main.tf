@@ -28,6 +28,13 @@ module "alb" {
   health_check_path = var.health_check_path
 }
 
+module "ecs" {
+  source           = "./Modules/ECS"
+  private_subnets  = module.networking.private_subnets
+  sg_ecs_id        = module.security_group.sg_ecs_id
+  target_group_arn = module.alb.target_group_arn
+}
+
 module "rds" {
   source           = "./Modules/RDS"
   database_subnets = module.networking.database_subnets
