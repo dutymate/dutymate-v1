@@ -1,4 +1,5 @@
 resource "aws_security_group" "sg_alb" {
+  name   = "dutymate-sg-alb"
   vpc_id = var.vpc_id
 
   ingress {
@@ -28,6 +29,7 @@ resource "aws_security_group" "sg_alb" {
 }
 
 resource "aws_security_group" "sg_ecs" {
+  name   = "dutymate-sg-ecs"
   vpc_id = var.vpc_id
 
   ingress {
@@ -71,6 +73,7 @@ resource "aws_security_group" "sg_ecs" {
 }
 
 resource "aws_security_group" "sg_mysql" {
+  name   = "dutymate-sg-mysql"
   vpc_id = var.vpc_id
 
   ingress {
@@ -93,6 +96,7 @@ resource "aws_security_group" "sg_mysql" {
 }
 
 resource "aws_security_group" "sg_valkey" {
+  name   = "dutymate-sg-valkey"
   vpc_id = var.vpc_id
 
   ingress {
@@ -115,6 +119,7 @@ resource "aws_security_group" "sg_valkey" {
 }
 
 resource "aws_security_group" "sg_mongodb" {
+  name   = "dutymate-sg-mongodb"
   vpc_id = var.vpc_id
 
   ingress {
@@ -137,6 +142,7 @@ resource "aws_security_group" "sg_mongodb" {
 }
 
 resource "aws_security_group" "sg_db_ssm_access" {
+  name   = "dutymate-sg-db-ssm-access"
   vpc_id = var.vpc_id
 
   egress {
