@@ -1,15 +1,19 @@
 import React from "react";
 import { FaUserCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
 	return (
 		<div className="px-[1.3rem] pb-10">
 			<div className="flex flex-col">
 				{/* 마이페이지 텍스트와 아이콘 */}
-				<div className="flex items-center gap-x-6 px-4 mb-4">
+				<Link
+					to="/my-page"
+					className="flex items-center gap-x-6 px-4 mb-4 hover:bg-gray-100 rounded-lg py-2"
+				>
 					<FaUserCircle className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500" />
 					<span className="text-sm font-semibold">마이페이지</span>
-				</div>
+				</Link>
 
 				{/* 가운데 정렬된 선 */}
 				<div className="mx-2 mb-4">
