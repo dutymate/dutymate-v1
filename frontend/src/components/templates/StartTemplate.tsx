@@ -117,7 +117,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 					<img
 						src={dutyMateLogo}
 						alt="DutyMate Logo"
-						className="w-[35%] mb-8"
+						className="w-[35%] -mb-3"
 					/>
 					{children}
 				</div>

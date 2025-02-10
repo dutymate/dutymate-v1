@@ -1,14 +1,26 @@
 import StartTemplate from "../components/templates/StartTemplate";
+import NextTemplate from "../components/templates/NextTemplate";
 import CreateWardForm from "../components/organisms/CreateWardForm";
 import { useNavigate } from "react-router-dom";
 import useUserAuthStore from "../store/userAuthStore";
 import { wardService } from "../services/wardService";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 
 const CreateWard = () => {
 	const navigate = useNavigate();
 	const userAuthStore = useUserAuthStore();
+	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth < 1024);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
 
 	const handleCreateWard = async (hospitalName: string, wardName: string) => {
 		console.log("handleCreateWard 함수 호출됨:", { hospitalName, wardName });
@@ -55,15 +67,17 @@ const CreateWard = () => {
 		}
 	};
 
+	const Template = isMobile ? NextTemplate : StartTemplate;
+
 	return (
-		<StartTemplate>
+		<Template>
 			<div className="flex flex-col items-center">
-				<p className="text-gray-600 text-base mb-8">
+				<p className="text-gray-600 text-base mt-8 mb-8">
 					병동 생성을 위한 기본 정보를 입력해주세요.
 				</p>
 				<CreateWardForm onSubmit={handleCreateWard} />
 			</div>
-		</StartTemplate>
+		</Template>
 	);
 };
 

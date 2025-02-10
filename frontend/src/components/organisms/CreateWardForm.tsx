@@ -76,7 +76,7 @@ const CreateWardForm = ({ onSubmit }: CreateWardFormProps) => {
 	};
 
 	return (
-		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 w-[25rem] flex flex-col items-center">
+		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 lg:py-16 w-[25rem] flex flex-col items-center">
 			<form
 				noValidate
 				onSubmit={handleSubmit}
@@ -104,15 +104,20 @@ const CreateWardForm = ({ onSubmit }: CreateWardFormProps) => {
 						required
 					/>
 				</div>
-				<Button
-					type="submit"
-					color="primary"
-					size="lg"
-					fullWidth
-					disabled={isLoading}
-				>
-					{isLoading ? "생성 중..." : "생성하기"}
-				</Button>
+				<div className="mt-8 lg:mt-2 -mb-1">
+					<Button
+						type="submit"
+						color="primary"
+						size="lg"
+						fullWidth
+						disabled={isLoading}
+						className="h-[5vh] lg:h-12"
+					>
+						<span className="text-xl lg:text-base">
+							{isLoading ? "생성 중..." : "생성하기"}
+						</span>
+					</Button>
+				</div>
 			</form>
 		</div>
 	);

@@ -18,7 +18,9 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 				{/* 로고 영역 */}
 				<div className="flex-1 bg-base-muted-30 flex flex-col relative">
 					<div
-						className={`flex justify-center items-center translate-y-[18vh] mb-8`}
+						className={`flex justify-center items-center ${
+							isLoginPage ? "translate-y-[14vh]" : "translate-y-[18vh]"
+						} mb-8`}
 					>
 						<img
 							src={dutyMateLogo}

@@ -11,9 +11,17 @@ const Landing = () => {
 
 	return (
 		<StartTemplate>
-			<Button color="primary" size="lg" width="long" onClick={handleStart}>
-				시작하기
-			</Button>
+			<div className="flex flex-col items-center">
+				<Button
+					color="primary"
+					size="lg"
+					width="long"
+					onClick={handleStart}
+					className="mt-1 lg:mt-[5vh] h-[4.5vh] lg:h-12"
+				>
+					<span className="text-xl lg:text-base">시작하기</span>
+				</Button>
+			</div>
 		</StartTemplate>
 	);
 };

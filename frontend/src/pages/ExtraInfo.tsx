@@ -93,8 +93,8 @@ const ExtraInfo = () => {
 
 	return (
 		<Template>
-			<div className="flex flex-col items-center  translate-y-[8vh] lg:translate-y-0">
-				<p className="text-base-foreground text-lg mb-8">
+			<div className="flex flex-col items-center">
+				<p className="text-gray-600 text-lg mt-12 mb-8">
 					원활한 서비스 이용을 위한 부가 정보를 알려주세요.
 				</p>
 				<ExtraInfoForm initialData={formData} onSubmit={handleSubmit} />

@@ -1,11 +1,29 @@
 import LoginForm from "../components/organisms/LoginForm";
 import StartTemplate from "../components/templates/StartTemplate";
+import NextTemplate from "../components/templates/NextTemplate";
+import { useState, useEffect } from "react";
 
 const Login = () => {
+	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth < 1024);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
+	const Template = isMobile ? NextTemplate : StartTemplate;
+
 	return (
-		<StartTemplate isLoginPage>
+		<Template isLoginPage>
+			<div className="flex flex-col items-center">
+				<div className="mt-[8vh] lg:mt-8"></div>
+			</div>
 			<LoginForm />
-		</StartTemplate>
+		</Template>
 	);
 };
 
