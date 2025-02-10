@@ -26,20 +26,22 @@ const DutyBadgeEng = ({
 
 	const badgeStyles = {
 		filled: {
-			D: "bg-duty-day text-white",
-			E: "bg-duty-evening text-white",
-			N: "bg-duty-night text-white",
-			O: "bg-duty-off text-white",
-			ALL: "bg-base-foreground text-white",
-			default: "bg-base-muted text-white font-bold",
+			D: "bg-duty-day text-white hover:ring-2 hover:ring-offset-2 hover:ring-duty-day focus:ring-2 focus:ring-offset-2 focus:ring-duty-day",
+			E: "bg-duty-evening text-white hover:ring-2 hover:ring-offset-2 hover:ring-duty-evening focus:ring-2 focus:ring-offset-2 focus:ring-duty-evening",
+			N: "bg-duty-night text-white hover:ring-2 hover:ring-offset-2 hover:ring-duty-night focus:ring-2 focus:ring-offset-2 focus:ring-duty-night",
+			O: "bg-duty-off text-white hover:ring-2 hover:ring-offset-2 hover:ring-duty-off focus:ring-2 focus:ring-offset-2 focus:ring-duty-off",
+			ALL: "bg-base-foreground text-white hover:ring-2 hover:ring-offset-2 hover:ring-base-foreground focus:ring-2 focus:ring-offset-2 focus:ring-base-foreground",
+			default:
+				"bg-base-muted text-white font-bold hover:ring-2 hover:ring-offset-2 hover:ring-base-muted focus:ring-2 focus:ring-offset-2 focus:ring-base-muted",
 		},
 		outline: {
-			D: "bg-white text-duty-day border-2 border-duty-day",
-			E: "bg-white text-duty-evening border-2 border-duty-evening",
-			N: "bg-white text-duty-night border-2 border-duty-night",
-			O: "bg-white text-duty-off border-2 border-duty-off",
-			ALL: "bg-white text-base-foreground border-2 border-base-foreground",
-			default: "bg-white text-base-muted border-2 border-base-muted font-bold",
+			D: "bg-white text-duty-day border-2 border-duty-day hover:ring-2 hover:ring-offset-2 hover:ring-duty-day focus:ring-2 focus:ring-offset-2 focus:ring-duty-day",
+			E: "bg-white text-duty-evening border-2 border-duty-evening hover:ring-2 hover:ring-offset-2 hover:ring-duty-evening focus:ring-2 focus:ring-offset-2 focus:ring-duty-evening",
+			N: "bg-white text-duty-night border-2 border-duty-night hover:ring-2 hover:ring-offset-2 hover:ring-duty-night focus:ring-2 focus:ring-offset-2 focus:ring-duty-night",
+			O: "bg-white text-duty-off border-2 border-duty-off hover:ring-2 hover:ring-offset-2 hover:ring-duty-off focus:ring-2 focus:ring-offset-2 focus:ring-duty-off",
+			ALL: "bg-white text-base-foreground border-2 border-base-foreground hover:ring-2 hover:ring-offset-2 hover:ring-base-foreground focus:ring-2 focus:ring-offset-2 focus:ring-base-foreground",
+			default:
+				"bg-white text-base-muted border-2 border-base-muted font-bold hover:ring-2 hover:ring-offset-2 hover:ring-base-muted focus:ring-2 focus:ring-offset-2 focus:ring-base-muted",
 		},
 		letter: {
 			D: "text-duty-day",
@@ -59,8 +61,8 @@ const DutyBadgeEng = ({
         ${badgeStyles[variant][type]}
         flex items-center justify-center
         rounded-[9px] font-medium
-        ${isSelected && !noRing ? "ring-2 ring-offset-2 ring-primary" : ""}
         ${onClick ? "cursor-pointer" : ""}
+        transition-all duration-200
       `}
 		>
 			{type === "default" ? "-" : type === "ALL" ? "All" : type}

@@ -71,8 +71,8 @@ const WardAdminRowCard = ({
 				checked={isSelected}
 				onChange={() => onSelect?.(nurse.memberId)}
 			/>
-			<div className="flex items-center justify-between flex-1">
-				<div className="flex items-center gap-6">
+			<div className="flex items-center justify-between flex-1 gap-10">
+				<div className="flex items-center gap-6 flex-shrink-0">
 					<div className="flex items-center w-[120px]">
 						<FaUserCircle className="w-6 h-6 text-gray-500 flex-shrink-0" />
 						<span className="font-medium truncate ml-2">{nurse.name}</span>
@@ -137,8 +137,8 @@ const WardAdminRowCard = ({
 						))}
 					</div>
 				</div>
-				<div className="flex items-center gap-6">
-					<div className="relative w-[300px] group">
+				<div className="flex items-center gap-6 flex-1 min-w-0">
+					<div className="relative flex-1 min-w-0 group">
 						{isEditingMemo ? (
 							<input
 								ref={memoInputRef}
@@ -159,7 +159,6 @@ const WardAdminRowCard = ({
 								<button
 									onClick={() => {
 										setIsEditingMemo(true);
-										// 다음 렌더링 사이클에서 input에 포커스
 										setTimeout(() => memoInputRef.current?.focus(), 0);
 									}}
 									className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -173,7 +172,7 @@ const WardAdminRowCard = ({
 							</div>
 						)}
 					</div>
-					<div className="w-[60px]">
+					<div className="w-[60px] flex-shrink-0">
 						<Dropdown
 							variant="authority"
 							value={null}

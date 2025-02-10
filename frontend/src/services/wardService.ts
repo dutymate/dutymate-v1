@@ -154,8 +154,9 @@ export const wardService = {
 				params: { code },
 			})
 			.then((response) => {
-				return true;
+				return response.data;
 			})
+
 			.catch((error) => {
 				if (error.code === "ERR_NETWORK") {
 					console.error(
