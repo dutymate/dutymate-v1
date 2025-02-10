@@ -46,7 +46,7 @@ const CreateWard = () => {
 
 			// 잠시 후 페이지 이동
 			setTimeout(() => {
-				navigate("/ward-admin");
+				navigate("/shift-admin");
 			}, 1000);
 		} catch (error) {
 			console.error("병동 생성 실패:", error);

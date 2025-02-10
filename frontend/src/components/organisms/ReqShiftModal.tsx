@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "../atoms/Button";
 import { DateInput, TextArea } from "../atoms/Input";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
-import { ToggleButton } from "../atoms/ToggleButton";
+import ToggleButton from "../atoms/ToggleButton";
 import { requestService } from "../../services/requestService";
 
 interface ReqShiftModalProps {

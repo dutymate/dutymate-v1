@@ -36,6 +36,17 @@ interface DutyIssue {
 	message: string;
 }
 
+interface WardDuty {
+	id: string;
+	year: number;
+	month: number;
+	duty: {
+		memberId: number;
+		name: string;
+		shifts: string;
+	}[];
+}
+
 interface DutyInfo {
 	id: string;
 	year: number;
@@ -82,13 +93,20 @@ export const dutyService = {
 				return response.data;
 			})
 			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
 							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;
@@ -110,13 +128,20 @@ export const dutyService = {
 				return response.data as DayDuty;
 			})
 			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
 							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;
@@ -136,13 +161,20 @@ export const dutyService = {
 				return response.data as MyDuty;
 			})
 			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
 							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;
@@ -151,21 +183,33 @@ export const dutyService = {
 
 	/**
 	 * 병동 근무표 조회
+	 * @returns 병동의 전체 근무표 정보
 	 */
-	getWardDuty: () => {
+	getWardDuty: (year?: number, month?: number) => {
+		const params = year && month ? { year, month } : {};
 		return axiosInstance
-			.get("/duty/ward")
+			.get("/duty/ward", { params })
 			.then((response) => {
 				return response.data;
 			})
 			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
 							window.location.href = "/login";
 							break;
+						case 400:
+							console.error("잘못된 요청입니다:", error);
+							throw new Error("잘못된 요청입니다");
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;
@@ -186,13 +230,20 @@ export const dutyService = {
 				return response.data;
 			})
 			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
 							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;
@@ -210,13 +261,20 @@ export const dutyService = {
 				return response.data;
 			})
 			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
 							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;
@@ -238,13 +296,20 @@ export const dutyService = {
 				return response.data;
 			})
 			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
 				if (error.response) {
 					switch (error.response.status) {
 						case 401:
 							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;

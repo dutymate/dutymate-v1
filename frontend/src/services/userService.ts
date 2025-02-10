@@ -49,9 +49,11 @@ export const userService = {
 				success(response.data);
 			})
 			.catch((error) => {
+				console.error("Error occurred:", error);
 				if (axios.isAxiosError(error)) {
 					fail(error.response?.data);
 				}
+				throw error;
 			});
 	},
 
@@ -72,9 +74,11 @@ export const userService = {
 			});
 			success(response.data);
 		} catch (error) {
+			console.error("Error occurred:", error);
 			if (axios.isAxiosError(error)) {
 				fail(error.response?.data);
 			}
+			throw error;
 		}
 	},
 

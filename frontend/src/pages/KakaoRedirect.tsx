@@ -5,7 +5,6 @@ import {
 	LoginResponse,
 	ApiErrorResponse,
 } from "../services/userService";
-import Login from "./Login";
 import useUserAuthStore from "../store/userAuthStore";
 
 export function KakaoRedirect() {
@@ -25,15 +24,9 @@ export function KakaoRedirect() {
 		userService.kakaoLogin(
 			code,
 			(data: LoginResponse) => {
-				// console.log("✅ 로그인 성공:", data);
-
-				// 사용자 정보 가져오기
 				const { role, existAdditionalInfo, existMyWard } = data;
-
-				// 사용자 정보 전역 스토어에 저장
 				userAuthStore.setUserInfo(data);
 
-				// 로그인 후 페이지 이동
 				if (!existAdditionalInfo) {
 					navigate("/extra-info");
 				} else if (!existMyWard) {
@@ -57,10 +50,10 @@ export function KakaoRedirect() {
 		);
 	}, []);
 
+	// 로딩 상태를 보여주는 컴포넌트 반환
 	return (
-		<div>
-			<Login />
+		<div className="flex items-center justify-center min-h-screen">
+			<div className="animate-spin text-4xl">⌛</div>
 		</div>
 	);
 }
-export default KakaoRedirect;

@@ -28,6 +28,11 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
 			: "hover:bg-base-muted";
 	};
 
+	const handleClick = (e: React.MouseEvent, index: number) => {
+		e.preventDefault(); // Prevent form submission
+		onChange(index);
+	};
+
 	return (
 		<div className="flex bg-base-muted-30 rounded-lg p-1 w-full max-w-[25rem]">
 			{options.map((option, index) => {
@@ -35,6 +40,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
 				return (
 					<button
 						key={index}
+						type="button" // Explicitly set button type
 						className={[
 							"flex-1",
 							variant === "request" ? "p-3" : "p-3",
@@ -50,7 +56,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
 							"gap-2",
 							getHoverStyle(isSelected),
 						].join(" ")}
-						onClick={() => onChange(index)}
+						onClick={(e) => handleClick(e, index)}
 					>
 						{option.icon && (
 							<span
@@ -67,4 +73,4 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
 	);
 };
 
-export { ToggleButton };
+export default ToggleButton;

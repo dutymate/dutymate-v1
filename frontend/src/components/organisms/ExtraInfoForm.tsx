@@ -1,5 +1,5 @@
 import { Select } from "../atoms/Input";
-import { ToggleButton } from "../atoms/ToggleButton";
+import ToggleButton from "../atoms/ToggleButton";
 import { Button } from "../atoms/Button";
 import { useState, useEffect } from "react";
 

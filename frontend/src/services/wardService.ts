@@ -105,7 +105,8 @@ export const wardService = {
 							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;
@@ -136,7 +137,8 @@ export const wardService = {
 							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;
@@ -174,7 +176,8 @@ export const wardService = {
 						case 404:
 							throw new Error("유효하지 않은 병동 코드입니다");
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;
@@ -205,7 +208,8 @@ export const wardService = {
 							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;
@@ -235,7 +239,8 @@ export const wardService = {
 							window.location.href = "/login";
 							break;
 						default:
-							window.location.href = "/error";
+							console.error("Error occurred:", error);
+							throw error;
 					}
 				}
 				throw error;

@@ -73,9 +73,6 @@ const CreateWardForm = ({
 		try {
 			await onSubmit(hospitalName, wardName);
 			setIsSuccess(true);
-			setTimeout(() => {
-				navigate("/shift-admin");
-			}, 5000);
 		} catch (error) {
 			console.error("병동 생성 실패:", error);
 		} finally {

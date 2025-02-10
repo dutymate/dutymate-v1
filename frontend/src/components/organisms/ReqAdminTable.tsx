@@ -118,32 +118,17 @@ const ReqAdminTable = () => {
 				<div className="overflow-y-auto overflow-x-auto px-2">
 					<div className="flex flex-col gap-2 min-w-[80vw] lg:min-w-[60vw]">
 						{/* 헤더 */}
-						<div className="flex items-center justify-between p-2 lg:p-3 bg-gray-50 rounded-xl font-medium text-gray-600 text-sm lg:text-base sticky top-0 z-10">
-							<div className="flex items-center gap-2 lg:gap-4 flex-1 min-w-0">
-								{/* 프로필 및 이름 헤더 */}
-								<div className="w-[15vw] min-w-[120px] max-w-[180px] flex items-center pl-2 lg:pl-4">
-									<div className="ml-8">이름</div>
+						<div className="flex items-center p-1.5 lg:p-2 mb-2 text-sm lg:text-base text-gray-600 font-medium bg-base-muted-30 rounded-xl">
+							<div className="flex items-center justify-between flex-1 gap-10">
+								<div className="flex items-center gap-6 flex-shrink-0">
+									<div className="w-[120px] pl-2">이름</div>
+									<div className="w-[90px] text-center">날짜</div>
+									<div className="w-[66px] text-center">근무</div>
+									<div className="w-[180px] text-center">요청 내용</div>
 								</div>
-
-								{/* 날짜 헤더 */}
-								<div className="w-[12vw] min-w-[90px] max-w-[120px] text-center">
-									날짜
+								<div className="flex items-center gap-6 flex-1 min-w-0">
+									<div className="flex-1 text-center">상태</div>
 								</div>
-
-								{/* Duty 뱃지 헤더 */}
-								<div className="w-[8vw] min-w-[66px] max-w-[88px] text-center">
-									근무
-								</div>
-
-								{/* 요청 내용 헤더 */}
-								<div className="w-[25vw] lg:w-[30vw] text-center">
-									요청 내용
-								</div>
-							</div>
-
-							{/* 승인/거절 버튼 헤더 */}
-							<div className="w-[15vw] min-w-[180px] max-w-[240px] flex justify-center">
-								상태
 							</div>
 						</div>
 

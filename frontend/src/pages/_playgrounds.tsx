@@ -13,7 +13,7 @@ import { WardCodeInput } from "@/components/atoms/WardCodeInput";
 import { Icon } from "@/components/atoms/Icon";
 import { CheckBox } from "@/components/atoms/CheckBox";
 import { SortButton, FilterButton } from "@/components/atoms/SubButton";
-import { ToggleButton } from "@/components/atoms/ToggleButton";
+import ToggleButton from "@/components/atoms/ToggleButton";
 import { Dropdown } from "@/components/atoms/Dropdown";
 import { Badge } from "@/components/atoms/Badge";
 import { ProgressChecker } from "@/components/atoms/ProgressChecker";
@@ -75,8 +75,8 @@ const Playgrounds: React.FC = () => {
 					<div className="bg-white p-6 rounded-lg shadow-sm">
 						<h3 className="text-lg font-semibold mb-4">Badges</h3>
 						<div className="flex flex-wrap gap-4">
-							<Badge type="admin" />
-							<Badge type="worker" />
+							<Badge type="HN" />
+							<Badge type="RN" />
 						</div>
 					</div>
 
@@ -869,7 +869,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type}
+											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
 											size="sm"
 											isSelected={selectedSmall === type}
 											onClick={() =>
@@ -889,7 +889,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type}
+											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
 											size="md"
 											isSelected={selectedMedium === type}
 											onClick={() =>
@@ -909,7 +909,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type}
+											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
 											size="lg"
 											isSelected={selectedLarge === type}
 											onClick={() =>
@@ -927,7 +927,11 @@ const Playgrounds: React.FC = () => {
 								</h3>
 								<div className="flex gap-4">
 									{badgeTypes.map((type) => (
-										<DutyBadgeEng key={type} type={type} isSelected />
+										<DutyBadgeEng
+											key={type}
+											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
+											isSelected
+										/>
 									))}
 								</div>
 							</div>
@@ -941,7 +945,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type}
+											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
 											onClick={() => console.log(`${type} clicked`)}
 										/>
 									))}
@@ -955,7 +959,11 @@ const Playgrounds: React.FC = () => {
 								</h3>
 								<div className="flex gap-4">
 									{badgeTypes.map((type) => (
-										<DutyBadgeEng key={type} type={type} variant="outline" />
+										<DutyBadgeEng
+											key={type}
+											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
+											variant="outline"
+										/>
 									))}
 								</div>
 							</div>
@@ -967,7 +975,11 @@ const Playgrounds: React.FC = () => {
 								</h3>
 								<div className="flex gap-4">
 									{badgeTypes.map((type) => (
-										<DutyBadgeEng key={type} type={type} variant="letter" />
+										<DutyBadgeEng
+											key={type}
+											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
+											variant="letter"
+										/>
 									))}
 								</div>
 							</div>
@@ -985,9 +997,10 @@ const Playgrounds: React.FC = () => {
 									Default (Hold)
 								</h3>
 								<ApprovalBtn
-									onChange={(status) =>
-										console.log("Status changed to:", status)
-									}
+									onApprove={() => console.log("Status changed to: ACCEPTED")}
+									onReject={() => console.log("Status changed to: DENIED")}
+									onHold={() => console.log("Status changed to: HOLD")}
+									currentStatus="HOLD"
 								/>
 							</div>
 
@@ -997,10 +1010,10 @@ const Playgrounds: React.FC = () => {
 									Initially Approved
 								</h3>
 								<ApprovalBtn
-									initialStatus="approve"
-									onChange={(status) =>
-										console.log("Status changed to:", status)
-									}
+									onApprove={() => console.log("Status changed to: ACCEPTED")}
+									onReject={() => console.log("Status changed to: DENIED")}
+									onHold={() => console.log("Status changed to: HOLD")}
+									currentStatus="ACCEPTED"
 								/>
 							</div>
 
@@ -1010,10 +1023,10 @@ const Playgrounds: React.FC = () => {
 									Initially Denied
 								</h3>
 								<ApprovalBtn
-									initialStatus="deny"
-									onChange={(status) =>
-										console.log("Status changed to:", status)
-									}
+									onApprove={() => console.log("Status changed to: ACCEPTED")}
+									onReject={() => console.log("Status changed to: DENIED")}
+									onHold={() => console.log("Status changed to: HOLD")}
+									currentStatus="DENIED"
 								/>
 							</div>
 						</div>

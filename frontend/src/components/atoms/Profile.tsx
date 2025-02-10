@@ -21,7 +21,9 @@ const Profile = () => {
 					<span className="text-xs font-bold text-gray-600">
 						(주)듀티메이트
 					</span>
-					<span className="text-xs text-gray-400">www.dutymate.net</span>
+					<span className="text-xs text-gray-400">
+						<a href="#">개인정보처리방침</a>
+					</span>
 				</div>
 			</div>
 		</div>
