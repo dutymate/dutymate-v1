@@ -8,14 +8,14 @@ export interface WardRequest {
 	date: string;
 	shift: "D" | "E" | "N" | "O";
 	memo: string;
-	status: "승인" | "거절" | "대기";
+	status: "ACCEPTED" | "DENIED" | "HOLD";
 }
 
 export interface MyRequest {
 	date: string;
 	shift: "D" | "E" | "N" | "O";
 	memo: string;
-	status: "승인" | "승인 대기중" | "거절";
+	status: "ACCEPTED" | "DENIED" | "HOLD";
 }
 
 export interface CreateRequestDto {
@@ -26,7 +26,7 @@ export interface CreateRequestDto {
 
 export interface EditRequestStatusDto {
 	memberId: number;
-	status: "승인" | "거절" | "대기";
+	status: "ACCEPTED" | "DENIED" | "HOLD";
 }
 
 // API 서비스

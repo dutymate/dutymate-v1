@@ -69,14 +69,28 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 
 	const getStatusColor = (status: string) => {
 		switch (status) {
-			case "승인":
+			case "ACCEPTED":
 				return "text-duty-day font-bold";
-			case "승인 대기중":
+			case "HOLD":
 				return "text-duty-night font-bold";
-			case "거절":
+			case "DENIED":
 				return "text-duty-evening font-bold";
 			default:
 				return "text-gray-700";
+		}
+	};
+
+	// 상태 표시 텍스트 변환 함수 추가
+	const getStatusText = (status: string) => {
+		switch (status) {
+			case "ACCEPTED":
+				return "승인";
+			case "HOLD":
+				return "승인 대기중";
+			case "DENIED":
+				return "거절";
+			default:
+				return status;
 		}
 	};
 
@@ -174,7 +188,7 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 										<span
 											className={`text-sm ${getStatusColor(request.status)}`}
 										>
-											{request.status}
+											{getStatusText(request.status)}
 										</span>
 									</div>
 									<span className="text-sm text-gray-600">{request.memo}</span>
