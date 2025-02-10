@@ -28,29 +28,28 @@ const EnterWard = () => {
 		console.log("Attempting to enter ward with code:", wardCode);
 
 		try {
-			const isValid = await wardService.checkWardCode(wardCode);
-			console.log("Ward code check result:", isValid);
+			// 1. 병동 코드 확인
+			const response = await wardService.checkWardCode(wardCode);
+			console.log("Ward code check result:", response);
 
-			if (!isValid) {
-				throw new Error("유효하지 않은 병동 코드입니다");
-			}
-
+			// 2. 병동 입장 성공 시 사용자 정보 업데이트
 			userAuthStore.setUserInfo({
 				...userAuthStore.userInfo!,
 				existMyWard: true,
 			});
 
+			// 3. 성공 메시지 표시
 			toast.success("병동 입장에 성공했습니다", {
 				position: "top-center",
 				autoClose: 3000,
 			});
 
+			// 4. 근무표 페이지로 이동
 			setTimeout(() => {
-				navigate("/ward");
+				navigate("/my-shift");
 			}, 1000);
 		} catch (error) {
 			console.error("병동 입장 실패:", error);
-
 			if (error instanceof Error) {
 				switch (error.message) {
 					case "서버 연결 실패":
