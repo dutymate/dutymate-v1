@@ -13,3 +13,7 @@ variable "sg_alb_id" {
 variable "health_check_path" {
   type = string
 }
+
+variable "acm_cert_arn" {
+  type = string
+}

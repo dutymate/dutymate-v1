@@ -26,6 +26,14 @@ variable "database_subnet_cidr_block" {
   type = list(string)
 }
 
+variable "route53_zone_id" {
+  type = string
+}
+
+variable "domain_name" {
+  type = string
+}
+
 variable "health_check_path" {
   type = string
 }

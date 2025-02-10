@@ -30,6 +30,7 @@ module "alb" {
   vpc_id            = module.networking.vpc_id
   public_subnets    = module.networking.public_subnets
   sg_alb_id         = module.security_group.sg_alb_id
+  acm_cert_arn      = module.route53.acm_cert_arn
   health_check_path = var.health_check_path
 }
 
@@ -70,4 +71,12 @@ module "s3" {
 
 module "ecr" {
   source = "./Modules/ECR"
+}
+
+module "route53" {
+  source          = "./Modules/Route53"
+  alb_dns_name    = module.alb.alb_dns_name
+  alb_zone_id     = module.alb.alb_zone_id
+  route53_zone_id = var.route53_zone_id
+  domain_name     = var.domain_name
 }
