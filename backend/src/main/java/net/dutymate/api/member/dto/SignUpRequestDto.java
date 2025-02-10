@@ -15,12 +15,13 @@ public class SignUpRequestDto {
 	private String passwordConfirm;
 	private String name;
 
-	public Member toMember() {
+	public Member toMember(String defaultProfileImg) {
 		return Member.builder()
 			.email(email)
 			.password(BCrypt.hashpw(password, BCrypt.gensalt()))
 			.name(name)
 			.provider(Provider.NONE)
+			.profileImg(defaultProfileImg)
 			.build();
 	}
 

@@ -39,6 +39,12 @@ public class MemberController {
 		return ResponseEntity.ok(loginResponseDto);
 	}
 
+	@GetMapping("/check-email")
+	public ResponseEntity<?> checkEmailDuplicate(@RequestParam String email) {
+		memberService.checkEmail(email);
+		return ResponseEntity.ok().build();
+	}
+
 	@GetMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
 		LoginResponseDto loginResponseDto = memberService.login(loginRequestDto);

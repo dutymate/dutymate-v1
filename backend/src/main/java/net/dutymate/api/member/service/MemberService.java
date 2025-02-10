@@ -83,7 +83,11 @@ public class MemberService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
 		}
 
-		Member newMember = signUpRequestDto.toMember();
+		// 이메일 중복 체크
+		checkEmail(signUpRequestDto.getEmail());
+
+		Member newMember = signUpRequestDto.toMember(addBasicProfileImgUrl());
+
 		memberRepository.save(newMember);
 		return login(signUpRequestDto.toLoginRequestDto());
 	}
@@ -181,6 +185,7 @@ public class MemberService {
 	}
 
 	// 인가 코드로 KAKAO로부터 액세스 토큰을 받아오는 메서드
+
 	private String getKakaoAccessToken(String code) {
 		// 요청 Param 설정
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -194,8 +199,8 @@ public class MemberService {
 			requestApiByPost(kakaoTokenUri, params, KakaoTokenResponseDto.class);
 		return Objects.requireNonNull(kakaoTokenResponseDto).getAccessToken();
 	}
-
 	// 액세스 토큰으로 KAKAO로부터 사용자 정보를 가져오는 메서드
+
 	public KakaoUserResponseDto.KakaoAccount getKakaoUserInfo(String kakaoAccessToken) {
 		// WebClient 인스턴스 생성 후 사용자 정보 가져오기 POST 요청
 		KakaoUserResponseDto kakaoUserResponseDto
@@ -226,20 +231,21 @@ public class MemberService {
 	}
 
 	// KAKAO 계정으로 회원가입
+
 	private Member signUp(KakaoUserResponseDto.KakaoAccount kakaoAccount) {
 		Member newMember = kakaoAccount.toMember();
 		memberRepository.save(newMember);
 		return newMember;
 	}
-
 	// GOOGLE 계정으로 회원가입
+
 	private Member signUp(GoogleUserResponseDto googleUserInfo) {
 		Member newMember = googleUserInfo.toMember();
 		memberRepository.save(newMember);
 		return newMember;
 	}
-
 	// API POST 요청 with params
+
 	private <T> T requestApiByPost(
 		String uri, MultiValueMap<String, String> params, Class<T> classType) {
 		return WebClient.create().post()
@@ -250,8 +256,8 @@ public class MemberService {
 			.bodyToMono(classType)
 			.block();
 	}
-
 	// API POST 요청 with params, header
+
 	private <T> T requestApiByPostWithAuthHeader(String uri, String token, Class<T> classType) {
 		return WebClient.create().post()
 			.uri(uri)
@@ -277,6 +283,7 @@ public class MemberService {
 	}
 
 	// 마이페이지 정보 조회하기
+
 	@Transactional(readOnly = true)
 	public MypageResponseDto getMember(Member member) {
 		WardMember wardMember = getMemberById(member.getMemberId()).getWardMember();
@@ -316,6 +323,7 @@ public class MemberService {
 	}
 
 	// 파일 업로드
+
 	public void uploadProfileImg(MultipartFile multipartFile, Member member, String dirName) {
 
 		if (multipartFile == null || multipartFile.isEmpty()) {
@@ -344,8 +352,8 @@ public class MemberService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "파일 업로드 중 오류가 발생했습니다.");
 		}
 	}
-
 	// 파일명을 난수화하기 위해 UUID 활용
+
 	private String createFileName(String fileName, String dirName) {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		String extension = getFileExtension(fileName);
@@ -360,6 +368,7 @@ public class MemberService {
 	}
 
 	// 프로필 이미지 삭제 -> 기본 이미지로 변경
+
 	public void deleteProfileImg(Member member) {
 		try {
 			String fileUrl = member.getProfileImg();
@@ -372,11 +381,7 @@ public class MemberService {
 
 			s3Client.deleteObject(deleteObjectRequest);
 
-			// 기본 프로필 이미지 URL 생성
-			String defaultProfileImageUrl =
-				"https://" + bucket + ".s3." + region + ".amazonaws.com/profile/default_profile.png";
-
-			member.setFileUrl(defaultProfileImageUrl);
+			member.setFileUrl(addBasicProfileImgUrl());
 			memberRepository.save(member);
 
 		} catch (Exception e) {
@@ -389,4 +394,17 @@ public class MemberService {
 		return fileUrl.replace(baseUrl, "");
 	}
 
+	// 기본 프로필 이미지 URL 생성
+	private String addBasicProfileImgUrl() {
+		return "https://" + bucket + ".s3." + region + ".amazonaws.com/profile/default_profile.png";
+	}
+
+	// 회원가입 시, 이메일 중복 체크
+	public void checkEmail(String email) {
+		boolean isExistedEmail = memberRepository.existsByEmail(email);
+
+		if (isExistedEmail) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 회원가입된 사용자입니다.");
+		}
+	}
 }
