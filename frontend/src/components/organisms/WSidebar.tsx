@@ -66,13 +66,13 @@ const NavigationItem = React.memo(
 );
 
 interface SidebarProps {
-	userType: "head" | "staff";
+	userType: "HN" | "RN"; // "head" | "staff" 대신 실제 role 타입 사용
 }
 
 const Sidebar = ({ userType }: SidebarProps) => {
 	const location = useLocation();
 	const navigation =
-		userType === "head" ? headNurseNavigation : staffNurseNavigation;
+		userType === "HN" ? headNurseNavigation : staffNurseNavigation;
 
 	return (
 		<div className="fixed inset-y-0 left-0 z-40 flex flex-col bg-white w-[238px] border-r border-gray-200 rounded-tr-[18.47px] rounded-br-[18.47px] shadow-[0_4.62px_18.47px_rgba(0,0,0,0.05)]">

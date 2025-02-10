@@ -66,7 +66,7 @@ const NavigationItem = React.memo(
 );
 
 interface SidebarProps {
-	userType: "head" | "nurse";
+	userType: "HN" | "RN";
 	isOpen: boolean;
 	onClose: () => void;
 }
@@ -74,7 +74,7 @@ interface SidebarProps {
 const Sidebar = ({ userType, isOpen, onClose }: SidebarProps) => {
 	const location = useLocation();
 	const navigation =
-		userType === "head" ? headNurseNavigation : staffNurseNavigation;
+		userType === "HN" ? headNurseNavigation : staffNurseNavigation;
 
 	return (
 		<>

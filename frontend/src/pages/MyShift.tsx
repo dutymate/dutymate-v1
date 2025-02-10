@@ -6,6 +6,7 @@ import TodayShiftModal from "../components/organisms/TodayShiftModal";
 import { useState, useEffect } from "react";
 import { IoMdMenu } from "react-icons/io";
 import { dutyService } from "../services/dutyService";
+import useUserAuthStore from "../store/userAuthStore";
 
 // Duty 타입 변환 유틸리티 함수
 const convertDutyType = (
@@ -42,6 +43,7 @@ const MyShift = () => {
 		}[];
 	} | null>(null);
 	const [loading, setLoading] = useState(false);
+	const { userInfo } = useUserAuthStore(); // 전역 상태에서 role 가져오기
 
 	// 초기 데이터 로딩
 	useEffect(() => {
@@ -93,12 +95,12 @@ const MyShift = () => {
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
 			<div className="hidden lg:block w-[238px] shrink-0">
-				<Sidebar userType="head" />
+				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 			</div>
 
 			{/* 모바일 Sidebar */}
 			<MSidebar
-				userType="head"
+				userType={userInfo?.role as "HN" | "RN"}
 				isOpen={isSidebarOpen}
 				onClose={() => setIsSidebarOpen(false)}
 			/>

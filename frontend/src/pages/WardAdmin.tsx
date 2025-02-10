@@ -7,11 +7,13 @@ import WardAdminInfo from "../components/organisms/WardAdminInfo";
 import WardAdminTable from "../components/organisms/WardAdminTable";
 import { wardService, WardInfo } from "../services/wardService";
 import { toast } from "react-toastify";
+import useUserAuthStore from "../store/userAuthStore";
 
 const WardAdmin = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [wardInfo, setWardInfo] = useState<WardInfo | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const { userInfo } = useUserAuthStore();
 
 	useEffect(() => {
 		const fetchWardInfo = async () => {
@@ -32,12 +34,12 @@ const WardAdmin = () => {
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
 			<div className="hidden lg:block w-[238px] shrink-0">
-				<Sidebar userType="head" />
+				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 			</div>
 
 			{/* 모바일 Sidebar */}
 			<MSidebar
-				userType="head"
+				userType={userInfo?.role as "HN" | "RN"}
 				isOpen={isSidebarOpen}
 				onClose={() => setIsSidebarOpen(false)}
 			/>
