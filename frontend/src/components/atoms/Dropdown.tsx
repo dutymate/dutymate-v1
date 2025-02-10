@@ -104,7 +104,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 			case "bottom-right":
 				return "top-full left-0 mt-1";
 			default:
-				return "top-full right-0 mt-1";
+				return "bottom-full right-0 mt-1";
 		}
 	};
 

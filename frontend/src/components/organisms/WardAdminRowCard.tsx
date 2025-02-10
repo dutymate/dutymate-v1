@@ -34,6 +34,8 @@ const WardAdminRowCard = ({
 		"bottom",
 	);
 	const authorityDropdownRef = useRef<HTMLDivElement>(null);
+	const skillButtonRef = useRef<HTMLButtonElement>(null);
+	const skillDropdownRef = useRef<HTMLDivElement>(null);
 
 	// Add this to verify data flow
 	useEffect(() => {
@@ -57,6 +59,41 @@ const WardAdminRowCard = ({
 			window.removeEventListener("scroll", updateDropdownPosition);
 			window.removeEventListener("resize", updateDropdownPosition);
 		};
+	}, []);
+
+	useEffect(() => {
+		const updateDropdownPosition = () => {
+			if (skillButtonRef.current) {
+				const rect = skillButtonRef.current.getBoundingClientRect();
+				const spaceBelow = window.innerHeight - rect.bottom;
+				setDropdownPosition(spaceBelow < 100 ? "top" : "bottom");
+			}
+		};
+
+		updateDropdownPosition();
+		window.addEventListener("scroll", updateDropdownPosition);
+		window.addEventListener("resize", updateDropdownPosition);
+
+		return () => {
+			window.removeEventListener("scroll", updateDropdownPosition);
+			window.removeEventListener("resize", updateDropdownPosition);
+		};
+	}, []);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				skillDropdownRef.current &&
+				skillButtonRef.current &&
+				!skillDropdownRef.current.contains(event.target as Node) &&
+				!skillButtonRef.current.contains(event.target as Node)
+			) {
+				setOpenSkillDropdown(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
 
 	const skillOptions = [
@@ -150,6 +187,7 @@ const WardAdminRowCard = ({
 						<button
 							className="flex items-center gap-1 px-2 py-1 border rounded hover:bg-gray-50"
 							onClick={() => setOpenSkillDropdown(!openSkillDropdown)}
+							ref={skillButtonRef}
 						>
 							<Icon
 								name={(nurse.skillLevel?.toLowerCase() ?? "low") as IconName}
@@ -164,7 +202,10 @@ const WardAdminRowCard = ({
 						</button>
 
 						{openSkillDropdown && (
-							<div className="absolute bottom-full left-0 mb-1 bg-white border rounded-md shadow-lg z-10">
+							<div
+								ref={skillDropdownRef}
+								className={`absolute ${dropdownPosition === "top" ? "bottom-full mb-1" : "top-full mt-1"} left-0 bg-white border rounded-md shadow-lg z-10`}
+							>
 								{skillOptions.map((option) => (
 									<button
 										key={option.value}
