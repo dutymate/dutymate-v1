@@ -1,5 +1,7 @@
 package net.dutymate.api.member.dto;
 
+import java.util.Optional;
+
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.enumclass.Provider;
 
@@ -51,12 +53,12 @@ public class KakaoUserResponseDto {
 		}
 
 		// KakaoAccount(DTO) -> Member Entity
-		public Member toMember() {
+		public Member toMember(String defaultProfileImageUrl) {
 			return Member.builder()
 				.email(email)
 				.password("KakaoPassword123!!")
 				.name(profile.getNickname())
-				.profileImg(profile.getProfileImageUrl())
+				.profileImg(Optional.ofNullable(profile.getProfileImageUrl()).orElse(defaultProfileImageUrl))
 				.provider(Provider.KAKAO)
 				.build();
 		}

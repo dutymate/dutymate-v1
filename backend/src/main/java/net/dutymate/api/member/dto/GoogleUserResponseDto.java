@@ -1,5 +1,7 @@
 package net.dutymate.api.member.dto;
 
+import java.util.Optional;
+
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.enumclass.Provider;
 
@@ -17,12 +19,12 @@ public class GoogleUserResponseDto {
 	private String picture;
 
 	// GoogleUser(DTO) -> Member Entity
-	public Member toMember() {
+	public Member toMember(String defaultProfileImage) {
 		return Member.builder()
 			.email(email)
 			.password("GooglePassword123!!")
 			.name(name)
-			.profileImg(picture)
+			.profileImg(Optional.ofNullable(picture).orElse(defaultProfileImage))
 			.provider(Provider.GOOGLE)
 			.build();
 	}

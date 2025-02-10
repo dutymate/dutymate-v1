@@ -92,6 +92,15 @@ public class MemberService {
 		return login(signUpRequestDto.toLoginRequestDto());
 	}
 
+	// 회원가입 시, 이메일 중복 체크
+	public void checkEmail(String email) {
+		boolean isExistedEmail = memberRepository.existsByEmail(email);
+
+		if (isExistedEmail) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 회원가입된 사용자입니다.");
+		}
+	}
+
 	@Transactional(readOnly = true)
 	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
 		// 아이디 확인
@@ -231,16 +240,15 @@ public class MemberService {
 	}
 
 	// KAKAO 계정으로 회원가입
-
 	private Member signUp(KakaoUserResponseDto.KakaoAccount kakaoAccount) {
-		Member newMember = kakaoAccount.toMember();
+		Member newMember = kakaoAccount.toMember(addBasicProfileImgUrl());
 		memberRepository.save(newMember);
 		return newMember;
 	}
-	// GOOGLE 계정으로 회원가입
 
+	// GOOGLE 계정으로 회원가입
 	private Member signUp(GoogleUserResponseDto googleUserInfo) {
-		Member newMember = googleUserInfo.toMember();
+		Member newMember = googleUserInfo.toMember(addBasicProfileImgUrl());
 		memberRepository.save(newMember);
 		return newMember;
 	}
@@ -397,14 +405,5 @@ public class MemberService {
 	// 기본 프로필 이미지 URL 생성
 	private String addBasicProfileImgUrl() {
 		return "https://" + bucket + ".s3." + region + ".amazonaws.com/profile/default_profile.png";
-	}
-
-	// 회원가입 시, 이메일 중복 체크
-	public void checkEmail(String email) {
-		boolean isExistedEmail = memberRepository.existsByEmail(email);
-
-		if (isExistedEmail) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 회원가입된 사용자입니다.");
-		}
 	}
 }
