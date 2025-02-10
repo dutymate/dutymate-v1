@@ -16,6 +16,7 @@ export interface InputProps {
 	required?: boolean;
 	onInvalid?: (e: React.InvalidEvent<HTMLInputElement>) => void;
 	onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
+	onFocus?: () => void;
 }
 
 export const Input = ({
@@ -34,6 +35,7 @@ export const Input = ({
 	required,
 	onInvalid,
 	onInput,
+	onFocus,
 }: InputProps) => {
 	const inputClasses = error
 		? "col-start-1 row-start-1 block w-full rounded-md bg-white py-2.5 pr-10 pl-3 text-base text-red-900 outline outline-[0.125rem] outline-red-300/50 placeholder:text-red-300 focus:outline-[0.125rem] focus:outline-red-600/50 sm:py-3 sm:text-lg"
@@ -73,6 +75,7 @@ export const Input = ({
 					required={required}
 					onInvalid={onInvalid}
 					onInput={onInput}
+					onFocus={onFocus}
 					aria-invalid={error ? "true" : undefined}
 					aria-describedby={
 						error
