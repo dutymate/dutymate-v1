@@ -78,14 +78,14 @@ const TeamShiftTable = () => {
 		return date.getDay() === 0 || date.getDay() === 6;
 	};
 
-	const handlePrevMonth = () => {
-		setCurrentDate((prev) => {
-			if (prev.month === 1) {
-				return { year: prev.year - 1, month: 12 };
-			}
-			return { year: prev.year, month: prev.month - 1 };
-		});
-	};
+	// const handlePrevMonth = () => {
+	// 	setCurrentDate((prev) => {
+	// 		if (prev.month === 1) {
+	// 			return { year: prev.year - 1, month: 12 };
+	// 		}
+	// 		return { year: prev.year, month: prev.month - 1 };
+	// 	});
+	// };
 
 	const handleNextMonth = () => {
 		setCurrentDate((prev) => {
@@ -101,21 +101,21 @@ const TeamShiftTable = () => {
 			<div className="flex flex-col sm:flex-row items-center justify-between mb-4">
 				<div className="w-[180px] hidden sm:block">{/* 왼쪽 여백 공간 */}</div>
 				<div className="flex items-center gap-4 sm:gap-14 mb-4 sm:mb-0">
-					<Icon
+					{/* <Icon
 						name="left"
 						size={24}
 						className="cursor-pointer text-gray-300 hover:text-gray-400"
 						onClick={handlePrevMonth}
-					/>
+					/> */}
 					<div className="text-[0.9rem] lg:text-lg font-medium whitespace-nowrap">
 						{wardDuty.year}년 {wardDuty.month}월
 					</div>
-					<Icon
+					{/* <Icon
 						name="right"
 						size={24}
 						className="cursor-pointer text-gray-300 hover:text-gray-400"
 						onClick={handleNextMonth}
-					/>
+					/> */}
 				</div>
 				<div className="flex gap-2 w-full sm:w-[180px] justify-center sm:justify-end shrink-0">
 					<Button
@@ -139,16 +139,16 @@ const TeamShiftTable = () => {
 				</div>
 			</div>
 			<div className="overflow-x-auto relative max-w-full md:max-w-none -mx-6 md:mx-0 px-6 md:px-0">
-				<table className="min-w-full w-[800px] md:w-full border-separate border-spacing-0">
+				<table className="w-full border-separate border-spacing-0">
 					<thead>
 						<tr className="bg-gray-50">
-							<th className="px-4 py-2 min-w-[80px] sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white">
+							<th className="w-[120px] px-2 py-2 sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white">
 								<span className="text-gray-50"></span>
 							</th>
 							{days.map((day) => (
 								<th
 									key={day}
-									className={`px-2 py-2 min-w-[40px] ${
+									className={`w-[calc((100%-120px)/31)] px-1 py-2 ${
 										isWeekend(wardDuty.year, wardDuty.month, day)
 											? "text-red-500"
 											: ""
@@ -162,17 +162,23 @@ const TeamShiftTable = () => {
 					<tbody>
 						{wardDuty.duty.map((member) => (
 							<tr key={member.memberId} className="border-b border-gray-100">
-								<td
-									className={`pl-2 pr-2 py-2 font-medium sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white text-center ${
-										member.name.length > 3 ? "text-xs" : "text-sm"
-									}`}
-								>
+								<td className="w-[120px] pl-2 pr-2 py-2 font-medium sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white text-center group">
 									<div className="bg-gray-50 rounded-lg px-2 py-0.5 relative">
-										{member.name}
+										<span className="block truncate max-w-[120px]">
+											{member.name}
+										</span>
+										{member.name.length > 3 && (
+											<div className="absolute left-1/2 -translate-x-1/2 -top-8 hidden group-hover:block bg-gray-800 text-white px-2 py-1 rounded text-sm whitespace-nowrap z-30">
+												{member.name}
+											</div>
+										)}
 									</div>
 								</td>
 								{member.shifts.split("").map((shift, index) => (
-									<td key={index} className="px-2 py-1.5 text-center">
+									<td
+										key={index}
+										className="w-[calc((100%-120px)/31)] px-1 py-1.5 text-center"
+									>
 										<DutyBadgeEng
 											type={
 												(shift === "X" ? "default" : shift) as
