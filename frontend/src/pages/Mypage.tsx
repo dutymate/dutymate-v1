@@ -33,8 +33,10 @@ const Mypage = () => {
 				</button>
 
 				<Title title="마이페이지" subtitle="나의 정보를 확인해보세요" />
-				<div className="mt-6">
-					<MypageForm />
+				<div className="mt-4 flex justify-center">
+					<div className="w-full lg:w-[1400px]">
+						<MypageForm />
+					</div>
 				</div>
 			</div>
 		</div>

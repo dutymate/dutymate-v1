@@ -430,3 +430,119 @@ export const Select = ({
 		</div>
 	);
 };
+
+// 마이페이지 전용 Input
+interface MypageInputProps {
+	id: string;
+	name: string;
+	label: string;
+	value?: string;
+	defaultValue?: string;
+	disabled?: boolean;
+	error?: string;
+	className?: string;
+	labelClassName?: string;
+	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export const MypageInput = ({
+	id,
+	name,
+	label,
+	value,
+	defaultValue,
+	disabled = false,
+	error,
+	className = "",
+	labelClassName = "",
+	onChange,
+}: MypageInputProps) => {
+	return (
+		<div className="flex flex-col">
+			<label
+				htmlFor={id}
+				className={`text-xs font-medium text-gray-700 mb-1 ${labelClassName}`}
+			>
+				{label}
+			</label>
+			<input
+				type="text"
+				id={id}
+				name={name}
+				value={value}
+				defaultValue={defaultValue}
+				disabled={disabled}
+				onChange={onChange}
+				className={`h-8 px-2 text-sm border border-gray-300 rounded-md 
+					${disabled ? "bg-gray-50 text-gray-500" : "bg-white"}
+					${error ? "border-red-500" : ""}
+					focus:outline-none focus:ring-2 focus:ring-primary-20
+					${className}`}
+			/>
+			{error && <span className="mt-1 text-xs text-red-500">{error}</span>}
+		</div>
+	);
+};
+
+// 마이페이지 전용 Select
+interface MypageSelectProps {
+	id: string;
+	name: string;
+	label: string;
+	options: { value: string; label: string }[];
+	value?: string;
+	defaultValue?: string;
+	placeholder?: string;
+	error?: string;
+	className?: string;
+	labelClassName?: string;
+	onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+export const MypageSelect = ({
+	id,
+	name,
+	label,
+	options,
+	value,
+	defaultValue,
+	placeholder,
+	error,
+	className = "",
+	labelClassName = "",
+	onChange,
+}: MypageSelectProps) => {
+	return (
+		<div className="flex flex-col">
+			<label
+				htmlFor={id}
+				className={`text-xs font-medium text-gray-700 mb-1 ${labelClassName}`}
+			>
+				{label}
+			</label>
+			<select
+				id={id}
+				name={name}
+				value={value}
+				defaultValue={defaultValue}
+				onChange={onChange}
+				className={`h-8 px-2 text-sm border border-gray-300 rounded-md bg-white
+					${error ? "border-red-500" : ""}
+					focus:outline-none focus:ring-2 focus:ring-primary-20
+					${className}`}
+			>
+				{placeholder && (
+					<option value="" disabled>
+						{placeholder}
+					</option>
+				)}
+				{options.map((option) => (
+					<option key={option.value} value={option.value}>
+						{option.label}
+					</option>
+				))}
+			</select>
+			{error && <span className="mt-1 text-xs text-red-500">{error}</span>}
+		</div>
+	);
+};
