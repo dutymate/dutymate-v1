@@ -65,15 +65,20 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 			<form onSubmit={handleSubmit} className="flex flex-col gap-6">
 				<div className="flex flex-col gap-2">
 					<div className="relative">
-						<WardCodeInput
-							id="ward-code"
-							name="wardCode"
-							label="병동 코드"
-							onChange={handleInputChange}
-							error={error}
-							showInvalidMessage={true}
-							disabled={isLoading}
-						/>
+						<label className="block text-lg font-medium text-gray-700 mb-2 text-left">
+							병동 코드
+						</label>
+						<div className="w-full flex justify-center">
+							<WardCodeInput
+								id="ward-code"
+								name="wardCode"
+								label=""
+								onChange={handleInputChange}
+								error={error}
+								showInvalidMessage={true}
+								disabled={isLoading}
+							/>
+						</div>
 					</div>
 				</div>
 				<Button
@@ -82,15 +87,15 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 					size="lg"
 					fullWidth
 					disabled={isLoading || !!error || wardCode.length !== 6}
-					className={isLoading ? "opacity-70 cursor-not-allowed" : ""}
+					className={`h-[5vh] lg:h-12 ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
 				>
 					{isLoading ? (
 						<div className="flex items-center justify-center gap-2">
 							<span className="animate-spin">⌛</span>
-							<span>확인 중...</span>
+							<span className="text-xl lg:text-base">확인 중...</span>
 						</div>
 					) : (
-						"입장하기"
+						<span className="text-lg lg:text-base">입장하기</span>
 					)}
 				</Button>
 			</form>

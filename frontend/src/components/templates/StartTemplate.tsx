@@ -18,17 +18,24 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 			<div className="lg:hidden flex flex-col h-screen overflow-hidden">
 				{/* 로고 영역 */}
 				<div className="flex-1 bg-base-muted-30 flex flex-col relative">
-					<div className="flex justify-center mt-20 mb-8">
-						<img
-							src={dutyMateLogo}
-							alt="DutyMate Logo"
-							className="w-[60%] max-w-[280px]"
-						/>
+					{/* 로고 컨테이너를 absolute로 분리 */}
+					<div
+						className={`absolute w-full ${isLoginPage ? "top-[14vh]" : "top-20"}`}
+					>
+						<div className="flex justify-center">
+							<img
+								src={dutyMateLogo}
+								alt="DutyMate Logo"
+								className="w-[60%] max-w-[280px]"
+							/>
+						</div>
 					</div>
 
 					{/* 텍스트 영역과 버튼 - 로그인 페이지가 아닐 때만 표시 */}
 					{!isLoginPage && (
-						<div className="px-10 py-20">
+						<div className="px-10 py-20 mt-32">
+							{" "}
+							{/* mt-32로 로고 아래 여백 확보 */}
 							<div className="flex flex-col gap-2 mb-8 lg:text-left text-center">
 								<h1 className="text-2xl font-bold text-gray-800">
 									"듀티표의 마침표, 듀티메이트."

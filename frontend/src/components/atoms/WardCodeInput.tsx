@@ -74,36 +74,34 @@ export const WardCodeInput = ({
 					{label}
 				</label>
 			)}
-			<div className="flex flex-col gap-2">
-				<div className="flex gap-2 sm:gap-3">
-					{Array(length)
-						.fill(0)
-						.map((_, index) => (
-							<input
-								key={index}
-								ref={(el) => (inputRefs.current[index] = el)}
-								id={`${id}-${index}`}
-								name={`${name}-${index}`}
-								type="text"
-								maxLength={1}
-								value={values[index]}
-								onChange={(e) => handleChange(index, e.target.value)}
-								onKeyDown={(e) => handleKeyDown(index, e)}
-								disabled={disabled}
-								className={singleInputClass}
-								aria-invalid={error ? "true" : undefined}
-							/>
-						))}
-				</div>
-				{showInvalidMessage && invalidInput && (
-					<p className="text-[0.875rem] text-red-600 sm:text-[1rem]">
-						영문자와 숫자만 입력 가능합니다
-					</p>
-				)}
-				{error && (
-					<p className="text-[0.875rem] text-red-600 sm:text-[1rem]">{error}</p>
-				)}
+			<div className="flex gap-5 sm:gap-4">
+				{Array(length)
+					.fill(0)
+					.map((_, index) => (
+						<input
+							key={index}
+							ref={(el) => (inputRefs.current[index] = el)}
+							id={`${id}-${index}`}
+							name={`${name}-${index}`}
+							type="text"
+							maxLength={1}
+							value={values[index] || ""}
+							onChange={(e) => handleChange(index, e.target.value)}
+							onKeyDown={(e) => handleKeyDown(index, e)}
+							disabled={disabled}
+							className={singleInputClass}
+							aria-invalid={error ? "true" : undefined}
+						/>
+					))}
 			</div>
+			{showInvalidMessage && invalidInput && (
+				<p className="text-[0.875rem] text-red-600 sm:text-[1rem]">
+					영문자와 숫자만 입력 가능합니다
+				</p>
+			)}
+			{error && (
+				<p className="text-[0.875rem] text-red-600 sm:text-[1rem]">{error}</p>
+			)}
 		</div>
 	);
 };
