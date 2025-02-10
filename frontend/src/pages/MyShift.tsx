@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { IoMdMenu } from "react-icons/io";
 import { dutyService } from "../services/dutyService";
 import useUserAuthStore from "../store/userAuthStore";
+import { toast } from "react-toastify";
 
 // Duty 타입 변환 유틸리티 함수
 const convertDutyType = (
@@ -66,6 +67,7 @@ const MyShift = () => {
 	const handleDateSelect = async (date: Date) => {
 		setSelectedDate(date);
 		setLoading(true);
+		setDayDutyData(null); // 새로운 요청 시 이전 데이터 초기화
 		try {
 			const data = await dutyService.getMyDayDuty(
 				date.getFullYear(),
@@ -75,7 +77,8 @@ const MyShift = () => {
 			setDayDutyData(data);
 			setSelectedDuty(convertDutyType(data.myShift));
 		} catch (error) {
-			console.error("Failed to fetch day duty data:", error);
+			toast.error("해당 날짜의 근무 정보가 없습니다.");
+			setSelectedDate(null); // 선택된 날짜 초기화
 		} finally {
 			setLoading(false);
 		}

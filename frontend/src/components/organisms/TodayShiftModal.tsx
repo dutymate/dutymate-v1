@@ -45,7 +45,7 @@ const TodayShiftModal = ({
 	onDateChange,
 	loading = false,
 }: TodayShiftModalProps) => {
-	if (!date || !dutyData) return null;
+	if (!date) return null;
 
 	const formatMonth = (month: number) => {
 		return month < 10 ? `0${month}` : month;
@@ -68,6 +68,16 @@ const TodayShiftModal = ({
 			{loading ? (
 				<div className="flex justify-center items-center h-[300px]">
 					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+				</div>
+			) : !dutyData ? (
+				<div className="text-center py-8">
+					<p className="text-base-muted">해당 날짜의 근무 정보가 없습니다.</p>
+					<button
+						onClick={onClose}
+						className="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+					>
+						닫기
+					</button>
 				</div>
 			) : (
 				<>

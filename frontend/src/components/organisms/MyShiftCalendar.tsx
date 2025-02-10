@@ -38,22 +38,30 @@ const MyShiftCalendar = ({
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
-	const handlePrevMonth = () => {
+	const handlePrevMonth = async () => {
 		const newDate = new Date(
 			currentDate.getFullYear(),
 			currentDate.getMonth() - 1,
 		);
-		setCurrentDate(newDate);
-		onMonthChange?.(newDate.getFullYear(), newDate.getMonth() + 1);
+		try {
+			await onMonthChange?.(newDate.getFullYear(), newDate.getMonth() + 1);
+			setCurrentDate(newDate);
+		} catch (error) {
+			console.error("Failed to fetch duty data:", error);
+		}
 	};
 
-	const handleNextMonth = () => {
+	const handleNextMonth = async () => {
 		const newDate = new Date(
 			currentDate.getFullYear(),
 			currentDate.getMonth() + 1,
 		);
-		setCurrentDate(newDate);
-		onMonthChange?.(newDate.getFullYear(), newDate.getMonth() + 1);
+		try {
+			await onMonthChange?.(newDate.getFullYear(), newDate.getMonth() + 1);
+			setCurrentDate(newDate);
+		} catch (error) {
+			console.error("Failed to fetch duty data:", error);
+		}
 	};
 
 	// 실제 근무 데이터로부터 듀티 가져오기
@@ -71,20 +79,26 @@ const MyShiftCalendar = ({
 			0,
 		).getDate();
 
-		let shift: string;
+		let shift: string | undefined;
 		if (targetMonth < currentMonth) {
 			// 이전 달의 마지막 주
-			shift =
-				dutyData.prevShifts[
-					day - (prevMonthLastDate - dutyData.prevShifts.length)
-				];
+			const index = day - (prevMonthLastDate - dutyData.prevShifts.length);
+			shift = dutyData.prevShifts[index];
 		} else if (targetMonth > currentMonth) {
 			// 다음 달의 첫 주
+			// day가 1부터 시작하므로 인덱스 조정이 필요 없음
 			shift = dutyData.nextShifts[day - 1];
+			// 다음 달의 첫 주차만 표시하도록 제한
+			if (day > dutyData.nextShifts.length) {
+				return null;
+			}
 		} else {
 			// 현재 달
 			shift = dutyData.shifts[day - 1];
 		}
+
+		// shift가 undefined이거나 'X'인 경우 null 반환
+		if (!shift || shift === "X") return null;
 
 		const dutyMap: Record<string, "day" | "evening" | "night" | "off" | null> =
 			{
@@ -321,7 +335,7 @@ const MyShiftCalendar = ({
 							{getDutyFromShifts(
 								new Date(
 									currentDate.getFullYear(),
-									currentDate.getMonth(),
+									currentDate.getMonth() + 1,
 									day,
 								),
 								day,
@@ -332,7 +346,7 @@ const MyShiftCalendar = ({
 											getDutyFromShifts(
 												new Date(
 													currentDate.getFullYear(),
-													currentDate.getMonth(),
+													currentDate.getMonth() + 1,
 													day,
 												),
 												day,
