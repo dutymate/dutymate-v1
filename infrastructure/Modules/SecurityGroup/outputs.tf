@@ -10,6 +10,10 @@ output "sg_valkey_id" {
   value = aws_security_group.sg_valkey.id
 }
 
+output "sg_mongodb_id" {
+  value = aws_security_group.sg_mongodb.id
+}
+
 output "sg_db_ssm_access_id" {
   value = aws_security_group.sg_db_ssm_access.id
 }

@@ -37,3 +37,11 @@ variable "mysql_username" {
 variable "mysql_password" {
   type = string
 }
+
+variable "mongodb_username" {
+  type = string
+}
+
+variable "mongodb_password" {
+  type = string
+}

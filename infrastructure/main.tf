@@ -42,6 +42,14 @@ module "elasticache" {
   sg_valkey_id     = module.security_group.sg_valkey_id
 }
 
+module "documentdb" {
+  source           = "./Modules/DocumentDB"
+  database_subnets = module.networking.database_subnets
+  sg_mongodb_id    = module.security_group.sg_mongodb_id
+  mongodb_username = var.mongodb_username
+  mongodb_password = var.mongodb_password
+}
+
 module "s3" {
   source     = "./Modules/S3"
   vpce_s3_id = module.networking.vpce_s3_id
