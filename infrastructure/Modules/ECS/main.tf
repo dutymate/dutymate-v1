@@ -11,45 +11,6 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
-resource "aws_iam_role" "ecs_service_role" {
-  name = "dutymate-ecs-service-role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Effect    = "Allow",
-      Principal = { Service = "ecs.amazonaws.com" },
-      Action    = "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_service_role_attachment" {
-  role       = aws_iam_role.ecs_service_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
-}
-
-resource "aws_iam_role" "ecs_instance_role" {
-  name = "dutymate-ecs-instance-role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Effect    = "Allow",
-      Principal = { Service = "ec2.amazonaws.com" },
-      Action    = "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_instance_role_attachment" {
-  role       = aws_iam_role.ecs_instance_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
-}
-
-resource "aws_iam_instance_profile" "ecs_instance_profile" {
-  name = "dutymate-ecs-instance-profile"
-  role = aws_iam_role.ecs_instance_role.name
-}
-
 resource "aws_ecs_task_definition" "ecs_task_definition" {
   family       = "dutymate-ecs-task"
   network_mode = "awsvpc"
@@ -99,7 +60,7 @@ resource "aws_launch_template" "ecs_lt" {
   vpc_security_group_ids = [var.sg_ecs_id]
 
   iam_instance_profile {
-    name = aws_iam_instance_profile.ecs_instance_profile.name
+    name = var.ecs_instance_profile_name
   }
 
   instance_market_options {

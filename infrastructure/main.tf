@@ -1,3 +1,7 @@
+module "iam" {
+  source = "./Modules/IAM"
+}
+
 module "networking" {
   source                     = "./Modules/Networking"
   vpc_cidr                   = var.vpc_cidr
@@ -15,9 +19,10 @@ module "security_group" {
 }
 
 module "ssm" {
-  source              = "./Modules/SSM"
-  database_subnets    = module.networking.database_subnets
-  sg_db_ssm_access_id = module.security_group.sg_db_ssm_access_id
+  source                    = "./Modules/SSM"
+  database_subnets          = module.networking.database_subnets
+  sg_db_ssm_access_id       = module.security_group.sg_db_ssm_access_id
+  ssm_instance_profile_name = module.iam.ssm_instance_profile_name
 }
 
 module "alb" {
@@ -29,10 +34,11 @@ module "alb" {
 }
 
 module "ecs" {
-  source           = "./Modules/ECS"
-  private_subnets  = module.networking.private_subnets
-  sg_ecs_id        = module.security_group.sg_ecs_id
-  target_group_arn = module.alb.target_group_arn
+  source                    = "./Modules/ECS"
+  private_subnets           = module.networking.private_subnets
+  sg_ecs_id                 = module.security_group.sg_ecs_id
+  target_group_arn          = module.alb.target_group_arn
+  ecs_instance_profile_name = module.iam.ecs_instance_profile_name
 }
 
 module "rds" {
