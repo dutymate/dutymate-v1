@@ -1,5 +1,6 @@
 package net.dutymate.api.member.service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.enumclass.Gender;
 import net.dutymate.api.enumclass.Provider;
@@ -406,4 +408,36 @@ public class MemberService {
 	private String addBasicProfileImgUrl() {
 		return "https://" + bucket + ".s3." + region + ".amazonaws.com/profile/default_profile.png";
 	}
+
+	@Transactional
+	public void exitWard(Member member) {
+		Ward ward = member.getWardMember().getWard();
+
+		if (member.getRole() == Role.RN) {
+			WardMember wardMember = wardMemberRepository.findById(member.getWardMember().getWardMemberId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
+
+			ward.removeWardMember(wardMember);
+			return;
+		}
+
+		if (member.getRole() == Role.HN) {
+			List<WardMember> wardMemberList = wardMemberRepository.findAllByWard(ward);
+
+			boolean hasOtherHN = wardMemberList.stream()
+				.anyMatch(wardMember ->
+					!wardMember.getMember().getMemberId().equals(member.getMemberId())
+						&& wardMember.getMember().getRole() == Role.HN);
+
+			if (!hasOtherHN) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 관리자 권한을 넘겨주세요.");
+			}
+
+			WardMember wardMember = wardMemberRepository.findById(member.getWardMember().getWardMemberId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
+
+			ward.removeWardMember(wardMember); // 병동에서 제거
+		}
+	}
+
 }

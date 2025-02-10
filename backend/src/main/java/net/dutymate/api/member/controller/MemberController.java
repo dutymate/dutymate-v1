@@ -108,4 +108,10 @@ public class MemberController {
 		memberService.deleteProfileImg(member);
 		return ResponseEntity.ok().build();
 	}
+
+	@DeleteMapping("/ward")
+	public ResponseEntity<?> deleteWardMember(@Auth Member member) {
+		memberService.exitWard(member);
+		return ResponseEntity.ok().build();
+	}
 }
