@@ -1,6 +1,7 @@
 package net.dutymate.api.member.service;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,6 +38,10 @@ import net.dutymate.api.wardmember.repository.WardMemberRepository;
 
 import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.RequiredArgsConstructor;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +50,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final JwtUtil jwtUtil;
 	private final WardMemberRepository wardMemberRepository;
+	private final S3Client s3Client;
 
 	@Value("${kakao.client.id}")
 	private String kakaoClientId;
@@ -64,6 +71,11 @@ public class MemberService {
 	private String googleUserUri;
 	@Value("${google.redirect.uri}")
 	private String googleRedirectUri;
+
+	@Value("${cloud.aws.region.static}")
+	private String region;
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucket;
 
 	@Transactional
 	public LoginResponseDto signUp(SignUpRequestDto signUpRequestDto) {
@@ -302,4 +314,79 @@ public class MemberService {
 		}
 		validateNickname(nickname);
 	}
+
+	// 파일 업로드
+	public void uploadProfileImg(MultipartFile multipartFile, Member member, String dirName) {
+
+		if (multipartFile == null || multipartFile.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "파일이 비어 있습니다.");
+		}
+
+		String fileName = createFileName(multipartFile.getOriginalFilename(), dirName);
+
+		try {
+
+			PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+				.bucket(bucket)
+				.key(fileName)
+				.contentType(multipartFile.getContentType())
+				.build();
+
+			// InputStream을 사용하여 메모리 사용량 최소화
+			s3Client.putObject(putObjectRequest,
+				RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize()));
+
+			String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
+
+			member.setFileUrl(fileUrl);
+
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "파일 업로드 중 오류가 발생했습니다.");
+		}
+	}
+
+	// 파일명을 난수화하기 위해 UUID 활용
+	private String createFileName(String fileName, String dirName) {
+		String uuid = UUID.randomUUID().toString().replace("-", "");
+		String extension = getFileExtension(fileName);
+		return dirName + "/" + uuid + extension;
+	}
+
+	private String getFileExtension(String fileName) {
+		if (fileName == null || !fileName.contains(".")) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일입니다.");
+		}
+		return fileName.substring(fileName.lastIndexOf("."));
+	}
+
+	// 프로필 이미지 삭제 -> 기본 이미지로 변경
+	public void deleteProfileImg(Member member) {
+		try {
+			String fileUrl = member.getProfileImg();
+			String fileName = extractFileNameFromUrl(fileUrl);
+
+			DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+				.bucket(bucket)
+				.key(fileName)
+				.build();
+
+			s3Client.deleteObject(deleteObjectRequest);
+
+			// 기본 프로필 이미지 URL 생성
+			String defaultProfileImageUrl =
+				"https://" + bucket + ".s3." + region + ".amazonaws.com/profile/default_profile.png";
+
+			member.setFileUrl(defaultProfileImageUrl);
+			memberRepository.save(member);
+
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "S3 이미지 삭제 중 오류 발생");
+		}
+	}
+
+	private String extractFileNameFromUrl(String fileUrl) {
+		String baseUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/";
+		return fileUrl.replace(baseUrl, "");
+	}
+
 }

@@ -92,4 +92,8 @@ public class Member {
 		this.gender = Gender.valueOf(gender);
 		this.grade = grade;
 	}
+
+	public void setFileUrl(String fileUrl) {
+		this.profileImg = fileUrl;
+	}
 }
