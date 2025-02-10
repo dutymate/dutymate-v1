@@ -44,4 +44,11 @@ public class WardController {
 		WardInfoResponseDto wardInfoResponseDto = wardService.getWardInfo(member);
 		return ResponseEntity.ok(wardInfoResponseDto);
 	}
+
+	// 가상 간호사 추가 (관리자)
+	@PostMapping("/member/virtual")
+	public ResponseEntity<?> addVirtualMember(@Auth Member member) {
+		wardService.addVirtualMember(member);
+		return ResponseEntity.ok().build();
+	}
 }
