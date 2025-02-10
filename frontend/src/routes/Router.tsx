@@ -14,6 +14,7 @@ import Community from "../pages/Community";
 import ReqAdmin from "../pages/ReqAdmin";
 import DutyManagement from "../pages/DutyManagement";
 import Error from "../pages/Error";
+import Mypage from "../pages/Mypage";
 
 const Router = () => {
 	return (
@@ -31,6 +32,7 @@ const Router = () => {
 			<Route path="/community" element={<Community />} />
 			<Route path="/req-admin" element={<ReqAdmin />} />
 			<Route path="/shift-admin" element={<DutyManagement />} />
+			<Route path="/my-page" element={<Mypage />} />
 			<Route path="/error" element={<Error />} />
 			<Route path="/_playgrounds" element={<Playgrounds />} />
 			<Route path="*" element={<Error />} />
