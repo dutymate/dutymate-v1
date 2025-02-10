@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.ward.dto.EnterManagementRequestDto;
+import net.dutymate.api.ward.dto.EnterWaitingResponseDto;
 import net.dutymate.api.ward.dto.HospitalNameResponseDto;
 import net.dutymate.api.ward.dto.VirtualNameRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
@@ -40,8 +42,18 @@ public class WardController {
 	// 병동 입장하기 (멤버) : 유효한 코드인지 체크
 	@GetMapping("/check-code")
 	public ResponseEntity<?> checkCode(@RequestParam String code, @Auth Member member) {
-		wardService.checkInvalidCode(code, member);
+		wardService.addToEnterWaiting(code, member);
 		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	// 병동 입장 승인 및 거절 (관리자) : 입장 관리
+	@PostMapping("/member/{memberId}")
+	public ResponseEntity<?> editEnterStatus(
+		@PathVariable Long memberId,
+		@RequestBody EnterManagementRequestDto enterManagementRequestDto,
+		@Auth Member member) {
+		wardService.enterManagement(memberId, enterManagementRequestDto, member);
+		return ResponseEntity.ok().build();
 	}
 
 	// 병동 정보 조회하기 (관리자)
@@ -73,5 +85,13 @@ public class WardController {
 	public ResponseEntity<?> getHospital(@RequestParam String name) {
 		List<HospitalNameResponseDto> hospitalNameResponseDto = wardService.findHospitalName(name);
 		return ResponseEntity.ok(hospitalNameResponseDto);
+	}
+
+	// 병동 입장 요청 내역 조회 (관리자)
+	@GetMapping("/enter")
+	public ResponseEntity<?> getEnterWaitingList(@Auth Member member) {
+		List<EnterWaitingResponseDto> enterWaitingResponseDtoList
+			= wardService.getEnterWaitingList(member);
+		return ResponseEntity.ok(enterWaitingResponseDtoList);
 	}
 }

@@ -11,23 +11,31 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.entity.Hospital;
+import net.dutymate.api.entity.EnterWaiting;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
+import net.dutymate.api.enumclass.EnterStatus;
+import net.dutymate.api.enumclass.Role;
+import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.enumclass.Gender;
 import net.dutymate.api.enumclass.Provider;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
+import net.dutymate.api.ward.dto.EnterManagementRequestDto;
+import net.dutymate.api.ward.dto.EnterWaitingResponseDto;
 import net.dutymate.api.ward.dto.HospitalNameResponseDto;
 import net.dutymate.api.ward.dto.VirtualNameRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
+import net.dutymate.api.ward.repository.EnterWaitingRepository;
 import net.dutymate.api.ward.repository.HospitalRepository;
 import net.dutymate.api.ward.repository.WardRepository;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
+import net.dutymate.api.wardschedules.service.WardScheduleService;
 import net.dutymate.api.wardschedules.util.InitialDutyGenerator;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +49,7 @@ public class WardService {
 	private final WardScheduleRepository wardScheduleRepository;
 	private final InitialDutyGenerator initialDutyGenerator;
 	private final MemberRepository memberRepository;
+	private final EnterWaitingRepository enterWaitingRepository;
 	private final HospitalRepository hospitalRepository;
 
 	@Transactional
@@ -75,10 +84,66 @@ public class WardService {
 	}
 
 	@Transactional
-	public void checkInvalidCode(String wardCode, Member member) {
+	public void addToEnterWaiting(String wardCode, Member member) {
+		// 0. 이미 입장 대기중인 병동이 있는지 확인
+		if (enterWaitingRepository.existsByMember(member)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 입장 대기중인 병동이 있습니다.");
+		}
+
 		// 1. wardCode에 해당하는 ward가 존재하는지 확인
 		Ward ward = wardRepository.findByWardCode(wardCode)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 병동 코드입니다."));
+
+		// 2. 이미 ward에 입장한 회원인지 확인
+		boolean isAlreadyEnteredWard = wardMemberRepository.existsByMember(member);
+		if (isAlreadyEnteredWard) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 입장한 병동이 있습니다.");
+		}
+
+		// 3. 입장 대기 엔티티 생성 및 저장
+		EnterWaiting enterWaiting = EnterWaiting.builder()
+			.member(member)
+			.ward(ward)
+			.build();
+		enterWaitingRepository.save(enterWaiting);
+	}
+
+	@Transactional
+	public void enterManagement(Long newMemberId, EnterManagementRequestDto enterManagementRequestDto, Member member) {
+		EnterStatus enterStatus = enterManagementRequestDto.getStatus();
+
+		// 수간호사가 아니면 예외 처리
+		if (!member.getRole().equals(Role.HN)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자가 아닙니다.");
+		}
+
+		// 수간호사가 속한 병동 불러오기
+		Ward ward = Optional.ofNullable(member.getWardMember())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."))
+			.getWard();
+
+		// 입장 요청한 멤버 정보 불러오기
+		Member newMember = memberRepository.findById(newMemberId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "입장 요청한 회원 정보를 찾을 수 없습니다."));
+
+		// 입장 대기 테이블에 없는 경우 예외 처리
+		if (!enterWaitingRepository.existsByMemberAndWard(newMember, ward)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "입장 요청하지 않은 회원입니다.");
+		}
+
+		// 병동 입장을 승인한 경우
+		if (enterStatus.equals(EnterStatus.ACCEPTED)) {
+			enterToWard(ward, newMember);
+		}
+
+		// 병동 입장을 승인 or 거절하는 경우 모두 입장 대기 테이블에서 삭제시켜야 함
+		enterWaitingRepository.removeByMemberAndWard(newMember, ward);
+	}
+
+	public void enterToWard(Ward ward, Member member) {
+		// 1. wardCode에 해당하는 ward가 존재하는지 확인
+		// Ward ward = wardRepository.findByWardCode(wardCode)
+		// 	.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 병동 코드입니다."));
 
 		// 2. 이미 ward에 입장한 회원인지 확인
 		boolean isAlreadyEnteredWard = wardMemberRepository.existsByMember(member);
@@ -141,7 +206,29 @@ public class WardService {
 		// 3. 해당 병동의 모든 wardMember 조회
 		List<WardMember> wardMemberList = wardMemberRepository.findAllByWard(ward);
 
-		return WardInfoResponseDto.of(ward, wardMemberList);
+		// 4. 입장 대기 인원 조회
+		long enterWaitingCnt = enterWaitingRepository.countByWard(ward);
+
+		return WardInfoResponseDto.of(ward, wardMemberList, enterWaitingCnt);
+	}
+
+	@Transactional(readOnly = true)
+	public List<EnterWaitingResponseDto> getEnterWaitingList(Member member) {
+		// 수간호사가 아니면 예외 처리
+		if (!member.getRole().equals(Role.HN)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자가 아닙니다.");
+		}
+
+		// 수간호사가 속한 병동 불러오기
+		Ward ward = Optional.ofNullable(member.getWardMember())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."))
+			.getWard();
+
+		// EnterWaiting -> DTO 변환 후 반환
+		return enterWaitingRepository.findByWard(ward)
+			.stream()
+			.map(EnterWaitingResponseDto::of)
+			.toList();
 	}
 
 	@Transactional

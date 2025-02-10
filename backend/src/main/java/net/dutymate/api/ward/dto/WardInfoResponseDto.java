@@ -21,9 +21,10 @@ public class WardInfoResponseDto {
 	private String wardName;
 	private String hospitalName;
 	private int nursesTotalCnt;
+	private long enterWaitingCnt;
 	private List<Nurse> nurses;
 
-	public static WardInfoResponseDto of(Ward ward, List<WardMember> wardMemberList) {
+	public static WardInfoResponseDto of(Ward ward, List<WardMember> wardMemberList, long enterWaitingCnt) {
 		List<Nurse> nurses = wardMemberList.stream()
 			.map(Nurse::of)
 			.toList();
@@ -33,6 +34,7 @@ public class WardInfoResponseDto {
 			.wardName(ward.getWardName())
 			.hospitalName(ward.getHospitalName())
 			.nursesTotalCnt(nurses.size())
+			.enterWaitingCnt(enterWaitingCnt)
 			.nurses(nurses)
 			.build();
 
