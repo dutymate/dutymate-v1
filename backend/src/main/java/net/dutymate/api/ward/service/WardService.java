@@ -17,6 +17,7 @@ import net.dutymate.api.enumclass.Provider;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
+import net.dutymate.api.ward.dto.VirtualNameRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
 import net.dutymate.api.ward.repository.WardRepository;
@@ -218,5 +219,27 @@ public class WardService {
 		}
 		int seq = Integer.parseInt(tempNurses.getLast().getMember().getName().substring(3)) + 1;
 		return "간호사" + seq;
+	}
+
+	@Transactional
+	public void changeVirtualMemberName(
+		Long changeMemberId, VirtualNameRequestDto virtualNameRequestDto, Member member) {
+		// 수간호사가 아니면 예외 처리
+		if (!member.getRole().equals(Role.HN)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자가 아닙니다.");
+		}
+
+		// 이름 변경할 가상 간호사 불러오기
+		Member changeMember = memberRepository.findById(changeMemberId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 멤버입니다."));
+
+		// 수간호사와 가상간호사가 같은 병동에 속한지 확인하기
+		if (changeMember.getWardMember() != null && member.getWardMember() != null
+			&& changeMember.getWardMember().getWard() != member.getWardMember().getWard()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "같은 병동에 속하지 않은 간호사입니다.");
+		}
+
+		// 이름 변경
+		changeMember.changeName(virtualNameRequestDto.getName());
 	}
 }

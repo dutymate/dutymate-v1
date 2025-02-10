@@ -50,6 +50,7 @@ public class WardInfoResponseDto {
 		private ShiftType shift;
 		private SkillLevel skillLevel;
 		private String memo;
+		private Boolean isSynced;
 
 		public static Nurse of(WardMember wardMember) {
 			Member member = wardMember.getMember();
@@ -62,6 +63,7 @@ public class WardInfoResponseDto {
 				.shift(wardMember.getShiftType())
 				.skillLevel(wardMember.getSkillLevel())
 				.memo(wardMember.getMemo())
+				.isSynced(wardMember.getIsSynced())
 				.build();
 		}
 	}

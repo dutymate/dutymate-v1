@@ -3,7 +3,9 @@ package net.dutymate.api.ward.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.ward.dto.VirtualNameRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
 import net.dutymate.api.ward.service.WardService;
@@ -49,6 +52,16 @@ public class WardController {
 	@PostMapping("/member/virtual")
 	public ResponseEntity<?> addVirtualMember(@Auth Member member) {
 		wardService.addVirtualMember(member);
+		return ResponseEntity.ok().build();
+	}
+
+	// 가상 간호사 이름 변경 (관리자)
+	@PutMapping("/member/virtual/{memberId}")
+	public ResponseEntity<?> changeVirtualMemberName(
+		@PathVariable Long memberId,
+		@RequestBody VirtualNameRequestDto virtualNameRequestDto,
+		@Auth Member member) {
+		wardService.changeVirtualMemberName(memberId, virtualNameRequestDto, member);
 		return ResponseEntity.ok().build();
 	}
 }

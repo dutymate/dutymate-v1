@@ -96,4 +96,8 @@ public class Member {
 	public void setFileUrl(String fileUrl) {
 		this.profileImg = fileUrl;
 	}
+
+	public void changeName(String name) {
+		this.name = name;
+	}
 }
