@@ -66,7 +66,7 @@ public class RequestService {
 
 		// 기존 상태 및 새로운 상태 불러오기
 		RequestStatus prevStatus = request.getStatus();
-		RequestStatus changedStatus = RequestStatus.from(editRequestStatusRequestDto.getStatus());
+		RequestStatus changedStatus = RequestStatus.valueOf(editRequestStatusRequestDto.getStatus());
 
 		// 기존 상태 == 새로운 상태 -> 아무 동작도 하지 않음
 		if (prevStatus == changedStatus) {

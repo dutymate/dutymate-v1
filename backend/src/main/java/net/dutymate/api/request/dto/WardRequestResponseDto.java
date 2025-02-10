@@ -27,8 +27,7 @@ public class WardRequestResponseDto {
 			.date(request.getRequestDate())
 			.shift(String.valueOf(request.getRequestShift()))
 			.memo(request.getMemo())
-			.status(request.getStatus().getValue())
+			.status(String.valueOf(request.getStatus()))
 			.build();
 	}
-
 }
