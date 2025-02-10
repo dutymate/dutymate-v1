@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 import { Icon, IconName } from "./Icon";
 
 interface DropdownProps {
-	variant: "number" | "priority" | "authority" | "skill";
+	variant: keyof typeof OPTIONS;
 	value: string | number | null;
-	onChange: (value: string | number) => void;
+	onChange: (value: any) => void;
 	label: string;
 	disabled?: boolean;
-	position?: "left" | "right";
+	position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
 }
 
 const OPTIONS = {
@@ -31,7 +31,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 	onChange,
 	label,
 	disabled = false,
-	position = "right",
+	position = "bottom-left",
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
@@ -93,52 +93,61 @@ export const Dropdown: React.FC<DropdownProps> = ({
     `;
 	};
 
+	const getOptionsPosition = () => {
+		switch (position) {
+			case "top-left":
+				return "bottom-full right-0 mb-1";
+			case "top-right":
+				return "bottom-full left-0 mb-1";
+			case "bottom-left":
+				return "top-full right-0 mt-1";
+			case "bottom-right":
+				return "top-full left-0 mt-1";
+			default:
+				return "top-full right-0 mt-1";
+		}
+	};
+
 	return (
-		<div className="relative inline-block" ref={dropdownRef}>
-			<div className={`relative ${getDropdownStyle()}`}>
-				<button
-					type="button"
-					className={getButtonStyle()}
-					onClick={() => !disabled && setIsOpen(!isOpen)}
-					disabled={disabled}
-				>
-					<div className="flex items-center gap-2">
-						{variant === "skill" &&
-							value &&
-							ICONS.skill[value as keyof typeof ICONS.skill] && (
-								<Icon
-									name={ICONS.skill[value as keyof typeof ICONS.skill]}
-									size={16}
-									className="text-primary"
-								/>
-							)}
-						{variant === "authority" ? (
-							<Icon name="dots" size={20} className="text-primary" />
-						) : (
-							<span
-								className={`text-base ${variant === "number" && value ? "font-bold" : ""} ${!value ? "text-base-muted" : ""}`}
-							>
-								{getDisplayValue()}
-							</span>
+		<div className={`relative ${getDropdownStyle()}`} ref={dropdownRef}>
+			<button
+				type="button"
+				className={getButtonStyle()}
+				onClick={() => !disabled && setIsOpen(!isOpen)}
+				disabled={disabled}
+			>
+				<div className="flex items-center gap-2">
+					{variant === "skill" &&
+						value &&
+						ICONS.skill[value as keyof typeof ICONS.skill] && (
+							<Icon
+								name={ICONS.skill[value as keyof typeof ICONS.skill]}
+								size={16}
+								className="text-primary"
+							/>
 						)}
-					</div>
-					{variant !== "authority" && (
-						<Icon
-							name={isOpen ? "left" : "right"}
-							size={16}
-							className={`${disabled ? "text-base-muted" : "text-primary"} transform rotate-90 ${isOpen ? "rotate-[270deg]" : "rotate-90"} ml-2`}
-						/>
+					{variant === "authority" ? (
+						<Icon name="dots" size={20} className="text-primary" />
+					) : (
+						<span
+							className={`text-base ${variant === "number" && value ? "font-bold" : ""} ${!value ? "text-base-muted" : ""}`}
+						>
+							{getDisplayValue()}
+						</span>
 					)}
-				</button>
-			</div>
+				</div>
+				{variant !== "authority" && (
+					<Icon
+						name={isOpen ? "left" : "right"}
+						size={16}
+						className={`${disabled ? "text-base-muted" : "text-primary"} transform rotate-90 ${isOpen ? "rotate-[270deg]" : "rotate-90"} ml-2`}
+					/>
+				)}
+			</button>
 
 			{isOpen && !disabled && (
 				<div
-					className={`
-          absolute z-10 w-max min-w-full mt-1 bg-base-white shadow-lg
-          ${position === "left" ? "right-0" : "left-0"}
-          ${variant === "authority" ? "rounded-[9px] border border-base-muted" : "rounded-[9px] border border-base-muted"}
-        `}
+					className={`absolute ${getOptionsPosition()} z-50 w-32 py-1 bg-white border rounded-md shadow-lg`}
 				>
 					<ul className={variant === "authority" ? "py-2" : "py-3"}>
 						{options.map((option) => (

@@ -2,25 +2,24 @@ import { useState } from "react";
 import WardAdminRowCard from "./WardAdminRowCard";
 import { Nurse, wardService } from "../../services/wardService";
 import { toast } from "react-toastify";
+import useWardStore from "../../store/wardStore";
 
 interface WardAdminTableProps {
 	nurses: Nurse[];
 }
 
 const WardAdminTable = ({ nurses }: WardAdminTableProps) => {
+	const { updateNurse, syncWithServer } = useWardStore();
 	const [selectedNurses, setSelectedNurses] = useState<string[]>([]);
 
 	const handleNurseUpdate = async (memberId: number, data: any) => {
 		try {
-			await wardService.updateNurseInfo(memberId, {
-				shift: data.shift,
-				skillLevel: data.skillLevel,
-				memo: data.memo,
-				role: data.role,
-			});
+			await updateNurse(memberId, data);
 			toast.success("간호사 정보가 수정되었습니다");
 		} catch (error) {
 			toast.error("간호사 정보 수정에 실패했습니다");
+			// 실패 시 서버와 강제 동기화
+			await syncWithServer();
 		}
 	};
 
@@ -38,12 +37,12 @@ const WardAdminTable = ({ nurses }: WardAdminTableProps) => {
 				<div className="flex flex-col gap-2 min-w-[900px]">
 					{/* Header */}
 					<div className="flex items-center p-1.5 lg:p-2 mb-2 text-sm lg:text-base text-gray-600 font-medium bg-base-muted-30 rounded-xl">
-						<input
+						{/* <input
 							type="checkbox"
 							className="mr-3 min-w-[20px] flex-shrink-0"
 							onChange={handleSelectAll}
 							checked={selectedNurses.length === nurses.length}
-						/>
+						/> */}
 						<div className="flex items-center justify-between flex-1 gap-10">
 							<div className="flex items-center gap-6 flex-shrink-0">
 								<div className="w-[120px] pl-2">이름</div>

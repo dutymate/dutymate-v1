@@ -5,6 +5,8 @@ import { Nurse } from "../../services/wardService";
 import { useState, useEffect, useRef } from "react";
 import { Badge } from "../atoms/Badge";
 import { Dropdown } from "../atoms/Dropdown";
+import useWardStore from "../../store/wardStore";
+import { toast } from "react-toastify";
 
 interface WardAdminRowCardProps {
 	nurse: Nurse;
@@ -27,11 +29,35 @@ const WardAdminRowCard = ({
 	const [isEditingMemo, setIsEditingMemo] = useState(false);
 	const [memo, setMemo] = useState(nurse.memo);
 	const memoInputRef = useRef<HTMLInputElement>(null);
+	const { removeNurse } = useWardStore();
+	const [dropdownPosition, setDropdownPosition] = useState<"top" | "bottom">(
+		"bottom",
+	);
+	const authorityDropdownRef = useRef<HTMLDivElement>(null);
 
 	// Add this to verify data flow
 	useEffect(() => {
 		console.log("Nurse data:", nurse);
 	}, [nurse]);
+
+	useEffect(() => {
+		const updateDropdownPosition = () => {
+			if (authorityDropdownRef.current) {
+				const rect = authorityDropdownRef.current.getBoundingClientRect();
+				const spaceBelow = window.innerHeight - rect.bottom;
+				setDropdownPosition(spaceBelow < 100 ? "top" : "bottom");
+			}
+		};
+
+		updateDropdownPosition();
+		window.addEventListener("scroll", updateDropdownPosition);
+		window.addEventListener("resize", updateDropdownPosition);
+
+		return () => {
+			window.removeEventListener("scroll", updateDropdownPosition);
+			window.removeEventListener("resize", updateDropdownPosition);
+		};
+	}, []);
 
 	const skillOptions = [
 		{ value: "HIGH" as "HIGH", icon: "high" as const, label: "상급" },
@@ -40,19 +66,34 @@ const WardAdminRowCard = ({
 	];
 
 	const handleSkillChange = (skillLevel: "HIGH" | "MID" | "LOW") => {
-		onUpdate(nurse.memberId, { ...nurse, skillLevel });
+		onUpdate(nurse.memberId, {
+			skillLevel,
+			shift: nurse.shift || null,
+			memo: nurse.memo || "",
+			role: nurse.role,
+		});
 		setOpenSkillDropdown(false);
 	};
 
 	const handleShiftChange = (shift: "D" | "E" | "N" | "ALL") => {
-		onUpdate(nurse.memberId, { ...nurse, shift });
+		onUpdate(nurse.memberId, {
+			shift,
+			skillLevel: nurse.skillLevel || null,
+			memo: nurse.memo || "",
+			role: nurse.role,
+		});
 	};
 
 	// 메모 수정 완료 핸들러
 	const handleMemoComplete = () => {
 		setIsEditingMemo(false);
 		if (memo !== nurse.memo) {
-			onUpdate(nurse.memberId, { ...nurse, memo });
+			onUpdate(nurse.memberId, {
+				memo,
+				shift: nurse.shift || null,
+				skillLevel: nurse.skillLevel || null,
+				role: nurse.role,
+			});
 		}
 	};
 
@@ -63,14 +104,27 @@ const WardAdminRowCard = ({
 		}
 	};
 
+	const handleRemoveNurse = async () => {
+		try {
+			await removeNurse(nurse.memberId);
+			toast.success("간호사가 병동에서 제외되었습니다");
+		} catch (error) {
+			if (error instanceof Error && error.message === "LAST_HN") {
+				toast.error("새로운 관리자를 임명하세요");
+				return;
+			}
+			toast.error("간호사 제외에 실패했습니다");
+		}
+	};
+
 	return (
 		<div className="flex items-center p-2.5 bg-white rounded-[0.578125rem] border border-gray-200">
-			<input
+			{/* <input
 				type="checkbox"
 				className="mr-3 min-w-[20px] flex-shrink-0"
 				checked={isSelected}
 				onChange={() => onSelect?.(nurse.memberId)}
-			/>
+			/> */}
 			<div className="flex items-center justify-between flex-1 gap-10">
 				<div className="flex items-center gap-6 flex-shrink-0">
 					<div className="flex items-center w-[120px]">
@@ -110,7 +164,7 @@ const WardAdminRowCard = ({
 						</button>
 
 						{openSkillDropdown && (
-							<div className="absolute top-full left-0 mt-1 bg-white border rounded-md shadow-lg z-10">
+							<div className="absolute bottom-full left-0 mb-1 bg-white border rounded-md shadow-lg z-10">
 								{skillOptions.map((option) => (
 									<button
 										key={option.value}
@@ -124,12 +178,12 @@ const WardAdminRowCard = ({
 							</div>
 						)}
 					</div>
-					<div className="flex gap-2 w-[120px]">
+					<div className="flex gap-2 w-[155px]">
 						{(["D", "E", "N", "ALL"] as const).map((duty) => (
 							<DutyBadgeEng
 								key={duty}
 								type={duty}
-								size="sm"
+								size="md"
 								variant={nurse.shift === duty ? "filled" : "outline"}
 								onClick={() => handleShiftChange(duty)}
 								isSelected={nurse.shift === duty}
@@ -172,13 +226,13 @@ const WardAdminRowCard = ({
 							</div>
 						)}
 					</div>
-					<div className="w-[60px] flex-shrink-0">
+					<div className="w-[60px] flex-shrink-0" ref={authorityDropdownRef}>
 						<Dropdown
 							variant="authority"
 							value={null}
 							onChange={(value) => {
 								if (value === "병동내보내기") {
-									onUpdate(nurse.memberId, { ...nurse, isActive: false });
+									handleRemoveNurse();
 								} else if (value === "권한 넘기기") {
 									onUpdate(nurse.memberId, {
 										...nurse,
@@ -187,7 +241,7 @@ const WardAdminRowCard = ({
 								}
 							}}
 							label=""
-							position="left"
+							position={dropdownPosition === "top" ? "top-left" : "bottom-left"}
 						/>
 					</div>
 				</div>

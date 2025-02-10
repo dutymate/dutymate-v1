@@ -8,11 +8,12 @@ import WardAdminTable from "../components/organisms/WardAdminTable";
 import { wardService, WardInfo } from "../services/wardService";
 import { toast } from "react-toastify";
 import useUserAuthStore from "../store/userAuthStore";
+import useWardStore from "../store/wardStore";
 
 const WardAdmin = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const [wardInfo, setWardInfo] = useState<WardInfo | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const { wardInfo, setWardInfo } = useWardStore();
 	const { userInfo } = useUserAuthStore();
 
 	useEffect(() => {
@@ -28,7 +29,7 @@ const WardAdmin = () => {
 		};
 
 		fetchWardInfo();
-	}, []);
+	}, [setWardInfo]);
 
 	return (
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
