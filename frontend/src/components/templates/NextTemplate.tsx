@@ -5,11 +5,13 @@ import dutyMateLogo from "../../assets/logo.svg";
 interface StartTemplateProps {
 	children: React.ReactNode;
 	isLoginPage?: boolean;
+	isEnterWardPage?: boolean;
 }
 
 const StartTemplate: React.FC<StartTemplateProps> = ({
 	children,
 	isLoginPage,
+	isEnterWardPage,
 }) => {
 	return (
 		<div className="w-full h-screen lg:grid lg:grid-cols-2">
@@ -19,7 +21,11 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 				<div className="flex-1 bg-base-muted-30 flex flex-col relative">
 					<div
 						className={`flex justify-center items-center ${
-							isLoginPage ? "translate-y-[14vh]" : "translate-y-[18vh]"
+							isEnterWardPage
+								? "mt-[5vh]" // EnterWard 페이지일 때만 로고 위치 조정
+								: isLoginPage
+									? "mt-[12vh]"
+									: "mt-[18vh]" // 다른 페이지들은 기존 위치 유지
 						} mb-8`}
 					>
 						<img

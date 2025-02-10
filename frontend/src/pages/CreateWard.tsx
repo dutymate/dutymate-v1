@@ -70,7 +70,7 @@ const CreateWard = () => {
 	const Template = isMobile ? NextTemplate : StartTemplate;
 
 	return (
-		<Template>
+		<Template isCreateWardPage={true}>
 			<div className="flex flex-col items-center">
 				<p className="text-gray-600 text-base mt-8 mb-8">
 					병동 생성을 위한 기본 정보를 입력해주세요.
