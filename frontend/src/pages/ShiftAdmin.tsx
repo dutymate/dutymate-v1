@@ -15,7 +15,6 @@ const ShiftAdmin = () => {
 	return (
 		<div className="w-full min-h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
-			{/* 데스크톱 Sidebar */}
 			<div className="hidden lg:block w-[238px] shrink-0">
 				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 			</div>

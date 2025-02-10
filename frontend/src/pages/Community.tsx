@@ -4,20 +4,22 @@ import Title from "../components/atoms/Title";
 import CommunityForm from "../components/organisms/CommunityForm";
 import { useState } from "react";
 import { IoMdMenu } from "react-icons/io";
+import useUserAuthStore from "../store/userAuthStore";
 
 const Community = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const { userInfo } = useUserAuthStore();
 
 	return (
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
 			<div className="hidden lg:block w-[238px] shrink-0">
-				<Sidebar userType="head" />
+				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 			</div>
 
 			{/* 모바일 Sidebar */}
 			<MSidebar
-				userType="head"
+				userType={userInfo?.role as "HN" | "RN"}
 				isOpen={isSidebarOpen}
 				onClose={() => setIsSidebarOpen(false)}
 			/>
