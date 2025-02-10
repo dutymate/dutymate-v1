@@ -36,6 +36,12 @@ module "rds" {
   mysql_password   = var.mysql_password
 }
 
+module "elasticache" {
+  source           = "./Modules/ElastiCache"
+  database_subnets = module.networking.database_subnets
+  sg_valkey_id     = module.security_group.sg_valkey_id
+}
+
 module "s3" {
   source     = "./Modules/S3"
   vpce_s3_id = module.networking.vpce_s3_id
