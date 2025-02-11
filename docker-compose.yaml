@@ -7,7 +7,7 @@ services:
       - "3306:3306"
     environment:
       MYSQL_DATABASE: dutymate_db
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: DutymateA108*
       TZ: Asia/Seoul
     volumes:
       - ./db/mysql/data:/var/lib/mysql
@@ -27,7 +27,7 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: dutymate_admin
+      MONGO_INITDB_ROOT_PASSWORD: DutymateA108*
     volumes:
       - ./db/mongodb/:/data/db
