@@ -66,9 +66,17 @@ public class WardMember {
 	private Boolean isSynced;
 
 	public void updateWardMemberInfo(String shiftType, String skillLevel, String memo, String role) {
-		this.shiftType = ShiftType.valueOf(shiftType);
-		this.skillLevel = SkillLevel.valueOf(skillLevel);
-		this.memo = memo;
-		this.member.updateRole(String.valueOf(role));
+		if (shiftType != null && !shiftType.isEmpty()) {
+			this.shiftType = ShiftType.valueOf(shiftType);
+		}
+		if (skillLevel != null && !skillLevel.isEmpty()) {
+			this.skillLevel = SkillLevel.valueOf(skillLevel);
+		}
+		if (memo != null && !memo.isEmpty()) {
+			this.memo = memo;
+		}
+		if (role != null && !role.isEmpty()) {
+			this.member.updateRole(role);
+		}
 	}
 }
