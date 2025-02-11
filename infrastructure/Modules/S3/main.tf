@@ -51,28 +51,26 @@ resource "aws_s3_bucket_policy" "asset_bucket_policy" {
     aws_s3_bucket_public_access_block.asset_public_access
   ]
 
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "AllowPublicReadWriteAccess",
-      "Effect": "Allow",
-      "Principal": "*",
-      "Action":[
-        "s3:GetObject",
-        "s3:PutObject"
-      ],
-      "Resource": "arn:aws:s3:::${aws_s3_bucket.asset_bucket.id}/*",
-      "Condition": {
-        "StringEquals": {
-          "aws:SourceVpce": "${var.vpce_s3_id}"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "AllowPublicReadWriteAccess"
+        Effect    = "Allow"
+        Principal = "*"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject"
+        ]
+        Resource = "${aws_s3_bucket.asset_bucket.arn}/*"
+        Condition = {
+          StringEquals = {
+            "aws:SourceVpce" = "${var.vpce_s3_id}"
+          }
         }
       }
-    }
-  ]
-}
-POLICY
+    ]
+  })
 }
 
 resource "aws_s3_bucket_policy" "frontend_bucket_policy" {
@@ -82,22 +80,20 @@ resource "aws_s3_bucket_policy" "frontend_bucket_policy" {
     aws_s3_bucket_public_access_block.frontend_public_access
   ]
 
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": { "Service": "cloudfront.amazonaws.com" },
-      "Action": "s3:GetObject",
-      "Resource": "${aws_s3_bucket.frontend_bucket.arn}/*",
-      "Condition": {
-        "StringEquals": {
-          "AWS:SourceArn": "${var.frontend_distribution_arn}"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = { Service = "cloudfront.amazonaws.com" }
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.frontend_bucket.arn}/*"
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = "${var.frontend_distribution_arn}"
+          }
         }
       }
-    }
-  ]
-}
-POLICY
+    ]
+  })
 }
