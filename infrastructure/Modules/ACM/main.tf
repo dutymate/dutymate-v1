@@ -13,9 +13,8 @@ resource "aws_acm_certificate" "frontend_cert" {
   }
 
   tags = {
-    Name = "dutymate-acm-cert"
+    Name = "dutymate-frontend-cert"
   }
-
 }
 
 resource "aws_acm_certificate" "api_cert" {
@@ -27,6 +26,6 @@ resource "aws_acm_certificate" "api_cert" {
   }
 
   tags = {
-    Name = "dutymate-acm-cert"
+    Name = "dutymate-api-cert"
   }
 }
