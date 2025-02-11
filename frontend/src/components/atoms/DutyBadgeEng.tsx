@@ -1,7 +1,7 @@
 // DutyBadgeEng.tsx
 
 interface DutyBadgeEngProps {
-	type: "D" | "E" | "N" | "O" | "ALL" | "default";
+	type: "D" | "E" | "N" | "O" | "ALL" | "X";
 	size?: "xs" | "sm" | "md" | "lg";
 	isSelected?: boolean;
 	onClick?: () => void;
@@ -31,8 +31,7 @@ const DutyBadgeEng = ({
 			N: "bg-duty-night text-white hover:ring-2 hover:ring-offset-2 hover:ring-duty-night focus:ring-2 focus:ring-offset-2 focus:ring-duty-night",
 			O: "bg-duty-off text-white hover:ring-2 hover:ring-offset-2 hover:ring-duty-off focus:ring-2 focus:ring-offset-2 focus:ring-duty-off",
 			ALL: "bg-base-foreground text-white hover:ring-2 hover:ring-offset-2 hover:ring-base-foreground focus:ring-2 focus:ring-offset-2 focus:ring-base-foreground",
-			default:
-				"bg-base-muted text-white font-bold hover:ring-2 hover:ring-offset-2 hover:ring-base-muted focus:ring-2 focus:ring-offset-2 focus:ring-base-muted",
+			X: "bg-base-muted text-white font-bold hover:ring-2 hover:ring-offset-2 hover:ring-base-muted focus:ring-2 focus:ring-offset-2 focus:ring-base-muted",
 		},
 		outline: {
 			D: "bg-white text-duty-day border-2 border-duty-day hover:ring-2 hover:ring-offset-2 hover:ring-duty-day focus:ring-2 focus:ring-offset-2 focus:ring-duty-day",
@@ -40,8 +39,7 @@ const DutyBadgeEng = ({
 			N: "bg-white text-duty-night border-2 border-duty-night hover:ring-2 hover:ring-offset-2 hover:ring-duty-night focus:ring-2 focus:ring-offset-2 focus:ring-duty-night",
 			O: "bg-white text-duty-off border-2 border-duty-off hover:ring-2 hover:ring-offset-2 hover:ring-duty-off focus:ring-2 focus:ring-offset-2 focus:ring-duty-off",
 			ALL: "bg-white text-base-foreground border-2 border-base-foreground hover:ring-2 hover:ring-offset-2 hover:ring-base-foreground focus:ring-2 focus:ring-offset-2 focus:ring-base-foreground",
-			default:
-				"bg-white text-base-muted border-2 border-base-muted font-bold hover:ring-2 hover:ring-offset-2 hover:ring-base-muted focus:ring-2 focus:ring-offset-2 focus:ring-base-muted",
+			X: "bg-white text-base-muted border-2 border-base-muted font-bold hover:ring-2 hover:ring-offset-2 hover:ring-base-muted focus:ring-2 focus:ring-offset-2 focus:ring-base-muted",
 		},
 		letter: {
 			D: "text-duty-day",
@@ -49,7 +47,7 @@ const DutyBadgeEng = ({
 			N: "text-duty-night",
 			O: "text-duty-off",
 			ALL: "text-base-foreground",
-			default: "text-base-muted font-bold",
+			X: "text-base-muted font-bold",
 		},
 	};
 
@@ -65,7 +63,7 @@ const DutyBadgeEng = ({
         transition-all duration-200
       `}
 		>
-			{type === "default" ? "-" : type === "ALL" ? "All" : type}
+			{type === "X" ? "-" : type === "ALL" ? "All" : type}
 		</div>
 	);
 };

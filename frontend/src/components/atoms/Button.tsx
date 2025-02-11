@@ -1,3 +1,5 @@
+import React from "react";
+
 type ButtonSize = "xs" | "sm" | "md" | "lg";
 type ButtonWidth = "short" | "long";
 type ButtonColor = "primary" | "evening" | "night" | "day" | "off" | "muted";
@@ -82,23 +84,28 @@ const colorStyles: Record<
 	},
 };
 
-export function Button({
-	size = "md",
-	width = "short",
-	color = "primary",
-	children,
-	onClick,
-	fullWidth,
-	disabled,
-	className,
-	type = "button",
-}: ButtonProps) {
-	return (
-		<button
-			type={type}
-			onClick={onClick}
-			disabled={disabled}
-			className={`
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+	(
+		{
+			size = "md",
+			width = "short",
+			color = "primary",
+			children,
+			onClick,
+			fullWidth,
+			disabled,
+			className,
+			type = "button",
+		},
+		ref,
+	) => {
+		return (
+			<button
+				ref={ref}
+				type={type}
+				onClick={onClick}
+				disabled={disabled}
+				className={`
         ${sizeStyles[size]} 
         ${fullWidth ? "w-full" : widthStyles[width][size]}
         ${
@@ -115,10 +122,11 @@ export function Button({
         transition-colors
         ${className || ""}
       `}
-		>
-			{children}
-		</button>
-	);
-}
+			>
+				{children}
+			</button>
+		);
+	},
+);
 
 export type { ButtonProps, ButtonSize, ButtonWidth, ButtonColor };

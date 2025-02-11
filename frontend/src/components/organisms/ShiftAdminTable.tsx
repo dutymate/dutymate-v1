@@ -1,10 +1,11 @@
 // ShiftAdminTable.tsx
 
+import RuleEditModal from "./RuleEditModal";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import { Button } from "../atoms/Button";
 import { Icon } from "../atoms/Icon";
 import { ProgressChecker } from "../atoms/ProgressChecker";
-import React from "react";
+import React, { useState, useRef } from "react";
 
 // 월별 주말과 공휴일 계산 유틸리티 함수 수정
 const getWeekendAndHolidayPairs = (year: number, month: number): number[][] => {
@@ -35,6 +36,9 @@ const getWeekendAndHolidayPairs = (year: number, month: number): number[][] => {
 };
 
 const ShiftAdminTable = () => {
+	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
+	const ruleButtonRef = useRef<HTMLButtonElement>(null);
+
 	// 더미 간호사 데이터
 	const nurses = [
 		"김지민",
@@ -51,8 +55,8 @@ const ShiftAdminTable = () => {
 
 	// 31일 x 10명의 근무 타입을 저장하는 상태
 	const [duties, setDuties] = React.useState<
-		Array<Array<"D" | "E" | "N" | "O" | "default">>
-	>(Array(10).fill(Array(31).fill("default")));
+		Array<Array<"D" | "E" | "N" | "O" | "X">>
+	>(Array(10).fill(Array(31).fill("X")));
 
 	// 선택된 셀의 위치를 저장하는 상태
 	const [selectedCell, setSelectedCell] = React.useState<{
@@ -125,7 +129,7 @@ const ShiftAdminTable = () => {
 
 		duties.forEach((nurseRow) => {
 			nurseRow.forEach((duty, dayIndex) => {
-				if (duty !== "default") {
+				if (duty !== "X") {
 					counts[dayIndex][duty]++;
 					counts[dayIndex].total++;
 				}
@@ -145,7 +149,7 @@ const ShiftAdminTable = () => {
 		};
 
 		duties[nurseIndex].forEach((duty) => {
-			if (duty !== "default") {
+			if (duty !== "X") {
 				counts[duty]++;
 			}
 		});
@@ -193,7 +197,7 @@ const ShiftAdminTable = () => {
 	return (
 		<>
 			{/* 월 선택 및 버튼 영역 */}
-			<div className="bg-white rounded-xl py-0.5 px-2 shadow-[0_4px_12px_rgba(0,0,0,0.1)] -mb-3">
+			<div className="bg-white rounded-xl py-3 px-2 mb-0.75">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center">
 						{/* 월 선택 영역 */}
@@ -221,12 +225,14 @@ const ShiftAdminTable = () => {
 					{/* 버튼 영역 */}
 					<div className="flex gap-0.5 sm:gap-1">
 						<Button
+							ref={ruleButtonRef}
 							text-size="xs"
 							size="xs"
 							color="primary"
 							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
+							onClick={() => setIsRuleModalOpen(true)}
 						>
-							규칙 편집
+							규칙 조회
 						</Button>
 						<Button
 							text-size="xs"
@@ -452,6 +458,14 @@ const ShiftAdminTable = () => {
 					</div>
 				</div>
 			</div>
+
+			{/* 규칙 편집 모달 */}
+			{isRuleModalOpen && (
+				<RuleEditModal
+					onClose={() => setIsRuleModalOpen(false)}
+					buttonRef={ruleButtonRef}
+				/>
+			)}
 		</>
 	);
 };

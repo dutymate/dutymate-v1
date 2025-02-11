@@ -181,12 +181,12 @@ const TeamShiftTable = () => {
 									>
 										<DutyBadgeEng
 											type={
-												(shift === "X" ? "default" : shift) as
+												(shift === "X" ? "X" : shift) as
 													| "D"
 													| "E"
 													| "N"
 													| "O"
-													| "default"
+													| "X"
 											}
 											variant="letter"
 											size="sm"

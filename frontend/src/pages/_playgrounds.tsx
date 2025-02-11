@@ -35,7 +35,7 @@ const Playgrounds: React.FC = () => {
 	const [selectedMedium, setSelectedMedium] = useState<string | null>(null);
 	const [selectedLarge, setSelectedLarge] = useState<string | null>(null);
 
-	const badgeTypes = ["D", "E", "N", "O", "All", "default"] as const;
+	const badgeTypes = ["D", "E", "N", "O", "ALL", "X"] as const;
 
 	return (
 		<div className="min-h-screen bg-base-background p-8">
@@ -869,7 +869,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
+											type={type as "D" | "E" | "N" | "O" | "ALL" | "X"}
 											size="sm"
 											isSelected={selectedSmall === type}
 											onClick={() =>
@@ -889,7 +889,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
+											type={type as "D" | "E" | "N" | "O" | "ALL" | "X"}
 											size="md"
 											isSelected={selectedMedium === type}
 											onClick={() =>
@@ -909,7 +909,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
+											type={type as "D" | "E" | "N" | "O" | "ALL" | "X"}
 											size="lg"
 											isSelected={selectedLarge === type}
 											onClick={() =>
@@ -929,7 +929,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
+											type={type as "D" | "E" | "N" | "O" | "ALL" | "X"}
 											isSelected
 										/>
 									))}
@@ -945,7 +945,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
+											type={type as "D" | "E" | "N" | "O" | "ALL" | "X"}
 											onClick={() => console.log(`${type} clicked`)}
 										/>
 									))}
@@ -961,7 +961,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
+											type={type as "D" | "E" | "N" | "O" | "ALL" | "X"}
 											variant="outline"
 										/>
 									))}
@@ -977,7 +977,7 @@ const Playgrounds: React.FC = () => {
 									{badgeTypes.map((type) => (
 										<DutyBadgeEng
 											key={type}
-											type={type as "D" | "E" | "N" | "O" | "default" | "ALL"}
+											type={type as "D" | "E" | "N" | "O" | "ALL" | "X"}
 											variant="letter"
 										/>
 									))}

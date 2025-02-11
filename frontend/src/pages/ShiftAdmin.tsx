@@ -6,22 +6,20 @@ import HistoryList from "../components/organisms/HistoryList";
 import RuleCheckList from "../components/organisms/RuleCheckList";
 import { useState } from "react";
 import { IoMdMenu } from "react-icons/io";
-import useUserAuthStore from "../store/userAuthStore";
 
 const ShiftAdmin = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const { userInfo } = useUserAuthStore();
 
 	return (
 		<div className="w-full min-h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
 			<div className="hidden lg:block w-[238px] shrink-0">
-				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
+				<Sidebar userType="HN" />
 			</div>
 
 			{/* 모바일 Sidebar */}
 			<MSidebar
-				userType={userInfo?.role as "HN" | "RN"}
+				userType="HN"
 				isOpen={isSidebarOpen}
 				onClose={() => setIsSidebarOpen(false)}
 			/>
