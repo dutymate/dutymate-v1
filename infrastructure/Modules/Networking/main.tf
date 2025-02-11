@@ -140,3 +140,29 @@ resource "aws_vpc_endpoint" "vpce_s3" {
     Name = "dutymate-vpce-s3"
   }
 }
+
+resource "aws_vpc_endpoint" "vpec_ecr_api" {
+  vpc_id              = aws_vpc.vpc.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.ap-northeast-2.ecr.api"
+  private_dns_enabled = true
+  subnet_ids          = aws_subnet.private_subnets[*].id
+  security_group_ids  = [var.sg_vpce_ecr_id]
+
+  tags = {
+    Name = "dutymate-vpce-ecr-api"
+  }
+}
+
+resource "aws_vpc_endpoint" "vpec_ecr_dkr" {
+  vpc_id              = aws_vpc.vpc.id
+  vpc_endpoint_type   = "Interface"
+  service_name        = "com.amazonaws.ap-northeast-2.ecr.dkr"
+  private_dns_enabled = true
+  subnet_ids          = aws_subnet.private_subnets[*].id
+  security_group_ids  = [var.sg_vpce_ecr_id]
+
+  tags = {
+    Name = "dutymate-vpce-ecr-dkr"
+  }
+}

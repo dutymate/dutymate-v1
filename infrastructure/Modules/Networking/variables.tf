@@ -17,3 +17,7 @@ variable "private_subnet_cidr_block" {
 variable "database_subnet_cidr_block" {
   type = list(string)
 }
+
+variable "sg_vpce_ecr_id" {
+  type = string
+}

@@ -9,6 +9,7 @@ module "networking" {
   public_subnet_cidr_block   = var.public_subnet_cidr_block
   private_subnet_cidr_block  = var.private_subnet_cidr_block
   database_subnet_cidr_block = var.database_subnet_cidr_block
+  sg_vpce_ecr_id             = module.security_group.sg_vpce_ecr_id
 }
 
 module "security_group" {
