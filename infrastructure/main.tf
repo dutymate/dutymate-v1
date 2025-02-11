@@ -65,8 +65,9 @@ module "documentdb" {
 }
 
 module "s3" {
-  source     = "./Modules/S3"
-  vpce_s3_id = module.networking.vpce_s3_id
+  source                    = "./Modules/S3"
+  vpce_s3_id                = module.networking.vpce_s3_id
+  frontend_distribution_arn = module.cloudfront.frontend_distribution_arn
 }
 
 module "ecr" {
@@ -79,10 +80,19 @@ module "acm" {
 }
 
 module "route53" {
-  source                             = "./Modules/Route53"
-  api_cert_domain_validation_options = module.acm.api_cert_domain_validation_options
-  alb_dns_name                       = module.alb.alb_dns_name
-  alb_zone_id                        = module.alb.alb_zone_id
-  route53_zone_id                    = var.route53_zone_id
-  domain_name                        = var.domain_name
+  source                                  = "./Modules/Route53"
+  frontend_cert_domain_validation_options = module.acm.frontend_cert_domain_validation_options
+  frontend_distribution_domain_name       = module.cloudfront.frontend_distribution_domain_name
+  frontend_distribution_hosted_zone_id    = module.cloudfront.frontend_distribution_hosted_zone_id
+  api_cert_domain_validation_options      = module.acm.api_cert_domain_validation_options
+  alb_dns_name                            = module.alb.alb_dns_name
+  alb_zone_id                             = module.alb.alb_zone_id
+  route53_zone_id                         = var.route53_zone_id
+  domain_name                             = var.domain_name
+}
+
+module "cloudfront" {
+  source                               = "./Modules/CloudFront"
+  frontend_bucket_regional_domain_name = module.s3.frontend_bucket_regional_domain_name
+  frontend_cert_arn                    = module.acm.frontend_cert_arn
 }
