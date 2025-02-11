@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import net.dutymate.api.entity.Hospital;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
@@ -20,6 +21,7 @@ import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.ward.dto.VirtualNameRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
+import net.dutymate.api.ward.repository.HospitalRepository;
 import net.dutymate.api.ward.repository.WardRepository;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
@@ -37,6 +39,7 @@ public class WardService {
 	private final WardScheduleRepository wardScheduleRepository;
 	private final InitialDutyGenerator initialDutyGenerator;
 	private final MemberRepository memberRepository;
+	private final HospitalRepository hospitalRepository;
 
 	@Transactional
 	public void createWard(WardRequestDto requestWardDto, Member member) {
@@ -241,5 +244,18 @@ public class WardService {
 
 		// 이름 변경
 		changeMember.changeName(virtualNameRequestDto.getName());
+	}
+
+	public void findHospitalName(String query) {
+		List<Hospital> hospitalList = hospitalRepository.findByHospitalNameContaining(query);
+
+		if (hospitalList.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당하는 병원이 없습니다.");
+		}
+
+		if (hospitalList.size() > 5) {
+			hospitalList = hospitalList.subList(0, 5);
+		}
+
 	}
 }

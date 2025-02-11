@@ -1,7 +1,5 @@
 package net.dutymate.api.wardmember.dto;
 
-import net.dutymate.api.enumclass.SkillLevel;
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,7 +8,7 @@ import lombok.Data;
 public class NurseInfoRequestDto {
 
 	private String shift;
-	private SkillLevel skillLevel;
+	private String skillLevel;
 	private String memo;
 	private String role;
 
