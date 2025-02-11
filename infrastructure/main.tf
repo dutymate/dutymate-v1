@@ -30,7 +30,7 @@ module "alb" {
   vpc_id            = module.networking.vpc_id
   public_subnets    = module.networking.public_subnets
   sg_alb_id         = module.security_group.sg_alb_id
-  acm_cert_arn      = module.route53.acm_cert_arn
+  api_cert_arn      = module.acm.api_cert_arn
   health_check_path = var.health_check_path
 }
 
@@ -73,10 +73,16 @@ module "ecr" {
   source = "./Modules/ECR"
 }
 
+module "acm" {
+  source      = "./Modules/ACM"
+  domain_name = var.domain_name
+}
+
 module "route53" {
-  source          = "./Modules/Route53"
-  alb_dns_name    = module.alb.alb_dns_name
-  alb_zone_id     = module.alb.alb_zone_id
-  route53_zone_id = var.route53_zone_id
-  domain_name     = var.domain_name
+  source                             = "./Modules/Route53"
+  api_cert_domain_validation_options = module.acm.api_cert_domain_validation_options
+  alb_dns_name                       = module.alb.alb_dns_name
+  alb_zone_id                        = module.alb.alb_zone_id
+  route53_zone_id                    = var.route53_zone_id
+  domain_name                        = var.domain_name
 }

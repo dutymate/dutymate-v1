@@ -1,21 +1,6 @@
-resource "aws_acm_certificate" "acm_cert" {
-  domain_name               = var.domain_name
-  subject_alternative_names = ["api.${var.domain_name}"]
-  validation_method         = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  tags = {
-    Name = "dutymate-acm-cert"
-  }
-}
-
-
-resource "aws_route53_record" "cert_validation" {
+resource "aws_route53_record" "api_cert_validation" {
   for_each = {
-    for dvo in aws_acm_certificate.acm_cert.domain_validation_options : dvo.domain_name => {
+    for dvo in var.api_cert_domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
