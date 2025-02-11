@@ -13,6 +13,8 @@ interface ProfileStore {
 		grade: number;
 	}) => Promise<void>;
 	checkNickname: (nickname: string) => Promise<boolean>;
+	uploadProfileImage: (file: File) => Promise<void>;
+	deleteProfileImage: () => Promise<void>;
 }
 
 const useProfileStore = create<ProfileStore>((set) => ({
@@ -61,6 +63,33 @@ const useProfileStore = create<ProfileStore>((set) => ({
 			throw error;
 		}
 	},
+
+	uploadProfileImage: async (file: File) => {
+		try {
+			await profileService.uploadProfileImage(file);
+			const updatedProfile = await profileService.getProfile();
+			set({ profile: updatedProfile, error: null });
+		} catch (error) {
+			console.error("프로필 이미지 업로드 에러:", error);
+			throw error;
+		}
+	},
+
+	deleteProfileImage: async () => {
+		try {
+			await profileService.deleteProfileImage();
+			const updatedProfile = await profileService.getProfile();
+			set({ profile: updatedProfile, error: null });
+		} catch (error) {
+			console.error("프로필 이미지 삭제 에러:", error);
+			throw error;
+		}
+	},
 }));
 
+// {
+//   name: "user-auth-storage",
+//   storage: createJSONStorage(() => sessionStorage), // localStorage 대신 sessionStorage 사용
+// }, 또는 userAuthStore랑 프로필 스토어랑 합치기
+//  사이드바 아이콘을 세션 스토리지에 profileImg 업로드하기
 export default useProfileStore;

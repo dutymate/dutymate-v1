@@ -1,14 +1,21 @@
-import { FaUserCircle } from "react-icons/fa";
+import { Icon } from "../atoms/Icon";
 import { Button } from "../atoms/Button";
 import { MypageInput, MypageSelect } from "../atoms/Input";
 import { MypageToggleButton } from "../atoms/ToggleButton";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import useProfileStore from "../../store/profileStore";
 import { toast } from "react-toastify";
+import debounce from "lodash/debounce";
 
 const MypageProfile = () => {
-	const { profile, fetchProfile, updateProfile, checkNickname } =
-		useProfileStore();
+	const {
+		profile,
+		fetchProfile,
+		updateProfile,
+		checkNickname,
+		uploadProfileImage,
+		deleteProfileImage,
+	} = useProfileStore();
 	const [selectedImageOption, setSelectedImageOption] = useState(0);
 	const [formData, setFormData] = useState({
 		name: "",
@@ -20,6 +27,9 @@ const MypageProfile = () => {
 		isValid: boolean | null;
 		message: string;
 	}>({ isValid: null, message: "" });
+
+	// 이미지 업로드 input ref
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		fetchProfile();
@@ -69,34 +79,96 @@ const MypageProfile = () => {
 		{ value: "10", label: "10년차" },
 	];
 
-	const handleNicknameChange = async (
-		e: React.ChangeEvent<HTMLInputElement>,
-	) => {
+	const debouncedCheckNickname = useCallback(
+		debounce(async (nickname: string) => {
+			if (nickname === profile?.nickname) {
+				setNicknameStatus({ isValid: null, message: "" });
+				return;
+			}
+
+			if (nickname.length > 0) {
+				try {
+					const isAvailable = await checkNickname(nickname);
+					setNicknameStatus({
+						isValid: isAvailable,
+						message: isAvailable
+							? "사용 가능한 닉네임입니다."
+							: "이미 사용 중인 닉네임입니다.",
+					});
+				} catch (error) {
+					setNicknameStatus({
+						isValid: false,
+						message: "닉네임 확인 중 오류가 발생했습니다.",
+					});
+				}
+			} else {
+				setNicknameStatus({ isValid: null, message: "" });
+			}
+		}, 500),
+		[profile, checkNickname],
+	);
+
+	const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newNickname = e.target.value;
 		setFormData({ ...formData, nickname: newNickname });
+		debouncedCheckNickname(newNickname);
+	};
 
-		if (newNickname === profile?.nickname) {
-			setNicknameStatus({ isValid: null, message: "" });
+	useEffect(() => {
+		return () => {
+			debouncedCheckNickname.cancel();
+		};
+	}, [debouncedCheckNickname]);
+
+	// 이미지 토글 처리
+	const handleImageOptionChange = async (index: number) => {
+		try {
+			if (index === 0) {
+				// 기본이미지 선택
+				await deleteProfileImage();
+				setSelectedImageOption(index); // 상태 업데이트를 성공 후에 진행
+				toast.success("프로필 이미지가 삭제되었습니다.");
+			} else {
+				// 사진 등록 선택
+				setSelectedImageOption(index);
+				fileInputRef.current?.click();
+			}
+		} catch (error) {
+			if (error instanceof Error) {
+				toast.error(error.message);
+			} else {
+				toast.error("프로필 이미지 처리 중 오류가 발생했습니다.");
+			}
+		}
+	};
+
+	// 파일 선택 처리
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		// 파일 형식 검사
+		const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+		if (!validTypes.includes(file.type)) {
+			toast.error("JPG, PNG, JPEG 형식의 이미지만 업로드 가능합니다.");
 			return;
 		}
 
-		if (newNickname.length > 0) {
-			try {
-				const isAvailable = await checkNickname(newNickname);
-				setNicknameStatus({
-					isValid: isAvailable,
-					message: isAvailable
-						? "사용 가능한 닉네임입니다."
-						: "이미 사용 중인 닉네임입니다.",
-				});
-			} catch (error) {
-				setNicknameStatus({
-					isValid: false,
-					message: "닉네임 확인 중 오류가 발생했습니다.",
-				});
+		try {
+			await uploadProfileImage(file);
+			await fetchProfile(); // 명시적으로 프로필 새로고침
+			toast.success("프로필 이미지가 업로드되었습니다.");
+		} catch (error) {
+			if (error instanceof Error) {
+				toast.error(error.message);
+			} else {
+				toast.error("이미지 업로드 중 오류가 발생했습니다.");
 			}
-		} else {
-			setNicknameStatus({ isValid: null, message: "" });
+		}
+
+		// 파일 input 초기화
+		if (fileInputRef.current) {
+			fileInputRef.current.value = "";
 		}
 	};
 
@@ -116,18 +188,27 @@ const MypageProfile = () => {
 							alt="프로필 이미지"
 							className="w-20 h-20 lg:w-24 lg:h-24 rounded-full object-cover"
 							onError={(e) => {
-								e.currentTarget.onerror = null; // 에러 핸들러 제거
-								e.currentTarget.style.display = "none"; // 이미지 숨기기
-								// FaUserCircle이 대신 표시됨
+								e.currentTarget.onerror = null;
+								e.currentTarget.style.display = "none";
 							}}
 						/>
 					) : (
-						<FaUserCircle className="w-20 h-20 lg:w-24 lg:h-24 text-gray-400" />
+						<Icon
+							name="user"
+							className="w-20 h-20 lg:w-24 lg:h-24 text-gray-400"
+						/>
 					)}
+					<input
+						type="file"
+						ref={fileInputRef}
+						className="hidden"
+						accept=".jpg,.jpeg,.png"
+						onChange={handleFileChange}
+					/>
 					<MypageToggleButton
 						options={[{ text: "기본이미지" }, { text: "사진 등록" }]}
 						selectedIndex={selectedImageOption}
-						onChange={(index) => setSelectedImageOption(index)}
+						onChange={handleImageOptionChange}
 					/>
 				</div>
 				{/* 오른쪽 정보 */}

@@ -50,4 +50,34 @@ export const profileService = {
 				throw error;
 			});
 	},
+
+	// 프로필 이미지 업로드
+	uploadProfileImage: (file: File) => {
+		const formData = new FormData();
+		formData.append("file", file);
+
+		return axiosInstance
+			.post("/member/image", formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			})
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.response?.status === 401) {
+					throw new Error("로그인 토큰이 만료되었습니다.");
+				}
+				throw error;
+			});
+	},
+
+	// 프로필 이미지 삭제
+	deleteProfileImage: () => {
+		return axiosInstance.delete("/member/image").catch((error) => {
+			if (error.response?.status === 401) {
+				throw new Error("로그인 토큰이 만료되었습니다.");
+			}
+			throw error;
+		});
+	},
 };
