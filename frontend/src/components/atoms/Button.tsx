@@ -17,18 +17,21 @@ interface ButtonProps {
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
-	xs: `h-[1.6rem] 
-      rounded-[6px] px-2.5 py-0.5 
-      text-[0.75rem]`, // 10px
-	sm: `h-[1.5625rem] sm:h-[2.5rem] 
-      rounded-[9px] px-2 py-1 
-      text-[0.6875rem] sm:text-sm`, // 모바일: 11px, 데스크톱: 12px
-	md: `h-[1.5625rem] sm:h-[2.5rem] 
-      rounded-[9px] px-2 py-1 
-      text-xs sm:text-base`, // 모바일: 12px, 데스크톱: 14px
-	lg: `h-[1.875rem] sm:h-[3rem] 
-      rounded-[9px] px-2.5 py-1.5 
-      text-xs sm:text-lg`, // 모바일: 12px, 데스크톱: 14px
+  xs: `h-[1.5rem] sm:h-[2rem] 
+      rounded-[4px] px-2 py-0.5 
+      text-[0.75rem] sm:text-sm`, // 모바일: 12px, 데스크톱: 14px
+
+  sm: `h-[1.75rem] sm:h-[1.9rem] 
+      rounded-[6px] px-2.5 py-1 
+      text-sm sm:text-base`, // 모바일: 14px, 데스크톱: 16px
+
+  md: `h-[2rem] sm:h-[3rem] 
+      rounded-[8px] px-3 py-1.5 
+      text-base sm:text-lg`, // 모바일: 16px, 데스크톱: 18px
+
+  lg: `h-[2.5rem] sm:h-[3.5rem] 
+      rounded-[10px] px-3.5 py-2 
+      text-lg sm:text-xl`, // 모바일: 18px, 데스크톱: 20px
 };
 
 const widthStyles: Record<ButtonWidth, Record<ButtonSize, string>> = {

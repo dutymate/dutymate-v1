@@ -1,40 +1,46 @@
-// RuleCheckList.tsx
+interface RuleCheckListProps {
+  issues: {
+    name: string;
+    startDate: number;
+    endDate: number;
+    endDateShift: string;
+    message: string;
+  }[];
+}
 
-const RuleCheckList = () => {
-	const ruleViolationData = Array(5)
-		.fill(null)
-		.map((_, index) => ({
-			id: index + 1,
-			name: "김현진",
-			date: "1월 2일",
-			rule: "Day 근무",
-			message: "연속 근무는 최대 5일을 초과할 수 없습니다.",
-		}));
+const RuleCheckList = ({ issues }: RuleCheckListProps) => {
+  return (
+    <div className="flex w-1/2 max-w-[600px] bg-white rounded-xl p-5 shadow-lg relative overflow-hidden">
+      {/* 헤더 고정 */}
+      <div className="flex items-center justify-center pr-4 sticky top-0 bg-white z-10">
+        <h2
+          className="text-md font-bold text-foreground"
+          style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
+        >
+          규칙 위반
+        </h2>
+      </div>
 
-	return (
-		<div className="flex-1 bg-white rounded-xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.1)] h-[280px] overflow-y-auto custom-scrollbar">
-			<div className="flex justify-center items-center mb-4">
-				<h2 className="text-xl font-bold text-gray-700">규칙 위반</h2>
-			</div>
-			<div className="space-y-3">
-				{ruleViolationData.map((item) => (
-					<div key={item.id} className="flex flex-col gap-1">
-						<div className="flex items-center gap-3">
-							<div className="flex items-center gap-2">
-								<span className="bg-primary-20 px-2 py-0.5 rounded-md">
-									<span className="font-bold">[{item.name}]</span> 규칙 위반
-								</span>
-								<span className="text-gray-900 text-sm">
-									{item.date} {item.rule}
-								</span>
-							</div>
-						</div>
-						<div className="text-red-500 text-sm">{item.message}</div>
-					</div>
-				))}
-			</div>
-		</div>
-	);
+      {/* 블러 효과 & 스크롤 - min-w-0 추가하여 flex 컨테이너 크기 조절 문제 해결 */}
+      <div className="relative h-[140px] flex-1 w-full min-w-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 hover:scrollbar-thumb-gray-500">
+        <div className="space-y-3">
+          {issues.map((item, index) => (
+            <div key={index} className="flex items-center gap-3">
+              <span className="bg-primary-bg px-1.5 py-0.75 rounded-md">
+                <span className="font-medium text-sm">{item.name}</span>
+              </span>
+              <span className="text-foreground text-sm">
+                {item.startDate}일 - {item.endDateShift} 근무
+              </span>
+              <div className="text-duty-evening-dark text-sm text-red-500">
+                {item.message}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default RuleCheckList;

@@ -83,22 +83,5 @@ axiosInstance.interceptors.response.use(
 	},
 );
 
-/**
- * 사용 예시:
- *
- * import axiosInstance from '../lib/axios';
- *
- * // GET 요청
- * const getData = async () => {
- *   const response = await axiosInstance.get('/endpoint');
- *   return response.data;
- * };
- *
- * // POST 요청
- * const postData = async (data) => {
- *   const response = await axiosInstance.post('/endpoint', data);
- *   return response.data;
- * };
- */
 
 export default axiosInstance;
