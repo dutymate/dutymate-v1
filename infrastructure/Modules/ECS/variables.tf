@@ -13,3 +13,7 @@ variable "target_group_arn" {
 variable "ecs_instance_profile_name" {
   type = string
 }
+
+variable "ecr_repository_url" {
+  type = string
+}

@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   container_definitions = jsonencode([
     {
       name      = "dutymate-container",
-      image     = "dutymate/dutymate-api:latest",
+      image     = "${var.ecr_repository_url}:latest",
       memory    = 512,
       cpu       = 256,
       essential = true,

@@ -40,6 +40,7 @@ module "ecs" {
   sg_ecs_id                 = module.security_group.sg_ecs_id
   target_group_arn          = module.alb.target_group_arn
   ecs_instance_profile_name = module.iam.ecs_instance_profile_name
+  ecr_repository_url        = module.ecr.ecr_repository_url
 }
 
 module "rds" {
