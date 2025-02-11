@@ -36,7 +36,11 @@ import net.dutymate.api.member.dto.MypageResponseDto;
 import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.member.util.JwtUtil;
+import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
+import net.dutymate.api.wardmember.service.WardMemberService;
+import net.dutymate.api.wardschedules.collections.WardSchedule;
+import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
 import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +57,8 @@ public class MemberService {
 	private final JwtUtil jwtUtil;
 	private final WardMemberRepository wardMemberRepository;
 	private final S3Client s3Client;
+	private final WardScheduleRepository wardScheduleRepository;
+	private final WardMemberService wardMemberService;
 
 	@Value("${kakao.client.id}")
 	private String kakaoClientId;
@@ -333,7 +339,7 @@ public class MemberService {
 	}
 
 	// 파일 업로드
-
+	@Transactional
 	public void uploadProfileImg(MultipartFile multipartFile, Member member, String dirName) {
 
 		if (multipartFile == null || multipartFile.isEmpty()) {
@@ -362,8 +368,8 @@ public class MemberService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "파일 업로드 중 오류가 발생했습니다.");
 		}
 	}
-	// 파일명을 난수화하기 위해 UUID 활용
 
+	// 파일명을 난수화하기 위해 UUID 활용
 	private String createFileName(String fileName, String dirName) {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		String extension = getFileExtension(fileName);
@@ -378,7 +384,7 @@ public class MemberService {
 	}
 
 	// 프로필 이미지 삭제 -> 기본 이미지로 변경
-
+	@Transactional
 	public void deleteProfileImg(Member member) {
 		try {
 			String fileUrl = member.getProfileImg();
@@ -418,6 +424,7 @@ public class MemberService {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
 
 			ward.removeWardMember(wardMember);
+			deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
 			return;
 		}
 
@@ -437,7 +444,66 @@ public class MemberService {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
 
 			ward.removeWardMember(wardMember); // 병동에서 제거
+			deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
 		}
 	}
 
+	// 회원 탈퇴하기
+	@Transactional
+	public void deleteMember(Member member) {
+
+		Ward ward = member.getWardMember().getWard();
+
+		// RN이면 바로 회원 탈퇴 가능
+		if (member.getRole() == Role.RN) {
+			if (member.getWardMember() != null) {
+				ward.removeWardMember(member.getWardMember());
+			}
+			memberRepository.delete(member);
+			deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
+			return;
+		}
+
+		if (member.getRole() == Role.HN) {
+			List<WardMember> wardMemberList = wardMemberRepository.findAllByWard(ward);
+
+			// 병동 내 다른 HN이 있는지 확인
+			boolean hasOtherHN = wardMemberList.stream()
+				.anyMatch(wardMember ->
+					!wardMember.getMember().getMemberId().equals(member.getMemberId())
+						&& wardMember.getMember().getRole() == Role.HN);
+
+			if (!hasOtherHN) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 멤버에게 관리자 권한 부여 후, 탈퇴가 가능합니다.");
+			}
+
+			if (member.getWardMember() != null) {
+				ward.removeWardMember(member.getWardMember());
+			}
+			memberRepository.delete(member);
+			deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
+		}
+	}
+
+	// MongoDB 에서 내보내는 wardmember 찾아서 삭제 (이전 달은 상관 X)
+	public void deleteWardMemberInMongo(Member member, Ward ward) {
+		// 이번달 듀티에서 삭제
+		YearMonth yearMonth = YearMonth.nowYearMonth();
+
+		WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(),
+			yearMonth.year(), yearMonth.month()).orElse(null);
+
+		if (currMonthSchedule != null) {
+			wardMemberService.deleteWardMemberDuty(currMonthSchedule, member);
+		}
+
+		// 다음달 듀티에서 삭제
+		YearMonth nextYearMonth = yearMonth.nextYearMonth();
+		WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(),
+			nextYearMonth.year(), nextYearMonth.month()).orElse(null);
+
+		if (nextMonthSchedule != null) {
+			wardMemberService.deleteWardMemberDuty(nextMonthSchedule, member);
+		}
+	}
 }

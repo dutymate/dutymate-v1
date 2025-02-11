@@ -84,7 +84,7 @@ public class WardMemberService {
 		}
 	}
 
-	private void deleteWardMemberDuty(WardSchedule existingSchedule, Member member) {
+	public void deleteWardMemberDuty(WardSchedule existingSchedule, Member member) {
 
 		// 마지막 nowIdx가 가리키는 Duty 가져오기
 		WardSchedule.Duty currDuty = existingSchedule.getDuties().get(existingSchedule.getNowIdx());

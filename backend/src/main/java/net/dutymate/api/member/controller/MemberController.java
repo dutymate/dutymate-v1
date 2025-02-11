@@ -114,4 +114,10 @@ public class MemberController {
 		memberService.exitWard(member);
 		return ResponseEntity.ok().build();
 	}
+
+	@DeleteMapping
+	public ResponseEntity<?> deleteMember(@Auth Member member) {
+		memberService.deleteMember(member);
+		return ResponseEntity.ok().build();
+	}
 }
