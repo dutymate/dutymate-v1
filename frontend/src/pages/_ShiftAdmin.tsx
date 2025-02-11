@@ -16,19 +16,27 @@ const DutyManagement = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	const fetchDutyInfo = async (year?: number, month?: number, historyIdx?: number) => {
+	const fetchDutyInfo = async (
+		year?: number,
+		month?: number,
+		historyIdx?: number,
+	) => {
 		try {
 			setLoading(true);
 			const params: Record<string, any> = {};
 			if (year) params.year = year;
 			if (month) params.month = month;
-			if (typeof historyIdx === 'number') params.history = historyIdx;
-			
-			const data = await dutyService.getDuty(Object.keys(params).length > 0 ? params : undefined);
+			if (typeof historyIdx === "number") params.history = historyIdx;
+
+			const data = await dutyService.getDuty(
+				Object.keys(params).length > 0 ? params : undefined,
+			);
 			setDutyInfo(data);
 			setError(null);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "Failed to fetch duty info");
+			setError(
+				err instanceof Error ? err.message : "Failed to fetch duty info",
+			);
 		} finally {
 			setLoading(false);
 		}
@@ -67,7 +75,7 @@ const DutyManagement = () => {
 				</button>
 
 				<div className="flex flex-col gap-3 pb-8">
-					<ShiftAdminTable 
+					<ShiftAdminTable
 						dutyData={dutyInfo.duty}
 						invalidCnt={dutyInfo.invalidCnt}
 						year={dutyInfo.year}
@@ -76,7 +84,12 @@ const DutyManagement = () => {
 					/>
 					<div className="flex flex-col lg:flex-row gap-4">
 						<RuleCheckList issues={dutyInfo.issues} />
-						<HistoryList histories={dutyInfo.history} onRevert={(historyIdx) => fetchDutyInfo(undefined, undefined, historyIdx)} />
+						<HistoryList
+							histories={dutyInfo.history}
+							onRevert={(historyIdx) =>
+								fetchDutyInfo(undefined, undefined, historyIdx)
+							}
+						/>
 					</div>
 				</div>
 			</div>

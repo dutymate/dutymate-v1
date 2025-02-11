@@ -1,7 +1,7 @@
 import axiosInstance from "../lib/axios";
 
 // 타입 정의
-interface DayDuty {
+export interface DayDuty {
 	myShift: "D" | "E" | "N" | "O";
 	otherShifts: {
 		grade: number;
@@ -10,7 +10,7 @@ interface DayDuty {
 	}[];
 }
 
-interface MyDuty {
+export interface MyDuty {
 	year: number;
 	month: number;
 	prevShifts: string; // 전달 일주일
@@ -18,7 +18,7 @@ interface MyDuty {
 	shifts: string; // 이번달 근무표
 }
 
-interface DutyHistory {
+export interface DutyHistory {
 	idx: number;
 	memberId: number;
 	name: string;
@@ -28,7 +28,7 @@ interface DutyHistory {
 	isAutoCreated: boolean;
 }
 
-interface DutyIssue {
+export interface DutyIssue {
 	name: string;
 	startDate: number;
 	endDate: number;
@@ -36,7 +36,7 @@ interface DutyIssue {
 	message: string;
 }
 
-interface WardDuty {
+export interface WardDuty {
 	id: string;
 	year: number;
 	month: number;
@@ -60,10 +60,10 @@ export interface DutyInfo {
 		shifts: string;
 	}[];
 	issues: DutyIssue[];
-	history: DutyHistory[];
+	histories: DutyHistory[];
 }
 
-interface DutyUpdateRequest {
+export interface DutyUpdateRequest {
 	year: number;
 	month: number;
 	history: {
@@ -250,15 +250,29 @@ export const dutyService = {
 	 * 근무표 조회/되돌리기
 	 * @param params - 년도, 월, 히스토리 인덱스 (선택)
 	 */
-	getDuty: () => {
+	getDuty: (params?: {
+		year?: number;
+		month?: number;
+		history?: number;
+	}) => {
 		return axiosInstance
-			.get("/duty")
+			.get("/duty", { params })
 			.then((response) => {
-				console.log('Raw response:', response);
 				return response.data;
 			})
 			.catch((error) => {
-				console.error('Error details:', error);
+				if (error.code === "ERR_NETWORK") {
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
 				throw error;
 			});
 	},

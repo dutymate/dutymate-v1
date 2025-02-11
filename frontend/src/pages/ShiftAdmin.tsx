@@ -1,26 +1,107 @@
-import { useEffect } from "react";
+import Sidebar from "../components/organisms/WSidebar";
+import MSidebar from "../components/organisms/MSidebar";
+import ShiftAdminTable from "../components/organisms/ShiftAdminTable";
+import RuleCheckList from "../components/organisms/RuleCheckList";
+import HistoryList from "../components/organisms/HistoryList";
+import { useState, useEffect } from "react";
+import { IoMdMenu } from "react-icons/io";
+import useUserAuthStore from "../store/userAuthStore";
 import { dutyService } from "../services/dutyService";
-import userAuthStore from "@/store/userAuthStore";
+import type { DutyInfo } from "../services/dutyService";
 
 const DutyManagement = () => {
-	useEffect(() => {
-		const fetchDuty = async () => {
-			try {
-				// 요청 직전의 토큰 상태 확인
-				const token = userAuthStore.getState().userInfo?.token; // 또는 당신의 토큰 저장소
-				console.log('Current token:', token);
-				
-				const response = await dutyService.getDuty();
-				console.log('Duty Response:', response);
-			} catch (error) {
-				console.error('Error fetching duty:', error);
-			}
-		};
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const { userInfo } = useUserAuthStore();
+	const [dutyInfo, setDutyInfo] = useState<DutyInfo | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
-		fetchDuty();
+	const fetchDutyInfo = async (
+		year?: number,
+		month?: number,
+		historyIdx?: number,
+	) => {
+		try {
+			setLoading(true);
+			const params: Record<string, any> = {};
+
+			if (year) params.year = year;
+			if (month) params.month = month;
+			if (typeof historyIdx === "number") params.history = historyIdx;
+
+			const data = await dutyService.getDuty(params);
+
+			// history 데이터가 있는지 확인
+			if (!data.histories) {
+				console.warn("No history data available");
+			}
+
+			setDutyInfo(data);
+			setError(null);
+		} catch (err) {
+			console.error("Error fetching duty info:", err);
+			setError(
+				err instanceof Error ? err.message : "Failed to fetch duty info",
+			);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		fetchDutyInfo();
 	}, []);
 
-	return <div>Loading...</div>;
+	if (loading) return <div>Loading...</div>;
+	if (error) return <div>Error: {error}</div>;
+	if (!dutyInfo) return null;
+
+	return (
+		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
+			{/* 데스크톱 Sidebar */}
+			<div className="hidden lg:block w-[238px] shrink-0">
+				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
+			</div>
+
+			{/* 모바일 Sidebar */}
+			<MSidebar
+				userType={userInfo?.role as "HN" | "RN"}
+				isOpen={isSidebarOpen}
+				onClose={() => setIsSidebarOpen(false)}
+			/>
+
+			{/* 메인 컨텐츠 영역 */}
+			<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 h-[calc(100vh-1rem)] lg:h-screen overflow-y-auto">
+				{/* 모바일 메뉴 버튼 */}
+				<button
+					onClick={() => setIsSidebarOpen(true)}
+					className="lg:hidden mb-4 p-2 hover:bg-gray-100 rounded-lg"
+				>
+					<IoMdMenu className="w-6 h-6 text-gray-600" />
+				</button>
+
+				<div className="flex flex-col gap-3 pb-8">
+					<ShiftAdminTable
+						dutyData={dutyInfo.duty}
+						invalidCnt={dutyInfo.invalidCnt}
+						year={dutyInfo.year}
+						month={dutyInfo.month}
+						onUpdate={fetchDutyInfo}
+						issues={dutyInfo.issues}
+					/>
+					<div className="flex flex-col lg:flex-row gap-4">
+						<RuleCheckList issues={dutyInfo.issues} />
+						<HistoryList
+							histories={dutyInfo.histories}
+							onRevert={(historyIdx) =>
+								fetchDutyInfo(undefined, undefined, historyIdx)
+							}
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default DutyManagement;

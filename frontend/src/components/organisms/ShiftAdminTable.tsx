@@ -7,21 +7,22 @@ import { Icon } from "../atoms/Icon";
 import { ProgressChecker } from "../atoms/ProgressChecker";
 import { useState, useRef, useEffect } from "react";
 import { dutyService } from "../../services/dutyService";
+import { toast } from "react-toastify";
 
 // 월별 주말과 공휴일 계산 유틸리티 함수 수정
 const getWeekendAndHolidayPairs = (year: number, month: number): number[][] => {
 	const pairs: number[][] = [];
 
-  // 다른 달의 경우 기존 로직 사용
-  const daysInMonth = new Date(year, month, 0).getDate();
-  for (let day = 1; day <= daysInMonth; day++) {
-    const date = new Date(year, month - 1, day);
-    const dayOfWeek = date.getDay();
-    if (dayOfWeek === 6) {
-      pairs.push([day, Math.min(day + 1, daysInMonth)]);
-    }
-  }
-	
+	// 다른 달의 경우 기존 로직 사용
+	const daysInMonth = new Date(year, month, 0).getDate();
+	for (let day = 1; day <= daysInMonth; day++) {
+		const date = new Date(year, month - 1, day);
+		const dayOfWeek = date.getDay();
+		if (dayOfWeek === 6) {
+			pairs.push([day, Math.min(day + 1, daysInMonth)]);
+		}
+	}
+
 	return pairs;
 };
 
@@ -37,38 +38,45 @@ interface ShiftAdminTableProps {
 	year: number;
 	month: number;
 	onUpdate: (year?: number, month?: number, historyIdx?: number) => void;
+	issues: {
+		name: string;
+		startDate: number;
+		endDate: number;
+		endDateShift: string;
+		message: string;
+	}[];
 }
 
-const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftAdminTableProps) => {
+const ShiftAdminTable = ({
+	dutyData,
+	invalidCnt,
+	year,
+	month,
+	onUpdate,
+	issues,
+}: ShiftAdminTableProps) => {
 	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
 	const ruleButtonRef = useRef<HTMLButtonElement>(null);
-	const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
-	
+	const [selectedCell, setSelectedCell] = useState<{
+		row: number;
+		col: number;
+	} | null>(null);
+
 	// 근무표 데이터 변환
-	const nurses = dutyData.map(nurse => nurse.name);
-	const duties = dutyData.map(nurse => nurse.shifts.split(''));
-	const prevShifts = dutyData.map(nurse => nurse.prevShifts.split(''));
-
-	// 근무 변경을 위한 상태 추가
-	const [isEditing, setIsEditing] = useState(false);
-	const [currentShift, setCurrentShift] = useState<"D" | "E" | "N" | "O" | "X">("X");
-
-	// 근무 순환 함수
-	const getNextShift = (current: string): "D" | "E" | "N" | "O" | "X" => {
-		const shifts: ("D" | "E" | "N" | "O" | "X")[] = ["D", "E", "N", "O", "X"];
-		const currentIndex = shifts.indexOf(current as "D" | "E" | "N" | "O" | "X");
-		return shifts[(currentIndex + 1) % shifts.length];
-	};
+	const nurses = dutyData.map((nurse) => nurse.name);
+	const duties = dutyData.map((nurse) => nurse.shifts.split(""));
+	const prevShifts = dutyData.map((nurse) => nurse.prevShifts.split(""));
 
 	// 근무 변경 핸들러
-	const handleShiftChange = async (nurseIndex: number, dayIndex: number) => {
-		if (!selectedCell) return;
-
+	const handleShiftChange = async (
+		nurseIndex: number,
+		dayIndex: number,
+		shift: "D" | "E" | "N" | "O" | "X",
+	) => {
 		const nurse = dutyData[nurseIndex];
-		const shifts = nurse.shifts.split('');
+		const shifts = nurse.shifts.split("");
 		const currentShift = shifts[dayIndex];
-		const nextShift = getNextShift(currentShift);
-		
+
 		try {
 			await dutyService.updateDuty({
 				year,
@@ -77,44 +85,48 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 					memberId: nurse.memberId,
 					name: nurse.name,
 					before: currentShift,
-					after: nextShift,
+					after: shift,
 					modifiedDay: dayIndex + 1,
-					isAutoCreated: false
-				}
+					isAutoCreated: false,
+				},
 			});
-			
+
 			// 업데이트 후 데이터 새로고침
 			onUpdate();
 		} catch (error) {
-			console.error('Failed to update shift:', error);
-			// 에러 처리
-		}
-	};
-
-	// 셀 클릭 핸들러 추가
-	const handleCellClick = (row: number, col: number) => {
-		setSelectedCell({ row, col });
-		if (col >= 0 && col < 31) {
-			handleShiftChange(row, col);
+			console.error("Failed to update shift:", error);
 		}
 	};
 
 	// 키보드 이벤트 핸들러
 	useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
+		const handleKeyPress = (e: KeyboardEvent) => {
 			if (!selectedCell) return;
 
 			const { row, col } = selectedCell;
 			if (col >= 0 && col < 31) {
-				if (e.key === 'Enter' || e.key === ' ') {
-					handleShiftChange(row, col);
+				const key = e.key.toUpperCase();
+				if (["D", "E", "N", "O", "X"].includes(key)) {
+					handleShiftChange(row, col, key as "D" | "E" | "N" | "O" | "X");
+
+					// 다음 셀로 이동
+					if (col < 30) {
+						setSelectedCell({ row, col: col + 1 });
+					} else if (row < nurses.length - 1) {
+						setSelectedCell({ row: row + 1, col: 0 });
+					}
 				}
 			}
 		};
 
-		window.addEventListener('keydown', handleKeyDown);
-		return () => window.removeEventListener('keydown', handleKeyDown);
+		window.addEventListener("keypress", handleKeyPress);
+		return () => window.removeEventListener("keypress", handleKeyPress);
 	}, [selectedCell]);
+
+	// 셀 클릭 핸들러 (선택만 하고 변경은 하지 않음)
+	const handleCellClick = (row: number, col: number) => {
+		setSelectedCell({ row, col });
+	};
 
 	// 이전 달로 이동
 	const handlePrevMonth = () => {
@@ -141,12 +153,12 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 			E: 0,
 			N: 0,
 			O: 0,
-			total: 0
+			total: 0,
 		};
 
-		duties.forEach(nurseShifts => {
+		duties.forEach((nurseShifts) => {
 			const shift = nurseShifts[dayIndex];
-			if (shift && shift !== 'X') {
+			if (shift && shift !== "X") {
 				counts[shift as keyof typeof counts]++;
 				counts.total++;
 			}
@@ -161,11 +173,11 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 			D: 0,
 			E: 0,
 			N: 0,
-			O: 0
+			O: 0,
 		};
 
-		duties[nurseIndex].forEach(shift => {
-			if (shift && shift !== 'X') {
+		duties[nurseIndex].forEach((shift) => {
+			if (shift && shift !== "X") {
 				counts[shift as keyof typeof counts]++;
 			}
 		});
@@ -176,13 +188,13 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 	// 주말 및 공휴일 체크
 	const isHoliday = (day: number) => {
 		const weekendPairs = getWeekendAndHolidayPairs(year, month);
-		return weekendPairs.some(pair => day >= pair[0] && day <= pair[1]);
+		return weekendPairs.some((pair) => day >= pair[0] && day <= pair[1]);
 	};
 
 	// 셀 하이라이트 로직
 	const isHighlighted = (row: number, col: number) => {
 		if (!selectedCell) return "";
-		
+
 		// 기존 하이라이트 로직 유지
 		if (row === selectedCell.row) {
 			if (col >= 0 && col < 31) {
@@ -207,9 +219,62 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 	// 완성도 계산
 	const calculateProgress = () => {
 		const totalCells = nurses.length * 31;
-		const filledCells = duties.reduce((acc, nurseRow) => 
-			acc + nurseRow.filter(duty => duty !== "X").length, 0);
-		return Math.round((filledCells / totalCells) * 100);
+		const filledCells = duties.reduce(
+			(acc, nurseRow) => acc + nurseRow.filter((duty) => duty !== "X").length,
+			0,
+		);
+		return Math.round(((filledCells - invalidCnt) / totalCells) * 100);
+	};
+
+	// Calculate the number of days in the current month
+	const daysInMonth = new Date(year, month, 0).getDate();
+
+	// 자동생성 핸들러 수정
+	const handleAutoCreate = async () => {
+		try {
+			// 자동생성 중임을 알림
+			const loadingToast = toast.loading("자동생성 중입니다...", {
+				position: "top-center",
+			});
+
+			// API 호출
+			await dutyService.autoCreateDuty(year, month);
+
+			// 성공 알림
+			toast.update(loadingToast, {
+				render: "자동생성에 성공했습니다",
+				type: "success",
+				isLoading: false,
+				autoClose: 1500,
+			});
+
+			// 잠시 후 페이지 새로고침
+			setTimeout(() => {
+				window.location.href = "/shift-admin";
+			}, 1500);
+		} catch (error) {
+			// 실패 알림
+			toast.error("자동생성에 실패했습니다", {
+				position: "top-center",
+				autoClose: 1500,
+			});
+
+			// 잠시 후 페이지 새로고침
+			setTimeout(() => {
+				window.location.href = "/shift-admin";
+			}, 1500);
+		}
+	};
+
+	// 위반 사항 체크 함수 추가
+	const getViolation = (nurseIndex: number, dayIndex: number) => {
+		const nurseName = nurses[nurseIndex];
+		return issues.find(
+			(issue) =>
+				issue.name === nurseName &&
+				dayIndex + 1 >= issue.startDate &&
+				dayIndex + 1 <= issue.endDate,
+		);
 	};
 
 	return (
@@ -233,10 +298,13 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 								onClick={handleNextMonth}
 							/>
 							<div className="flex items-center gap-2 ml-1">
-								<span className="text-sm text-gray-400">완성도</span>
-								<span className="text-lg font-bold text-black">
-									{100 - parseFloat((invalidCnt / (nurses.length * 31) * 100).toFixed(1))}%
+								<span className="text-[11px] sm:text-xs text-gray-400">
+									기본 OFF
 								</span>
+								<span className="text-[12px] sm:text-sm font-bold text-black">
+									10
+								</span>
+								<span className="text-foreground">일</span>
 							</div>
 						</div>
 					</div>
@@ -256,6 +324,7 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 							size="sm"
 							color="evening"
 							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
+							onClick={handleAutoCreate}
 						>
 							자동 생성
 						</Button>
@@ -289,7 +358,7 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 												이전 근무
 											</span>
 										</th>
-										{Array.from({ length: 31 }, (_, i) => {
+										{Array.from({ length: daysInMonth }, (_, i) => {
 											const day = i + 1;
 											return (
 												<th
@@ -334,10 +403,7 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 								</thead>
 								<tbody>
 									{nurses.map((name, i) => (
-										<tr
-											key={i}
-											className="text-xs border-b border-gray-200 h-9"
-										>
+										<tr key={i} className="h-8 border-b border-gray-200 group">
 											<td
 												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, -2)}`}
 											>
@@ -349,64 +415,93 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 												className={`p-0 border-r border-gray-200 ${isHighlighted(i, -1)}`}
 											>
 												<div className="flex justify-center -space-x-1.5">
-													<div className="scale-[0.65]">
-														<DutyBadgeEng type="D" size="sm" variant="filled" />
-													</div>
-													<div className="scale-[0.65]">
-														<DutyBadgeEng type="E" size="sm" variant="filled" />
-													</div>
-													<div className="scale-[0.65]">  
-														<DutyBadgeEng type="N" size="sm" variant="filled" />
-													</div>
-													<div className="scale-[0.65]">
-														<DutyBadgeEng type="O" size="sm" variant="filled" />
-													</div>
-												</div>
-											</td>
-											{Array.from({ length: 31 }, (_, j) => (
-												<td
-													key={j}
-													className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, j)}`}
-												>
-													<div
-														className="flex items-center justify-center cursor-pointer"
-														onClick={() => handleCellClick(i, j)}
-														onKeyDown={(e) => {
-															if (e.key === 'Enter' || e.key === ' ') {
-																handleCellClick(i, j);
-															}
-														}}
-														tabIndex={0}
-														role="button"
-														aria-label={`${nurses[i]}의 ${j + 1}일 근무`}
-													>
-														<div className="scale-[0.95]">
+													{prevShifts[i].map((shift, index) => (
+														<div key={index} className="scale-[0.65]">
 															<DutyBadgeEng
-																type={duties[i][j] as "X" | "D" | "E" | "N" | "O" | "ALL"}
+																type={
+																	shift as "X" | "D" | "E" | "N" | "O" | "ALL"
+																}
 																size="sm"
 																variant="filled"
 															/>
 														</div>
-													</div>
-												</td>
-											))}
+													))}
+												</div>
+											</td>
+											{Array.from({ length: daysInMonth }, (_, j) => {
+												const violation = getViolation(i, j);
+												const isViolationMiddle =
+													violation &&
+													j + 1 ===
+														Math.floor(
+															(violation.startDate + violation.endDate) / 2,
+														);
+												const isViolationCell =
+													violation &&
+													j + 1 >= violation.startDate &&
+													j + 1 <= violation.endDate;
+
+												return (
+													<td
+														key={j}
+														className={`p-0 text-center border-r border-gray-200 relative ${isHighlighted(
+															i,
+															j,
+														)} ${isViolationCell ? "group" : ""}`}
+													>
+														<div
+															className="flex items-center justify-center cursor-pointer relative"
+															onClick={() => handleCellClick(i, j)}
+															tabIndex={0}
+															role="button"
+															aria-label={`${nurses[i]}의 ${j + 1}일 근무`}
+														>
+															{violation && (
+																<div className="absolute -inset-y-1 inset-x-0 bg-red-500 opacity-30 rounded-md" />
+															)}
+															<div className="relative z-10">
+																<div className="scale-[0.95]">
+																	<DutyBadgeEng
+																		type={
+																			duties[i][j] as
+																				| "X"
+																				| "D"
+																				| "E"
+																				| "N"
+																				| "O"
+																				| "ALL"
+																		}
+																		size="sm"
+																		variant="filled"
+																	/>
+																</div>
+															</div>
+															{isViolationMiddle && (
+																<div className="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 bg-red-100 text-red-600 text-xs p-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
+																	{violation.message}
+																</div>
+															)}
+														</div>
+													</td>
+												);
+											})}
 											<td
-												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, 31)}`}
+												className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 31)}`}
 											>
 												{getNurseDutyCounts(i).D}
 											</td>
 											<td
-												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, 32)}`}
+												className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 32)}`}
 											>
 												{getNurseDutyCounts(i).E}
 											</td>
 											<td
-												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, 33)}`}
+												className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 33)}`}
 											>
 												{getNurseDutyCounts(i).N}
 											</td>
 											<td
-												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, 34)}`}
+												className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 34)}`}
 											>
 												{getNurseDutyCounts(i).O}
 											</td>
@@ -439,7 +534,7 @@ const ShiftAdminTable = ({ dutyData, invalidCnt, year, month, onUpdate }: ShiftA
 														{text}
 													</div>
 												</td>
-												{Array.from({ length: 31 }, (_, j) => (
+												{Array.from({ length: daysInMonth }, (_, j) => (
 													<td
 														key={j}
 														className={`p-0 text-center text-[11px] border-r border-gray-200 ${
