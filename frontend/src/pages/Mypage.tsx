@@ -2,7 +2,9 @@ import { useState } from "react";
 import Sidebar from "../components/organisms/WSidebar";
 import MSidebar from "../components/organisms/MSidebar";
 import Title from "../components/atoms/Title";
-import MypageForm from "../components/organisms/MypageForm";
+import MypageProfile from "../components/organisms/MypageProfile";
+import MypagePassword from "../components/organisms/MypagePassword";
+import MypageExit from "../components/organisms/MypageExit";
 import { IoMdMenu } from "react-icons/io";
 import useUserAuthStore from "../store/userAuthStore";
 
@@ -35,8 +37,10 @@ const Mypage = () => {
 
 				<Title title="마이페이지" subtitle="나의 정보를 확인해보세요" />
 				<div className="mt-4 flex justify-center">
-					<div className="w-full lg:w-[1400px]">
-						<MypageForm />
+					<div className="w-full lg:w-[1400px] space-y-4">
+						<MypageProfile />
+						<MypagePassword />
+						<MypageExit />
 					</div>
 				</div>
 			</div>
