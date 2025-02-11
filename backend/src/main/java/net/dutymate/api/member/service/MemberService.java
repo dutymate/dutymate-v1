@@ -390,6 +390,9 @@ public class MemberService {
 			String fileUrl = member.getProfileImg();
 			String fileName = extractFileNameFromUrl(fileUrl);
 
+			if (fileName.equals("default_profile.png"))
+				return;
+
 			DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
 				.bucket(bucket)
 				.key(fileName)
@@ -406,7 +409,7 @@ public class MemberService {
 	}
 
 	private String extractFileNameFromUrl(String fileUrl) {
-		String baseUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/";
+		String baseUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/profile/";
 		return fileUrl.replace(baseUrl, "");
 	}
 
