@@ -390,8 +390,9 @@ public class MemberService {
 			String fileUrl = member.getProfileImg();
 			String fileName = extractFileNameFromUrl(fileUrl);
 
-			if (fileName.equals("default_profile.png"))
+			if (fileName.equals("default_profile.png")) {
 				return;
+			}
 
 			DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
 				.bucket(bucket)
