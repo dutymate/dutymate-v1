@@ -1,4 +1,5 @@
 resource "aws_iam_role" "ssm_role" {
+  name = "dutymate-ssm-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -21,6 +22,7 @@ resource "aws_iam_role_policy_attachment" "ssm_attach" {
 }
 
 resource "aws_iam_instance_profile" "ssm_instance_profile" {
+  name = "dutymate-ssm-instance-profile"
   role = aws_iam_role.ssm_role.name
 
   tags = {
