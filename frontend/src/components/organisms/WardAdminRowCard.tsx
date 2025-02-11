@@ -2,7 +2,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { Icon, IconName } from "../atoms/Icon";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import { Nurse } from "../../services/wardService";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Badge } from "../atoms/Badge";
 import { Dropdown } from "../atoms/Dropdown";
 import useWardStore from "../../store/wardStore";
@@ -36,49 +36,76 @@ const WardAdminRowCard = ({
 	const authorityDropdownRef = useRef<HTMLDivElement>(null);
 	const skillButtonRef = useRef<HTMLButtonElement>(null);
 	const skillDropdownRef = useRef<HTMLDivElement>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
 
 	// Add this to verify data flow
 	useEffect(() => {
 		console.log("Nurse data:", nurse);
 	}, [nurse]);
 
-	useEffect(() => {
-		const updateDropdownPosition = () => {
-			if (authorityDropdownRef.current) {
-				const rect = authorityDropdownRef.current.getBoundingClientRect();
-				const spaceBelow = window.innerHeight - rect.bottom;
-				setDropdownPosition(spaceBelow < 100 ? "top" : "bottom");
-			}
+	const updateDropdownPosition = useCallback(
+		(buttonRef: React.RefObject<HTMLElement>) => {
+			if (!buttonRef.current || !containerRef.current) return;
+
+			const buttonRect = buttonRef.current.getBoundingClientRect();
+			const containerRect = containerRef.current.getBoundingClientRect();
+			const scrollableParent = getScrollableParent(containerRef.current);
+			const scrollableRect = scrollableParent.getBoundingClientRect();
+
+			// Calculate space below within the scrollable container
+			const spaceBelow = scrollableRect.bottom - buttonRect.bottom;
+			const spaceAbove = buttonRect.top - scrollableRect.top;
+
+			// Use the larger space, with a preference for below if equal
+			setDropdownPosition(spaceBelow >= spaceAbove ? "bottom" : "top");
+		},
+		[],
+	);
+
+	// Helper function to find the nearest scrollable parent
+	const getScrollableParent = (element: HTMLElement): HTMLElement => {
+		const isScrollable = (el: HTMLElement) => {
+			const style = window.getComputedStyle(el);
+			const overflowY = style.overflowY;
+			return overflowY !== "visible" && overflowY !== "hidden";
 		};
 
-		updateDropdownPosition();
-		window.addEventListener("scroll", updateDropdownPosition);
-		window.addEventListener("resize", updateDropdownPosition);
+		let parent = element.parentElement;
+		while (parent) {
+			if (isScrollable(parent)) return parent;
+			parent = parent.parentElement;
+		}
+		return document.body;
+	};
+
+	// Update authority dropdown position
+	useEffect(() => {
+		const handlePositionUpdate = () =>
+			updateDropdownPosition(authorityDropdownRef);
+
+		handlePositionUpdate();
+		window.addEventListener("scroll", handlePositionUpdate, true); // Use capture phase
+		window.addEventListener("resize", handlePositionUpdate);
 
 		return () => {
-			window.removeEventListener("scroll", updateDropdownPosition);
-			window.removeEventListener("resize", updateDropdownPosition);
+			window.removeEventListener("scroll", handlePositionUpdate, true);
+			window.removeEventListener("resize", handlePositionUpdate);
 		};
-	}, []);
+	}, [updateDropdownPosition]);
 
+	// Update skill dropdown position
 	useEffect(() => {
-		const updateDropdownPosition = () => {
-			if (skillButtonRef.current) {
-				const rect = skillButtonRef.current.getBoundingClientRect();
-				const spaceBelow = window.innerHeight - rect.bottom;
-				setDropdownPosition(spaceBelow < 100 ? "top" : "bottom");
-			}
-		};
+		const handlePositionUpdate = () => updateDropdownPosition(skillButtonRef);
 
-		updateDropdownPosition();
-		window.addEventListener("scroll", updateDropdownPosition);
-		window.addEventListener("resize", updateDropdownPosition);
+		handlePositionUpdate();
+		window.addEventListener("scroll", handlePositionUpdate, true);
+		window.addEventListener("resize", handlePositionUpdate);
 
 		return () => {
-			window.removeEventListener("scroll", updateDropdownPosition);
-			window.removeEventListener("resize", updateDropdownPosition);
+			window.removeEventListener("scroll", handlePositionUpdate, true);
+			window.removeEventListener("resize", handlePositionUpdate);
 		};
-	}, []);
+	}, [updateDropdownPosition]);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -155,7 +182,10 @@ const WardAdminRowCard = ({
 	};
 
 	return (
-		<div className="flex items-center p-2.5 bg-white rounded-[0.578125rem] border border-gray-200">
+		<div
+			ref={containerRef}
+			className="flex items-center p-2.5 bg-white rounded-[0.578125rem] border border-gray-200"
+		>
 			{/* <input
 				type="checkbox"
 				className="mr-3 min-w-[20px] flex-shrink-0"

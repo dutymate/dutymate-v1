@@ -27,16 +27,20 @@ const CreateWard = () => {
 
 		try {
 			console.log("wardService.createWard 호출 전");
-			await wardService.createWard({
+			const response = await wardService.createWard({
 				hospitalName,
 				wardName,
 			});
 			console.log("wardService.createWard 호출 성공");
 
-			userAuthStore.setUserInfo({
-				...userAuthStore.userInfo!,
-				existMyWard: true,
-			});
+			const currentUserInfo = userAuthStore.userInfo;
+			if (currentUserInfo) {
+				userAuthStore.setUserInfo({
+					...currentUserInfo,
+					existMyWard: true,
+					role: "HN",
+				});
+			}
 
 			// 성공 토스트 메시지 표시
 			toast.success("병동이 생성되었습니다", {
@@ -70,7 +74,7 @@ const CreateWard = () => {
 	const Template = isMobile ? NextTemplate : StartTemplate;
 
 	return (
-		<Template isCreateWardPage={true}>
+		<Template>
 			<div className="flex flex-col items-center">
 				<p className="text-gray-600 text-base mt-8 mb-8">
 					병동 생성을 위한 기본 정보를 입력해주세요.
