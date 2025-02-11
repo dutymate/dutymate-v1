@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import net.dutymate.api.entity.Hospital;
 
 public interface HospitalRepository extends JpaRepository<Hospital, Long> {
-	List<Hospital> findByHospitalNameStartsWith(String hospitalName, Pageable pageable);
 
 	List<Hospital> findByHospitalNameContaining(String hospitalName, Pageable pageable);
 }

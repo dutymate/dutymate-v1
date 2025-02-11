@@ -249,7 +249,7 @@ public class WardService {
 	}
 
 	public List<HospitalNameResponseDto> findHospitalName(String query) {
-		List<Hospital> hospitalList = hospitalRepository.findByHospitalNameStartsWith(query, PageRequest.of(0, 5));
+		List<Hospital> hospitalList = hospitalRepository.findByHospitalNameContaining(query, PageRequest.of(0, 5));
 
 		return hospitalList.stream().map(HospitalNameResponseDto::of).toList();
 
