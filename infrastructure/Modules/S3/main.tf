@@ -2,7 +2,7 @@ resource "aws_s3_bucket" "asset_bucket" {
   bucket = "dutymate-bucket-${terraform.workspace}"
 
   tags = {
-    Environment = terraform.workspace
+    Name = "dutymate-bucket-${terraform.workspace}"
   }
 }
 
