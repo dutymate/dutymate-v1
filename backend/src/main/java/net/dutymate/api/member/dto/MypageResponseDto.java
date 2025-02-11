@@ -15,7 +15,7 @@ public class MypageResponseDto {
 	private String profileImg;
 	private String email;
 	private String name;
-	private String nickName;
+	private String nickname;
 	private String gender;
 	private Integer grade;
 
@@ -26,7 +26,7 @@ public class MypageResponseDto {
 			.profileImg(member.getProfileImg())
 			.email(member.getEmail())
 			.name(member.getName())
-			.nickName(member.getNickname())
+			.nickname(member.getNickname())
 			.gender(String.valueOf(member.getGender()))
 			.grade(member.getGrade())
 			.build();
