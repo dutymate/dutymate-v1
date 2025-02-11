@@ -46,7 +46,7 @@ public class WardInfoResponseDto {
 		private String name;
 		private Gender gender;
 		private Role role;
-		private int grade;
+		private Integer grade;
 		private ShiftType shift;
 		private SkillLevel skillLevel;
 		private String memo;

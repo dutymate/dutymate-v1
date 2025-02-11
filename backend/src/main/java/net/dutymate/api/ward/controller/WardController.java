@@ -1,5 +1,7 @@
 package net.dutymate.api.ward.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.ward.dto.HospitalNameResponseDto;
 import net.dutymate.api.ward.dto.VirtualNameRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
@@ -63,5 +66,12 @@ public class WardController {
 		@Auth Member member) {
 		wardService.changeVirtualMemberName(memberId, virtualNameRequestDto, member);
 		return ResponseEntity.ok().build();
+	}
+
+	// 병원 이름 검색하기
+	@GetMapping("/hospital")
+	public ResponseEntity<?> getHospital(@RequestParam String name) {
+		List<HospitalNameResponseDto> hospitalNameResponseDto = wardService.findHospitalName(name);
+		return ResponseEntity.ok(hospitalNameResponseDto);
 	}
 }

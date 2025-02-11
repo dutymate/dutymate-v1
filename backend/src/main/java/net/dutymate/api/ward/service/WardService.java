@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import net.dutymate.api.enumclass.Provider;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
+import net.dutymate.api.ward.dto.HospitalNameResponseDto;
 import net.dutymate.api.ward.dto.VirtualNameRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
@@ -246,16 +248,10 @@ public class WardService {
 		changeMember.changeName(virtualNameRequestDto.getName());
 	}
 
-	public void findHospitalName(String query) {
-		List<Hospital> hospitalList = hospitalRepository.findByHospitalNameContaining(query);
+	public List<HospitalNameResponseDto> findHospitalName(String query) {
+		List<Hospital> hospitalList = hospitalRepository.findByHospitalNameStartsWith(query, PageRequest.of(0, 5));
 
-		if (hospitalList.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당하는 병원이 없습니다.");
-		}
-
-		if (hospitalList.size() > 5) {
-			hospitalList = hospitalList.subList(0, 5);
-		}
+		return hospitalList.stream().map(HospitalNameResponseDto::of).toList();
 
 	}
 }
