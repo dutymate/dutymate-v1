@@ -1,9 +1,9 @@
 resource "aws_ecr_repository" "ecr_repository" {
-  name                 = "dutymate/backend"
+  name                 = "dutymate/dutymate-api"
   image_tag_mutability = "MUTABLE"
 
   tags = {
-    Service = "backend"
+    Name = "dutymate/dutymate-api"
   }
 }
 
