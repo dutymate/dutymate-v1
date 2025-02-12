@@ -26,10 +26,10 @@ const HistoryList = () => {
 	const renderChangeIndicator = (item: DutyHistory) => {
 		if (item.isAutoCreated) {
 			return (
-				<div className="flex items-center gap-2 bg-blue-50 px-2 py-1 rounded-md">
+				<div className="flex items-center gap-2 bg-duty-day-bg px-2 py-1 rounded-md">
 					<div className="flex items-center gap-1">
-						<Icon name="schedule" size={14} className="text-blue-500" />
-						<span className="text-sm text-blue-600">자동 생성됨</span>
+						<Icon name="schedule" size={14} className="text-duty-day" />
+						<span className="text-sm text-duty-day">자동 생성됨</span>
 					</div>
 				</div>
 			);
@@ -70,20 +70,20 @@ const HistoryList = () => {
 						{sortedHistories.map((item) => (
 							<div
 								key={item.idx}
-								className={`flex items-center w-full gap-3 px-2 py-1 hover:bg-gray-50 ${
-									item.isAutoCreated ? "border-l-2 border-blue-400" : ""
-								}`}
+								className={`flex items-center w-full gap-3 px-2 py-1 hover:bg-gray-50 ${""}`}
 							>
 								<div className="flex items-center gap-3 flex-1 min-w-0">
 									<span
 										className={`px-1.5 py-0.75 rounded-md ${
-											item.isAutoCreated ? "bg-duty-off-dark" : "bg-duty-off-bg"
+											item.isAutoCreated ? "bg-duty-off-bg" : "bg-duty-off-bg"
 										}`}
 									>
-										<span className="font-medium text-md">{item.name}</span>
+										<span className="font-medium text-md">
+											{item.isAutoCreated ? "근무표" : item.name}
+										</span>
 									</span>
 									<span className="text-foreground text-sm">
-										{item.modifiedDay}일
+										{item.isAutoCreated ? "" : `${item.modifiedDay}일`}
 									</span>
 									{renderChangeIndicator(item)}
 								</div>

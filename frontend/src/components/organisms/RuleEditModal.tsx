@@ -47,7 +47,8 @@ const getFontWeight = (value: number) => {
 
 const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 	const [rules, setRules] = useState<WardRule | null>(null);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSubmitting] = useState(false);
+	// const [setIsSubmitting] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const modalRef = useRef<HTMLDivElement>(null);
 
@@ -122,7 +123,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 		if (!rules) return;
 
 		// TODO: API 연동 후 제거
-		toast.info("규칙 편집 기능은 개발중에 있습니다");
+		toast.info("준비 중입니다.");
 		onClose();
 		return;
 

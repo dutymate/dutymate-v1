@@ -146,12 +146,10 @@ export const TempNurseButton = ({
 	return (
 		<button
 			onClick={onClick}
-			className={`flex items-center justify-center gap-1.5 py-1 w-[100px] bg-white rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors ${className}`}
+			className={`flex items-center justify-center gap-1.5 py-1 w-[100px] bg-duty-day rounded-lg border hover:bg-duty-day-dark transition-colors ${className}`}
 		>
-			<IoIosAddCircleOutline className="text-gray-600 text-[0.95rem]" />
-			<span className="text-[0.8rem] text-gray-600 font-medium">
-				임시 간호사
-			</span>
+			<IoIosAddCircleOutline className="text-white text-[0.95rem]" />
+			<span className="text-[0.8rem] text-white">임시 간호사</span>
 		</button>
 	);
 };

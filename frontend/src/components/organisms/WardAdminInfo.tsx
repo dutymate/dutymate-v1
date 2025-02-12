@@ -36,7 +36,7 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 							</h3>
 							<TempNurseButton onClick={onAddTempNurse} />
 						</div>
-						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
+						<p className="font-semibold border border-gray-30= rounded-md px-3 py-1 text-center">
 							{wardInfo.nursesTotalCnt}명
 						</p>
 					</div>

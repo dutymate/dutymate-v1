@@ -52,21 +52,21 @@ interface ShiftAdminTableProps {
 	}[];
 }
 
-const getMaxAllowedMonth = () => {
-	const today = new Date();
-	const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1);
-	return {
-		year: nextMonth.getFullYear(),
-		month: nextMonth.getMonth() + 1,
-	};
-};
+// const getMaxAllowedMonth = () => {
+// 	const today = new Date();
+// 	const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1);
+// 	return {
+// 		year: nextMonth.getFullYear(),
+// 		month: nextMonth.getMonth() + 1,
+// 	};
+// };
 
 const ShiftAdminTable = ({
 	dutyData,
-	invalidCnt,
+	// invalidCnt,
 	year,
 	month,
-	onUpdate,
+	// onUpdate,
 	issues,
 }: ShiftAdminTableProps) => {
 	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
@@ -204,45 +204,45 @@ const ShiftAdminTable = ({
 		setSelectedCell({ row, col });
 	};
 
-	// 이전 달로 이동
-	const handlePrevMonth = async () => {
-		const newYear = month === 1 ? year - 1 : year;
-		const newMonth = month === 1 ? 12 : month - 1;
+	// // 이전 달로 이동
+	// const handlePrevMonth = async () => {
+	// 	const newYear = month === 1 ? year - 1 : year;
+	// 	const newMonth = month === 1 ? 12 : month - 1;
 
-		try {
-			await onUpdate(newYear, newMonth);
-		} catch (error) {
-			toast.error("근무표 조회에 실패했습니다.");
-		}
-	};
+	// 	try {
+	// 		await onUpdate(newYear, newMonth);
+	// 	} catch (error) {
+	// 		toast.error("근무표 조회에 실패했습니다.");
+	// 	}
+	// };
 
 	// 다음 달로 이동
-	const handleNextMonth = async () => {
-		const maxAllowed = getMaxAllowedMonth();
+	// const handleNextMonth = async () => {
+	// 	const maxAllowed = getMaxAllowedMonth();
 
-		// Calculate next month
-		const nextMonthDate = new Date(year, month);
-		const nextYear = nextMonthDate.getMonth() === 11 ? year + 1 : year;
-		const nextMonth = nextMonthDate.getMonth() === 11 ? 1 : month + 1;
+	// 	// Calculate next month
+	// 	const nextMonthDate = new Date(year, month);
+	// 	const nextYear = nextMonthDate.getMonth() === 11 ? year + 1 : year;
+	// 	const nextMonth = nextMonthDate.getMonth() === 11 ? 1 : month + 1;
 
-		// Check if next month exceeds the limit
-		if (
-			nextYear > maxAllowed.year ||
-			(nextYear === maxAllowed.year && nextMonth > maxAllowed.month)
-		) {
-			toast.warning("다음 달까지만 조회할 수 있습니다.", {
-				position: "top-center",
-				autoClose: 2000,
-			});
-			return;
-		}
+	// 	// Check if next month exceeds the limit
+	// 	if (
+	// 		nextYear > maxAllowed.year ||
+	// 		(nextYear === maxAllowed.year && nextMonth > maxAllowed.month)
+	// 	) {
+	// 		toast.warning("다음 달까지만 조회할 수 있습니다.", {
+	// 			position: "top-center",
+	// 			autoClose: 2000,
+	// 		});
+	// 		return;
+	// 	}
 
-		try {
-			await onUpdate(nextYear, nextMonth);
-		} catch (error) {
-			toast.error("근무표 조회에 실패했습니다.");
-		}
-	};
+	// 	try {
+	// 		await onUpdate(nextYear, nextMonth);
+	// 	} catch (error) {
+	// 		toast.error("근무표 조회에 실패했습니다.");
+	// 	}
+	// };
 
 	// 날짜별 근무 통계 계산
 	const dutyCounts = Array.from({ length: 31 }, (_, dayIndex) => {
@@ -330,7 +330,7 @@ const ShiftAdminTable = ({
 
 	// 완성도 계산
 	const calculateProgress = () => {
-		const totalCells = nurses.length * 31;
+		const totalCells = nurses.length * daysInMonth;
 		const filledCells = duties.reduce(
 			(acc, nurseRow) => acc + nurseRow.filter((duty) => duty !== "X").length,
 			0,
@@ -340,6 +340,17 @@ const ShiftAdminTable = ({
 
 	// 자동생성 핸들러 수정
 	const handleAutoCreate = async () => {
+		// 총 간호사 수 확인
+		if (nurses.length < 10) {
+			const confirmed = window.confirm(
+				"해당 기능 최소 인원은 10명입니다. 임시 간호사를 추가해주세요.",
+			);
+			if (confirmed) {
+				window.location.href = "/ward-admin";
+			}
+			return;
+		}
+
 		try {
 			// 자동생성 중임을 알림
 			const loadingToast = toast.loading("자동생성 중입니다...", {
@@ -406,14 +417,20 @@ const ShiftAdminTable = ({
 								name="left"
 								size={16}
 								className="cursor-pointer text-gray-600 hover:text-gray-800"
-								onClick={handlePrevMonth}
+								// onClick={handlePrevMonth}
+								onClick={() => {
+									toast.info("준비중입니다.");
+								}}
 							/>
 							<span className="text-lg font-medium">{month}월</span>
 							<Icon
 								name="right"
 								size={16}
 								className="cursor-pointer text-gray-600 hover:text-gray-800"
-								onClick={handleNextMonth}
+								// onClick={handleNextMonth}
+								onClick={() => {
+									toast.info("준비중입니다.");
+								}}
 							/>
 							<div className="flex items-center gap-2 ml-1">
 								<span className="text-[11px] sm:text-xs text-gray-400">
