@@ -29,7 +29,7 @@ const WardAdminRowCard = ({
 	const [isEditingMemo, setIsEditingMemo] = useState(false);
 	const [memo, setMemo] = useState(nurse.memo);
 	const memoInputRef = useRef<HTMLInputElement>(null);
-	const { removeNurse } = useWardStore();
+	const { removeNurse, updateVirtualNurseName } = useWardStore();
 	const [dropdownPosition, setDropdownPosition] = useState<"top" | "bottom">(
 		"bottom",
 	);
@@ -37,6 +37,9 @@ const WardAdminRowCard = ({
 	const skillButtonRef = useRef<HTMLButtonElement>(null);
 	const skillDropdownRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
+	const [isEditingName, setIsEditingName] = useState(false);
+	const [name, setName] = useState(nurse.name);
+	const nameInputRef = useRef<HTMLInputElement>(null);
 
 	// Add this to verify data flow
 	useEffect(() => {
@@ -181,139 +184,191 @@ const WardAdminRowCard = ({
 		}
 	};
 
-	return (
-		<div
-			ref={containerRef}
-			className="flex items-center p-2.5 bg-white rounded-[0.578125rem] border border-gray-200"
-		>
-			{/* <input
-				type="checkbox"
-				className="mr-3 min-w-[20px] flex-shrink-0"
-				checked={isSelected}
-				onChange={() => onSelect?.(nurse.memberId)}
-			/> */}
-			<div className="flex items-center justify-between flex-1 gap-10">
-				<div className="flex items-center gap-6 flex-shrink-0">
-					<div className="flex items-center w-[120px]">
-						<FaUserCircle className="w-6 h-6 text-gray-500 flex-shrink-0" />
-						<span className="font-medium truncate ml-2">{nurse.name}</span>
-					</div>
-					<div className="w-[60px] flex items-center">
-						<Badge type={nurse.role} className="whitespace-nowrap" />
-					</div>
-					<div className="flex items-center gap-1 w-[60px]">
-						<Icon
-							name={nurse.gender === "F" ? "female" : "male"}
-							size={16}
-							className="text-gray-500"
-						/>
-						<span>{nurse.gender === "F" ? "여자" : "남자"}</span>
-					</div>
-					<div className="flex items-center gap-1 w-[70px]">
-						<Icon name="idCard" size={16} className="text-gray-500" />
-						<span>{nurse.grade}년차</span>
-					</div>
-					<div className="relative w-[80px]">
-						<button
-							className="flex items-center gap-1 px-2 py-1 border rounded hover:bg-gray-50"
-							onClick={() => setOpenSkillDropdown(!openSkillDropdown)}
-							ref={skillButtonRef}
-						>
-							<Icon
-								name={(nurse.skillLevel?.toLowerCase() ?? "low") as IconName}
-								size={16}
-							/>
-							<span className="text-sm">
-								{
-									skillOptions.find((opt) => opt.value === nurse.skillLevel)
-										?.label
-								}
-							</span>
-						</button>
+	const handleNameComplete = async () => {
+		if (!nurse.isSynced && name !== nurse.name) {
+			try {
+				await updateVirtualNurseName(nurse.memberId, name);
+				toast.success("이름이 수정되었습니다.");
+			} catch (error) {
+				toast.error("이름 수정에 실패했습니다.");
+				setName(nurse.name);
+			}
+		}
+		setIsEditingName(false);
+	};
 
-						{openSkillDropdown && (
-							<div
-								ref={skillDropdownRef}
-								className={`absolute ${dropdownPosition === "top" ? "bottom-full mb-1" : "top-full mt-1"} left-0 bg-white border rounded-md shadow-lg z-10`}
+	const handleNameKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === "Enter") {
+			handleNameComplete();
+		} else if (e.key === "Escape") {
+			setName(nurse.name);
+			setIsEditingName(false);
+		}
+	};
+
+	return (
+		<div ref={containerRef} className="relative">
+			<div className="flex items-center p-1.5 lg:p-2 bg-white rounded-xl border border-gray-100">
+				<div className="flex items-center justify-between flex-1 gap-10">
+					<div className="flex items-center gap-6 flex-shrink-0">
+						<div className="w-[120px] pl-2 group relative">
+							{!nurse.isSynced && (
+								<div className="flex items-center">
+									{isEditingName ? (
+										<input
+											ref={nameInputRef}
+											type="text"
+											value={name}
+											onChange={(e) => setName(e.target.value)}
+											onBlur={handleNameComplete}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleNameComplete();
+												if (e.key === "Escape") {
+													setName(nurse.name);
+													setIsEditingName(false);
+												}
+											}}
+											autoFocus
+											className="w-full rounded px-2 py-1 text-sm border border-primary-dark"
+										/>
+									) : (
+										<div className="flex items-center w-full">
+											<span className="flex-1">{name}</span>
+											<button
+												onClick={() => setIsEditingName(true)}
+												className="opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+											>
+												<Icon
+													name="edit"
+													size={16}
+													className="text-gray-400 hover:text-primary-dark"
+												/>
+											</button>
+										</div>
+									)}
+								</div>
+							)}
+							{nurse.isSynced && <span>{nurse.name}</span>}
+						</div>
+						<div className="w-[60px] flex items-center">
+							<Badge type={nurse.role} className="whitespace-nowrap" />
+						</div>
+						<div className="flex items-center gap-1 w-[60px]">
+							<Icon
+								name={nurse.gender === "F" ? "female" : "male"}
+								size={16}
+								className="text-gray-500"
+							/>
+							<span>{nurse.gender === "F" ? "여자" : "남자"}</span>
+						</div>
+						<div className="flex items-center gap-1 w-[70px]">
+							<Icon name="idCard" size={16} className="text-gray-500" />
+							<span>{nurse.grade}년차</span>
+						</div>
+						<div className="relative w-[80px]">
+							<button
+								className="flex items-center gap-1 px-2 py-1 border rounded hover:bg-gray-50"
+								onClick={() => setOpenSkillDropdown(!openSkillDropdown)}
+								ref={skillButtonRef}
 							>
-								{skillOptions.map((option) => (
-									<button
-										key={option.value}
-										className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full"
-										onClick={() => handleSkillChange(option.value)}
-									>
-										<Icon name={option.icon} size={16} />
-										<span className="text-sm">{option.label}</span>
-									</button>
-								))}
-							</div>
-						)}
-					</div>
-					<div className="flex gap-2 w-[155px]">
-						{(["D", "E", "N", "ALL"] as const).map((duty) => (
-							<DutyBadgeEng
-								key={duty}
-								type={duty}
-								size="md"
-								variant={nurse.shift === duty ? "filled" : "outline"}
-								onClick={() => handleShiftChange(duty)}
-								isSelected={nurse.shift === duty}
-							/>
-						))}
-					</div>
-				</div>
-				<div className="flex items-center gap-6 flex-1 min-w-0">
-					<div className="relative flex-1 min-w-0 group">
-						{isEditingMemo ? (
-							<input
-								ref={memoInputRef}
-								type="text"
-								value={memo}
-								onChange={(e) => setMemo(e.target.value)}
-								onBlur={handleMemoComplete}
-								onKeyDown={handleMemoKeyDown}
-								autoFocus
-								className="w-full rounded px-3 py-1 text-sm border border-primary-dark"
-								placeholder="메모를 입력하세요"
-							/>
-						) : (
-							<div className="flex items-center w-full">
-								<span className="flex-1 truncate text-sm text-gray-500">
-									{memo || "메모 없음"}
+								<Icon
+									name={(nurse.skillLevel?.toLowerCase() ?? "low") as IconName}
+									size={16}
+								/>
+								<span className="text-sm">
+									{
+										skillOptions.find((opt) => opt.value === nurse.skillLevel)
+											?.label
+									}
 								</span>
-								<button
-									onClick={() => {
-										setIsEditingMemo(true);
-										setTimeout(() => memoInputRef.current?.focus(), 0);
-									}}
-									className="opacity-0 group-hover:opacity-100 transition-opacity"
+							</button>
+
+							{openSkillDropdown && (
+								<div
+									ref={skillDropdownRef}
+									className={`absolute ${dropdownPosition === "top" ? "bottom-full mb-1" : "top-full mt-1"} left-0 bg-white border rounded-md shadow-lg z-10`}
 								>
-									<Icon
-										name="edit"
-										size={16}
-										className="text-gray-400 hover:text-primary-dark"
-									/>
-								</button>
-							</div>
-						)}
+									{skillOptions.map((option) => (
+										<button
+											key={option.value}
+											className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full"
+											onClick={() => handleSkillChange(option.value)}
+										>
+											<Icon name={option.icon} size={16} />
+											<span className="text-sm">{option.label}</span>
+										</button>
+									))}
+								</div>
+							)}
+						</div>
+						<div className="flex gap-2 w-[155px]">
+							{(["D", "E", "N", "ALL"] as const).map((duty) => (
+								<DutyBadgeEng
+									key={duty}
+									type={duty}
+									size="md"
+									variant={nurse.shift === duty ? "filled" : "outline"}
+									onClick={() => handleShiftChange(duty)}
+									isSelected={nurse.shift === duty}
+								/>
+							))}
+						</div>
 					</div>
-					<div className="w-[60px] flex-shrink-0" ref={authorityDropdownRef}>
-						<Dropdown
-							variant="authority"
-							value={null}
-							onChange={(value) => {
-								if (value === "병동내보내기") {
-									handleRemoveNurse();
-								} else if (value === "권한 넘기기") {
-									onUpdate(nurse.memberId, {
-										...nurse,
-										role: nurse.role === "HN" ? "RN" : "HN",
-									});
+					<div className="flex items-center gap-6 flex-1 min-w-0">
+						<div className="relative flex-1 min-w-0 group">
+							{isEditingMemo ? (
+								<input
+									ref={memoInputRef}
+									type="text"
+									value={memo}
+									onChange={(e) => setMemo(e.target.value)}
+									onBlur={handleMemoComplete}
+									onKeyDown={handleMemoKeyDown}
+									autoFocus
+									className="w-full rounded px-3 py-1 text-sm border border-primary-dark"
+									placeholder="메모를 입력하세요"
+								/>
+							) : (
+								<div className="flex items-center w-full">
+									<span className="flex-1 truncate text-sm text-gray-500">
+										{memo || "메모 없음"}
+									</span>
+									<button
+										onClick={() => {
+											setIsEditingMemo(true);
+											setTimeout(() => memoInputRef.current?.focus(), 0);
+										}}
+										className="opacity-0 group-hover:opacity-100 transition-opacity"
+									>
+										<Icon
+											name="edit"
+											size={16}
+											className="text-gray-400 hover:text-primary-dark"
+										/>
+									</button>
+								</div>
+							)}
+						</div>
+						<div className="w-[60px] flex-shrink-0" ref={authorityDropdownRef}>
+							<Dropdown
+								variant="authority"
+								value={null}
+								onChange={(value) => {
+									if (value === "병동내보내기") {
+										handleRemoveNurse();
+									} else if (value === "권한 넘기기") {
+										onUpdate(nurse.memberId, {
+											...nurse,
+											role: nurse.role === "HN" ? "RN" : "HN",
+										});
+									}
+								}}
+								label=""
+								position={
+									dropdownPosition === "top" ? "top-left" : "bottom-left"
 								}
-							}}
-							label=""
-							position={dropdownPosition === "top" ? "top-left" : "bottom-left"}
-						/>
+							/>
+						</div>
 					</div>
 				</div>
 			</div>

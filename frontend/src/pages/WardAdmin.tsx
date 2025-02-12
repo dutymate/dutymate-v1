@@ -13,7 +13,7 @@ import useWardStore from "../store/wardStore";
 const WardAdmin = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
-	const { wardInfo, setWardInfo } = useWardStore();
+	const { wardInfo, setWardInfo, addVirtualNurse } = useWardStore();
 	const { userInfo } = useUserAuthStore();
 
 	useEffect(() => {
@@ -30,6 +30,15 @@ const WardAdmin = () => {
 
 		fetchWardInfo();
 	}, [setWardInfo]);
+
+	const handleAddVirtualNurse = async () => {
+		try {
+			await addVirtualNurse();
+			toast.success("임시 간호사가 추가되었습니다.");
+		} catch (error) {
+			toast.error("임시 간호사 추가에 실패했습니다.");
+		}
+	};
 
 	return (
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
@@ -61,7 +70,10 @@ const WardAdmin = () => {
 				<div className="mt-6 flex flex-col gap-4">
 					{!isLoading && wardInfo && (
 						<>
-							<WardAdminInfo wardInfo={wardInfo} />
+							<WardAdminInfo
+								wardInfo={wardInfo}
+								onAddTempNurse={handleAddVirtualNurse}
+							/>
 							<WardAdminTable nurses={wardInfo.nurses} />
 						</>
 					)}

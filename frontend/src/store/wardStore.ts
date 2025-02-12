@@ -8,11 +8,15 @@ interface WardStore {
 	removeNurse: (memberId: number) => Promise<void>;
 	syncWithServer: () => Promise<void>;
 	lastSyncTime: number | null;
+	virtualNurseCount: number;
+	addVirtualNurse: () => Promise<void>;
+	updateVirtualNurseName: (memberId: number, name: string) => Promise<void>;
 }
 
 const useWardStore = create<WardStore>((set, get) => ({
 	wardInfo: null,
 	lastSyncTime: null,
+	virtualNurseCount: 0,
 
 	setWardInfo: (wardInfo) =>
 		set({
@@ -112,6 +116,64 @@ const useWardStore = create<WardStore>((set, get) => ({
 				console.error("서버 동기화 실패:", error);
 				throw error;
 			}
+		}
+	},
+
+	addVirtualNurse: async () => {
+		const count = get().virtualNurseCount + 1;
+		const nurseName = `간호사${count}`;
+
+		try {
+			const newNurse = await wardService.addVirtualNurse(nurseName);
+
+			// Optimistic Update
+			set((state) => {
+				if (!state.wardInfo) return state;
+
+				return {
+					wardInfo: {
+						...state.wardInfo,
+						nurses: [...state.wardInfo.nurses, newNurse],
+						nursesTotalCnt: state.wardInfo.nursesTotalCnt + 1,
+					},
+					virtualNurseCount: count,
+					lastSyncTime: Date.now(), // 동기화 시간 업데이트
+				};
+			});
+
+			// 서버와 동기화
+			await get().syncWithServer();
+		} catch (error) {
+			console.error("임시 간호사 추가 실패:", error);
+			throw error;
+		}
+	},
+
+	updateVirtualNurseName: async (memberId: number, name: string) => {
+		const previousState = get().wardInfo;
+
+		// Optimistic Update
+		set((state) => {
+			if (!state.wardInfo) return state;
+
+			const updatedNurses = state.wardInfo.nurses.map((nurse) =>
+				nurse.memberId === memberId ? { ...nurse, name } : nurse,
+			);
+
+			return {
+				wardInfo: {
+					...state.wardInfo,
+					nurses: updatedNurses,
+				},
+			};
+		});
+
+		try {
+			await wardService.updateVirtualNurseName(memberId, name);
+		} catch (error) {
+			// 에러 발생 시 이전 상태로 롤백
+			set({ wardInfo: previousState });
+			throw error;
 		}
 	},
 }));

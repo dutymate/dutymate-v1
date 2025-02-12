@@ -34,6 +34,8 @@ export interface Nurse {
 	skillLevel: "LOW" | "MID" | "HIGH";
 	/** 메모 */
 	memo: string;
+	/** 동기화 여부 */
+	isSynced: boolean;
 }
 
 /**
@@ -251,5 +253,49 @@ export const wardService = {
 		// 		resolve({ success: true });
 		// 	}, 300);
 		// });
+	},
+
+	// 임시 간호사 추가
+	addVirtualNurse: (name: string) => {
+		return axiosInstance
+			.post("/ward/member/virtual", { name })
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	// 임시 간호사 이름 수정
+	updateVirtualNurseName: (memberId: number, name: string) => {
+		return axiosInstance
+			.put(`/ward/member/virtual/${memberId}`, { name })
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
 	},
 };

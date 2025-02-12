@@ -3,14 +3,14 @@ import { Icon } from "../atoms/Icon";
 // import { SortButton, FilterButton } from "../atoms/SubButton";
 import { WardInfo } from "../../services/wardService";
 import { toast } from "react-toastify";
-import { IoIosAddCircleOutline } from "react-icons/io";
 import { TempNurseButton } from "../atoms/Button";
 
 interface WardAdminInfoProps {
 	wardInfo: WardInfo;
+	onAddTempNurse: () => void;
 }
 
-const WardAdminInfo = ({ wardInfo }: WardAdminInfoProps) => {
+const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 	const handleCopyCode = () => {
 		navigator.clipboard.writeText(wardInfo.wardCode);
 		toast.success("병동 코드가 복사되었습니다");
@@ -30,9 +30,12 @@ const WardAdminInfo = ({ wardInfo }: WardAdminInfoProps) => {
 					</div>
 
 					<div className="bg-white rounded-xl p-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-						<h3 className="text-[0.95rem] text-gray-600 mb-1 font-medium">
-							병동 인원
-						</h3>
+						<div className="flex items-center justify-between mb-1">
+							<h3 className="text-[0.95rem] text-gray-600 font-medium">
+								병동 인원
+							</h3>
+							<TempNurseButton onClick={onAddTempNurse} />
+						</div>
 						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
 							{wardInfo.nursesTotalCnt}명
 						</p>
@@ -65,9 +68,6 @@ const WardAdminInfo = ({ wardInfo }: WardAdminInfoProps) => {
 						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
 							1명 대기
 						</p>
-					</div>
-					<div className="mt-1 lg:col-span-2 lg:col-start-3">
-						<TempNurseButton />
 					</div>
 				</div>
 			</div>
