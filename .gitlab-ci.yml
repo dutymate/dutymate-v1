@@ -136,7 +136,7 @@ build_frontend:
     - npm run build
   artifacts:
     paths:
-      - frontend/build
+      - frontend/dist
 
 deploy_frontend:
   stage: deploy_frontend
