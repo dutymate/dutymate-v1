@@ -5,6 +5,7 @@ stages:
   - aws_ecr_login
   - publish_backend
   - deploy_backend
+  - build_frontend
 
 check_infrastructure:
   stage: check_infrastructure
@@ -116,3 +117,21 @@ deploy_backend:
     AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   script:
     - aws ecs update-service --cluster $AWS_ECS_CLUSTER_NAME --service $AWS_ECS_SERVICE_NAME --force-new-deployment
+
+build_frontend:
+  stage: build_frontend
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^release.*/'
+  image: node:22.13-alpine
+  cache:
+    paths:
+      - frontend/node_modules
+    key: $CI_PROJECT_NAME-frontend-build-cache
+  before_script:
+    - cd frontend
+    - npm ci
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/build
