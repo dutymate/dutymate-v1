@@ -2,6 +2,7 @@ package net.dutymate.api.entity;
 
 import java.util.List;
 
+import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.enumclass.ShiftType;
 import net.dutymate.api.enumclass.SkillLevel;
 
@@ -76,7 +77,7 @@ public class WardMember {
 			this.memo = memo;
 		}
 		if (role != null && !role.isEmpty()) {
-			this.member.updateRole(role);
+			this.member.updateRole(Role.valueOf(role));
 		}
 	}
 }

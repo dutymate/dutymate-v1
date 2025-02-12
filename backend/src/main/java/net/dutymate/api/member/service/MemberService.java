@@ -449,6 +449,7 @@ public class MemberService {
 
 			ward.removeWardMember(wardMember); // 병동에서 제거
 			deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
+			member.updateRole(null);
 		}
 	}
 

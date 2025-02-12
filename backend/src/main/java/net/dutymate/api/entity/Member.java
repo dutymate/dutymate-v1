@@ -82,8 +82,8 @@ public class Member {
 		this.role = role;
 	}
 
-	public void updateRole(String role) {
-		this.role = Role.valueOf(role);
+	public void updateRole(Role role) {
+		this.role = role;
 	}
 
 	public void editMember(String name, String nickname, String gender, Integer grade) {
