@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class ShiftUtil {
 
 	private final WardScheduleRepository wardScheduleRepository;
+	private final InitialDutyGenerator initialDutyGenerator;
 
 	// 병동 스케줄에서 Shift 조회 메서드
 	public Shift getShift(int year, int month, int date, Member member) {
@@ -66,8 +67,13 @@ public class ShiftUtil {
 				prev.changeShifts(after);
 			});
 
+		wardSchedule.setNowIdx(wardSchedule.getNowIdx() + 1);
 		// 기존 병동 스케줄에 새로운 스냅샷 추가 및 저장
-		wardSchedule.getDuties().add(WardSchedule.Duty.builder().duty(newDuty).build());
+		wardSchedule.getDuties().add(WardSchedule.Duty.builder()
+			.idx(wardSchedule.getNowIdx() + 1)
+			.duty(newDuty)
+			.history(initialDutyGenerator.createInitialHistory())
+			.build());
 		wardScheduleRepository.save(wardSchedule);
 	}
 }

@@ -99,6 +99,7 @@ public class RequestService {
 		// ELSE IF) 기존 칸 Shift == 요청 Shift	 THEN) X로 변경
 		if (changedStatus == RequestStatus.ACCEPTED) {
 			shiftUtil.changeShift(year, month, date, requestMember, request.getRequestShift());
+
 		} else if (prevShift == request.getRequestShift()) {
 			shiftUtil.changeShift(year, month, date, requestMember, Shift.X);
 		}
