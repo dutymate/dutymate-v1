@@ -6,6 +6,7 @@ stages:
   - publish_backend
   - deploy_backend
   - build_frontend
+  - deploy_frontend
 
 check_infrastructure:
   stage: check_infrastructure
@@ -135,3 +136,22 @@ build_frontend:
   artifacts:
     paths:
       - frontend/build
+
+deploy_frontend:
+  stage: deploy_frontend
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^release.*/'
+  needs:
+    - job: build_frontend
+      artifacts: true
+  image: amazon/aws-cli
+  variables:
+    AWS_ACCESS_KEY_ID: $AWS_FRONTEND_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $AWS_FRONTEND_SECRET_KEY
+    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+  before_script:
+    - cd frontend/build
+    - export AWS_CLOUDFRONT_DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Origins.Items[?DomainName=='$AWS_FRONTEND_BUCKET_NAME.s3.$AWS_DEFAULT_REGION.amazonaws.com']].Id" --output text)
+  script:
+    - aws s3 sync . s3://$AWS_FRONTEND_BUCKET_NAME --delete
+    - aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
