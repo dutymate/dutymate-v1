@@ -133,7 +133,7 @@ resource "aws_route_table_association" "database_route_table_assoc" {
 resource "aws_vpc_endpoint" "vpce_s3" {
   vpc_id            = aws_vpc.vpc.id
   vpc_endpoint_type = "Gateway"
-  service_name      = "com.amazonaws.ap-northeast-2.s3"
+  service_name      = "com.amazonaws.${var.aws_region}.s3"
   route_table_ids   = [aws_route_table.private_route_table.id]
 
   tags = {
@@ -144,7 +144,7 @@ resource "aws_vpc_endpoint" "vpce_s3" {
 resource "aws_vpc_endpoint" "vpec_ecr_api" {
   vpc_id              = aws_vpc.vpc.id
   vpc_endpoint_type   = "Interface"
-  service_name        = "com.amazonaws.ap-northeast-2.ecr.api"
+  service_name        = "com.amazonaws.${var.aws_region}.ecr.api"
   private_dns_enabled = true
   subnet_ids          = aws_subnet.private_subnets[*].id
   security_group_ids  = [var.sg_vpce_ecr_id]
@@ -157,7 +157,7 @@ resource "aws_vpc_endpoint" "vpec_ecr_api" {
 resource "aws_vpc_endpoint" "vpec_ecr_dkr" {
   vpc_id              = aws_vpc.vpc.id
   vpc_endpoint_type   = "Interface"
-  service_name        = "com.amazonaws.ap-northeast-2.ecr.dkr"
+  service_name        = "com.amazonaws.${var.aws_region}.ecr.dkr"
   private_dns_enabled = true
   subnet_ids          = aws_subnet.private_subnets[*].id
   security_group_ids  = [var.sg_vpce_ecr_id]
