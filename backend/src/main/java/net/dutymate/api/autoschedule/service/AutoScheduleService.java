@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import net.dutymate.api.autoschedule.util.ScheduleGenerator;
+import net.dutymate.api.autoschedule.util.NurseScheduler;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Rule;
 import net.dutymate.api.entity.WardMember;
@@ -42,7 +42,7 @@ public class AutoScheduleService {
 
 	private final WardScheduleRepository wardScheduleRepository;
 
-	private final ScheduleGenerator scheduleGenerator;
+	private final NurseScheduler nurseScheduler;
 
 	@Transactional
 	public ResponseEntity<String> generateAutoSchedule(YearMonth yearMonth, Member member) {
@@ -68,10 +68,15 @@ public class AutoScheduleService {
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무 일정을 찾을 수 없습니다."));
 
 		if (wardSchedule.getDuties().get(wardSchedule.getNowIdx()).getDuty().size()
-			< scheduleGenerator.neededNurseCount(yearMonth, rule)) {
-			return ResponseEntity.badRequest().body("현재 근무 일정에는 간호사가 더 필요합니다.");
+			< nurseScheduler.neededNurseCount(yearMonth, rule)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사가 더 필요합니다.");
 		}
-		scheduleGenerator.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth);
+		// scheduleGenerator.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth);
+		Long memberId = member.getMemberId();
+		nurseScheduler.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth, memberId);
+
+		// scheduleMaker.scheduleMake(wardSchedule, rule, wardMembers, prevWardSchedule, yearMonth);
+
 		wardScheduleRepository.save(wardSchedule);
 
 		return ResponseEntity.ok("자동 생성 완료");

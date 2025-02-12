@@ -21,12 +21,12 @@ public class AutoScheduleController {
 	private final AutoScheduleService autoScheduleService;
 
 	@GetMapping
-	public ResponseEntity<String> autoCreate(
+	public ResponseEntity<?> autoCreate(
 		@RequestParam(value = "year", required = false) Integer year,
 		@RequestParam(value = "month", required = false) Integer month,
 		@Auth Member member) {
-
-		return autoScheduleService.generateAutoSchedule(new YearMonth(year, month), member);
+		autoScheduleService.generateAutoSchedule(new YearMonth(year, month), member);
+		return ResponseEntity.ok().build();
 	}
 
 }
