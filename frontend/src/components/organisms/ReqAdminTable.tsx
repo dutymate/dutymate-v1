@@ -1,8 +1,8 @@
 // ReqAdminTable.tsx
 
 import { useState, useEffect } from "react";
-import { SmallSearchInput } from "../atoms/Input";
-import { SortButton, FilterButton } from "../atoms/SubButton";
+// import { SmallSearchInput } from "../atoms/Input";
+// import { SortButton, FilterButton } from "../atoms/SubButton";
 import { DutyBadgeKor } from "../atoms/DutyBadgeKor";
 import { FaUserCircle } from "react-icons/fa";
 import { ApprovalBtn } from "../atoms/ApprovalBtn";
@@ -13,7 +13,8 @@ import { WardRequest } from "../../services/requestService";
 const ReqAdminTable = () => {
 	const [requests, setRequests] = useState<WardRequest[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [searchTerm, setSearchTerm] = useState("");
+	const [searchTerm] = useState("");
+	// const [ setSearchTerm] = useState("");
 
 	// 요청 목록 조회
 	const fetchRequests = async () => {
