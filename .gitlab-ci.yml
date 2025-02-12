@@ -130,6 +130,7 @@ build_frontend:
     key: $CI_PROJECT_NAME-frontend-build-cache
   before_script:
     - cd frontend
+    - cp $FE_ENV_FILE .env
     - npm ci
   script:
     - npm run build
