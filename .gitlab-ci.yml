@@ -53,6 +53,8 @@ build_backend:
       - backend/build/
       - backend/.sonar/cache/
     key: $CI_PROJECT_NAME-backend-cache
+  variables:
+    GIT_DEPTH: 0
   before_script:
     - cd backend
     - cp $ENV_FILE .env
