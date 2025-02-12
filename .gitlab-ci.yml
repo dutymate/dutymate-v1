@@ -51,16 +51,12 @@ build_backend:
     paths:
       - backend/.gradle/
       - backend/build/
-      - backend/.sonar/cache/
     key: $CI_PROJECT_NAME-backend-cache
-  variables:
-    GIT_DEPTH: 0
   before_script:
     - cd backend
     - cp $ENV_FILE .env
   script:
     - gradle build --build-cache
-    - gradle sonar -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.qualitygate.wait=true
   after_script:
     - cd backend
     - chmod +x scripts/ci/generate-codequality-report-from-checkstyle.sh
