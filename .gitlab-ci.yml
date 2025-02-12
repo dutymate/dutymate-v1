@@ -11,7 +11,7 @@ check_infrastructure:
         - infrastructure/**/*
   image:
     name: hashicorp/terraform:latest
-    entrypoint: [""]
+    entrypoint: [ "" ]
   script:
     - terraform fmt -recursive -check
     - terraform validate
@@ -48,12 +48,14 @@ build_backend:
     paths:
       - backend/.gradle/
       - backend/build/
+      - backend/.sonar/cache/
     key: $CI_PROJECT_NAME-backend-cache
   before_script:
     - cd backend
     - cp $ENV_FILE .env
   script:
     - gradle build --build-cache
+    - gradle sonar -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.qualitygate.wait=true
   after_script:
     - cd backend
     - chmod +x scripts/ci/generate-codequality-report-from-checkstyle.sh
