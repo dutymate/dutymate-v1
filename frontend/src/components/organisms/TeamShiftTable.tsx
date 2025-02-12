@@ -96,6 +96,11 @@ const TeamShiftTable = () => {
 		});
 	};
 
+	// 근무표 다운로드 기능능
+	const handleDownloadWardSchedule = () => {
+		toast.info("준비 중입니다.");
+	};
+
 	return (
 		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6">
 			<div className="flex flex-col sm:flex-row items-center justify-between mb-4">
@@ -132,7 +137,7 @@ const TeamShiftTable = () => {
 						size="sm"
 						color="off"
 						className="whitespace-nowrap px-3"
-						onClick={() => console.log("다운로드")}
+						onClick={handleDownloadWardSchedule}
 					>
 						다운로드
 					</Button>

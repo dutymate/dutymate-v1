@@ -11,6 +11,7 @@ import { IoIosChatboxes } from "react-icons/io";
 import { PiLightbulbFilamentFill } from "react-icons/pi";
 import Profile from "../atoms/Profile";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface NavigationItem {
 	name: string;
@@ -38,11 +39,25 @@ const staffNurseNavigation: NavigationItem[] = [
 ];
 
 const NavigationItem = React.memo(
-	({ item, isActive }: { item: NavigationItem; isActive: boolean }) => (
-		<li className="flex justify-center px-[1.3rem]">
-			<Link
-				to={item.href}
-				className={`
+	({ item, isActive }: { item: NavigationItem; isActive: boolean }) => {
+		const handleClick = (
+			e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+		) => {
+			if (item.name === "커뮤니티" || item.name === "튜토리얼") {
+				e.preventDefault(); // 🔹 링크 이동 막기
+				toast.info("준비 중입니다."); // 🔹 Toast 메시지 출력
+			}
+		};
+
+		return (
+			<li className="flex justify-center px-[1.3rem]">
+				<Link
+					to={
+						item.name === "커뮤니티" || item.name === "튜토리얼"
+							? "#"
+							: item.href
+					}
+					className={`
 					flex items-center gap-x-3 px-4 py-2.5 w-full rounded-lg
 					font-['Pretendard Variable'] text-[0.9rem] group
 					${
@@ -51,18 +66,20 @@ const NavigationItem = React.memo(
 							: "text-gray-700 hover:text-primary hover:bg-primary-10"
 					}
 				`}
-			>
-				{React.createElement(item.icon, {
-					className: `w-4 h-4 min-w-4 ${
-						isActive
-							? "text-primary-dark"
-							: "text-gray-500 group-hover:text-primary"
-					}`,
-				})}
-				<span className="font-semibold">{item.name}</span>
-			</Link>
-		</li>
-	),
+					onClick={handleClick}
+				>
+					{React.createElement(item.icon, {
+						className: `w-4 h-4 min-w-4 ${
+							isActive
+								? "text-primary-dark"
+								: "text-gray-500 group-hover:text-primary"
+						}`,
+					})}
+					<span className="font-semibold">{item.name}</span>
+				</Link>
+			</li>
+		);
+	},
 );
 
 interface SidebarProps {

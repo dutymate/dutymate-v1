@@ -406,6 +406,11 @@ const ShiftAdminTable = ({
 		}, 0);
 	};
 
+	// 근무표 다운로드 기능
+	const handleDownloadWardSchedule = () => {
+		toast.info("준비 중입니다.");
+	};
+
 	return (
 		<>
 			{/* 월 선택 및 버튼 영역 */}
@@ -468,6 +473,7 @@ const ShiftAdminTable = ({
 							size="sm"
 							color="off"
 							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
+							onClick={handleDownloadWardSchedule}
 						>
 							다운로드
 						</Button>
