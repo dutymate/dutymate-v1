@@ -1,4 +1,5 @@
 import React from "react";
+import { IoIosAddCircleOutline } from "react-icons/io";
 
 type ButtonSize = "xs" | "sm" | "md" | "lg";
 type ButtonWidth = "short" | "long";
@@ -131,5 +132,28 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 		);
 	},
 );
+
+// 임시 간호사 추가 버튼
+interface TempNurseButtonProps {
+	onClick?: () => void;
+	className?: string;
+}
+
+export const TempNurseButton = ({
+	onClick,
+	className,
+}: TempNurseButtonProps) => {
+	return (
+		<button
+			onClick={onClick}
+			className={`flex items-center justify-center gap-2 py-2 w-[calc(100%-5px)] ml-auto bg-white rounded-md border border-gray-300 hover:bg-gray-100 transition-colors ${className}`}
+		>
+			<IoIosAddCircleOutline className="text-gray-600 text-[1.125rem]" />
+			<span className="text-[0.95rem] text-gray-600 font-medium">
+				임시 간호사 추가
+			</span>
+		</button>
+	);
+};
 
 export type { ButtonProps, ButtonSize, ButtonWidth, ButtonColor };

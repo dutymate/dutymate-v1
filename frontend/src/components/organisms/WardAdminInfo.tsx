@@ -3,6 +3,8 @@ import { Icon } from "../atoms/Icon";
 // import { SortButton, FilterButton } from "../atoms/SubButton";
 import { WardInfo } from "../../services/wardService";
 import { toast } from "react-toastify";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { TempNurseButton } from "../atoms/Button";
 
 interface WardAdminInfoProps {
 	wardInfo: WardInfo;
@@ -17,8 +19,8 @@ const WardAdminInfo = ({ wardInfo }: WardAdminInfoProps) => {
 	return (
 		<div className="w-full">
 			<div className="bg-white rounded-[1.154375rem] p-4">
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-					<div className="bg-white rounded-xl p-2.5 col-span-1 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+					<div className="bg-white rounded-xl p-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
 						<h3 className="text-[0.95rem] text-gray-600 mb-1 font-medium">
 							병동 정보
 						</h3>
@@ -36,7 +38,7 @@ const WardAdminInfo = ({ wardInfo }: WardAdminInfoProps) => {
 						</p>
 					</div>
 
-					<div className="bg-white rounded-xl p-2.5 col-span-1 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+					<div className="bg-white rounded-xl p-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
 						<div className="flex items-center gap-2 mb-1">
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								병동 코드
@@ -64,27 +66,30 @@ const WardAdminInfo = ({ wardInfo }: WardAdminInfoProps) => {
 							1명 대기
 						</p>
 					</div>
+					<div className="mt-1 lg:col-span-2 lg:col-start-3">
+						<TempNurseButton />
+					</div>
 				</div>
+			</div>
 
-				{/* <div className="mb-3">
-					<div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 lg:gap-0">
-						<h2 className="text-lg font-semibold">간호사 관리</h2>
-						<div className="flex items-center gap-2 w-full lg:w-auto">
-							<div className="flex-1 lg:flex-initial">
-								<SmallSearchInput
-									id="search-nurse"
-									name="searchNurse"
-									placeholder="이름으로 검색하기"
-								/>
-							</div>
-							<div className="flex gap-2 flex-shrink-0">
-								<SortButton label="정렬" onClick={() => {}} />
-								<FilterButton label="필터" onClick={() => {}} />
-							</div>
+			{/* <div className="mb-3">
+				<div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2 lg:gap-0">
+					<h2 className="text-lg font-semibold">간호사 관리</h2>
+					<div className="flex items-center gap-2 w-full lg:w-auto">
+						<div className="flex-1 lg:flex-initial">
+							<SmallSearchInput
+								id="search-nurse"
+								name="searchNurse"
+								placeholder="이름으로 검색하기"
+							/>
+						</div>
+						<div className="flex gap-2 flex-shrink-0">
+							<SortButton label="정렬" onClick={() => {}} />
+							<FilterButton label="필터" onClick={() => {}} />
 						</div>
 					</div>
-				</div> */}
-			</div>
+				</div>
+			</div> */}
 		</div>
 	);
 };
