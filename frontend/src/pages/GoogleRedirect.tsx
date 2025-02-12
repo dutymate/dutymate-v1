@@ -6,6 +6,7 @@ import {
 	ApiErrorResponse,
 } from "../services/userService";
 import useUserAuthStore from "../store/userAuthStore";
+import { toast } from "react-toastify";
 
 export function GoogleRedirect() {
 	const navigate = useNavigate();
@@ -26,6 +27,7 @@ export function GoogleRedirect() {
 			(data: LoginResponse) => {
 				const { role, existAdditionalInfo, existMyWard } = data;
 				userAuthStore.setUserInfo(data);
+				toast.success("정상적으로 로그인되었습니다.");
 
 				if (!existAdditionalInfo) {
 					navigate("/extra-info");
@@ -44,8 +46,8 @@ export function GoogleRedirect() {
 				}
 			},
 			(error: ApiErrorResponse) => {
+				toast.error("아이디 또는 비밀번호가 일치하지 않습니다.");
 				navigate("/login");
-				console.error(error);
 			},
 		);
 	}, []);

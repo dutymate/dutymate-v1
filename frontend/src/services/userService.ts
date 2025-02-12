@@ -28,6 +28,11 @@ export interface ApiErrorResponse {
 	status: string;
 }
 
+interface LoginRequest {
+	email: string;
+	password: string;
+}
+
 // API Functions
 export const userService = {
 	/**
@@ -93,6 +98,23 @@ export const userService = {
 	): Promise<AdditionalInfoResponse> => {
 		try {
 			const response = await axiosInstance.post("/member/info", data);
+			return response.data;
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				throw error.response?.data;
+			}
+			throw error;
+		}
+	},
+
+	/**
+	 * 일반 로그인 API
+	 * @param data
+	 * @returns
+	 */
+	login: async (data: LoginRequest): Promise<LoginResponse> => {
+		try {
+			const response = await axiosInstance.post("/member/login", data);
 			return response.data;
 		} catch (error) {
 			if (axios.isAxiosError(error)) {

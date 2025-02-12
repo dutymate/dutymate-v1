@@ -1,14 +1,121 @@
 import { EmailInput, PasswordInput } from "../atoms/Input";
 import kakaoIcon from "../../assets/kakaotalk.svg";
 import googleIcon from "../../assets/google.svg";
+import { useState } from "react";
+import userService from "@/services/userService";
+import { toast } from "react-toastify";
+import useUserAuthStore from "@/store/userAuthStore";
+import { useNavigate } from "react-router-dom";
+
+interface LoginData {
+	email: string;
+	password: string;
+}
+
+// 이메일 형식 검증
+const validateEmail = (email: string) => {
+	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
 
 const LoginForm = () => {
+	const navigate = useNavigate();
+	const userAuthStore = useUserAuthStore();
+
+	const [loginData, setLoginData] = useState<LoginData>({
+		email: "",
+		password: "",
+	});
+
+	const [error, setError] = useState<{ email?: string; password?: string }>({});
+
 	const handleKakaoLogin = () => {
 		window.location.href = import.meta.env.VITE_KAKAO_LOGIN_URL;
 	};
 
 	const handleGoogleLogin = () => {
 		window.location.href = import.meta.env.VITE_GOOGLE_LOGIN_URL;
+	};
+
+	const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+
+		setLoginData((preData) => ({
+			...preData,
+			[name]: value,
+		}));
+
+		// 입력 변경 시, 에러 메세지 초기화
+		setError((preError) => ({
+			...preError,
+			[name]: "",
+		}));
+	};
+
+	const handleLoginBtn = async (e: React.FormEvent) => {
+		e.preventDefault();
+
+		const trimEmail = loginData.email.trim();
+		const trimpassword = loginData.password.trim();
+		let isValid = true;
+
+		// 이메일 검증
+		if (!trimEmail) {
+			setError((prevError) => ({
+				...prevError,
+				email: "이메일을 입력해 주세요.",
+			}));
+			isValid = false;
+		} else if (!validateEmail(trimEmail)) {
+			setError((prevError) => ({
+				...prevError,
+				email: "올바른 이메일 형식이 아닙니다.",
+			}));
+			isValid = false;
+		}
+
+		// 패스워드 검증
+		if (!trimpassword) {
+			setError((prevError) => ({
+				...prevError,
+				password: "비밀번호를 입력해주세요.",
+			}));
+			isValid = false;
+		}
+
+		if (!isValid) {
+			return;
+		}
+
+		try {
+			const data = await userService.login({
+				email: trimEmail,
+				password: trimpassword,
+			});
+			const { role, existAdditionalInfo, existMyWard } = data;
+
+			userAuthStore.setUserInfo(data);
+			toast.success("정상적으로 로그인되었습니다.");
+
+			// 로그인 후 이동 로직
+			if (!existAdditionalInfo) {
+				navigate("/extra-info");
+			} else if (!existMyWard) {
+				if (role === "HN") {
+					navigate("/create-ward");
+				} else {
+					navigate("/enter-ward");
+				}
+			} else {
+				if (role === "HN") {
+					navigate("/shift-admin");
+				} else {
+					navigate("/my-shift");
+				}
+			}
+		} catch (error) {
+			toast.error("아이디 또는 비밀번호가 일치하지 않습니다.");
+			navigate("/login");
+		}
 	};
 
 	return (
@@ -18,17 +125,28 @@ const LoginForm = () => {
 					<EmailInput
 						id="email"
 						name="email"
-						label="아이디"
+						label="이메일"
 						placeholder="ssafynurse@dutymate.com"
+						value={loginData.email}
+						onChange={handleLoginChange}
+						error={error.email}
 					/>
 				</div>
 				<div className="lg:mt-2 mt-6">
-					<PasswordInput id="password" name="password" label="비밀번호" />
+					<PasswordInput
+						id="password"
+						name="password"
+						label="비밀번호"
+						value={loginData.password}
+						onChange={handleLoginChange}
+						error={error.password}
+					/>
 				</div>
 				<div className="lg:mt-4 mt-8">
 					<button
 						type="submit"
 						className="w-full px-3 py-2 text-sm font-medium text-white bg-base-black rounded-md hover:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-base-black"
+						onClick={handleLoginBtn}
 					>
 						로그인
 					</button>
