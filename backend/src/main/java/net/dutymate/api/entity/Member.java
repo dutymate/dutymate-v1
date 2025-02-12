@@ -2,6 +2,8 @@ package net.dutymate.api.entity;
 
 import java.sql.Timestamp;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import net.dutymate.api.enumclass.Gender;
 import net.dutymate.api.enumclass.Provider;
 import net.dutymate.api.enumclass.Role;
@@ -99,5 +101,9 @@ public class Member {
 
 	public void changeName(String name) {
 		this.name = name;
+	}
+
+	public void updatePassword(String newPassword) {
+		this.password = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 	}
 }

@@ -25,6 +25,7 @@ import net.dutymate.api.enumclass.Provider;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.member.dto.AdditionalInfoRequestDto;
 import net.dutymate.api.member.dto.AdditionalInfoResponseDto;
+import net.dutymate.api.member.dto.CheckPasswordDto;
 import net.dutymate.api.member.dto.GoogleTokenResponseDto;
 import net.dutymate.api.member.dto.GoogleUserResponseDto;
 import net.dutymate.api.member.dto.KakaoTokenResponseDto;
@@ -513,5 +514,24 @@ public class MemberService {
 		if (nextMonthSchedule != null) {
 			wardMemberService.deleteWardMemberDuty(nextMonthSchedule, member);
 		}
+	}
+
+	public void checkPassword(Member member, CheckPasswordDto checkPasswordDto) {
+		// 1. 만약 소셜 로그인한 이력이 있는 경우 예외 처리
+		checkAnotherSocialLogin(member, Provider.NONE);
+
+		// 2. 현재 비밀번호 확인 (DB에 저장된 암호화된 비밀번호와 일치하는지 확인)
+		if (!BCrypt.checkpw(checkPasswordDto.getCurrentPassword(), member.getPassword())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "현재 비밀번호가 일치하지 않습니다.");
+		}
+
+		// 3. 새 비밀번호와 비밀번호 확인 값이 같은지 확인
+		if (!checkPasswordDto.getNewPassword().equals(checkPasswordDto.getNewPasswordConfirm())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "새 비밀번호가 일치하지 않습니다.");
+		}
+
+		// 4. 새 비밀번호 암호화하여 저장하기
+		member.updatePassword(checkPasswordDto.getNewPassword());
+		memberRepository.save(member);
 	}
 }

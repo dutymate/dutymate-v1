@@ -17,6 +17,7 @@ import net.dutymate.api.entity.Member;
 import net.dutymate.api.member.dto.AdditionalInfoRequestDto;
 import net.dutymate.api.member.dto.AdditionalInfoResponseDto;
 import net.dutymate.api.member.dto.CheckNicknameRequestDto;
+import net.dutymate.api.member.dto.CheckPasswordDto;
 import net.dutymate.api.member.dto.LoginRequestDto;
 import net.dutymate.api.member.dto.LoginResponseDto;
 import net.dutymate.api.member.dto.MypageEditRequestDto;
@@ -120,4 +121,11 @@ public class MemberController {
 		memberService.deleteMember(member);
 		return ResponseEntity.ok().build();
 	}
+
+	@PutMapping("/password")
+	public ResponseEntity<?> checkPassword(@Auth Member member, @RequestBody CheckPasswordDto checkPasswordDto) {
+		memberService.checkPassword(member, checkPasswordDto);
+		return ResponseEntity.ok().build();
+	}
+
 }
