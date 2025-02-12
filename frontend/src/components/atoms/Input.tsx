@@ -16,7 +16,7 @@ export interface InputProps {
 	required?: boolean;
 	onInvalid?: (e: React.InvalidEvent<HTMLInputElement>) => void;
 	onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
-	onFocus?: () => void;
+	onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 export const Input = ({
