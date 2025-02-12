@@ -51,7 +51,7 @@ build_backend:
     key: $CI_PROJECT_NAME-backend-cache
   before_script:
     - cd backend
-    - cp $APPLICATION_ENV src/main/resources/application-env.yaml
+    - cp $ENV_FILE .env
   script:
     - gradle build --build-cache
   after_script:
