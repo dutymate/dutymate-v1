@@ -92,7 +92,7 @@ const ReqAdminTable = () => {
 					{/* 검색창과 데스크톱용 정렬/필터 */}
 					<div className="flex flex-row gap-1 lg:gap-2 w-full lg:w-auto items-center">
 						{/* 검색창 */}
-						<div className="w-[140px] lg:w-[260px]">
+						{/* <div className="w-[140px] lg:w-[260px]">
 							<SmallSearchInput
 								id="search-nurse"
 								name="search-nurse"
@@ -100,17 +100,17 @@ const ReqAdminTable = () => {
 								value={searchTerm}
 								onChange={(e) => setSearchTerm(e.target.value)}
 							/>
-						</div>
+						</div> */}
 						{/* 모바일 정렬/필터 버튼 */}
-						<div className="flex lg:hidden gap-1 ml-auto">
+						{/* <div className="flex lg:hidden gap-1 ml-auto">
 							<SortButton label="정렬" />
 							<FilterButton label="필터" />
-						</div>
+						</div> */}
 						{/* 데스크톱 정렬/필터 버튼 */}
-						<div className="hidden lg:flex gap-2 flex-shrink-0">
+						{/* <div className="hidden lg:flex gap-2 flex-shrink-0">
 							<SortButton label="정렬" />
 							<FilterButton label="필터" />
-						</div>
+						</div> */}
 					</div>
 				</div>
 

@@ -25,6 +25,12 @@ export interface ApiErrorResponse {
 	status: string;
 }
 
+export interface PasswordUpdateRequest {
+	currentPassword: string;
+	newPassword: string;
+	newPasswordConfirm: string;
+}
+
 export const profileService = {
 	// 프로필 정보 조회
 	getProfile: () => {
@@ -136,6 +142,26 @@ export const profileService = {
 				fail(error.response?.data);
 			}
 			throw error;
+		}
+	},
+
+	/**
+	 * 비밀번호 변경 API
+	 * @param data
+	 * @returns
+	 */
+	updatePassword: async (
+		data: PasswordUpdateRequest,
+		success: () => void,
+		fail: (error: ApiErrorResponse) => void,
+	) => {
+		try {
+			await axiosInstance.put("/member/password", data);
+			success();
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				fail(error.response?.data);
+			}
 		}
 	},
 };
