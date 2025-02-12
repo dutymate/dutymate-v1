@@ -35,10 +35,10 @@ interface LoginRequest {
 }
 
 interface SignupRequest {
-	email : string;
-	password : string;
-	passwordConfirm : string;
-	name : string;
+	email: string;
+	password: string;
+	passwordConfirm: string;
+	name: string;
 }
 
 // API Functions
@@ -134,15 +134,15 @@ export const userService = {
 
 	/**
 	 * 회원가입 API 연동
-	 * @param data 
-	 * @returns 
+	 * @param data
+	 * @returns
 	 */
-	signup : async (data : SignupRequest): Promise<LoginResponse> => {
+	signup: async (data: SignupRequest): Promise<LoginResponse> => {
 		try {
 			const response = await axiosInstance.post("/member", data);
 			return response.data;
-		}catch (error){
-			if(axios.isAxiosError(error)){
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
 				throw error.response?.data;
 			}
 			throw error;
@@ -151,18 +151,18 @@ export const userService = {
 
 	/**
 	 * 이메일 중복 체크 api
-	 * @param email 
+	 * @param email
 	 */
-	checkEmail : async(email : string) : Promise<void> =>{
+	checkEmail: async (email: string): Promise<void> => {
 		try {
-			await axiosInstance.get("/member/check-email", {params : {email}})
-		}catch(error) {
-			if(axios.isAxiosError(error)){
+			await axiosInstance.get("/member/check-email", { params: { email } });
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
 				throw error;
 			}
 			throw error;
 		}
-	}
+	},
 };
 
 export default userService;
