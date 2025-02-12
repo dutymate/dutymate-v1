@@ -14,7 +14,7 @@ resource "aws_instance" "db_access_instance" {
   subnet_id                   = var.database_subnets[0]
   associate_public_ip_address = false
   iam_instance_profile        = var.ssm_instance_profile_name
-  vpc_security_group_ids      = [var.sg_db_ssm_access_id]
+  vpc_security_group_ids      = [var.sg_ssm_ec2_id]
 
   tags = {
     Name = "dutymate-db-access-instance"

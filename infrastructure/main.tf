@@ -11,6 +11,7 @@ module "networking" {
   private_subnet_cidr_block  = var.private_subnet_cidr_block
   database_subnet_cidr_block = var.database_subnet_cidr_block
   sg_vpce_ecr_id             = module.security_group.sg_vpce_ecr_id
+  sg_vpce_ssm_id             = module.security_group.sg_vpce_ssm_id
 }
 
 module "security_group" {
@@ -23,7 +24,7 @@ module "security_group" {
 module "ssm" {
   source                    = "./Modules/SSM"
   database_subnets          = module.networking.database_subnets
-  sg_db_ssm_access_id       = module.security_group.sg_db_ssm_access_id
+  sg_ssm_ec2_id             = module.security_group.sg_ssm_ec2_id
   ssm_instance_profile_name = module.iam.ssm_instance_profile_name
 }
 

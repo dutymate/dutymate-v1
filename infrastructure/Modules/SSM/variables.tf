@@ -2,7 +2,7 @@ variable "database_subnets" {
   type = list(string)
 }
 
-variable "sg_db_ssm_access_id" {
+variable "sg_ssm_ec2_id" {
   type = string
 }
 

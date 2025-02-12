@@ -18,10 +18,14 @@ output "sg_mongodb_id" {
   value = aws_security_group.sg_mongodb.id
 }
 
+output "sg_ssm_ec2_id" {
+  value = aws_security_group.sg_ssm_ec2.id
+}
+
 output "sg_vpce_ecr_id" {
   value = aws_security_group.sg_vpce_ecr.id
 }
 
-output "sg_db_ssm_access_id" {
-  value = aws_security_group.sg_db_ssm_access.id
+output "sg_vpce_ssm_id" {
+  value = aws_security_group.sg_vpce_ssm.id
 }

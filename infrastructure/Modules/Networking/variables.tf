@@ -25,3 +25,7 @@ variable "database_subnet_cidr_block" {
 variable "sg_vpce_ecr_id" {
   type = string
 }
+
+variable "sg_vpce_ssm_id" {
+  type = string
+}
