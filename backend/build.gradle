@@ -4,6 +4,7 @@ plugins {
     id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'com.google.cloud.tools.jib' version '3.4.4'
     id "org.sonarqube" version '6.0.1.5171'
 }
 
@@ -67,4 +68,19 @@ checkstyle {
     configFile = file('config/checkstyle/naver-checkstyle-rules.xml')
     configProperties = ['checkstyle.suppressions.file': 'config/checkstyle/naver-checkstyle-suppressions.xml']
     toolVersion = '10.19.0'
+}
+
+jib {
+    from {
+        image = 'amazoncorretto:17-alpine-jdk'
+    }
+    to {
+        tags = ['latest', "${project.version}".toString()]
+        credHelper = 'ecr-login'
+    }
+    container {
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+        jvmFlags = ['-XX:+UseContainerSupport', '-Dserver.port=8080', '-Dfile.encoding=UTF-8']
+        ports = ['8080']
+    }
 }

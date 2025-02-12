@@ -2,6 +2,8 @@ stages:
   - check_infrastructure
   - check_frontend
   - build_backend
+  - aws_ecr_login
+  - publish_backend
 
 check_infrastructure:
   stage: check_infrastructure
@@ -65,3 +67,39 @@ build_backend:
     reports:
       codequality:
         - backend/checkstyle-report.json
+
+aws_ecr_login:
+  stage: aws_ecr_login
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^release.*/'
+  image:
+    name: amazon/aws-cli
+    entrypoint: [ "" ]
+  variables:
+    AWS_ACCESS_KEY_ID: $AWS_ECR_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $AWS_ECR_SECRET_KEY
+    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+  script:
+    - aws ecr get-login-password --region $AWS_DEFAULT_REGION >> password.txt
+  artifacts:
+    paths:
+      - password.txt
+
+publish_backend:
+  stage: publish_backend
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^release.*/'
+  needs:
+    - job: aws_ecr_login
+      artifacts: true
+  image: gradle:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - cd backend
+  script:
+    - gradle jib:build -Djib.to.image=$AWS_ECR_REPO_URI -Djib.to.auth.username=AWS -Djib.to.auth.password=$(cat password.txt)
