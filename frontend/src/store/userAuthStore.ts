@@ -7,6 +7,7 @@ interface UserInfo {
 	memberId: number;
 	name: string;
 	role: string;
+	provider: string;
 	profileImg: string | null;
 	existAdditionalInfo: boolean;
 	existMyWard: boolean;
