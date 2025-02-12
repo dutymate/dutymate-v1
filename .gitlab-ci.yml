@@ -4,6 +4,7 @@ stages:
   - build_backend
   - aws_ecr_login
   - publish_backend
+  - deploy_backend
 
 check_infrastructure:
   stage: check_infrastructure
@@ -103,3 +104,17 @@ publish_backend:
     - cd backend
   script:
     - gradle jib:build -Djib.to.image=$AWS_ECR_REPO_URI -Djib.to.auth.username=AWS -Djib.to.auth.password=$(cat password.txt)
+
+deploy_backend:
+  stage: deploy_backend
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^release.*/'
+  needs:
+    - job: publish_backend
+  image: amazon/aws-cli
+  variables:
+    AWS_ACCESS_KEY_ID: $AWS_ECS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $AWS_ECS_SECRET_KEY
+    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+  script:
+    - aws ecs update-service --cluster $AWS_ECS_CLUSTER_NAME --service $AWS_ECS_SERVICE_NAME --force-new-deployment
