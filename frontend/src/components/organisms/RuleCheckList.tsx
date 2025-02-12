@@ -1,24 +1,14 @@
-interface RuleCheckListProps {
-	issues: {
-		name: string;
-		startDate: number;
-		endDate: number;
-		endDateShift: string;
-		message: string;
-	}[];
-}
+import useShiftStore from "../../store/shiftStore";
+import { Icon } from "../atoms/Icon";
 
-const RuleCheckList = ({ issues }: RuleCheckListProps) => {
+const RuleCheckList = () => {
+	const issues = useShiftStore((state) => state.dutyInfo?.issues || []);
+
 	return (
-		<div className="flex w-1/2 max-w-[600px] bg-white rounded-xl p-5 shadow-lg relative overflow-hidden">
+		<div className="flex flex-1 bg-white rounded-xl p-5 shadow-lg relative overflow-hidden">
 			{/* 헤더 고정 */}
-			<div className="flex items-center justify-center pr-4 sticky top-0 bg-white z-10">
-				<h2
-					className="text-md font-bold text-foreground"
-					style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
-				>
-					규칙 위반
-				</h2>
+			<div className="flex items-top justify-center pr-4 sticky top-0 bg-white z-10">
+				<Icon name="alert" size={24} className="text-gray-600" />
 			</div>
 
 			{/* 블러 효과 & 스크롤 - min-w-0 추가하여 flex 컨테이너 크기 조절 문제 해결 */}
@@ -31,8 +21,8 @@ const RuleCheckList = ({ issues }: RuleCheckListProps) => {
 					<div className="space-y-3">
 						{issues.map((item, index) => (
 							<div key={index} className="flex items-center gap-3">
-								<span className="bg-primary-bg px-1.5 py-0.75 rounded-md">
-									<span className="font-medium text-sm">{item.name}</span>
+								<span className="bg-duty-off-bg px-1.5 py-0.75 rounded-md">
+									<span className="font-medium text-md">{item.name}</span>
 								</span>
 								<span className="text-foreground text-sm">
 									{item.startDate}일 - {item.endDateShift} 근무

@@ -2,16 +2,26 @@
 
 import { Icon } from "../atoms/Icon";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
-import { DutyHistory } from "../../services/dutyService";
+import useShiftStore from "../../store/shiftStore";
+import type { DutyHistory } from "../../services/dutyService";
+import { useCallback, useMemo } from "react";
 
-interface HistoryListProps {
-	histories: DutyHistory[];
-	onRevert: (historyIdx: number) => void;
-}
+const HistoryList = () => {
+	const histories = useShiftStore((state) => state.dutyInfo?.histories || []);
+	const fetchDutyInfo = useShiftStore((state) => state.fetchDutyInfo);
 
-const HistoryList = ({ histories = [], onRevert }: HistoryListProps) => {
 	// 최신 수정 기록이 위에 오도록 정렬
-	const sortedHistories = [...histories].sort((a, b) => b.idx - a.idx);
+	const sortedHistories = useMemo(
+		() => [...histories].sort((a, b) => b.idx - a.idx),
+		[histories],
+	);
+
+	const handleRevert = useCallback(
+		async (historyIdx: number) => {
+			await fetchDutyInfo(undefined, undefined, historyIdx);
+		},
+		[fetchDutyInfo],
+	);
 
 	const renderChangeIndicator = (item: DutyHistory) => {
 		if (item.isAutoCreated) {
@@ -45,13 +55,8 @@ const HistoryList = ({ histories = [], onRevert }: HistoryListProps) => {
 	return (
 		<div className="flex w-1/2 max-w-[600px] bg-white rounded-xl p-5 shadow-lg relative overflow-hidden">
 			{/* 헤더 고정 */}
-			<div className="flex items-center justify-center pr-4 sticky top-0 bg-white z-10">
-				<h2
-					className="text-md font-bold text-foreground"
-					style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
-				>
-					수정 기록
-				</h2>
+			<div className="flex items-top justify-center pr-4 sticky top-0 bg-white z-10">
+				<Icon name="history" size={24} className="text-gray-600" />
 			</div>
 
 			{/* 스크롤 영역 */}
@@ -61,7 +66,7 @@ const HistoryList = ({ histories = [], onRevert }: HistoryListProps) => {
 						수정 기록이 없습니다
 					</div>
 				) : (
-					<div className="space-y-3">
+					<div className="space-y-0">
 						{sortedHistories.map((item) => (
 							<div
 								key={item.idx}
@@ -72,10 +77,10 @@ const HistoryList = ({ histories = [], onRevert }: HistoryListProps) => {
 								<div className="flex items-center gap-3 flex-1 min-w-0">
 									<span
 										className={`px-1.5 py-0.75 rounded-md ${
-											item.isAutoCreated ? "bg-blue-50" : "bg-primary-bg"
+											item.isAutoCreated ? "bg-duty-off-dark" : "bg-duty-off-bg"
 										}`}
 									>
-										<span className="font-medium text-sm">{item.name}</span>
+										<span className="font-medium text-md">{item.name}</span>
 									</span>
 									<span className="text-foreground text-sm">
 										{item.modifiedDay}일
@@ -84,7 +89,7 @@ const HistoryList = ({ histories = [], onRevert }: HistoryListProps) => {
 								</div>
 								<button
 									className="flex items-center gap-1 text-gray-400 hover:text-gray-600 px-2 py-1 rounded-md hover:bg-gray-100"
-									onClick={() => onRevert(item.idx)}
+									onClick={() => handleRevert(item.idx)}
 								>
 									<span className="text-sm whitespace-nowrap">되돌리기</span>
 									<Icon name="undo" size={16} />

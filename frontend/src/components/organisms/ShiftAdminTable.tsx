@@ -5,9 +5,14 @@ import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import { Button } from "../atoms/Button";
 import { Icon } from "../atoms/Icon";
 import { ProgressChecker } from "../atoms/ProgressChecker";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { dutyService } from "../../services/dutyService";
 import { toast } from "react-toastify";
+import useShiftStore from "../../store/shiftStore";
+import FaultLayer from "../atoms/FaultLayer";
+
+const THROTTLE_DELAY = 1000; // 1초
+let lastUpdateTime = 0;
 
 // 월별 주말과 공휴일 계산 유틸리티 함수 수정
 const getWeekendAndHolidayPairs = (year: number, month: number): number[][] => {
@@ -47,6 +52,15 @@ interface ShiftAdminTableProps {
 	}[];
 }
 
+const getMaxAllowedMonth = () => {
+	const today = new Date();
+	const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1);
+	return {
+		year: nextMonth.getFullYear(),
+		month: nextMonth.getMonth() + 1,
+	};
+};
+
 const ShiftAdminTable = ({
 	dutyData,
 	invalidCnt,
@@ -57,10 +71,10 @@ const ShiftAdminTable = ({
 }: ShiftAdminTableProps) => {
 	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
 	const ruleButtonRef = useRef<HTMLButtonElement>(null);
-	const [selectedCell, setSelectedCell] = useState<{
-		row: number;
-		col: number;
-	} | null>(null);
+
+	const selectedCell = useShiftStore((state) => state.selectedCell);
+	const setSelectedCell = useShiftStore((state) => state.setSelectedCell);
+	const updateShift = useShiftStore((state) => state.updateShift);
 
 	// 근무표 데이터 변환
 	const nurses = dutyData.map((nurse) => nurse.name);
@@ -68,60 +82,122 @@ const ShiftAdminTable = ({
 	const prevShifts = dutyData.map((nurse) => nurse.prevShifts.split(""));
 
 	// 근무 변경 핸들러
-	const handleShiftChange = async (
-		nurseIndex: number,
-		dayIndex: number,
-		shift: "D" | "E" | "N" | "O" | "X",
-	) => {
-		const nurse = dutyData[nurseIndex];
-		const shifts = nurse.shifts.split("");
-		const currentShift = shifts[dayIndex];
+	const handleShiftChange = useCallback(
+		async (
+			nurseIndex: number,
+			dayIndex: number,
+			shift: "D" | "E" | "N" | "O" | "X",
+		) => {
+			const now = Date.now();
+			if (now - lastUpdateTime < THROTTLE_DELAY) {
+				toast.warning("잠시 후 다시 시도해주세요", {
+					position: "top-center",
+					autoClose: 1000,
+				});
+				return;
+			}
 
-		try {
-			await dutyService.updateDuty({
-				year,
-				month,
-				history: {
+			const nurse = dutyData[nurseIndex];
+			const shifts = nurse.shifts.split("");
+			const currentShift = shifts[dayIndex];
+
+			try {
+				lastUpdateTime = now;
+				await updateShift({
+					year,
+					month,
 					memberId: nurse.memberId,
 					name: nurse.name,
+					dayIndex,
 					before: currentShift,
 					after: shift,
-					modifiedDay: dayIndex + 1,
-					isAutoCreated: false,
-				},
-			});
+				});
+			} catch (error) {
+				toast.error("근무 수정에 실패했습니다.");
+			}
+		},
+		[dutyData, year, month, updateShift],
+	);
 
-			// 업데이트 후 데이터 새로고침
-			onUpdate();
-		} catch (error) {
-			console.error("Failed to update shift:", error);
-		}
-	};
+	// 현재 달의 일수 계산
+	const daysInMonth = new Date(year, month, 0).getDate();
 
 	// 키보드 이벤트 핸들러
 	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (!selectedCell) return;
+			const { row, col } = selectedCell;
+
+			switch (e.key) {
+				case "ArrowRight":
+					if (col < daysInMonth - 1) {
+						setSelectedCell({ row, col: col + 1 });
+					} else if (row < nurses.length - 1) {
+						// 마지막 열에서 다음 행의 첫 열로 이동
+						setSelectedCell({ row: row + 1, col: 0 });
+					}
+					break;
+				case "ArrowLeft":
+					if (col > 0) {
+						setSelectedCell({ row, col: col - 1 });
+					} else if (row > 0) {
+						// 첫 열에서 이전 행의 마지막 열로 이동
+						setSelectedCell({ row: row - 1, col: daysInMonth - 1 });
+					}
+					break;
+				case "ArrowUp":
+					if (row > 0) {
+						setSelectedCell({ row: row - 1, col });
+					}
+					break;
+				case "ArrowDown":
+					if (row < nurses.length - 1) {
+						setSelectedCell({ row: row + 1, col });
+					}
+					break;
+				case "Delete":
+					handleShiftChange(row, col, "X");
+					break;
+				case "Backspace":
+					handleShiftChange(row, col, "X");
+					if (col > 0) {
+						setSelectedCell({ row, col: col - 1 });
+					} else if (row > 0) {
+						// 첫 열에서 이전 행의 마지막 열로 이동
+						setSelectedCell({ row: row - 1, col: daysInMonth - 1 });
+					}
+					break;
+			}
+		};
+
 		const handleKeyPress = (e: KeyboardEvent) => {
 			if (!selectedCell) return;
 
 			const { row, col } = selectedCell;
-			if (col >= 0 && col < 31) {
+			if (col >= 0 && col < daysInMonth) {
 				const key = e.key.toUpperCase();
 				if (["D", "E", "N", "O", "X"].includes(key)) {
 					handleShiftChange(row, col, key as "D" | "E" | "N" | "O" | "X");
 
 					// 다음 셀로 이동
-					if (col < 30) {
+					if (col < daysInMonth - 1) {
 						setSelectedCell({ row, col: col + 1 });
 					} else if (row < nurses.length - 1) {
+						// 마지막 열에서 다음 행의 첫 열로 이동
 						setSelectedCell({ row: row + 1, col: 0 });
 					}
 				}
 			}
 		};
 
+		window.addEventListener("keydown", handleKeyDown);
 		window.addEventListener("keypress", handleKeyPress);
-		return () => window.removeEventListener("keypress", handleKeyPress);
-	}, [selectedCell]);
+
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+			window.removeEventListener("keypress", handleKeyPress);
+		};
+	}, [selectedCell, nurses.length, daysInMonth, handleShiftChange]);
 
 	// 셀 클릭 핸들러 (선택만 하고 변경은 하지 않음)
 	const handleCellClick = (row: number, col: number) => {
@@ -129,20 +205,42 @@ const ShiftAdminTable = ({
 	};
 
 	// 이전 달로 이동
-	const handlePrevMonth = () => {
-		if (month === 1) {
-			onUpdate(year - 1, 12);
-		} else {
-			onUpdate(year, month - 1);
+	const handlePrevMonth = async () => {
+		const newYear = month === 1 ? year - 1 : year;
+		const newMonth = month === 1 ? 12 : month - 1;
+
+		try {
+			await onUpdate(newYear, newMonth);
+		} catch (error) {
+			toast.error("근무표 조회에 실패했습니다.");
 		}
 	};
 
 	// 다음 달로 이동
-	const handleNextMonth = () => {
-		if (month === 12) {
-			onUpdate(year + 1, 1);
-		} else {
-			onUpdate(year, month + 1);
+	const handleNextMonth = async () => {
+		const maxAllowed = getMaxAllowedMonth();
+
+		// Calculate next month
+		const nextMonthDate = new Date(year, month);
+		const nextYear = nextMonthDate.getMonth() === 11 ? year + 1 : year;
+		const nextMonth = nextMonthDate.getMonth() === 11 ? 1 : month + 1;
+
+		// Check if next month exceeds the limit
+		if (
+			nextYear > maxAllowed.year ||
+			(nextYear === maxAllowed.year && nextMonth > maxAllowed.month)
+		) {
+			toast.warning("다음 달까지만 조회할 수 있습니다.", {
+				position: "top-center",
+				autoClose: 2000,
+			});
+			return;
+		}
+
+		try {
+			await onUpdate(nextYear, nextMonth);
+		} catch (error) {
+			toast.error("근무표 조회에 실패했습니다.");
 		}
 	};
 
@@ -195,22 +293,36 @@ const ShiftAdminTable = ({
 	const isHighlighted = (row: number, col: number) => {
 		if (!selectedCell) return "";
 
-		// 기존 하이라이트 로직 유지
+		const baseHighlight = "transition-all duration-100";
+
+		// 선택된 셀 자체의 하이라이트
+		if (row === selectedCell.row && col === selectedCell.col) {
+			return `${baseHighlight} bg-duty-off-bg ring-2 ring-primary ring-offset-2 z-10`;
+		}
+
+		// 같은 행 하이라이트 (이름과 이전 근무 포함)
 		if (row === selectedCell.row) {
+			// 이름 열
+			if (col === -2) return `${baseHighlight} bg-duty-off-bg rounded-l-lg`;
+			// 이전 근무 열
+			if (col === -1) return `${baseHighlight} bg-duty-off-bg`;
+			// 일반 근무 열
 			if (col >= 0 && col < 31) {
-				if (col === 0) return "bg-[#FFEEE5] rounded-l-lg";
-				return "bg-[#FFEEE5]";
+				if (col === 0) return `${baseHighlight} bg-duty-off-bg`;
+				return `${baseHighlight} bg-duty-off-bg`;
 			}
+			// 통계 열
 			if (col >= 31) {
-				if (col === 34) return "bg-[#FFEEE5] rounded-r-lg";
-				return "bg-[#FFEEE5]";
+				if (col === 34) return `${baseHighlight} bg-duty-off-bg rounded-r-lg`;
+				return `${baseHighlight} bg-duty-off-bg`;
 			}
 		}
 
+		// 같은 열 하이라이트
 		if (selectedCell.col === col) {
-			if (row === 0) return "bg-[#FFEEE5] rounded-t-lg";
-			if (row === nurses.length - 1) return "bg-[#FFEEE5] rounded-b-lg";
-			return "bg-[#FFEEE5]";
+			if (row === 0) return `${baseHighlight} bg-duty-off-bg rounded-t-lg`;
+			if (row === nurses.length - 1) return `${baseHighlight} bg-duty-off-bg`;
+			return `${baseHighlight} bg-duty-off-bg`;
 		}
 
 		return "";
@@ -223,11 +335,8 @@ const ShiftAdminTable = ({
 			(acc, nurseRow) => acc + nurseRow.filter((duty) => duty !== "X").length,
 			0,
 		);
-		return Math.round(((filledCells - invalidCnt) / totalCells) * 100);
+		return Math.round((filledCells / totalCells) * 100);
 	};
-
-	// Calculate the number of days in the current month
-	const daysInMonth = new Date(year, month, 0).getDate();
 
 	// 자동생성 핸들러 수정
 	const handleAutoCreate = async () => {
@@ -277,6 +386,15 @@ const ShiftAdminTable = ({
 		);
 	};
 
+	// 해당 월의 기본 OFF 일수 계산 (주말/공휴일)
+	const getDefaultOffDays = (year: number, month: number) => {
+		const pairs = getWeekendAndHolidayPairs(year, month);
+		// 각 쌍의 날짜 수를 계산하여 합산
+		return pairs.reduce((total, [start, end]) => {
+			return total + (end - start + 1);
+		}, 0);
+	};
+
 	return (
 		<>
 			{/* 월 선택 및 버튼 영역 */}
@@ -302,7 +420,7 @@ const ShiftAdminTable = ({
 									기본 OFF
 								</span>
 								<span className="text-[12px] sm:text-sm font-bold text-black">
-									10
+									{getDefaultOffDays(year, month)}
 								</span>
 								<span className="text-foreground">일</span>
 							</div>
@@ -422,65 +540,74 @@ const ShiftAdminTable = ({
 																	shift as "X" | "D" | "E" | "N" | "O" | "ALL"
 																}
 																size="sm"
-																variant="filled"
+																isSelected={false}
 															/>
 														</div>
 													))}
 												</div>
 											</td>
-											{Array.from({ length: daysInMonth }, (_, j) => {
-												const violation = getViolation(i, j);
-												const isViolationMiddle =
-													violation &&
-													j + 1 ===
-														Math.floor(
-															(violation.startDate + violation.endDate) / 2,
-														);
-												const isViolationCell =
-													violation &&
-													j + 1 >= violation.startDate &&
-													j + 1 <= violation.endDate;
+											{Array.from({ length: daysInMonth }, (_, dayIndex) => {
+												const violation = getViolation(i, dayIndex);
+												// 위반 구간의 시작점에서만 FaultLayer를 표시
+												const isViolationStart =
+													violation && dayIndex + 1 === violation.startDate;
 
 												return (
 													<td
-														key={j}
-														className={`p-0 text-center border-r border-gray-200 relative ${isHighlighted(
-															i,
-															j,
-														)} ${isViolationCell ? "group" : ""}`}
+														key={dayIndex}
+														onClick={() => handleCellClick(i, dayIndex)}
+														className={`p-0 text-center border-r border-gray-200 relative ${isHighlighted(i, dayIndex)}`}
 													>
 														<div
-															className="flex items-center justify-center cursor-pointer relative"
-															onClick={() => handleCellClick(i, j)}
+															className="flex items-center justify-center cursor-pointer relative outline-none"
 															tabIndex={0}
 															role="button"
-															aria-label={`${nurses[i]}의 ${j + 1}일 근무`}
+															onClick={() => handleCellClick(i, dayIndex)}
+															aria-label={`${nurses[i]}의 ${dayIndex + 1}일 근무`}
+															style={{ WebkitTapHighlightColor: "transparent" }}
 														>
-															{violation && (
-																<div className="absolute -inset-y-1 inset-x-0 bg-red-500 opacity-30 rounded-md" />
+															{isViolationStart && (
+																<>
+																	<FaultLayer
+																		startDate={violation.startDate}
+																		endDate={violation.endDate}
+																		message={violation.message}
+																	/>
+																	<div
+																		style={{
+																			width: `${(violation.endDate - violation.startDate + 1) * 40}px`,
+																			left: "0",
+																			position: "absolute",
+																			top: "32px",
+																		}}
+																		className="invisible group-hover:visible"
+																	>
+																		<div className="absolute top-0 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md bg-white px-2 py-1 text-xs text-red-600 shadow-lg">
+																			<div className="absolute -top-2 left-1/2 h-0 w-0 -translate-x-1/2 border-x-8 border-b-8 border-x-transparent border-b-white" />
+																			{violation.message}
+																		</div>
+																	</div>
+																</>
 															)}
-															<div className="relative z-10">
+															<div className="relative z-20">
 																<div className="scale-[0.95]">
 																	<DutyBadgeEng
 																		type={
-																			duties[i][j] as
-																				| "X"
+																			duties[i][dayIndex] as
 																				| "D"
 																				| "E"
 																				| "N"
 																				| "O"
-																				| "ALL"
+																				| "X"
 																		}
 																		size="sm"
-																		variant="filled"
+																		isSelected={
+																			selectedCell?.row === i &&
+																			selectedCell?.col === dayIndex
+																		}
 																	/>
 																</div>
 															</div>
-															{isViolationMiddle && (
-																<div className="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 bg-red-100 text-red-600 text-xs p-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
-																	{violation.message}
-																</div>
-															)}
 														</div>
 													</td>
 												);
@@ -538,7 +665,7 @@ const ShiftAdminTable = ({
 													<td
 														key={j}
 														className={`p-0 text-center text-[11px] border-r border-gray-200 ${
-															selectedCell?.col === j ? "bg-[#FEF6F2]" : ""
+															selectedCell?.col === j ? "bg-duty-off-bg" : ""
 														}`}
 													>
 														<div className="flex items-center justify-center h-6">

@@ -24,14 +24,31 @@ const DutyBadgeEng = ({
 		lg: "w-10 h-10 text-xl",
 	};
 
+	const getRingColor = (type: DutyBadgeEngProps["type"]) => {
+		switch (type) {
+			case "D":
+				return "ring-duty-day";
+			case "E":
+				return "ring-duty-evening";
+			case "N":
+				return "ring-duty-night";
+			case "O":
+				return "ring-duty-off";
+			case "X":
+				return "ring-base-foreground";
+			default:
+				return "ring-base-foreground";
+		}
+	};
+
 	const badgeStyles = {
 		filled: {
-			D: "bg-duty-day text-white hover:ring-2 hover:ring-offset-2 hover:ring-duty-day focus:ring-2 focus:ring-offset-2 focus:ring-duty-day",
-			E: "bg-duty-evening text-white hover:ring-2 hover:ring-offset-2 hover:ring-duty-evening focus:ring-2 focus:ring-offset-2 focus:ring-duty-evening",
-			N: "bg-duty-night text-white hover:ring-2 hover:ring-offset-2 hover:ring-duty-night focus:ring-2 focus:ring-offset-2 focus:ring-duty-night",
-			O: "bg-duty-off text-white hover:ring-2 hover:ring-offset-2 hover:ring-duty-off focus:ring-2 focus:ring-offset-2 focus:ring-duty-off",
-			ALL: "bg-base-foreground text-white hover:ring-2 hover:ring-offset-2 hover:ring-base-foreground focus:ring-2 focus:ring-offset-2 focus:ring-base-foreground",
-			X: "bg-base-muted text-white font-bold hover:ring-2 hover:ring-offset-2 hover:ring-base-muted focus:ring-2 focus:ring-offset-2 focus:ring-base-muted",
+			D: `bg-duty-day text-white ${isSelected ? `ring-2 ring-offset-2 ${getRingColor("D")}` : ""}`,
+			E: `bg-duty-evening text-white ${isSelected ? `ring-2 ring-offset-2 ${getRingColor("E")}` : ""}`,
+			N: `bg-duty-night text-white ${isSelected ? `ring-2 ring-offset-2 ${getRingColor("N")}` : ""}`,
+			O: `bg-duty-off text-white ${isSelected ? `ring-2 ring-offset-2 ${getRingColor("O")}` : ""}`,
+			ALL: `bg-base-foreground text-white ${isSelected ? `ring-2 ring-offset-2 ${getRingColor("ALL")}` : ""}`,
+			X: `bg-base-muted text-white font-bold ${isSelected ? `ring-2 ring-offset-2 ${getRingColor("X")}` : ""}`,
 		},
 		outline: {
 			D: "bg-white text-duty-day border-2 border-duty-day hover:ring-2 hover:ring-offset-2 hover:ring-duty-day focus:ring-2 focus:ring-offset-2 focus:ring-duty-day",

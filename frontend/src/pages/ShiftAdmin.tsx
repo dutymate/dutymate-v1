@@ -6,53 +6,18 @@ import HistoryList from "../components/organisms/HistoryList";
 import { useState, useEffect } from "react";
 import { IoMdMenu } from "react-icons/io";
 import useUserAuthStore from "../store/userAuthStore";
-import { dutyService } from "../services/dutyService";
-import type { DutyInfo } from "../services/dutyService";
+import useShiftStore from "../store/shiftStore";
 
 const DutyManagement = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const { userInfo } = useUserAuthStore();
-	const [dutyInfo, setDutyInfo] = useState<DutyInfo | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-
-	const fetchDutyInfo = async (
-		year?: number,
-		month?: number,
-		historyIdx?: number,
-	) => {
-		try {
-			setLoading(true);
-			const params: Record<string, any> = {};
-
-			if (year) params.year = year;
-			if (month) params.month = month;
-			if (typeof historyIdx === "number") params.history = historyIdx;
-
-			const data = await dutyService.getDuty(params);
-
-			// history 데이터가 있는지 확인
-			if (!data.histories) {
-				console.warn("No history data available");
-			}
-
-			setDutyInfo(data);
-			setError(null);
-		} catch (err) {
-			console.error("Error fetching duty info:", err);
-			setError(
-				err instanceof Error ? err.message : "Failed to fetch duty info",
-			);
-		} finally {
-			setLoading(false);
-		}
-	};
+	const { dutyInfo, loading, error, fetchDutyInfo } = useShiftStore();
 
 	useEffect(() => {
 		fetchDutyInfo();
 	}, []);
 
-	if (loading) return <div>Loading...</div>;
+	if (loading && !dutyInfo) return <div>Loading...</div>;
 	if (error) return <div>Error: {error}</div>;
 	if (!dutyInfo) return null;
 
@@ -89,14 +54,9 @@ const DutyManagement = () => {
 						onUpdate={fetchDutyInfo}
 						issues={dutyInfo.issues}
 					/>
-					<div className="flex flex-col lg:flex-row gap-4">
-						<RuleCheckList issues={dutyInfo.issues} />
-						<HistoryList
-							histories={dutyInfo.histories}
-							onRevert={(historyIdx) =>
-								fetchDutyInfo(undefined, undefined, historyIdx)
-							}
-						/>
+					<div className="flex flex-col lg:flex-row gap-4 w-full">
+						<RuleCheckList />
+						<HistoryList />
 					</div>
 				</div>
 			</div>

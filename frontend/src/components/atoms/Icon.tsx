@@ -9,6 +9,7 @@ import { BiSolidUserPin } from "react-icons/bi";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { IoIosChatboxes, IoMdMenu } from "react-icons/io";
 import { IoFemale, IoMale, IoCloseOutline } from "react-icons/io5";
+import { MdHistory } from "react-icons/md";
 import {
 	MdSignalCellular1Bar,
 	MdSignalCellular3Bar,
@@ -47,6 +48,7 @@ const iconComponents = {
 	undo: GrUndo,
 	menu: IoMdMenu,
 	close: IoCloseOutline,
+	history: MdHistory,
 };
 
 export type IconName = keyof typeof iconComponents;
