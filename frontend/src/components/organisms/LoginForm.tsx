@@ -5,7 +5,7 @@ import { useState } from "react";
 import userService from "@/services/userService";
 import { toast } from "react-toastify";
 import useUserAuthStore from "@/store/userAuthStore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 interface LoginData {
 	email: string;
@@ -151,19 +151,15 @@ const LoginForm = () => {
 						로그인
 					</button>
 				</div>
-				<div className="lg:mt-3 mt-6 text-[0.9rem] text-gray-600 flex justify-center gap-2">
+				{/* <div className="lg:mt-3 mt-6 text-[0.9rem] text-gray-600 flex justify-center gap-2">
 					<button type="button" className="underline">
-						회원 가입
+						아이디 찾기
 					</button>
 					<span className="text-gray-300">|</span>
 					<button type="button" className="underline">
 						비밀번호 찾기
 					</button>
-					<span className="text-gray-300">|</span>
-					<button type="button" className="underline">
-						아이디 찾기
-					</button>
-				</div>
+				</div> */}
 				<div className="lg:mt-8 mt-12 lg:space-y-2 space-y-4 mb-3">
 					<button
 						type="button"
@@ -191,6 +187,12 @@ const LoginForm = () => {
 					</button>
 				</div>
 			</form>
+			<div className="text-center mt-4">
+				<span className="text-gray-600">계정이 없으신가요? </span>
+				<Link to="/sign-up" className="text-primary-dark hover:underline">
+					회원가입
+				</Link>
+			</div>
 		</div>
 	);
 };

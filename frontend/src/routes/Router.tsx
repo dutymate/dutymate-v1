@@ -15,12 +15,14 @@ import ReqAdmin from "../pages/ReqAdmin";
 import Error from "../pages/Error";
 import Mypage from "../pages/Mypage";
 import ShiftAdmin from "../pages/ShiftAdmin";
+import Signup from "../pages/Signup";
 
 const Router = () => {
 	return (
 		<Routes>
 			<Route path="/" element={<Landing />} />
 			<Route path="/login" element={<Login />} />
+			<Route path="/sign-up" element={<Signup />} />
 			<Route path="/oauth/kakao" element={<KakaoRedirect />} />
 			<Route path="/oauth/google" element={<GoogleRedirect />} />
 			<Route path="/my-shift" element={<MyShift />} />
