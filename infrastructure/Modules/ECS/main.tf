@@ -12,8 +12,10 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 }
 
 resource "aws_ecs_task_definition" "ecs_task_definition" {
-  family       = "dutymate-ecs-task"
-  network_mode = "awsvpc"
+  family             = "dutymate-ecs-task"
+  network_mode       = "awsvpc"
+  execution_role_arn = var.ecs_task_execution_role_arn
+  task_role_arn      = var.ecs_task_execution_role_arn
 
   container_definitions = jsonencode([
     {
@@ -27,6 +29,12 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
         hostPort      = 8080,
         protocol      = "tcp"
       }]
+      environmentFiles = [
+        {
+          value = "${var.asset_bucket_arn}/environments/.env",
+          type  = "s3"
+        }
+      ]
     }
   ])
 }
