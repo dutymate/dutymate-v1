@@ -178,12 +178,12 @@ const useWardStore = create<WardStore>((set, get) => ({
 	},
 }));
 
-// 주기적 동기화를 위한 interval 설정
-if (typeof window !== "undefined") {
-	setInterval(() => {
-		const store = useWardStore.getState();
-		store.syncWithServer().catch(console.error);
-	}, 30000); // 30초마다 동기화
-}
+// // 주기적 동기화를 위한 interval 설정
+// if (typeof window !== "undefined") {
+// 	setInterval(() => {
+// 		const store = useWardStore.getState();
+// 		store.syncWithServer().catch(console.error);
+// 	}, 30000); // 30초마다 동기화
+// }
 
 export default useWardStore;
