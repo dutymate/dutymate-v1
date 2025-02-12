@@ -1,4 +1,5 @@
 import axiosInstance from "../lib/axios";
+import axios from "axios";
 
 export interface ProfileResponse {
 	hospitalName: string;
@@ -16,6 +17,12 @@ export interface ProfileUpdateRequest {
 	nickname: string;
 	gender: "F" | "M";
 	grade: number;
+}
+
+export interface ApiErrorResponse {
+	message: string;
+	timestamp: string;
+	status: string;
 }
 
 export const profileService = {
@@ -79,5 +86,39 @@ export const profileService = {
 			}
 			throw error;
 		});
+	},
+
+	// 병동 나가기
+	exitWard: async (
+		success: () => void,
+		fail: (error: ApiErrorResponse) => void,
+	) => {
+		try {
+			await axiosInstance.delete(`/member/ward`);
+			success();
+		} catch (error) {
+			console.error("Error occurred:", error);
+			if (axios.isAxiosError(error)) {
+				fail(error.response?.data);
+			}
+			throw error;
+		}
+	},
+
+	// 회원 탈퇴하기
+	withdrawlMember: async (
+		success: () => void,
+		fail: (error: ApiErrorResponse) => void,
+	) => {
+		try {
+			await axiosInstance.delete(`/member`);
+			success();
+		} catch (error) {
+			console.error("Error occurred:", error);
+			if (axios.isAxiosError(error)) {
+				fail(error.response?.data);
+			}
+			throw error;
+		}
 	},
 };

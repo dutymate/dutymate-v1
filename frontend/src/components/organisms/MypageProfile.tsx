@@ -114,6 +114,11 @@ const MypageProfile = () => {
 		debouncedCheckNickname(newNickname);
 	};
 
+	const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newName = e.target.value;
+		setFormData({ ...formData, name: newName });
+	};
+
 	useEffect(() => {
 		return () => {
 			debouncedCheckNickname.cancel();
@@ -224,8 +229,9 @@ const MypageProfile = () => {
 						id="name"
 						name="name"
 						label="이름"
-						value={profile?.name || ""}
-						disabled
+						value={formData.name}
+						onChange={handleNameChange}
+						className="focus:outline-none focus:ring-2 focus:ring-primary-20"
 					/>
 					<div className="relative">
 						<MypageInput
