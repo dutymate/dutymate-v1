@@ -7,10 +7,29 @@ import MypagePassword from "../components/organisms/MypagePassword";
 import MypageExit from "../components/organisms/MypageExit";
 import { IoMdMenu } from "react-icons/io";
 import useUserAuthStore from "../store/userAuthStore";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { ApiErrorResponse, profileService } from "@/services/profileService";
 
 const Mypage = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const { userInfo } = useUserAuthStore();
+	const navigate = useNavigate();
+	const userAuthStore = useUserAuthStore();
+	const handleLogoutButton = () => {
+		profileService.logout(
+			() => {
+				userAuthStore.logout();
+				navigate("/login");
+			},
+			(error: ApiErrorResponse) => {
+				toast.error(error.message);
+			},
+		);
+
+		navigate("/login");
+	};
+
 	return (
 		<div className="w-full min-h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
@@ -34,8 +53,15 @@ const Mypage = () => {
 				>
 					<IoMdMenu className="w-6 h-6 text-gray-600" />
 				</button>
-
-				<Title title="마이페이지" subtitle="나의 정보를 확인해보세요" />
+				<div className="flex">
+					<Title title="마이페이지" subtitle="나의 정보를 확인해보세요" />
+					<button
+						onClick={handleLogoutButton}
+						className="w-full lg:w-[100px] px-3 py-2 bg-white text-gray-900 border border-gray-200 rounded-md hover:bg-gray-50 text-xs lg:text-sm h-[35px] ml-3"
+					>
+						로그아웃
+					</button>
+				</div>
 				<div className="mt-4 flex justify-center">
 					<div className="w-full lg:w-[1400px] space-y-4">
 						<MypageProfile />

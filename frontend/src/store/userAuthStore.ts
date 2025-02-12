@@ -30,6 +30,7 @@ interface UserAuthState {
 	setUserInfo: (userInfo: UserInfo) => void;
 	setAdditionalInfo: (additionalInfo: AdditionalInfo) => void;
 	logout: () => void;
+	setProfileImg: (profileImgUrl: string | null) => void;
 }
 
 // Zustand 스토어 생성
@@ -66,12 +67,30 @@ export const useUserAuthStore = create<UserAuthState>()(
 				});
 			},
 
-			logout: () =>
+			logout: () => {
 				set({
 					isAuthenticated: false,
 					userInfo: null,
 					additionalInfo: null,
 				}),
+					sessionStorage.removeItem("user-auth-storage");
+			},
+
+			setProfileImg: (profileImgUrl: string | null) => {
+				const currentState = get();
+				// userInfo가 없거나 인증되지 않은 상태라면 에러
+				if (!currentState.isAuthenticated || !currentState.userInfo) {
+					throw new Error(
+						"User must be authenticated before setting additional info",
+					);
+				}
+				set({
+					userInfo: {
+						...currentState.userInfo,
+						profileImg: profileImgUrl,
+					},
+				});
+			},
 		}),
 		{
 			name: "user-auth-storage",

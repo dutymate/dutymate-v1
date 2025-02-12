@@ -12,16 +12,15 @@ const MypageExit = () => {
 		if (isConfirmed) {
 			profileService.exitWard(
 				() => {
-					navigate("/extra-info")
+					navigate("/extra-info");
 					// console.log("병동 나가기 성공");
 				},
 				(error: ApiErrorResponse) => {
-					toast.error(error.message)
+					toast.error(error.message);
 				},
-			)
+			);
 		}
 	};
-
 
 	const handleWithdrawal = () => {
 		const isConfirmed = confirm(
@@ -30,18 +29,18 @@ const MypageExit = () => {
 		if (isConfirmed) {
 			profileService.withdrawlMember(
 				() => {
-					navigate("/login")
+					navigate("/login");
 				},
 				(error: ApiErrorResponse) => {
-					toast.error(error.message)
+					toast.error(error.message);
 				},
-			)
+			);
 		}
 	};
 
 	return (
 		<div className="flex flex-row justify-center items-center gap-2">
-			<button 
+			<button
 				onClick={handleExitButton}
 				className="w-full lg:w-[180px] px-3 py-2 bg-white text-gray-900 border border-gray-200 rounded-md hover:bg-gray-50 text-xs lg:text-sm h-[40px]"
 			>

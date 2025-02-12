@@ -121,4 +121,21 @@ export const profileService = {
 			throw error;
 		}
 	},
+
+	// 로그아웃
+	logout: async (
+		success: () => void,
+		fail: (error: ApiErrorResponse) => void,
+	) => {
+		try {
+			await axiosInstance.post(`/member/logout`);
+			success();
+		} catch (error) {
+			console.error("Error occurred:", error);
+			if (axios.isAxiosError(error)) {
+				fail(error.response?.data);
+			}
+			throw error;
+		}
+	},
 };

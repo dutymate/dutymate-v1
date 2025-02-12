@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { profileService, ProfileResponse } from "../services/profileService";
+import useUserAuthStore from "./userAuthStore";
 
 interface ProfileStore {
 	profile: ProfileResponse | null;
@@ -68,6 +69,7 @@ const useProfileStore = create<ProfileStore>((set) => ({
 		try {
 			await profileService.uploadProfileImage(file);
 			const updatedProfile = await profileService.getProfile();
+			useUserAuthStore.getState().setProfileImg(updatedProfile.profileImg);
 			set({ profile: updatedProfile, error: null });
 		} catch (error) {
 			console.error("프로필 이미지 업로드 에러:", error);
@@ -79,6 +81,7 @@ const useProfileStore = create<ProfileStore>((set) => ({
 		try {
 			await profileService.deleteProfileImage();
 			const updatedProfile = await profileService.getProfile();
+			useUserAuthStore.getState().setProfileImg(updatedProfile.profileImg);
 			set({ profile: updatedProfile, error: null });
 		} catch (error) {
 			console.error("프로필 이미지 삭제 에러:", error);

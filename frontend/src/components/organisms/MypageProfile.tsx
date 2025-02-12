@@ -133,6 +133,7 @@ const MypageProfile = () => {
 				await deleteProfileImage();
 				setSelectedImageOption(index); // 상태 업데이트를 성공 후에 진행
 				toast.success("프로필 이미지가 삭제되었습니다.");
+				// console.log(profile)
 			} else {
 				// 사진 등록 선택
 				setSelectedImageOption(index);
@@ -163,6 +164,7 @@ const MypageProfile = () => {
 			await uploadProfileImage(file);
 			await fetchProfile(); // 명시적으로 프로필 새로고침
 			toast.success("프로필 이미지가 업로드되었습니다.");
+			// console.log(profile)
 		} catch (error) {
 			if (error instanceof Error) {
 				toast.error(error.message);

@@ -33,6 +33,7 @@ import net.dutymate.api.member.dto.LoginRequestDto;
 import net.dutymate.api.member.dto.LoginResponseDto;
 import net.dutymate.api.member.dto.MypageEditRequestDto;
 import net.dutymate.api.member.dto.MypageResponseDto;
+import net.dutymate.api.member.dto.ProfileImgResponseDto;
 import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.member.util.JwtUtil;
@@ -340,7 +341,7 @@ public class MemberService {
 
 	// 파일 업로드
 	@Transactional
-	public void uploadProfileImg(MultipartFile multipartFile, Member member, String dirName) {
+	public ProfileImgResponseDto uploadProfileImg(MultipartFile multipartFile, Member member, String dirName) {
 
 		if (multipartFile == null || multipartFile.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "파일이 비어 있습니다.");
@@ -364,6 +365,7 @@ public class MemberService {
 
 			member.setFileUrl(fileUrl);
 
+			return ProfileImgResponseDto.of(fileUrl);
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "파일 업로드 중 오류가 발생했습니다.");
 		}
@@ -385,13 +387,13 @@ public class MemberService {
 
 	// 프로필 이미지 삭제 -> 기본 이미지로 변경
 	@Transactional
-	public void deleteProfileImg(Member member) {
+	public ProfileImgResponseDto deleteProfileImg(Member member) {
 		try {
 			String fileUrl = member.getProfileImg();
 			String fileName = extractFileNameFromUrl(fileUrl);
 
 			if (fileName.equals("default_profile.png")) {
-				return;
+				return ProfileImgResponseDto.of(addBasicProfileImgUrl());
 			}
 
 			DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
@@ -404,6 +406,7 @@ public class MemberService {
 			member.setFileUrl(addBasicProfileImgUrl());
 			memberRepository.save(member);
 
+			return ProfileImgResponseDto.of(addBasicProfileImgUrl());
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "S3 이미지 삭제 중 오류 발생");
 		}
