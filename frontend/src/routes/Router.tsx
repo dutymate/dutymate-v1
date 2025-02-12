@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Playgrounds from "../pages/_playgrounds";
+// import Playgrounds from "../pages/_playgrounds";
 import Landing from "../pages/Landing";
 import Login from "../pages/Login";
 import { KakaoRedirect } from "../pages/KakaoRedirect";
@@ -36,7 +36,7 @@ const Router = () => {
 			<Route path="/shift-admin" element={<ShiftAdmin />} />
 			<Route path="/my-page" element={<Mypage />} />
 			<Route path="/error" element={<Error />} />
-			<Route path="/_playgrounds" element={<Playgrounds />} />
+			{/* <Route path="/_playgrounds" element={<Playgrounds />} /> */}
 			<Route path="*" element={<Error />} />
 		</Routes>
 	);

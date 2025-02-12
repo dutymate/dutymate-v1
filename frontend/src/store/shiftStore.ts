@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { dutyService } from "../services/dutyService";
-import type { DutyInfo, DutyUpdateRequest } from "../services/dutyService";
+import type { DutyInfo } from "../services/dutyService";
+// import type { DutyUpdateRequest } from "../services/dutyService";
 
 interface UpdateQueueItem {
 	params: {

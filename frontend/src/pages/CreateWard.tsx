@@ -27,7 +27,7 @@ const CreateWard = () => {
 
 		try {
 			// console.log("wardService.createWard 호출 전");
-			const response = await wardService.createWard({
+			await wardService.createWard({
 				hospitalName,
 				wardName,
 			});

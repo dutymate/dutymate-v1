@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "../atoms/Button";
 import { Input } from "../atoms/Input";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 interface CreateWardFormProps {
 	onSubmit: (hospitalName: string, wardName: string) => Promise<void>;
@@ -23,7 +23,7 @@ const CreateWardForm = ({
 	const [isSuccess, setIsSuccess] = useState(initialSuccess);
 	const [errors, setErrors] = useState<FormErrors>({});
 	const [showDropdown, setShowDropdown] = useState(false);
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const hospitals = [
 		{
 			name: "강북 삼성병원",

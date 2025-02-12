@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import {
 	userService,
 	LoginResponse,
-	ApiErrorResponse,
+	// ApiErrorResponse,
 } from "../services/userService";
 import useUserAuthStore from "../store/userAuthStore";
 import { toast } from "react-toastify";
@@ -26,7 +26,7 @@ export function KakaoRedirect() {
 			code,
 			(data: LoginResponse) => {
 				const { role, existAdditionalInfo, existMyWard } = data;
-				userAuthStore.setUserInfo(data);
+				userAuthStore.setUserInfo({ ...data, provider: "kakao" });
 				toast.success("정상적으로 로그인되었습니다.");
 
 				if (!existAdditionalInfo) {
@@ -45,7 +45,7 @@ export function KakaoRedirect() {
 					}
 				}
 			},
-			(error: ApiErrorResponse) => {
+			() => {
 				toast.error("아이디 또는 비밀번호가 일치하지 않습니다.");
 				navigate("/login");
 			},

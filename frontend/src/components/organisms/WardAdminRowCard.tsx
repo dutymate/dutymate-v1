@@ -1,4 +1,4 @@
-import { FaUserCircle } from "react-icons/fa";
+// import { FaUserCircle } from "react-icons/fa";
 import { Icon, IconName } from "../atoms/Icon";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import { Nurse } from "../../services/wardService";
@@ -18,8 +18,8 @@ interface WardAdminRowCardProps {
 const WardAdminRowCard = ({
 	nurse,
 	onUpdate,
-	isSelected = false,
-	onSelect,
+	// isSelected = false,
+	// onSelect,
 }: WardAdminRowCardProps) => {
 	if (!nurse) {
 		return null;
@@ -51,7 +51,7 @@ const WardAdminRowCard = ({
 			if (!buttonRef.current || !containerRef.current) return;
 
 			const buttonRect = buttonRef.current.getBoundingClientRect();
-			const containerRect = containerRef.current.getBoundingClientRect();
+			// const containerRect = containerRef.current.getBoundingClientRect();
 			const scrollableParent = getScrollableParent(containerRef.current);
 			const scrollableRect = scrollableParent.getBoundingClientRect();
 
@@ -197,14 +197,14 @@ const WardAdminRowCard = ({
 		setIsEditingName(false);
 	};
 
-	const handleNameKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === "Enter") {
-			handleNameComplete();
-		} else if (e.key === "Escape") {
-			setName(nurse.name);
-			setIsEditingName(false);
-		}
-	};
+	// const handleNameKeyDown = (e: React.KeyboardEvent) => {
+	// 	if (e.key === "Enter") {
+	// 		handleNameComplete();
+	// 	} else if (e.key === "Escape") {
+	// 		setName(nurse.name);
+	// 		setIsEditingName(false);
+	// 	}
+	// };
 
 	return (
 		<div ref={containerRef} className="relative">

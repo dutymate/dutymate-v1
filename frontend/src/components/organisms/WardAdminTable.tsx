@@ -1,6 +1,8 @@
-import { useState } from "react";
+// import { useState } from "react";
 import WardAdminRowCard from "./WardAdminRowCard";
-import { Nurse, wardService } from "../../services/wardService";
+import { Nurse } from "../../services/wardService";
+// import { wardService } from "../../services/wardService";
+
 import { toast } from "react-toastify";
 import useWardStore from "../../store/wardStore";
 
@@ -10,7 +12,8 @@ interface WardAdminTableProps {
 
 const WardAdminTable = ({ nurses }: WardAdminTableProps) => {
 	const { updateNurse, syncWithServer } = useWardStore();
-	const [selectedNurses, setSelectedNurses] = useState<string[]>([]);
+	// const [setSelectedNurses] = useState<string[]>([]);
+	// const [selectedNurses] = useState<string[]>([]);
 
 	const handleNurseUpdate = async (memberId: number, data: any) => {
 		try {
@@ -23,13 +26,13 @@ const WardAdminTable = ({ nurses }: WardAdminTableProps) => {
 		}
 	};
 
-	const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.checked) {
-			setSelectedNurses(nurses.map((nurse) => nurse.memberId.toString()));
-		} else {
-			setSelectedNurses([]);
-		}
-	};
+	// const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+	// 	if (e.target.checked) {
+	// 		setSelectedNurses(nurses.map((nurse) => nurse.memberId.toString()));
+	// 	} else {
+	// 		setSelectedNurses([]);
+	// 	}
+	// };
 
 	return (
 		<div className="bg-white rounded-[1.154375rem] p-4">

@@ -93,7 +93,7 @@ const LoginForm = () => {
 			});
 			const { role, existAdditionalInfo, existMyWard } = data;
 
-			userAuthStore.setUserInfo(data);
+			userAuthStore.setUserInfo({ ...data, provider: "local" });
 			toast.success("정상적으로 로그인되었습니다.");
 
 			// 로그인 후 이동 로직

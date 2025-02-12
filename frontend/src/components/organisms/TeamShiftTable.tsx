@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import { Button } from "../atoms/Button";
-import { Icon } from "../atoms/Icon";
+// import { Icon } from "../atoms/Icon";
 import ReqShiftModal from "./ReqShiftModal";
 import { dutyService } from "../../services/dutyService"; //실제 API 호출에 필요한 axios import
 import { toast } from "react-toastify";
 // import mockData from "../../services/response-json/duty/GetApiDutyWard.json"; // 임시 데이터 import
 
-interface DutyMember {
-	memberId: number;
-	name: string;
-	shifts: string;
-}
+// interface DutyMember {
+// 	memberId: number;
+// 	name: string;
+// 	shifts: string;
+// }
 
-interface DutyInfo {
-	id: string;
-	year: number;
-	month: number;
-	duty: DutyMember[];
-}
+// interface DutyInfo {
+// 	id: string;
+// 	year: number;
+// 	month: number;
+// 	duty: DutyMember[];
+// }
 
 interface WardDuty {
 	id: string;
@@ -35,7 +35,7 @@ const TeamShiftTable = () => {
 	const [wardDuty, setWardDuty] = useState<WardDuty | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isReqModalOpen, setIsReqModalOpen] = useState(false);
-	const [currentDate, setCurrentDate] = useState(() => {
+	const [currentDate] = useState(() => {
 		const now = new Date();
 		return {
 			year: now.getFullYear(),
@@ -87,14 +87,14 @@ const TeamShiftTable = () => {
 	// 	});
 	// };
 
-	const handleNextMonth = () => {
-		setCurrentDate((prev) => {
-			if (prev.month === 12) {
-				return { year: prev.year + 1, month: 1 };
-			}
-			return { year: prev.year, month: prev.month + 1 };
-		});
-	};
+	// const handleNextMonth = () => {
+	// 	setCurrentDate((prev) => {
+	// 		if (prev.month === 12) {
+	// 			return { year: prev.year + 1, month: 1 };
+	// 		}
+	// 		return { year: prev.year, month: prev.month + 1 };
+	// 	});
+	// };
 
 	// 근무표 다운로드 기능능
 	const handleDownloadWardSchedule = () => {

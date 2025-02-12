@@ -15,7 +15,7 @@ const DutyBadgeEng = ({
 	isSelected = false,
 	onClick,
 	variant = "filled",
-	noRing = false,
+	// noRing = false,
 }: DutyBadgeEngProps) => {
 	const sizeClasses = {
 		xs: "w-5 h-5 text-sm",
