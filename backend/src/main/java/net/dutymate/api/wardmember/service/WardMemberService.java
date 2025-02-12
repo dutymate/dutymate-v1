@@ -15,6 +15,7 @@ import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardmember.dto.NurseInfoRequestDto;
+import net.dutymate.api.wardmember.repository.WardMemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 import net.dutymate.api.wardschedules.util.InitialDutyGenerator;
@@ -27,6 +28,7 @@ public class WardMemberService {
 
 	private final MemberRepository memberRepository;
 	private final WardScheduleRepository wardScheduleRepository;
+	private final WardMemberRepository wardMemberRepository;
 	private final InitialDutyGenerator initialDutyGenerator;
 
 	@Transactional
@@ -39,44 +41,37 @@ public class WardMemberService {
 		// member가 병동 회원인지 체크하는 로직
 		validateWardMember(member, authMember);
 
-		if (member.getRole() == Role.HN) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자 권한을 넘겨줄 수 없습니다.");
+		if (member.getRole() == Role.RN) {
+
+			// 멤버와 1:1 매핑 되어 있는 wardMember 정보 수정
+			member.getWardMember().updateWardMemberInfo(
+				nurseInfoRequestDto.getShift(),
+				nurseInfoRequestDto.getSkillLevel(),
+				nurseInfoRequestDto.getMemo(),
+				nurseInfoRequestDto.getRole()
+			);
 		}
 
-		// if (member.getRole() == Role.RN) {
-		// 	WardMember wardMember = wardMemberRepository.findById(member.getWardMember().getWardMemberId())
-		// 		.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
-		//
-		// 	ward.removeWardMember(wardMember);
-		// 	deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
-		// 	return;
-		// }
-		//
-		// if (member.getRole() == Role.HN) {
-		// 	List<WardMember> wardMemberList = wardMemberRepository.findAllByWard(ward);
-		//
-		// 	boolean hasOtherHN = wardMemberList.stream()
-		// 		.anyMatch(wardMember ->
-		// 			!wardMember.getMember().getMemberId().equals(member.getMemberId())
-		// 				&& wardMember.getMember().getRole() == Role.HN);
-		//
-		// 	if (!hasOtherHN) {
-		// 		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 관리자 권한을 넘겨주세요.");
-		// 	}
-		//
-		// 	WardMember wardMember = wardMemberRepository.findById(member.getWardMember().getWardMemberId())
-		// 		.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
-		//
-		// 	ward.removeWardMember(wardMember); // 병동에서 제거
-		// 	deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
+		if (member.getRole() == Role.HN && nurseInfoRequestDto.getRole().equals("RN")) {
+			List<WardMember> wardMemberList = wardMemberRepository.findAllByWard(member.getWardMember().getWard());
 
-		// 멤버와 1:1 매핑 되어 있는 wardMember 정보 수정
-		member.getWardMember().updateWardMemberInfo(
-			nurseInfoRequestDto.getShift(),
-			nurseInfoRequestDto.getSkillLevel(),
-			nurseInfoRequestDto.getMemo(),
-			nurseInfoRequestDto.getRole()
-		);
+			boolean hasOtherHN = wardMemberList.stream()
+				.anyMatch(wardMember ->
+					!wardMember.getMember().getMemberId().equals(member.getMemberId())
+						&& wardMember.getMember().getRole() == Role.HN);
+
+			if (!hasOtherHN) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 관리자 권한을 넘겨주세요.");
+			}
+
+			// 멤버와 1:1 매핑 되어 있는 wardMember 정보 수정
+			member.getWardMember().updateWardMemberInfo(
+				nurseInfoRequestDto.getShift(),
+				nurseInfoRequestDto.getSkillLevel(),
+				nurseInfoRequestDto.getMemo(),
+				nurseInfoRequestDto.getRole()
+			);
+		}
 	}
 
 	@Transactional
