@@ -30,7 +30,7 @@ kakao:
   token:
     uri: ${KAKAO_TOKEN_URI}
   user:
-    uri: ${KAKAO_TOKEN_URI}
+    uri: ${KAKAO_USER_URI}
   redirect:
     uri: ${KAKAO_REDIRECT_URI}
 
