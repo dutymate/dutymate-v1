@@ -41,37 +41,17 @@ public class WardMemberService {
 		// member가 병동 회원인지 체크하는 로직
 		validateWardMember(member, authMember);
 
-		if (member.getRole() == Role.RN) {
-
-			// 멤버와 1:1 매핑 되어 있는 wardMember 정보 수정
-			member.getWardMember().updateWardMemberInfo(
-				nurseInfoRequestDto.getShift(),
-				nurseInfoRequestDto.getSkillLevel(),
-				nurseInfoRequestDto.getMemo(),
-				nurseInfoRequestDto.getRole()
-			);
-		}
-
 		if (member.getRole() == Role.HN && nurseInfoRequestDto.getRole().equals("RN")) {
-			List<WardMember> wardMemberList = wardMemberRepository.findAllByWard(member.getWardMember().getWard());
-
-			boolean hasOtherHN = wardMemberList.stream()
-				.anyMatch(wardMember ->
-					!wardMember.getMember().getMemberId().equals(member.getMemberId())
-						&& wardMember.getMember().getRole() == Role.HN);
-
-			if (!hasOtherHN) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 관리자 권한을 넘겨주세요.");
-			}
-
-			// 멤버와 1:1 매핑 되어 있는 wardMember 정보 수정
-			member.getWardMember().updateWardMemberInfo(
-				nurseInfoRequestDto.getShift(),
-				nurseInfoRequestDto.getSkillLevel(),
-				nurseInfoRequestDto.getMemo(),
-				nurseInfoRequestDto.getRole()
-			);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자는 간호사로 변경이 불가합니다.");
 		}
+
+		// 멤버와 1:1 매핑 되어 있는 wardMember 정보 수정
+		member.getWardMember().updateWardMemberInfo(
+			nurseInfoRequestDto.getShift(),
+			nurseInfoRequestDto.getSkillLevel(),
+			nurseInfoRequestDto.getMemo(),
+			nurseInfoRequestDto.getRole()
+		);
 	}
 
 	@Transactional

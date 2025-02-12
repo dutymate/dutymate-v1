@@ -72,7 +72,7 @@ public class WardMember {
 		if (skillLevel != null && !skillLevel.isEmpty()) {
 			this.skillLevel = SkillLevel.valueOf(skillLevel);
 		}
-		if (memo != null && !memo.isEmpty()) {
+		if (memo != null) {
 			this.memo = memo;
 		}
 		if (role != null && !role.isEmpty()) {
