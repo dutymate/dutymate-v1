@@ -23,15 +23,15 @@ const CreateWard = () => {
 	}, []);
 
 	const handleCreateWard = async (hospitalName: string, wardName: string) => {
-		console.log("handleCreateWard 함수 호출됨:", { hospitalName, wardName });
+		// console.log("handleCreateWard 함수 호출됨:", { hospitalName, wardName });
 
 		try {
-			console.log("wardService.createWard 호출 전");
+			// console.log("wardService.createWard 호출 전");
 			const response = await wardService.createWard({
 				hospitalName,
 				wardName,
 			});
-			console.log("wardService.createWard 호출 성공");
+			// console.log("wardService.createWard 호출 성공");
 
 			const currentUserInfo = userAuthStore.userInfo;
 			if (currentUserInfo) {

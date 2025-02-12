@@ -43,7 +43,7 @@ const WardAdminRowCard = ({
 
 	// Add this to verify data flow
 	useEffect(() => {
-		console.log("Nurse data:", nurse);
+		// console.log("Nurse data:", nurse);
 	}, [nurse]);
 
 	const updateDropdownPosition = useCallback(

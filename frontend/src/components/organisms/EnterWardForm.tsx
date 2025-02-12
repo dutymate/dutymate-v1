@@ -31,7 +31,7 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log("Form submitted with code:", wardCode);
+		// console.log("Form submitted with code:", wardCode);
 
 		if (!validateWardCode(wardCode)) {
 			return;

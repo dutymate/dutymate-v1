@@ -62,7 +62,7 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log("폼 제출 시도:", formState);
+		// console.log("폼 제출 시도:", formState);
 
 		if (!validateForm()) {
 			return;
@@ -71,9 +71,9 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 		setIsLoading(true);
 
 		try {
-			console.log("onSubmit 함수 호출 전");
+			// console.log("onSubmit 함수 호출 전");
 			await onSubmit(formState);
-			console.log("onSubmit 함수 호출 완료");
+			// console.log("onSubmit 함수 호출 완료");
 		} catch (error) {
 			console.error("부가 정보 제출 실패:", error);
 		} finally {

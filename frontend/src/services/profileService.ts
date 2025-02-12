@@ -35,7 +35,7 @@ export const profileService = {
 
 	// 프로필 정보 수정
 	updateProfile: (data: ProfileUpdateRequest) => {
-		console.log("서버로 보내는 데이터:", data); // 디버깅용
+		// console.log("서버로 보내는 데이터:", data); // 디버깅용
 		return axiosInstance
 			.put("/member", data)
 			.then((response) => response.data)

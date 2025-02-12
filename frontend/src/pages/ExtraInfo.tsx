@@ -35,7 +35,7 @@ const ExtraInfo = () => {
 	}, []);
 
 	const handleSubmit = async (data: FormData) => {
-		console.log("ExtraInfo handleSubmit 호출됨:", data);
+		// console.log("ExtraInfo handleSubmit 호출됨:", data);
 
 		try {
 			setFormData(data);
@@ -46,10 +46,10 @@ const ExtraInfo = () => {
 				role: data.role,
 			};
 
-			console.log("API 요청 데이터:", apiData);
+			// console.log("API 요청 데이터:", apiData);
 
 			const response = await userService.submitAdditionalInfo(apiData);
-			console.log("API 응답:", response);
+			// console.log("API 응답:", response);
 
 			setAdditionalInfo({
 				grade: apiData.grade,
@@ -57,7 +57,7 @@ const ExtraInfo = () => {
 				role: apiData.role,
 			});
 
-			console.log("전역 상태 업데이트 완료");
+			// console.log("전역 상태 업데이트 완료");
 
 			toast.success("회원 가입이 완료되었습니다.", {
 				position: "top-center",
@@ -67,10 +67,10 @@ const ExtraInfo = () => {
 			// 명확한 타입 체크 추가
 			setTimeout(() => {
 				if (response && response.role === "HN") {
-					console.log("수간호사로 병동 생성 페이지로 이동");
+					// console.log("수간호사로 병동 생성 페이지로 이동");
 					navigate("/create-ward");
 				} else if (response && response.role === "RN") {
-					console.log("평간호사로 병동 입장 페이지로 이동");
+					// console.log("평간호사로 병동 입장 페이지로 이동");
 					navigate("/enter-ward");
 				} else {
 					console.error("Invalid role in response:", response);

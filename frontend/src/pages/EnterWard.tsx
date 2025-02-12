@@ -25,12 +25,12 @@ const EnterWard = () => {
 	const Template = isMobile ? NextTemplate : StartTemplate;
 
 	const handleEnterWard = async (wardCode: string) => {
-		console.log("Attempting to enter ward with code:", wardCode);
+		// console.log("Attempting to enter ward with code:", wardCode);
 
 		try {
 			// 1. 병동 코드 확인
 			const response = await wardService.checkWardCode(wardCode);
-			console.log("Ward code check result:", response);
+			// console.log("Ward code check result:", response);
 
 			// 2. 병동 입장 성공 시 사용자 정보 업데이트
 			userAuthStore.setUserInfo({
