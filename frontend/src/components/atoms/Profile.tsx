@@ -1,8 +1,12 @@
+import useUserAuthStore from "@/store/userAuthStore";
 import React from "react";
-import { FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { Icon } from "./Icon";
 
 const Profile = () => {
+	const userAuthStore = useUserAuthStore();
+	const userInfo = userAuthStore.userInfo;
+
 	return (
 		<div className="px-[1.3rem] pb-10">
 			<div className="flex flex-col">
@@ -11,7 +15,22 @@ const Profile = () => {
 					to="/my-page"
 					className="flex items-center gap-x-6 px-4 mb-4 hover:bg-gray-100 rounded-lg py-2"
 				>
-					<FaUserCircle className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500" />
+					{userInfo?.profileImg ? (
+						<img
+							src={userInfo.profileImg}
+							alt="프로필 이미지"
+							className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500 rounded-full"
+							onError={(e) => {
+								e.currentTarget.onerror = null;
+								e.currentTarget.style.display = "none";
+							}}
+						/>
+					) : (
+						<Icon
+							name="user"
+							className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500 rounded-full"
+						/>
+					)}
 					<span className="text-sm font-semibold">마이페이지</span>
 				</Link>
 
