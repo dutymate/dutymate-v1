@@ -153,7 +153,7 @@ const WardAdminRowCard = ({
 
 	// 메모 수정 완료 핸들러
 	const handleMemoComplete = () => {
-		if(memo.length > 50){
+		if (memo.length > 50) {
 			toast.error("메모는 최대 50자까지 작성 가능합니다.");
 			return;
 		}
@@ -189,22 +189,22 @@ const WardAdminRowCard = ({
 		}
 	};
 
-	const handleChangeNurseRole = async ( ) => {
-		if(!nurse.isSynced){
-			toast.error("임시 간호사는 관리자 권한 부여가 불가합니다.")
+	const handleChangeNurseRole = async () => {
+		if (!nurse.isSynced) {
+			toast.error("임시 간호사는 관리자 권한 부여가 불가합니다.");
 			return;
 		}
 
-		if(nurse.role !== "HN"){
+		if (nurse.role !== "HN") {
 			onUpdate(nurse.memberId, {
 				...nurse,
-				role:"HN",
+				role: "HN",
 			});
-		}else{
-			toast.error("관리자는 권한 변경이 불가합니다.")
+		} else {
+			toast.error("관리자는 권한 변경이 불가합니다.");
 			return;
 		}
-	}
+	};
 
 	const handleNameComplete = async () => {
 		if (!nurse.isSynced && name !== nurse.name) {
@@ -372,7 +372,7 @@ const WardAdminRowCard = ({
 							)}
 						</div>
 						<div className="w-[60px] flex-shrink-0" ref={authorityDropdownRef}>
-							<Dropdown 
+							<Dropdown
 								variant="authority"
 								value={null}
 								onChange={(value) => {
@@ -386,8 +386,7 @@ const WardAdminRowCard = ({
 								position={
 									dropdownPosition === "top" ? "top-left" : "bottom-left"
 								}
-								
-								/>
+							/>
 						</div>
 					</div>
 				</div>
