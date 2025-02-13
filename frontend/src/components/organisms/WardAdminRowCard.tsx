@@ -185,6 +185,11 @@ const WardAdminRowCard = ({
 	};
 
 	const handleChangeNurseRole = async ( ) => {
+		if(!nurse.isSynced){
+			toast.error("임시 간호사는 관리자 권한 부여가 불가합니다.")
+			return;
+		}
+		
 		if(nurse.role !== "HN"){
 			onUpdate(nurse.memberId, {
 				...nurse,
@@ -192,6 +197,7 @@ const WardAdminRowCard = ({
 			});
 		}else{
 			toast.error("관리자는 권한 변경이 불가합니다.")
+			return;
 		}
 	}
 
