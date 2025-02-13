@@ -219,11 +219,7 @@ public class WardService {
 
 	private String generateTempName(Ward ward) {
 		List<WardMember> tempNurses = wardMemberRepository.findByWardAndIsSynced(ward, false);
-		if (tempNurses.isEmpty()) {
-			return "간호사1";
-		}
-		int seq = Integer.parseInt(tempNurses.getLast().getMember().getName().substring(3)) + 1;
-		return "간호사" + seq;
+		return "간호사" + (tempNurses.size() + 1);
 	}
 
 	@Transactional
