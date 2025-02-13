@@ -307,12 +307,12 @@ public class WardScheduleService {
 		}
 
 		if (prevWardSchedule != null) {
-			prevShifts = getShifts(member, prevWardSchedule, daysInAWeek)
+			prevShifts = getShifts(member, prevWardSchedule, daysInMonth)
 				.substring(prevYearMonth.daysInMonth() - daysInAWeek);
 		}
 
 		if (nextWardSchedule != null) {
-			nextShifts = getShifts(member, nextWardSchedule, daysInAWeek)
+			nextShifts = getShifts(member, nextWardSchedule, daysInMonth)
 				.substring(0, daysInAWeek);
 		}
 
