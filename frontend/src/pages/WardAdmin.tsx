@@ -46,6 +46,10 @@ const WardAdmin = () => {
 		}
 	};
 
+	const handleViewHistory = () => {
+		toast.info("준비 중입니다.");
+	};
+
 	return (
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
@@ -79,6 +83,7 @@ const WardAdmin = () => {
 							<WardAdminInfo
 								wardInfo={wardInfo}
 								onAddTempNurse={handleAddVirtualNurse}
+								onViewHistory={handleViewHistory}
 							/>
 							<WardAdminTable nurses={wardInfo.nurses} />
 						</>

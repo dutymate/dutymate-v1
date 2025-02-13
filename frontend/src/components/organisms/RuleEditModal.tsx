@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { ruleService } from "../../services/ruleService";
-import { Button } from "../atoms/Button";
+// import { Button } from "../atoms/Button";
 import { toast } from "react-toastify";
 
 interface RuleEditModalProps {
@@ -47,7 +47,7 @@ const getFontWeight = (value: number) => {
 
 const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 	const [rules, setRules] = useState<WardRule | null>(null);
-	const [isSubmitting] = useState(false);
+	// const [isSubmitting] = useState(false);
 	// const [setIsSubmitting] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const modalRef = useRef<HTMLDivElement>(null);
@@ -119,26 +119,26 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 		});
 	};
 
-	const handleSubmit = async () => {
-		if (!rules) return;
+	// const handleSubmit = async () => {
+	// 	if (!rules) return;
 
-		// TODO: API 연동 후 제거
-		toast.info("준비 중입니다.");
-		onClose();
-		return;
+	// 	// TODO: API 연동 후 제거
+	// 	toast.info("준비 중입니다.");
+	// 	onClose();
+	// 	return;
 
-		// setIsSubmitting(true);
-		// try {
-		//   await ruleService.updateWardRules(rules);
-		//   toast.success("규칙이 저장되었습니다");
-		//   onClose();
-		// } catch (error) {
-		//   console.error("Failed to update rules:", error);
-		//   toast.error("규칙 저장에 실패했습니다");
-		// } finally {
-		//   setIsSubmitting(false);
-		// }
-	};
+	// 	// setIsSubmitting(true);
+	// 	// try {
+	// 	//   await ruleService.updateWardRules(rules);
+	// 	//   toast.success("규칙이 저장되었습니다");
+	// 	//   onClose();
+	// 	// } catch (error) {
+	// 	//   console.error("Failed to update rules:", error);
+	// 	//   toast.error("규칙 저장에 실패했습니다");
+	// 	// } finally {
+	// 	//   setIsSubmitting(false);
+	// 	// }
+	// };
 
 	return (
 		<div className="fixed inset-0 z-50" style={{ background: "transparent" }}>

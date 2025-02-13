@@ -8,12 +8,21 @@ import { TempNurseButton } from "../atoms/Button";
 interface WardAdminInfoProps {
 	wardInfo: WardInfo;
 	onAddTempNurse: () => void;
+	onViewHistory?: () => void;
 }
 
-const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
+const WardAdminInfo = ({
+	wardInfo,
+	onAddTempNurse,
+	onViewHistory,
+}: WardAdminInfoProps) => {
 	const handleCopyCode = () => {
 		navigator.clipboard.writeText(wardInfo.wardCode);
 		toast.success("병동 코드가 복사되었습니다");
+	};
+
+	const handleViewHistory = () => {
+		toast.info("준비 중입니다.");
 	};
 
 	return (
@@ -59,11 +68,16 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 					</div>
 
 					<div className="bg-white rounded-xl p-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-						<div className="flex items-center gap-2 mb-1">
+						<div className="flex items-center justify-between mb-1">
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								입장 관리
 							</h3>
-							<Icon name="door" size={18} className="text-gray-500" />
+							<button
+								onClick={onViewHistory || handleViewHistory}
+								className="flex items-center justify-center gap-1.5 py-1 w-[100px] bg-duty-off rounded-lg border hover:bg-duty-off-dark transition-colors"
+							>
+								<span className="text-[0.8rem] text-white">내역 조회</span>
+							</button>
 						</div>
 						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
 							1명 대기

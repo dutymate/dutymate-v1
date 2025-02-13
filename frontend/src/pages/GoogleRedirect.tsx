@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import {
 	userService,
 	LoginResponse,
-	ApiErrorResponse,
+	// ApiErrorResponse,
 } from "../services/userService";
 import useUserAuthStore from "../store/userAuthStore";
 import { toast } from "react-toastify";
@@ -50,7 +50,7 @@ export function GoogleRedirect() {
 					}
 				}
 			},
-			(error: ApiErrorResponse) => {
+			() => {
 				useLoadingStore.getState().setLoading(false);
 				toast.error("이미 다른 경로로 가입한 회원입니다.");
 				navigate("/login");
