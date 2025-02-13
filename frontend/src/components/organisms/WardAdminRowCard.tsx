@@ -184,6 +184,17 @@ const WardAdminRowCard = ({
 		}
 	};
 
+	const handleChangeNurseRole = async ( ) => {
+		if(nurse.role !== "HN"){
+			onUpdate(nurse.memberId, {
+				...nurse,
+				role:"HN",
+			});
+		}else{
+			toast.error("관리자는 권한 변경이 불가합니다.")
+		}
+	}
+
 	const handleNameComplete = async () => {
 		if (!nurse.isSynced && name !== nurse.name) {
 			try {
@@ -350,24 +361,22 @@ const WardAdminRowCard = ({
 							)}
 						</div>
 						<div className="w-[60px] flex-shrink-0" ref={authorityDropdownRef}>
-							<Dropdown
+							<Dropdown 
 								variant="authority"
 								value={null}
 								onChange={(value) => {
-									if (value === "병동내보내기") {
+									if (value === "병동 내보내기") {
 										handleRemoveNurse();
 									} else if (value === "권한 넘기기") {
-										onUpdate(nurse.memberId, {
-											...nurse,
-											role: nurse.role === "HN" ? "RN" : "HN",
-										});
+										handleChangeNurseRole();
 									}
 								}}
 								label=""
 								position={
 									dropdownPosition === "top" ? "top-left" : "bottom-left"
 								}
-							/>
+								
+								/>
 						</div>
 					</div>
 				</div>

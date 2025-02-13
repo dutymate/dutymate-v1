@@ -13,7 +13,7 @@ interface DropdownProps {
 const OPTIONS = {
 	number: [1, 2, 3, 4, 5],
 	priority: ["상", "중", "하"],
-	authority: ["병동내보내기", "권한 넘기기"],
+	authority: ["병동 내보내기", "권한 넘기기"],
 	skill: ["상급", "중급", "초급"],
 };
 
