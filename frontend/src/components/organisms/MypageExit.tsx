@@ -1,13 +1,15 @@
 import { ApiErrorResponse, profileService } from "@/services/profileService";
+import useUserAuthStore from "@/store/userAuthStore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const MypageExit = () => {
 	const navigate = useNavigate();
+	const userName = useUserAuthStore.getState().userInfo?.name;
 
 	const handleExitButton = () => {
 		const isConfirmed = confirm(
-			"병동 나가기 시 이번 달 근무표에서 홍길동님의 데이터가 삭제됩니다.\n계속 진행하시겠습니까?",
+			`병동 나가기 시 이번 달 근무표에서 ${userName}님의 데이터가 삭제됩니다.\n계속 진행하시겠습니까?`,
 		);
 		if (isConfirmed) {
 			profileService.exitWard(
