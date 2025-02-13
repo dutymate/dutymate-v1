@@ -199,25 +199,10 @@ const MyShiftCalendar = ({
 					{prevMonthDays.map((day) => (
 						<div
 							key={`prev-${day}`}
-							onClick={() => {
-								const newDate = new Date(
-									currentDate.getFullYear(),
-									currentDate.getMonth() - 1,
-									day,
-								);
-								onDateSelect(newDate);
-							}}
 							className={`
 								min-h-[80px] lg:min-h-[120px] 
 								p-2 lg:p-3 
-								relative bg-gray-50 cursor-pointer hover:bg-gray-100
-								${
-									externalSelectedDate &&
-									externalSelectedDate.getDate() === day &&
-									externalSelectedDate.getMonth() === currentDate.getMonth() - 1
-										? "ring-2 ring-primary ring-inset"
-										: ""
-								}
+								relative bg-gray-50 cursor-not-allowed
 							`}
 						>
 							<span className="text-base-muted text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
@@ -309,25 +294,10 @@ const MyShiftCalendar = ({
 					{nextMonthDays.map((day) => (
 						<div
 							key={`next-${day}`}
-							onClick={() => {
-								const newDate = new Date(
-									currentDate.getFullYear(),
-									currentDate.getMonth() + 1,
-									day,
-								);
-								onDateSelect(newDate);
-							}}
 							className={`
 								min-h-[80px] lg:min-h-[120px] 
 								p-2 lg:p-3 
-								relative bg-gray-50 cursor-pointer hover:bg-gray-100
-								${
-									externalSelectedDate &&
-									externalSelectedDate.getDate() === day &&
-									externalSelectedDate.getMonth() === currentDate.getMonth() + 1
-										? "ring-2 ring-primary ring-inset"
-										: ""
-								}
+								relative bg-gray-50 cursor-not-allowed
 							`}
 						>
 							<span className="text-base-muted text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">

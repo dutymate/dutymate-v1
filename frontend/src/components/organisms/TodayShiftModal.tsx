@@ -23,11 +23,11 @@ interface TodayShiftModalProps {
 	date: Date | null;
 	duty: "day" | "evening" | "night" | "off";
 	dutyData: {
-		myShift: "D" | "E" | "N" | "O";
+		myShift: "D" | "E" | "N" | "O" | "X";
 		otherShifts: {
 			grade: number;
 			name: string;
-			shift: "D" | "E" | "N" | "O";
+			shift: "D" | "E" | "N" | "O" | "X";
 		}[];
 	};
 	isMobile: boolean;
@@ -64,13 +64,13 @@ const TodayShiftModal = ({
 	};
 
 	const modalContent = (
-		<div className="bg-white rounded-2xl p-6 w-full max-w-[400px] shadow-sm">
+		<div className="bg-white rounded-2xl p-6 w-full max-w-[400px] shadow-sm min-h-[600px] flex flex-col">
 			{loading ? (
-				<div className="flex justify-center items-center h-[300px]">
+				<div className="flex justify-center items-center flex-1">
 					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
 				</div>
 			) : !dutyData ? (
-				<div className="text-center py-8">
+				<div className="text-center py-8 flex-1 flex items-center justify-center">
 					<p className="text-base-muted">해당 날짜의 근무 정보가 없습니다.</p>
 					<button
 						onClick={onClose}
@@ -95,21 +95,23 @@ const TodayShiftModal = ({
 									<IoChevronForward className="w-6 h-6 text-base-muted hover:text-gray-600" />
 								</button>
 							</div>
-							<div className="inline-block">
-								<p className="text-base-foreground text-base mb-2">
-									오늘의 근무 일정은{" "}
-									<span className={`text-duty-${duty} font-medium`}>
-										{duty.toUpperCase()}
-									</span>{" "}
-									입니다!
-								</p>
-								<div className={`h-1 bg-duty-${duty}-bg w-full`} />
-							</div>
+							{dutyData.myShift !== "X" && (
+								<div className="inline-block">
+									<p className="text-base-foreground text-base mb-2">
+										오늘의 근무 일정은{" "}
+										<span className={`text-duty-${duty} font-medium`}>
+											{duty.toUpperCase()}
+										</span>{" "}
+										입니다!
+									</p>
+									<div className={`h-1 bg-duty-${duty}-bg w-full`} />
+								</div>
+							)}
 						</div>
 						<div className="border-t border-gray-900 mb-2" />
 					</div>
 
-					<div className="max-h-[400px] overflow-y-auto">
+					<div className="flex-1 overflow-y-auto">
 						<div className="space-y-0.5">
 							{dutyData.otherShifts
 								.sort((a, b) => b.grade - a.grade)
@@ -129,10 +131,14 @@ const TodayShiftModal = ({
 												{nurse.grade}년차
 											</span>
 										</div>
-										<DutyBadgeKor
-											type={convertDutyType(nurse.shift)}
-											size="xs"
-										/>
+										{nurse.shift !== "X" ? (
+											<DutyBadgeKor
+												type={convertDutyType(nurse.shift)}
+												size="xs"
+											/>
+										) : (
+											<div className="w-[65px] h-[30px]" />
+										)}
 									</div>
 								))}
 						</div>
