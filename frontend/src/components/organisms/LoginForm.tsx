@@ -113,7 +113,7 @@ const LoginForm = () => {
 				}
 			}
 		} catch (error) {
-			toast.error("아이디 또는 비밀번호가 일치하지 않습니다.");
+			toast.error("이메일 또는 비밀번호가 일치하지 않습니다.");
 			navigate("/login");
 		}
 	};
@@ -153,7 +153,7 @@ const LoginForm = () => {
 				</div>
 				{/* <div className="lg:mt-3 mt-6 text-[0.9rem] text-gray-600 flex justify-center gap-2">
 					<button type="button" className="underline">
-						아이디 찾기
+						이메일 찾기
 					</button>
 					<span className="text-gray-300">|</span>
 					<button type="button" className="underline">

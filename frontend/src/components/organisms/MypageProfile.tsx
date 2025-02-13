@@ -223,7 +223,7 @@ const MypageProfile = () => {
 					<MypageInput
 						id="email"
 						name="email"
-						label="아이디"
+						label="이메일"
 						value={profile?.email || ""}
 						disabled
 					/>

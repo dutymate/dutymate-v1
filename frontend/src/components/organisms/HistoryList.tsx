@@ -91,7 +91,7 @@ const HistoryList = () => {
 									className="flex items-center gap-1 text-gray-400 hover:text-gray-600 px-2 py-1 rounded-md hover:bg-gray-100"
 									onClick={() => handleRevert(item.idx)}
 								>
-									<span className="text-sm whitespace-nowrap">되돌리기</span>
+									<span className="text-sm whitespace-nowrap">돌아가기</span>
 									<Icon name="undo" size={16} />
 								</button>
 							</div>

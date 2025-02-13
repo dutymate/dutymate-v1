@@ -210,19 +210,19 @@ const SignupForm = () => {
 				<div className="lg:mt-0 mt-0">
 					<EmailInput
 						id="email"
-						label="아이디"
+						label=""
 						name="email"
 						value={signupData.email}
 						onChange={handleSignupChange}
 						onFocus={handleSignupFocus}
 						error={error.email}
-						placeholder="아이디"
+						placeholder="이메일"
 					/>
 				</div>
 				<div className="lg:mt-2 mt-2">
 					<PasswordInput
 						id="password"
-						label="비밀번호"
+						label=""
 						name="password"
 						value={signupData.password}
 						onChange={handleSignupChange}
@@ -265,7 +265,7 @@ const SignupForm = () => {
 							className="w-4 h-4 text-primary-dark"
 						/>
 						<label htmlFor="agreement" className="ml-2 text-sm text-gray-600">
-							개인정보 수집,이용에 동의합니다.
+							개인정보 수집 및 이용에 동의합니다.
 						</label>
 					</div>
 				</div>
