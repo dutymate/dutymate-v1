@@ -155,7 +155,6 @@ deploy_frontend:
     AWS_SECRET_ACCESS_KEY: $AWS_FRONTEND_SECRET_KEY
     AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   before_script:
-    - cd frontend/build
     - export AWS_CLOUDFRONT_DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Origins.Items[?DomainName=='$AWS_FRONTEND_BUCKET_NAME.s3.$AWS_DEFAULT_REGION.amazonaws.com']].Id" --output text)
   script:
     - aws s3 sync . s3://$AWS_FRONTEND_BUCKET_NAME --delete
