@@ -8,6 +8,7 @@ import { IoMdMenu } from "react-icons/io";
 import { dutyService } from "../services/dutyService";
 import useUserAuthStore from "../store/userAuthStore";
 import { toast } from "react-toastify";
+import { useLoadingStore } from "@/store/loadingStore";
 
 // Duty 타입 변환 유틸리티 함수
 const convertDutyType = (
@@ -48,6 +49,7 @@ const MyShift = () => {
 
 	// 초기 데이터 로딩
 	useEffect(() => {
+		useLoadingStore.getState().setLoading(true);
 		const fetchMyDuty = async () => {
 			try {
 				const today = new Date();
@@ -56,7 +58,9 @@ const MyShift = () => {
 					today.getMonth() + 1,
 				);
 				setMyDutyData(data);
+				useLoadingStore.getState().setLoading(false);
 			} catch (error) {
+				useLoadingStore.getState().setLoading(false);
 				console.error("Failed to fetch duty data:", error);
 			}
 		};

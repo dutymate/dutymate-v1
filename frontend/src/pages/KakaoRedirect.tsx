@@ -7,6 +7,7 @@ import {
 } from "../services/userService";
 import useUserAuthStore from "../store/userAuthStore";
 import { toast } from "react-toastify";
+import PageLoadingSpinner from "@/components/atoms/Loadingspinner";
 
 export function KakaoRedirect() {
 	const navigate = useNavigate();
@@ -46,16 +47,12 @@ export function KakaoRedirect() {
 				}
 			},
 			() => {
-				toast.error("아이디 또는 비밀번호가 일치하지 않습니다.");
+				toast.error("이미 다른 경로로 가입한 회원입니다.");
 				navigate("/login");
 			},
 		);
 	}, []);
 
 	// 로딩 상태를 보여주는 컴포넌트 반환
-	return (
-		<div className="flex items-center justify-center min-h-screen">
-			<div className="animate-spin text-4xl">⌛</div>
-		</div>
-	);
+	return <PageLoadingSpinner />;
 }

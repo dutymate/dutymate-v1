@@ -10,6 +10,7 @@ import { wardService } from "../services/wardService";
 import { toast } from "react-toastify";
 import useUserAuthStore from "../store/userAuthStore";
 import useWardStore from "../store/wardStore";
+import { useLoadingStore } from "@/store/loadingStore";
 
 const WardAdmin = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -20,12 +21,15 @@ const WardAdmin = () => {
 	useEffect(() => {
 		const fetchWardInfo = async () => {
 			try {
+				useLoadingStore.getState().setLoading(true);
 				const data = await wardService.getWardInfo();
 				setWardInfo(data);
 			} catch (error) {
 				toast.error("병동 정보를 불러오는데 실패했습니다");
+				useLoadingStore.getState().setLoading(false);
 			} finally {
 				setIsLoading(false);
+				useLoadingStore.getState().setLoading(false);
 			}
 		};
 

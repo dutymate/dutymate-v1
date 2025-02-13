@@ -9,6 +9,7 @@ import { ApprovalBtn } from "../atoms/ApprovalBtn";
 import { requestService } from "../../services/requestService";
 import { toast } from "react-toastify";
 import { WardRequest } from "../../services/requestService";
+import { useLoadingStore } from "@/store/loadingStore";
 
 const ReqAdminTable = () => {
 	const [requests, setRequests] = useState<WardRequest[]>([]);
@@ -18,12 +19,14 @@ const ReqAdminTable = () => {
 
 	// 요청 목록 조회
 	const fetchRequests = async () => {
+		useLoadingStore.getState().setLoading(true);
 		try {
 			const data = await requestService.getWardRequests();
 			setRequests(data);
 		} catch (error) {
 			toast.error("요청 목록을 불러오는데 실패했습니다");
 		} finally {
+			useLoadingStore.getState().setLoading(false);
 			setIsLoading(false);
 		}
 	};

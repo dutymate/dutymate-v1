@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { IoMdMenu } from "react-icons/io";
 import useUserAuthStore from "../store/userAuthStore";
 import useShiftStore from "../store/shiftStore";
+import PageLoadingSpinner from "@/components/atoms/Loadingspinner";
 
 const DutyManagement = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -17,7 +18,9 @@ const DutyManagement = () => {
 		fetchDutyInfo();
 	}, []);
 
-	if (loading && !dutyInfo) return <div>Loading...</div>;
+	if (loading && !dutyInfo) {
+		return <PageLoadingSpinner />;
+	}
 	if (error) return <div>Error: {error}</div>;
 	if (!dutyInfo) return null;
 

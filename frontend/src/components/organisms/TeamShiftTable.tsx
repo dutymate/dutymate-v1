@@ -5,6 +5,7 @@ import { Button } from "../atoms/Button";
 import ReqShiftModal from "./ReqShiftModal";
 import { dutyService } from "../../services/dutyService"; //실제 API 호출에 필요한 axios import
 import { toast } from "react-toastify";
+import { useLoadingStore } from "@/store/loadingStore";
 // import mockData from "../../services/response-json/duty/GetApiDutyWard.json"; // 임시 데이터 import
 
 // interface DutyMember {
@@ -45,6 +46,7 @@ const TeamShiftTable = () => {
 
 	useEffect(() => {
 		const fetchWardDuty = async () => {
+			useLoadingStore.getState().setLoading(true);
 			try {
 				const data = await dutyService.getWardDuty(
 					currentDate.year,
@@ -56,6 +58,7 @@ const TeamShiftTable = () => {
 				toast.error("병동 근무표를 불러오는데 실패했습니다");
 			} finally {
 				setIsLoading(false);
+				useLoadingStore.getState().setLoading(false);
 			}
 		};
 
