@@ -40,6 +40,7 @@ const WardAdmin = () => {
 		try {
 			await addVirtualNurse();
 			toast.success("임시 간호사가 추가되었습니다.");
+			window.location.reload();
 		} catch (error) {
 			toast.error("임시 간호사 추가에 실패했습니다.");
 		}
