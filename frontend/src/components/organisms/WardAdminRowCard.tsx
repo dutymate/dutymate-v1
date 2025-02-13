@@ -153,6 +153,11 @@ const WardAdminRowCard = ({
 
 	// 메모 수정 완료 핸들러
 	const handleMemoComplete = () => {
+		if(memo.length > 50){
+			toast.error("메모는 최대 50자까지 작성 가능합니다.");
+			return;
+		}
+
 		setIsEditingMemo(false);
 		if (memo !== nurse.memo) {
 			onUpdate(nurse.memberId, {
@@ -189,7 +194,7 @@ const WardAdminRowCard = ({
 			toast.error("임시 간호사는 관리자 권한 부여가 불가합니다.")
 			return;
 		}
-		
+
 		if(nurse.role !== "HN"){
 			onUpdate(nurse.memberId, {
 				...nurse,
