@@ -20,7 +20,7 @@ resource "aws_security_group" "sg_alb" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.private_subnet_cidr_block
   }
 
   tags = {
@@ -145,18 +145,11 @@ resource "aws_security_group" "sg_ssm_ec2" {
   name   = "dutymate-sg-ssm-ec2"
   vpc_id = var.vpc_id
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.database_subnet_cidr_block
   }
 
   tags = {
@@ -175,13 +168,6 @@ resource "aws_security_group" "sg_vpce_ecr" {
     security_groups = [aws_security_group.sg_ecs.id]
   }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name = "dutymate-sg-vpce-ecr"
   }
@@ -196,13 +182,6 @@ resource "aws_security_group" "sg_vpce_ssm" {
     to_port         = 443
     protocol        = "tcp"
     security_groups = [aws_security_group.sg_ssm_ec2.id]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
