@@ -111,7 +111,9 @@ deploy_backend:
     - if: '$CI_COMMIT_BRANCH =~ /^release.*/'
   needs:
     - job: publish_backend
-  image: amazon/aws-cli
+  image:
+    name: amazon/aws-cli
+    entrypoint: [ "" ]
   variables:
     AWS_ACCESS_KEY_ID: $AWS_ECS_ACCESS_KEY_ID
     AWS_SECRET_ACCESS_KEY: $AWS_ECS_SECRET_KEY
@@ -145,7 +147,9 @@ deploy_frontend:
   needs:
     - job: build_frontend
       artifacts: true
-  image: amazon/aws-cli
+  image:
+    name: amazon/aws-cli
+    entrypoint: [ "" ]
   variables:
     AWS_ACCESS_KEY_ID: $AWS_FRONTEND_ACCESS_KEY_ID
     AWS_SECRET_ACCESS_KEY: $AWS_FRONTEND_SECRET_KEY
