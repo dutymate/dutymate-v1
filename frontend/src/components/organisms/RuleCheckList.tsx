@@ -25,7 +25,7 @@ const RuleCheckList = () => {
 									<span className="font-medium text-md">{item.name}</span>
 								</span>
 								<span className="text-foreground text-sm">
-									{item.startDate}일 - {item.endDateShift} 근무
+									{item.startDate}일 
 								</span>
 								<div className="text-duty-evening-dark text-sm text-red-500">
 									{item.message}
