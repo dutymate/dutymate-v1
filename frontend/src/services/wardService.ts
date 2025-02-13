@@ -171,12 +171,12 @@ export const wardService = {
 				if (error.response) {
 					switch (error.response.status) {
 						case 400:
-							throw new Error("이미 입장한 병동이 있습니다");
+							throw error;
 						case 401:
 							window.location.href = "/login";
 							break;
-						case 404:
-							throw new Error("유효하지 않은 병동 코드입니다");
+						// case 404:
+						// 	throw new Error("유효하지 않은 병동 코드입니다");
 						default:
 							console.error("Error occurred:", error);
 							throw error;

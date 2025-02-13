@@ -48,20 +48,15 @@ const EnterWard = () => {
 			setTimeout(() => {
 				navigate("/my-shift");
 			}, 1000);
-		} catch (error) {
+		} catch (error: any) {
 			console.error("병동 입장 실패:", error);
-			if (error instanceof Error) {
-				switch (error.message) {
+			if (error) {
+				switch (error.response.data.message) {
 					case "서버 연결 실패":
 						toast.error("잠시 후 다시 시도해주세요");
 						return;
-					case "이미 입장한 병동이 있습니다":
-					case "유효하지 않은 병동 코드입니다":
-						toast.error(error.message);
-						throw error;
 					default:
-						toast.error("병동 입장에 실패했습니다");
-						throw new Error("병동 입장에 실패했습니다");
+						toast.error(error.response.data.message);
 				}
 			}
 		}
