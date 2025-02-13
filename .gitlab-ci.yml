@@ -103,7 +103,7 @@ publish_backend:
   before_script:
     - cd backend
   script:
-    - gradle jib:build -Djib.to.image=$AWS_ECR_REPO_URI -Djib.to.auth.username=AWS -Djib.to.auth.password=$(cat password.txt)
+    - gradle jib:build -Djib.to.image=$AWS_ECR_REPO_URI -Djib.to.auth.username=AWS -Djib.to.auth.password=$(cat ../password.txt)
 
 deploy_backend:
   stage: deploy_backend
