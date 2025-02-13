@@ -82,7 +82,8 @@ const MyShiftCalendar = ({
 		let shift: string | undefined;
 		if (targetMonth < currentMonth) {
 			// 이전 달의 마지막 주
-			const index = day - (prevMonthLastDate - dutyData.prevShifts.length);
+			const prevShiftsLength = dutyData.prevShifts.length;
+			const index = prevShiftsLength - (prevMonthLastDate - day + 1);
 			shift = dutyData.prevShifts[index];
 		} else if (targetMonth > currentMonth) {
 			// 다음 달의 첫 주
