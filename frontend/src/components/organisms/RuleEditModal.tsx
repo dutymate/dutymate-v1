@@ -191,7 +191,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												<span className="text-sm font-medium text-duty-day">
 													D
 												</span>
-												<select disabled
+												<select
+													disabled
 													value={rules.wdayDCnt}
 													onChange={(e) =>
 														handleChange("wdayDCnt", Number(e.target.value))
@@ -233,7 +234,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												<span className="text-sm font-medium text-duty-evening">
 													E
 												</span>
-												<select disabled
+												<select
+													disabled
 													value={rules.wdayECnt}
 													onChange={(e) =>
 														handleChange("wdayECnt", Number(e.target.value))
@@ -270,7 +272,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												<span className="text-sm font-medium text-duty-night">
 													N
 												</span>
-												<select disabled
+												<select
+													disabled
 													value={rules.wdayNCnt}
 													onChange={(e) =>
 														handleChange("wdayNCnt", Number(e.target.value))
@@ -316,7 +319,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												<span className="text-sm font-medium text-duty-day">
 													D
 												</span>
-												<select disabled
+												<select
+													disabled
 													value={rules.wendDCnt}
 													onChange={(e) =>
 														handleChange("wendDCnt", Number(e.target.value))
@@ -353,7 +357,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												<span className="text-sm font-medium text-duty-evening">
 													E
 												</span>
-												<select disabled
+												<select
+													disabled
 													value={rules.wendECnt}
 													onChange={(e) =>
 														handleChange("wendECnt", Number(e.target.value))
@@ -390,7 +395,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												<span className="text-sm font-medium text-duty-night">
 													N
 												</span>
-												<select disabled
+												<select
+													disabled
 													value={rules.wendNCnt}
 													onChange={(e) =>
 														handleChange("wendNCnt", Number(e.target.value))
@@ -433,7 +439,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 										</span>
 										<div className="flex items-center gap-9">
 											<div className="flex items-center gap-1.5">
-												<select disabled
+												<select
+													disabled
 													value={rules.maxShift}
 													onChange={(e) =>
 														handleChange("maxShift", Number(e.target.value))
@@ -466,7 +473,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												</select>
 												<span className="text-xs text-foreground">일 이하</span>
 											</div>
-											<select disabled
+											<select
+												disabled
 												value={rules.prioMaxShift}
 												onChange={(e) =>
 													handleChange("prioMaxShift", Number(e.target.value))
@@ -512,7 +520,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 											연속 근무 후 오프 수
 										</span>
 										<div className="flex items-center gap-1.5">
-											<select disabled
+											<select
+												disabled
 												value={rules.offCntAfterMaxShift}
 												onChange={(e) =>
 													handleChange(
@@ -547,7 +556,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												))}
 											</select>
 											<span className="text-xs text-foreground">일 이상</span>
-											<select disabled
+											<select
+												disabled
 												value={rules.prioOffCntAfterMaxShift}
 												onChange={(e) =>
 													handleChange(
@@ -596,7 +606,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 											나이트 연속 최대
 										</span>
 										<div className="flex items-center gap-1.5">
-											<select disabled
+											<select
+												disabled
 												value={rules.maxN}
 												onChange={(e) =>
 													handleChange("maxN", Number(e.target.value))
@@ -628,7 +639,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												))}
 											</select>
 											<span className="text-xs text-foreground">일 이하</span>
-											<select disabled
+											<select
+												disabled
 												value={rules.prioMaxN}
 												onChange={(e) =>
 													handleChange("prioMaxN", Number(e.target.value))
@@ -673,7 +685,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 											나이트 연속 최소
 										</span>
 										<div className="flex items-center gap-1.5">
-											<select disabled
+											<select
+												disabled
 												value={rules.minN}
 												onChange={(e) =>
 													handleChange("minN", Number(e.target.value))
@@ -705,7 +718,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												))}
 											</select>
 											<span className="text-xs text-foreground">일 이상</span>
-											<select disabled
+											<select
+												disabled
 												value={rules.prioMinN}
 												onChange={(e) =>
 													handleChange("prioMinN", Number(e.target.value))
@@ -751,7 +765,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 											나이트 후 오프 수
 										</span>
 										<div className="flex items-center gap-1.5">
-											<select disabled
+											<select
+												disabled
 												value={rules.offCntAfterN}
 												onChange={(e) =>
 													handleChange("offCntAfterN", Number(e.target.value))
@@ -783,7 +798,8 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												))}
 											</select>
 											<span className="text-xs text-foreground">일 이상</span>
-											<select disabled
+											<select
+												disabled
 												value={rules.prioOffCntAfterN}
 												onChange={(e) =>
 													handleChange(
