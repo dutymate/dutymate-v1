@@ -20,7 +20,7 @@ const RuleCheckList = () => {
 				) : (
 					<div className="space-y-3">
 						{issues.map((item, index) => (
-							<div key={index} className="flex items-center gap-3">
+							<div key={index} className="flex items-center gap-5">
 								<span className="bg-duty-off-bg px-1.5 py-0.75 rounded-md">
 									<span className="font-medium text-md">{item.name}</span>
 								</span>
