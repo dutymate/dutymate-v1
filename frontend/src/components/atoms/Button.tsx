@@ -154,4 +154,22 @@ export const TempNurseButton = ({
 	);
 };
 
+// 연동하지 않고 추가하기 버튼
+export const ConnectButton = ({
+	onClick,
+	className,
+}: {
+	onClick: () => void;
+	className?: string;
+}) => {
+	return (
+		<button
+			onClick={onClick}
+			className={`w-[90vw] max-w-[400px] h-[44px] bg-primary-20 hover:bg-primary text-primary hover:text-white transition-colors whitespace-nowrap rounded-lg ${className}`}
+		>
+			연동하지 않고 추가하기
+		</button>
+	);
+};
+
 export type { ButtonProps, ButtonSize, ButtonWidth, ButtonColor };

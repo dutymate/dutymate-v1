@@ -88,7 +88,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 						<div className="relative h-[70vh]">
 							{/* 메인 텍스트 영역 */}
 							<div className="absolute top-[8vh] w-full z-10">
-								<div className="pl-[8%]">
+								<div className="pl-[8%] -translate-y-[9vh]">
 									<div className="flex flex-col gap-[0.3vw]">
 										<h1 className="text-[1.7vw] font-bold text-gray-800">
 											"듀티표의 마침표, 듀티메이트."
@@ -102,7 +102,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 								</div>
 							</div>
 							{/* 노트북 이미지 */}
-							<div className="absolute top-[23vh] -left-[20%] w-[120%] z-20">
+							<div className="absolute top-[14vh] -left-[20%] w-[120%] z-20">
 								<img
 									src={notebookImage}
 									alt="Notebook Preview"
