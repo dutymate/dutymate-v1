@@ -3,6 +3,7 @@ package net.dutymate.api.wardschedules.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -358,6 +359,7 @@ public class WardScheduleService {
 				return TodayDutyResponseDto.GradeNameShift
 					.of(nurse.getGrade(), nurse.getName(), nurseShift.getShifts().charAt(date - 1));
 			})
+			.sorted(Comparator.comparing(TodayDutyResponseDto.GradeNameShift::getShift))
 			.toList();
 
 		return TodayDutyResponseDto.of(myShift.getShifts().charAt(date - 1), otherShifts);
