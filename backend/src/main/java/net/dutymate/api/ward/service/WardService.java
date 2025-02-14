@@ -24,7 +24,7 @@ import net.dutymate.api.ward.dto.EnterWaitingResponseDto;
 import net.dutymate.api.ward.dto.HospitalNameResponseDto;
 import net.dutymate.api.ward.dto.TempLinkRequestDto;
 import net.dutymate.api.ward.dto.TempNurseResponseDto;
-import net.dutymate.api.ward.dto.VirtualNameRequestDto;
+import net.dutymate.api.ward.dto.VirtualEditRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
 import net.dutymate.api.ward.repository.EnterWaitingRepository;
@@ -386,8 +386,8 @@ public class WardService {
 	}
 
 	@Transactional
-	public void changeVirtualMemberName(
-		Long changeMemberId, VirtualNameRequestDto virtualNameRequestDto, Member member) {
+	public void changeVirtualMember(
+		Long changeMemberId, VirtualEditRequestDto virtualEditRequestDto, Member member) {
 		// 수간호사가 아니면 예외 처리
 		if (!member.getRole().equals(Role.HN)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자가 아닙니다.");
@@ -403,8 +403,9 @@ public class WardService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "같은 병동에 속하지 않은 간호사입니다.");
 		}
 
-		// 이름 변경
-		changeMember.changeName(virtualNameRequestDto.getName());
+		// 정보 수정
+		changeMember.changeTempMember(
+			virtualEditRequestDto.getName(), virtualEditRequestDto.getGender(), virtualEditRequestDto.getGrade());
 	}
 
 	public List<HospitalNameResponseDto> findHospitalName(String query) {

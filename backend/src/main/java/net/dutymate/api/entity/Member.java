@@ -99,8 +99,16 @@ public class Member {
 		this.profileImg = fileUrl;
 	}
 
-	public void changeName(String name) {
-		this.name = name;
+	public void changeTempMember(String name, Gender gender, Integer grade) {
+		if (name != null && !name.isEmpty()) {
+			this.name = name;
+		}
+		if (gender != null) {
+			this.gender = gender;
+		}
+		if (grade != null && grade > 0) {
+			this.grade = grade;
+		}
 	}
 
 	public void updatePassword(String newPassword) {

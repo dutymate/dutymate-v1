@@ -19,7 +19,7 @@ import net.dutymate.api.ward.dto.EnterWaitingResponseDto;
 import net.dutymate.api.ward.dto.HospitalNameResponseDto;
 import net.dutymate.api.ward.dto.TempLinkRequestDto;
 import net.dutymate.api.ward.dto.TempNurseResponseDto;
-import net.dutymate.api.ward.dto.VirtualNameRequestDto;
+import net.dutymate.api.ward.dto.VirtualEditRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
 import net.dutymate.api.ward.service.WardService;
@@ -61,13 +61,13 @@ public class WardController {
 		return ResponseEntity.ok().build();
 	}
 
-	// 가상 간호사 이름 변경 (관리자)
+	// 임시 간호사 정보 수정 (관리자)
 	@PutMapping("/member/virtual/{memberId}")
-	public ResponseEntity<?> changeVirtualMemberName(
+	public ResponseEntity<?> changeVirtualMember(
 		@PathVariable Long memberId,
-		@RequestBody VirtualNameRequestDto virtualNameRequestDto,
+		@RequestBody VirtualEditRequestDto virtualEditRequestDto,
 		@Auth Member member) {
-		wardService.changeVirtualMemberName(memberId, virtualNameRequestDto, member);
+		wardService.changeVirtualMember(memberId, virtualEditRequestDto, member);
 		return ResponseEntity.ok().build();
 	}
 
