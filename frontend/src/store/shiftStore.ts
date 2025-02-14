@@ -61,8 +61,8 @@ const useShiftStore = create<ShiftState>((set, get) => ({
 
 			const data = await dutyService.getDuty(params);
 
-			// Sort with nurseGrades if available
-			const nurseGrades = get().nurseGrades;
+			// Comment out sorting logic
+			// const nurseGrades = get().nurseGrades;
 			set({
 				dutyInfo: {
 					...data,
@@ -71,10 +71,11 @@ const useShiftStore = create<ShiftState>((set, get) => ({
 						if (a.role === "HN" && b.role !== "HN") return -1;
 						if (a.role !== "HN" && b.role === "HN") return 1;
 
-						// Sort by grade if available
-						const gradeA = nurseGrades[a.memberId] || 0;
-						const gradeB = nurseGrades[b.memberId] || 0;
-						return gradeB - gradeA;
+						// // Sort by grade if available
+						// const gradeA = nurseGrades[a.memberId] || 0;
+						// const gradeB = nurseGrades[b.memberId] || 0;
+						// return gradeB - gradeA;
+						return 0;
 					}),
 				},
 				error: null,

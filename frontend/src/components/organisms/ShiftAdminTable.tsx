@@ -387,7 +387,17 @@ const ShiftAdminTable = ({
 			(acc, nurseRow) => acc + nurseRow.filter((duty) => duty !== "X").length,
 			0,
 		);
-		return Math.round((filledCells / totalCells) * 100);
+
+		// 이슈당 해당하는 일수 계산
+		const issueCnt = issues.reduce((acc, issue) => {
+			return acc + (issue.endDate - issue.startDate + 1);
+		}, 0);
+
+		// 완성도 = (채워진 셀 - 이슈 셀) / 전체 셀 * 100
+		const progress = ((filledCells - issueCnt) / totalCells) * 100;
+
+		// 음수가 나올 경우 0으로 처리하고, 소수점 반올림
+		return Math.max(0, Math.round(progress));
 	};
 
 	// 자동생성 핸들러 수정
@@ -497,27 +507,23 @@ const ShiftAdminTable = ({
 		}
 	}, []); // 컴포넌트 마운트 시 한 번만 실행
 
-	// Fetch ward info and set nurse grades
-	useEffect(() => {
-		const fetchWardInfo = async () => {
-			try {
-				const wardInfo = await wardService.getWardInfo();
-				const grades: Record<number, number> = {};
-
-				wardInfo.nurses.forEach((nurse: Nurse) => {
-					grades[nurse.memberId] = nurse.grade;
-				});
-
-				setNurseGrades(grades);
-				// This will trigger a re-sort in the store
-				onUpdate(year, month);
-			} catch (error) {
-				console.error("Failed to fetch ward info:", error);
-			}
-		};
-
-		fetchWardInfo();
-	}, []);
+	// Comment out the entire useEffect for ward info
+	// useEffect(() => {
+	//   const fetchWardInfo = async () => {
+	//     try {
+	//       const wardInfo = await wardService.getWardInfo();
+	//       const grades: Record<number, number> = {};
+	//       wardInfo.nurses.forEach((nurse: Nurse) => {
+	//         grades[nurse.memberId] = nurse.grade;
+	//       });
+	//       setNurseGrades(grades);
+	//       onUpdate(year, month);
+	//     } catch (error) {
+	//       console.error("Failed to fetch ward info:", error);
+	//     }
+	//   };
+	//   fetchWardInfo();
+	// }, []);
 
 	return (
 		<div
