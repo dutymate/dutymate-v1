@@ -19,9 +19,11 @@ public class LoginResponseDto {
 	private Provider provider;
 	private boolean existAdditionalInfo;
 	private boolean existMyWard;
+	private boolean sentWardCode;
 
 	// Member Entity -> LoginResponseDto
-	public static LoginResponseDto of(Member member, String token, boolean existAdditionalInfo, boolean existMyWard) {
+	public static LoginResponseDto of(Member member, String token, boolean existAdditionalInfo, boolean existMyWard,
+		boolean sentWardCode) {
 		return LoginResponseDto.builder()
 			.token(token)
 			.memberId(member.getMemberId())
@@ -31,6 +33,7 @@ public class LoginResponseDto {
 			.provider(member.getProvider())
 			.existAdditionalInfo(existAdditionalInfo)
 			.existMyWard(existMyWard)
+			.sentWardCode(sentWardCode)
 			.build();
 	}
 }

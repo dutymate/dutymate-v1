@@ -39,6 +39,7 @@ import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.member.util.JwtUtil;
 import net.dutymate.api.records.YearMonth;
+import net.dutymate.api.ward.repository.EnterWaitingRepository;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
 import net.dutymate.api.wardmember.service.WardMemberService;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
@@ -61,6 +62,7 @@ public class MemberService {
 	private final S3Client s3Client;
 	private final WardScheduleRepository wardScheduleRepository;
 	private final WardMemberService wardMemberService;
+	private final EnterWaitingRepository enterWaitingRepository;
 
 	@Value("${kakao.client.id}")
 	private String kakaoClientId;
@@ -133,7 +135,9 @@ public class MemberService {
 
 		boolean existMyWard = wardMemberRepository.existsByMember(member);
 
-		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, existMyWard);
+		boolean sentWardCode = enterWaitingRepository.existsByMember(member);
+
+		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, existMyWard, sentWardCode);
 	}
 
 	@Transactional
@@ -157,7 +161,9 @@ public class MemberService {
 
 		boolean existMyWard = wardMemberRepository.existsByMember(member);
 
-		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, existMyWard);
+		boolean sentWardCode = enterWaitingRepository.existsByMember(member);
+
+		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, existMyWard, sentWardCode);
 	}
 
 	@Transactional
@@ -181,7 +187,9 @@ public class MemberService {
 
 		boolean existMyWard = wardMemberRepository.existsByMember(member);
 
-		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, existMyWard);
+		boolean sentWardCode = enterWaitingRepository.existsByMember(member);
+
+		return LoginResponseDto.of(member, accessToken, existAdditionalInfo, existMyWard, sentWardCode);
 	}
 
 	@Transactional
