@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import net.dutymate.api.entity.Request;
 import net.dutymate.api.entity.Rule;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.records.YearMonth;
@@ -91,19 +92,28 @@ public class NurseScheduler {
 		List<WardMember> wardMembers,
 		List<WardSchedule.NurseShift> prevNurseShifts,
 		YearMonth yearMonth,
-		Long currentMemberId) {
+		Long currentMemberId,
+		List<Request> requests) {
 		Map<Long, String> prevMonthSchedules = getPreviousMonthSchedules(prevNurseShifts);
 		Solution currentSolution = createInitialSolution(wardSchedule, rule, wardMembers, yearMonth);
 		Solution bestSolution = currentSolution.copy();
 
-		double currentScore = evaluateSolution(currentSolution, rule, prevMonthSchedules);
+		List<ShiftRequest> shiftRequests = requests.stream()
+			.map(request -> ShiftRequest.builder()
+				.nurseId(request.getWardMember().getMember().getMemberId())
+				.day(request.getRequestDate().getDate())
+				.requestedShift(request.getRequestShift().getValue().charAt(0))
+				.build())
+			.toList();
+
+		double currentScore = evaluateSolution(currentSolution, rule, prevMonthSchedules, shiftRequests);
 		double bestScore = currentScore;
 		double temperature = INITIAL_TEMPERATURE;
 		int noImprovementCount = 0;
 
 		for (int iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
 			Solution neighborSolution = generateNeighborSolution(currentSolution);
-			double neighborScore = evaluateSolution(neighborSolution, rule, prevMonthSchedules);
+			double neighborScore = evaluateSolution(neighborSolution, rule, prevMonthSchedules, shiftRequests);
 
 			if (acceptSolution(currentScore, neighborScore, temperature)) {
 				currentSolution = neighborSolution;
@@ -134,9 +144,9 @@ public class NurseScheduler {
 		if (prevNurseShifts != null) {
 			for (WardSchedule.NurseShift shift : prevNurseShifts) {
 				String shifts = shift.getShifts();
-				if (shifts.length() >= 3) {
+				if (shifts.length() >= 4) {
 					prevMonthSchedules.put(shift.getMemberId(),
-						shifts.substring(shifts.length() - 3));
+						shifts.substring(shifts.length() - 4));
 				}
 			}
 		}
@@ -313,13 +323,16 @@ public class NurseScheduler {
 		return true;
 	}
 
-	private double evaluateSolution(Solution solution, Rule rule, Map<Long, String> prevMonthSchedules) {
+	private double evaluateSolution(Solution solution, Rule rule, Map<Long, String> prevMonthSchedules,
+		List<ShiftRequest> requests) {
 		double score = 0;
 
 		// 강한 제약 조건
 		score += evaluateShiftRequirements(solution) * 10000;
 		score += evaluateConsecutiveShifts(solution, rule) * 10000;
 		score += evaluatePreviousMonthConstraints(solution, prevMonthSchedules) * 10000;
+
+		score += evaluateShiftRequests(solution, requests) * 10000;
 
 		// 약한 제약 조건
 		score += evaluateNodPatterns(solution) * 5000;
@@ -736,4 +749,35 @@ public class NurseScheduler {
 		}
 		return neededNurseCount;
 	}
+
+	@Getter
+	@Builder
+	private static class ShiftRequest {
+		private final Long nurseId;
+		private final int day;
+		private final char requestedShift;
+	}
+
+	// 근무 요청 평가 메서드
+	private double evaluateShiftRequests(Solution solution, List<ShiftRequest> requests) {
+		if (requests == null || requests.isEmpty()) {
+			return 0;
+		}
+
+		double violations = 0;
+		for (ShiftRequest request : requests) {
+			Solution.Nurse nurse = solution.getNurses().stream()
+				.filter(n -> n.getId().equals(request.getNurseId()))
+				.findFirst()
+				.orElse(null);
+
+			if (nurse != null) {
+				if (nurse.getShift(request.getDay()) != request.getRequestedShift()) {
+					violations++;
+				}
+			}
+		}
+		return violations;
+	}
+
 }

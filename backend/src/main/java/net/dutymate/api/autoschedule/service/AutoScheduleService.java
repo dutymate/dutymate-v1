@@ -10,11 +10,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.autoschedule.util.NurseScheduler;
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.entity.Request;
 import net.dutymate.api.entity.Rule;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.member.service.MemberService;
 import net.dutymate.api.records.YearMonth;
+import net.dutymate.api.request.repository.RequestRepository;
 import net.dutymate.api.rule.repository.RuleRepository;
 import net.dutymate.api.rule.service.RuleService;
 import net.dutymate.api.ward.repository.WardRepository;
@@ -41,6 +43,7 @@ public class AutoScheduleService {
 	private final RuleRepository ruleRepository;
 
 	private final WardScheduleRepository wardScheduleRepository;
+	private final RequestRepository requestRepository;
 
 	private final NurseScheduler nurseScheduler;
 
@@ -73,7 +76,10 @@ public class AutoScheduleService {
 		}
 		// scheduleGenerator.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth);
 		Long memberId = member.getMemberId();
-		nurseScheduler.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth, memberId);
+
+		List<Request> requests = requestRepository.findAllWardRequests(member.getWardMember().getWard());
+		nurseScheduler.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth, memberId,
+			requests);
 
 		// scheduleMaker.scheduleMake(wardSchedule, rule, wardMembers, prevWardSchedule, yearMonth);
 
