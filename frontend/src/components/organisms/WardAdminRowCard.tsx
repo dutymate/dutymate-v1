@@ -50,7 +50,7 @@ const WardAdminRowCard = ({
 
 	const userAuthStore = useUserAuthStore();
 	const navigate = useNavigate();
-	
+
 	// Add this to verify data flow
 	useEffect(() => {
 		// console.log("Nurse data:", nurse);
@@ -201,18 +201,23 @@ const WardAdminRowCard = ({
 	const handleRemoveNurse = async () => {
 		try {
 			// 관리자 본인 : 병동 관리 페이지에서 내보내기 불가(마이페이지로 이동)
-			if(nurse.memberId === userAuthStore.userInfo?.memberId){
-				const confirm = window.confirm("관리자는 마이페이지에서 병동 나가기를 통해 병동을 나갈 수 있습니다. 마이페이지로 이동하시겠습니까?")
-				if(confirm) {
+			if (nurse.memberId === userAuthStore.userInfo?.memberId) {
+				const confirm = window.confirm(
+					"관리자는 마이페이지에서 병동 나가기를 통해 병동을 나갈 수 있습니다. 마이페이지로 이동하시겠습니까?",
+				);
+				if (confirm) {
 					navigate("/my-page");
 				}
 				return;
 			}
 
 			// 본인 제외 관리자 : 병동 내보내기 시, confirm 띄우기기
-			if(nurse.memberId !== userAuthStore.userInfo?.memberId && nurse.role === "HN"){
+			if (
+				nurse.memberId !== userAuthStore.userInfo?.memberId &&
+				nurse.role === "HN"
+			) {
 				const confirm = window.confirm("관리자를 내보내시겠습니까?");
-				if(confirm) {
+				if (confirm) {
 					await removeNurse(nurse.memberId);
 				}
 				return;
