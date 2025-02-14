@@ -36,7 +36,7 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long memberId;
 
-	@Column(length = 45, updatable = false, nullable = false)
+	@Column(length = 45, nullable = false)
 	private String email;
 
 	@Column(nullable = false)
@@ -105,5 +105,18 @@ public class Member {
 
 	public void updatePassword(String newPassword) {
 		this.password = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+	}
+
+	public void linkMember(Member enterMember) {
+		System.out.println(enterMember.getEmail());
+		this.email = enterMember.getEmail();
+		this.password = enterMember.getPassword();
+		this.name = enterMember.getName();
+		this.nickname = enterMember.getNickname();
+		this.gender = enterMember.getGender();
+		this.role = enterMember.getRole();
+		this.grade = enterMember.getGrade();
+		this.provider = enterMember.getProvider();
+		this.profileImg = enterMember.getProfileImg();
 	}
 }

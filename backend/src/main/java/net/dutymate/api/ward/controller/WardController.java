@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
-import net.dutymate.api.ward.dto.EnterManagementRequestDto;
 import net.dutymate.api.ward.dto.EnterWaitingResponseDto;
 import net.dutymate.api.ward.dto.HospitalNameResponseDto;
+import net.dutymate.api.ward.dto.TempLinkRequestDto;
+import net.dutymate.api.ward.dto.TempNurseResponseDto;
 import net.dutymate.api.ward.dto.VirtualNameRequestDto;
 import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
@@ -44,16 +45,6 @@ public class WardController {
 	public ResponseEntity<?> checkCode(@RequestParam String code, @Auth Member member) {
 		wardService.addToEnterWaiting(code, member);
 		return ResponseEntity.status(HttpStatus.OK).build();
-	}
-
-	// 병동 입장 승인 및 거절 (관리자) : 입장 관리
-	@PostMapping("/member/{memberId}")
-	public ResponseEntity<?> editEnterStatus(
-		@PathVariable Long memberId,
-		@RequestBody EnterManagementRequestDto enterManagementRequestDto,
-		@Auth Member member) {
-		wardService.enterManagement(memberId, enterManagementRequestDto, member);
-		return ResponseEntity.ok().build();
 	}
 
 	// 병동 정보 조회하기 (관리자)
@@ -87,11 +78,50 @@ public class WardController {
 		return ResponseEntity.ok(hospitalNameResponseDto);
 	}
 
-	// 병동 입장 요청 내역 조회 (관리자)
+	// 병동 입장 요청 내역 조회 (관리자) : 입장 관리
 	@GetMapping("/enter")
 	public ResponseEntity<?> getEnterWaitingList(@Auth Member member) {
 		List<EnterWaitingResponseDto> enterWaitingResponseDtoList
 			= wardService.getEnterWaitingList(member);
 		return ResponseEntity.ok(enterWaitingResponseDtoList);
+	}
+
+	// 병동 임시 간호사 목록 조회 (관리자) : 입장 관리
+	@GetMapping("/member/temp")
+	public ResponseEntity<?> getTempNurseList(@Auth Member member) {
+		List<TempNurseResponseDto> tempNurseResponseDtoList
+			= wardService.getTempNuserList(member);
+		return ResponseEntity.ok(tempNurseResponseDtoList);
+	}
+
+	// 병동 입장 승인 (연동하지 않고 추가) (관리자) : 입장 관리
+	@PostMapping("/member/{memberId}")
+	public ResponseEntity<?> enterAcceptWithoutLink(
+		@PathVariable Long memberId,
+		@Auth Member member
+	) {
+		wardService.enterAcceptWithoutLink(memberId, member);
+		return ResponseEntity.ok().build();
+	}
+
+	// 병동 입장 승인 (연동하고 추가) (관리자) : 입장 관리
+	@PostMapping("/member/{memberId}/link")
+	public ResponseEntity<?> enterAcceptWithLink(
+		@PathVariable Long memberId,
+		@RequestBody TempLinkRequestDto tempLinkRequestDto,
+		@Auth Member member
+	) {
+		wardService.enterAcceptWithLink(memberId, tempLinkRequestDto, member);
+		return ResponseEntity.ok().build();
+	}
+
+	// 병동 입장 거절 (관리자) : 입장 관리
+	@PostMapping("/member/{memberId}/denied")
+	public ResponseEntity<?> enterDenied(
+		@PathVariable Long memberId,
+		// @RequestBody EnterManagementRequestDto enterManagementRequestDto,
+		@Auth Member member) {
+		wardService.enterDenied(memberId, member);
+		return ResponseEntity.ok().build();
 	}
 }

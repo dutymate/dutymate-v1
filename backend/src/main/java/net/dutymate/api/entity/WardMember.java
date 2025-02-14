@@ -80,4 +80,8 @@ public class WardMember {
 			this.member.updateRole(Role.valueOf(role));
 		}
 	}
+
+	public void changeIsSynced(boolean isSynced) {
+		this.isSynced = isSynced;
+	}
 }
