@@ -30,6 +30,7 @@ export interface ShiftState {
 	) => Promise<void>;
 	updateShift: (params: UpdateQueueItem["params"]) => Promise<void>;
 	setSelectedCell: (cell: { row: number; col: number } | null) => void;
+	setDutyInfo: (data: DutyInfo) => void;
 }
 
 const BATCH_DELAY = 500; // 0.5초 동안 수집된 업데이트를 배치로 처리
@@ -43,6 +44,7 @@ const useShiftStore = create<ShiftState>((set, get) => ({
 	isProcessing: false,
 
 	setSelectedCell: (cell) => set({ selectedCell: cell }),
+	setDutyInfo: (data) => set({ dutyInfo: data }),
 
 	fetchDutyInfo: async (year?: number, month?: number, historyIdx?: number) => {
 		try {
@@ -69,12 +71,15 @@ const useShiftStore = create<ShiftState>((set, get) => ({
 		const state = get();
 		if (!state.dutyInfo) return;
 
+		// 같은 근무 타입으로 변경하려는 경우 업데이트 하지 않음
+		if (params.before === params.after) return;
+
 		// 큐에 새 업데이트 추가
 		set((state) => ({
 			updateQueue: [...state.updateQueue, { params, timestamp: Date.now() }],
 		}));
 
-		// 낙관적 업데이트 즉시 적용
+		// 낙관적 업데이트 즉시 적용 (셀 변경만 적용)
 		set((state) => ({
 			dutyInfo: {
 				...state.dutyInfo!,
@@ -89,18 +94,6 @@ const useShiftStore = create<ShiftState>((set, get) => ({
 							}
 						: nurse,
 				),
-				histories: [
-					{
-						idx: (state.dutyInfo!.histories?.[0]?.idx ?? 0) + 1,
-						memberId: params.memberId,
-						name: params.name,
-						modifiedDay: params.dayIndex + 1,
-						before: params.before,
-						after: params.after,
-						isAutoCreated: false,
-					},
-					...(state.dutyInfo!.histories || []),
-				],
 			},
 		}));
 
@@ -132,7 +125,7 @@ const useShiftStore = create<ShiftState>((set, get) => ({
 				},
 			});
 
-			// 최신 데이터로 조용히 동기화
+			// 최신 데이터로 동기화
 			const latestData = await dutyService.getDuty({
 				year: lastUpdate.params.year,
 				month: lastUpdate.params.month,
