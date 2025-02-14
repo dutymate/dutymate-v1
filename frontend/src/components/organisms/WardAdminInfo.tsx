@@ -17,7 +17,7 @@ interface WardAdminInfoProps {
 const WardAdminInfo = ({
 	wardInfo,
 	onAddTempNurse,
-	onViewHistory,
+	// onViewHistory,
 }: WardAdminInfoProps) => {
 	const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 	const [selectedNurse, setSelectedNurse] = useState<{

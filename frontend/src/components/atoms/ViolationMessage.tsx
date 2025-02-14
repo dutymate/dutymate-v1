@@ -14,7 +14,7 @@ function ViolationMessage({
 	message,
 	targetRef,
 	index = 0,
-	total = 1,
+	// total = 1,
 	isVisible,
 }: ViolationMessageProps) {
 	const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -23,11 +23,11 @@ function ViolationMessage({
 		if (!targetRef.current) return;
 
 		const rect = targetRef.current.getBoundingClientRect();
-		const MESSAGE_GAP = 30;
+		// const MESSAGE_GAP = 30;
 
-		// 여러 메시지가 있을 경우 위아래로 배치
-		const isEven = index % 2 === 0;
-		const offset = Math.floor(index / 2) * MESSAGE_GAP;
+		// // 여러 메시지가 있을 경우 위아래로 배치
+		// const isEven = index % 2 === 0;
+		// const offset = Math.floor(index / 2) * MESSAGE_GAP;
 
 		setPosition({
 			// 점의 왼쪽 위에 메시지 표시

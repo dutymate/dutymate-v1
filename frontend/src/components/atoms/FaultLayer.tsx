@@ -51,31 +51,31 @@ function FaultLayer({
 
 	const width = (endDate - startDate + 1) * cellWidth;
 
-	// 메시지 위치 계산
-	const getMessagePosition = () => {
-		// 메시지 간 간격 (픽셀)
-		const MESSAGE_GAP = 30;
+	// // 메시지 위치 계산
+	// const getMessagePosition = () => {
+	// 	// 메시지 간 간격 (픽셀)
+	// 	const MESSAGE_GAP = 30;
 
-		if (total === 1) return { top: "top-8" };
+	// 	if (total === 1) return { top: "top-8" };
 
-		// 여러 메시지가 있을 경우 위아래로 배치
-		const isEven = index % 2 === 0;
-		const offset = Math.floor(index / 2) * MESSAGE_GAP;
+	// 	// 여러 메시지가 있을 경우 위아래로 배치
+	// 	const isEven = index % 2 === 0;
+	// 	const offset = Math.floor(index / 2) * MESSAGE_GAP;
 
-		if (isEven) {
-			return {
-				top: `top-[${32 + offset}px]`,
-				transform: "-translate-x-1/2",
-			};
-		} else {
-			return {
-				bottom: `bottom-[${32 + offset}px]`,
-				transform: "-translate-x-1/2",
-			};
-		}
-	};
+	// 	if (isEven) {
+	// 		return {
+	// 			top: `top-[${32 + offset}px]`,
+	// 			transform: "-translate-x-1/2",
+	// 		};
+	// 	} else {
+	// 		return {
+	// 			bottom: `bottom-[${32 + offset}px]`,
+	// 			transform: "-translate-x-1/2",
+	// 		};
+	// 	}
+	// };
 
-	const messagePosition = getMessagePosition();
+	// const messagePosition = getMessagePosition();
 
 	return (
 		<div

@@ -10,7 +10,7 @@ import { dutyService } from "../../services/dutyService";
 import { toast } from "react-toastify";
 import useShiftStore from "../../store/shiftStore";
 import FaultLayer from "../atoms/FaultLayer";
-import ViolationMessage from "../atoms/ViolationMessage";
+// import ViolationMessage from "../atoms/ViolationMessage";
 
 const THROTTLE_DELAY = 1000; // 1초
 let lastUpdateTime = 0;
@@ -71,11 +71,18 @@ const ShiftAdminTable = ({
 	issues,
 }: ShiftAdminTableProps) => {
 	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const ruleButtonRef = useRef<HTMLButtonElement>(null);
 
 	const selectedCell = useShiftStore((state) => state.selectedCell);
 	const setSelectedCell = useShiftStore((state) => state.setSelectedCell);
 	const updateShift = useShiftStore((state) => state.updateShift);
+
+	// Add hover state management at component level
+	const [hoveredCell, setHoveredCell] = useState<{
+		row: number;
+		day: number;
+	} | null>(null);
 
 	// 근무표 데이터 변환
 	const nurses = dutyData.map((nurse) => nurse.name);
@@ -211,6 +218,7 @@ const ShiftAdminTable = ({
 		const newMonth = month === 1 ? 12 : month - 1;
 
 		try {
+			setIsLoading(true);
 			// URL 쿼리 파라미터 업데이트
 			const url = new URL(window.location.href);
 			url.searchParams.set("year", newYear.toString());
@@ -220,6 +228,8 @@ const ShiftAdminTable = ({
 			await onUpdate(newYear, newMonth);
 		} catch (error) {
 			toast.error("근무표 조회에 실패했습니다.");
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -244,6 +254,7 @@ const ShiftAdminTable = ({
 		}
 
 		try {
+			setIsLoading(true);
 			// URL 쿼리 파라미터 업데이트
 			const url = new URL(window.location.href);
 			url.searchParams.set("year", nextYear.toString());
@@ -253,6 +264,8 @@ const ShiftAdminTable = ({
 			await onUpdate(nextYear, nextMonth);
 		} catch (error) {
 			toast.error("근무표 조회에 실패했습니다.");
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -394,16 +407,16 @@ const ShiftAdminTable = ({
 		}
 	};
 
-	// 위반 사항 체크 함수 추가
-	const getViolation = (nurseIndex: number, dayIndex: number) => {
-		const nurseName = nurses[nurseIndex];
-		return issues.find(
-			(issue) =>
-				issue.name === nurseName &&
-				dayIndex + 1 >= issue.startDate &&
-				dayIndex + 1 <= issue.endDate,
-		);
-	};
+	// // 위반 사항 체크 함수 추가
+	// const getViolation = (nurseIndex: number, dayIndex: number) => {
+	// 	const nurseName = nurses[nurseIndex];
+	// 	return issues.find(
+	// 		(issue) =>
+	// 			issue.name === nurseName &&
+	// 			dayIndex + 1 >= issue.startDate &&
+	// 			dayIndex + 1 <= issue.endDate,
+	// 	);
+	// };
 
 	// 해당 월의 기본 OFF 일수 계산 (주말/공휴일)
 	const getDefaultOffDays = (year: number, month: number) => {
@@ -499,247 +512,262 @@ const ShiftAdminTable = ({
 
 			{/* 근무표, 통계, 완성도를 하나의 상자로 통합 */}
 			<div className="bg-white rounded-xl p-2 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-				<div className="relative">
-					<div className="overflow-x-auto">
-						<div className="min-w-[800px]">
-							<table className="relative w-full border-collapse z-10">
-								<thead>
-									<tr className="text-xs text-gray-600 border-b border-gray-200">
-										<th className="p-0 text-center w-[90px] sm:w-24 border-r border-gray-200">
-											<span className="block text-xs sm:text-sm px-0.5">
-												이름
-											</span>
-										</th>
-										<th className="p-0 text-center w-[90px] sm:w-24 border-r border-gray-200">
-											<span className="block text-xs sm:text-sm px-0.5">
-												이전 근무
-											</span>
-										</th>
-										{Array.from({ length: daysInMonth }, (_, i) => {
-											const day = i + 1;
-											return (
-												<th
-													key={i}
-													className={`p-0 text-center w-10 border-r border-gray-200 ${
-														isHoliday(day) ? "text-red-500" : ""
-													}`}
-												>
-													{day}
-												</th>
-											);
-										})}
-										<th className="p-0 text-center w-7 border-r border-gray-200">
-											<div className="flex items-center justify-center">
-												<div className="scale-[0.65]">
-													<DutyBadgeEng type="D" size="sm" variant="filled" />
-												</div>
-											</div>
-										</th>
-										<th className="p-0 text-center w-7 border-r border-gray-200">
-											<div className="flex items-center justify-center">
-												<div className="scale-[0.65]">
-													<DutyBadgeEng type="E" size="sm" variant="filled" />
-												</div>
-											</div>
-										</th>
-										<th className="p-0 text-center w-7 border-r border-gray-200">
-											<div className="flex items-center justify-center">
-												<div className="scale-[0.65]">
-													<DutyBadgeEng type="N" size="sm" variant="filled" />
-												</div>
-											</div>
-										</th>
-										<th className="p-0 text-center w-7 border-r border-gray-200">
-											<div className="flex items-center justify-center">
-												<div className="scale-[0.65]">
-													<DutyBadgeEng type="O" size="sm" variant="filled" />
-												</div>
-											</div>
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{nurses.map((name, i) => (
-										<tr key={i} className="h-8 border-b border-gray-200 group">
-											<td
-												className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, -2)}`}
-											>
-												<span className="block text-xs sm:text-sm whitespace-nowrap overflow-hidden text-ellipsis">
-													{name}
+				{isLoading ? (
+					<div className="flex justify-center items-center h-[400px]">
+						<div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+					</div>
+				) : (
+					<div className="relative">
+						<div className="overflow-x-auto">
+							<div className="min-w-[800px]">
+								<table className="relative w-full border-collapse z-10">
+									<thead>
+										<tr className="text-xs text-gray-600 border-b border-gray-200">
+											<th className="p-0 text-center w-[90px] sm:w-24 border-r border-gray-200">
+												<span className="block text-xs sm:text-sm px-0.5">
+													이름
 												</span>
-											</td>
-											<td
-												className={`p-0 border-r border-gray-200 ${isHighlighted(i, -1)}`}
-											>
-												<div className="flex justify-center -space-x-1.5">
-													{prevShifts[i].map((shift, index) => (
-														<div key={index} className="scale-[0.65]">
-															<DutyBadgeEng
-																type={
-																	shift as "X" | "D" | "E" | "N" | "O" | "ALL"
-																}
-																size="sm"
-																isSelected={false}
-															/>
-														</div>
-													))}
-												</div>
-											</td>
-											{Array.from({ length: daysInMonth }, (_, dayIndex) => {
-												const violations = issues.filter(
-													(issue) =>
-														issue.name === nurses[i] &&
-														dayIndex + 1 >= issue.startDate &&
-														dayIndex + 1 <= issue.endDate,
-												);
-												const isAnyViolationStart = violations.some(
-													(v) => dayIndex + 1 === v.startDate,
-												);
-												const [isHovered, setIsHovered] = useState(false);
-
+											</th>
+											<th className="p-0 text-center w-[90px] sm:w-24 border-r border-gray-200">
+												<span className="block text-xs sm:text-sm px-0.5">
+													이전 근무
+												</span>
+											</th>
+											{Array.from({ length: daysInMonth }, (_, i) => {
+												const day = i + 1;
 												return (
-													<td
-														key={dayIndex}
-														onClick={() => handleCellClick(i, dayIndex)}
-														className={`p-0 text-center border-r border-gray-200 relative ${isHighlighted(i, dayIndex)}`}
-														onMouseEnter={() => setIsHovered(true)}
-														onMouseLeave={() => setIsHovered(false)}
+													<th
+														key={i}
+														className={`p-0 text-center w-10 border-r border-gray-200 ${
+															isHoliday(day) ? "text-red-500" : ""
+														}`}
 													>
-														<div
-															className="flex items-center justify-center cursor-pointer relative outline-none"
-															tabIndex={0}
-															role="button"
+														{day}
+													</th>
+												);
+											})}
+											<th className="p-0 text-center w-7 border-r border-gray-200">
+												<div className="flex items-center justify-center">
+													<div className="scale-[0.65]">
+														<DutyBadgeEng type="D" size="sm" variant="filled" />
+													</div>
+												</div>
+											</th>
+											<th className="p-0 text-center w-7 border-r border-gray-200">
+												<div className="flex items-center justify-center">
+													<div className="scale-[0.65]">
+														<DutyBadgeEng type="E" size="sm" variant="filled" />
+													</div>
+												</div>
+											</th>
+											<th className="p-0 text-center w-7 border-r border-gray-200">
+												<div className="flex items-center justify-center">
+													<div className="scale-[0.65]">
+														<DutyBadgeEng type="N" size="sm" variant="filled" />
+													</div>
+												</div>
+											</th>
+											<th className="p-0 text-center w-7 border-r border-gray-200">
+												<div className="flex items-center justify-center">
+													<div className="scale-[0.65]">
+														<DutyBadgeEng type="O" size="sm" variant="filled" />
+													</div>
+												</div>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{nurses.map((name, i) => (
+											<tr
+												key={i}
+												className="h-8 border-b border-gray-200 group"
+											>
+												<td
+													className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, -2)}`}
+												>
+													<span className="block text-xs sm:text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+														{name}
+													</span>
+												</td>
+												<td
+													className={`p-0 border-r border-gray-200 ${isHighlighted(i, -1)}`}
+												>
+													<div className="flex justify-center -space-x-1.5">
+														{prevShifts[i].map((shift, index) => (
+															<div key={index} className="scale-[0.65]">
+																<DutyBadgeEng
+																	type={
+																		shift as "X" | "D" | "E" | "N" | "O" | "ALL"
+																	}
+																	size="sm"
+																	isSelected={false}
+																/>
+															</div>
+														))}
+													</div>
+												</td>
+												{Array.from({ length: daysInMonth }, (_, dayIndex) => {
+													const violations = issues.filter(
+														(issue) =>
+															issue.name === nurses[i] &&
+															dayIndex + 1 >= issue.startDate &&
+															dayIndex + 1 <= issue.endDate,
+													);
+													const isAnyViolationStart = violations.some(
+														(v) => dayIndex + 1 === v.startDate,
+													);
+													const isHovered =
+														hoveredCell?.row === i &&
+														hoveredCell?.day === dayIndex;
+
+													return (
+														<td
+															key={dayIndex}
 															onClick={() => handleCellClick(i, dayIndex)}
-															aria-label={`${nurses[i]}의 ${dayIndex + 1}일 근무`}
-															style={{ WebkitTapHighlightColor: "transparent" }}
+															className={`p-0 text-center border-r border-gray-200 relative ${isHighlighted(i, dayIndex)}`}
+															onMouseEnter={() =>
+																setHoveredCell({ row: i, day: dayIndex })
+															}
+															onMouseLeave={() => setHoveredCell(null)}
 														>
-															{isAnyViolationStart &&
-																violations.map((violation, vIndex) => (
-																	<FaultLayer
-																		key={`${violation.startDate}-${violation.endDate}-${violation.message}`}
-																		startDate={violation.startDate}
-																		endDate={violation.endDate}
-																		message={violation.message}
-																		index={vIndex}
-																		total={violations.length}
-																		className={isHovered ? "opacity-90" : ""}
-																	/>
-																))}
-															<div className="relative z-[2]">
-																<div className="scale-[0.95]">
-																	<DutyBadgeEng
-																		type={
-																			duties[i][dayIndex] as
-																				| "D"
-																				| "E"
-																				| "N"
-																				| "O"
-																				| "X"
-																		}
-																		size="sm"
-																		isSelected={
-																			selectedCell?.row === i &&
-																			selectedCell?.col === dayIndex
-																		}
+															<div
+																className="flex items-center justify-center cursor-pointer relative outline-none"
+																tabIndex={0}
+																role="button"
+																onClick={() => handleCellClick(i, dayIndex)}
+																aria-label={`${nurses[i]}의 ${dayIndex + 1}일 근무`}
+																style={{
+																	WebkitTapHighlightColor: "transparent",
+																}}
+															>
+																{isAnyViolationStart &&
+																	violations.map((violation, vIndex) => (
+																		<FaultLayer
+																			key={`${violation.startDate}-${violation.endDate}-${violation.message}`}
+																			startDate={violation.startDate}
+																			endDate={violation.endDate}
+																			message={violation.message}
+																			index={vIndex}
+																			total={violations.length}
+																			className={isHovered ? "opacity-90" : ""}
+																		/>
+																	))}
+																<div className="relative z-[2]">
+																	<div className="scale-[0.95]">
+																		<DutyBadgeEng
+																			type={
+																				duties[i][dayIndex] as
+																					| "D"
+																					| "E"
+																					| "N"
+																					| "O"
+																					| "X"
+																			}
+																			size="sm"
+																			isSelected={
+																				selectedCell?.row === i &&
+																				selectedCell?.col === dayIndex
+																			}
+																		/>
+																	</div>
+																</div>
+															</div>
+														</td>
+													);
+												})}
+												<td
+													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 31)}`}
+												>
+													{getNurseDutyCounts(i).D}
+												</td>
+												<td
+													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 32)}`}
+												>
+													{getNurseDutyCounts(i).E}
+												</td>
+												<td
+													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 33)}`}
+												>
+													{getNurseDutyCounts(i).N}
+												</td>
+												<td
+													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 34)}`}
+												>
+													{getNurseDutyCounts(i).O}
+												</td>
+											</tr>
+										))}
+									</tbody>
+									{/* 통계 행들을 같은 테이블에 직접 추가 */}
+									<tbody>
+										{["DAY", "EVENING", "NIGHT", "OFF", "TOTAL"].map(
+											(text, i) => (
+												<tr
+													key={`empty-${i}`}
+													className="text-[10px] h-6 border-b border-gray-200"
+												>
+													<td
+														colSpan={2}
+														className={`p-0 font-bold text-[11px] border-r border-gray-200 ${
+															i === 0
+																? "text-[#318F3D]"
+																: i === 1
+																	? "text-[#E55656]"
+																	: i === 2
+																		? "text-[#532FC8]"
+																		: i === 3
+																			? "text-[#726F5A]"
+																			: "text-black"
+														}`}
+													>
+														<div className="flex items-center justify-center">
+															{text}
+														</div>
+													</td>
+													{Array.from({ length: daysInMonth }, (_, j) => (
+														<td
+															key={j}
+															className={`p-0 text-center text-[11px] border-r border-gray-200 ${
+																selectedCell?.col === j ? "bg-duty-off-bg" : ""
+															}`}
+														>
+															<div className="flex items-center justify-center h-6">
+																{i === 0 && dutyCounts[j].D}
+																{i === 1 && dutyCounts[j].E}
+																{i === 2 && dutyCounts[j].N}
+																{i === 3 && dutyCounts[j].O}
+																{i === 4 && dutyCounts[j].total}
+															</div>
+														</td>
+													))}
+													{/* 각 행의 마지막 4개 열을 차지하는 셀 */}
+													{i === 0 && (
+														<td
+															rowSpan={5}
+															colSpan={4}
+															className="p-0 border-r border-gray-200"
+														>
+															<div className="flex justify-center items-center h-full">
+																<div className="scale-[0.85]">
+																	<ProgressChecker
+																		value={calculateProgress()}
+																		size={80}
+																		strokeWidth={4}
+																		showLabel={true}
 																	/>
 																</div>
 															</div>
-														</div>
-													</td>
-												);
-											})}
-											<td
-												className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 31)}`}
-											>
-												{getNurseDutyCounts(i).D}
-											</td>
-											<td
-												className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 32)}`}
-											>
-												{getNurseDutyCounts(i).E}
-											</td>
-											<td
-												className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 33)}`}
-											>
-												{getNurseDutyCounts(i).N}
-											</td>
-											<td
-												className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 34)}`}
-											>
-												{getNurseDutyCounts(i).O}
-											</td>
-										</tr>
-									))}
-								</tbody>
-								{/* 통계 행들을 같은 테이블에 직접 추가 */}
-								<tbody>
-									{["DAY", "EVENING", "NIGHT", "OFF", "TOTAL"].map(
-										(text, i) => (
-											<tr
-												key={`empty-${i}`}
-												className="text-[10px] h-6 border-b border-gray-200"
-											>
-												<td
-													colSpan={2}
-													className={`p-0 font-bold text-[11px] border-r border-gray-200 ${
-														i === 0
-															? "text-[#318F3D]"
-															: i === 1
-																? "text-[#E55656]"
-																: i === 2
-																	? "text-[#532FC8]"
-																	: i === 3
-																		? "text-[#726F5A]"
-																		: "text-black"
-													}`}
-												>
-													<div className="flex items-center justify-center">
-														{text}
-													</div>
-												</td>
-												{Array.from({ length: daysInMonth }, (_, j) => (
-													<td
-														key={j}
-														className={`p-0 text-center text-[11px] border-r border-gray-200 ${
-															selectedCell?.col === j ? "bg-duty-off-bg" : ""
-														}`}
-													>
-														<div className="flex items-center justify-center h-6">
-															{i === 0 && dutyCounts[j].D}
-															{i === 1 && dutyCounts[j].E}
-															{i === 2 && dutyCounts[j].N}
-															{i === 3 && dutyCounts[j].O}
-															{i === 4 && dutyCounts[j].total}
-														</div>
-													</td>
-												))}
-												{/* 각 행의 마지막 4개 열을 차지하는 셀 */}
-												{i === 0 && (
-													<td
-														rowSpan={5}
-														colSpan={4}
-														className="p-0 border-r border-gray-200"
-													>
-														<div className="flex justify-center items-center h-full">
-															<div className="scale-[0.85]">
-																<ProgressChecker
-																	value={calculateProgress()}
-																	size={80}
-																	strokeWidth={4}
-																	showLabel={true}
-																/>
-															</div>
-														</div>
-													</td>
-												)}
-											</tr>
-										),
-									)}
-								</tbody>
-							</table>
+														</td>
+													)}
+												</tr>
+											),
+										)}
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
-				</div>
+				)}
 			</div>
 
 			{/* 규칙 편집 모달 */}
