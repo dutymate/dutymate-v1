@@ -3,12 +3,14 @@ import { useEffect } from "react";
 import {
 	userService,
 	LoginResponse,
+	ApiErrorResponse,
 	// ApiErrorResponse,
 } from "../services/userService";
 import useUserAuthStore from "../store/userAuthStore";
 import { toast } from "react-toastify";
 import { useLoadingStore } from "@/store/loadingStore";
 import PageLoadingSpinner from "@/components/atoms/Loadingspinner";
+import { AxiosError } from "axios";
 
 export function GoogleRedirect() {
 	const navigate = useNavigate();
@@ -50,9 +52,15 @@ export function GoogleRedirect() {
 					}
 				}
 			},
-			() => {
+			(error: ApiErrorResponse | AxiosError) => {
 				useLoadingStore.getState().setLoading(false);
-				toast.error("이미 다른 경로로 가입한 회원입니다.");
+
+				// 이미 다른 경로로 가입한 경우, 에러 메세지 띄우기
+				if (error.status === "BAD_REQUEST") {
+					toast.error(error.message);
+				} else {
+					toast.error("다시 시도해주세요.");
+				}
 				navigate("/login");
 			},
 		);

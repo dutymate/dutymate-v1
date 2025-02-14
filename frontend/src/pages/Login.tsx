@@ -7,6 +7,9 @@ const Login = () => {
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
 	useEffect(() => {
+		// 로그인 페이지로 접근 시, 토큰 삭제
+		sessionStorage.removeItem("user-auth-storage");
+
 		const handleResize = () => {
 			setIsMobile(window.innerWidth < 1024);
 		};

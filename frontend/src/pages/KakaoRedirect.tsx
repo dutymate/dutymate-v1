@@ -3,11 +3,14 @@ import { useEffect } from "react";
 import {
 	userService,
 	LoginResponse,
-	// ApiErrorResponse,
+	ApiErrorResponse,
 } from "../services/userService";
 import useUserAuthStore from "../store/userAuthStore";
 import { toast } from "react-toastify";
 import PageLoadingSpinner from "@/components/atoms/Loadingspinner";
+
+import { AxiosError } from "axios";
+import { useLoadingStore } from "@/store/loadingStore";
 
 export function KakaoRedirect() {
 	const navigate = useNavigate();
@@ -23,9 +26,12 @@ export function KakaoRedirect() {
 			return;
 		}
 
+		useLoadingStore.getState().setLoading(true);
+
 		userService.kakaoLogin(
 			code,
 			(data: LoginResponse) => {
+				useLoadingStore.getState().setLoading(false);
 				const { role, existAdditionalInfo, existMyWard } = data;
 				userAuthStore.setUserInfo({ ...data, provider: "kakao" });
 				toast.success("정상적으로 로그인되었습니다.");
@@ -46,8 +52,14 @@ export function KakaoRedirect() {
 					}
 				}
 			},
-			() => {
-				toast.error("이미 다른 경로로 가입한 회원입니다.");
+			(error: ApiErrorResponse | AxiosError) => {
+				useLoadingStore.getState().setLoading(true);
+				// 이미 다른 경로로 가입한 경우, 에러 메세지 띄우기
+				if (error.status === "BAD_REQUEST") {
+					toast.error(error.message);
+				} else {
+					toast.error("다시 시도해주세요.");
+				}
 				navigate("/login");
 			},
 		);

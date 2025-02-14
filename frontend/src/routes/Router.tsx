@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 // import Playgrounds from "../pages/_playgrounds";
 import Landing from "../pages/Landing";
 import Login from "../pages/Login";
@@ -16,6 +16,16 @@ import Error from "../pages/Error";
 import Mypage from "../pages/Mypage";
 import ShiftAdmin from "../pages/ShiftAdmin";
 import Signup from "../pages/Signup";
+import { ReactElement } from "react";
+
+interface ProtectedRouteProps {
+	element: ReactElement;
+}
+
+const ProtectedRoute = ({ element }: ProtectedRouteProps) => {
+	const token = sessionStorage.getItem("user-auth-storage");
+	return token ? element : <Navigate to="/login" replace />;
+};
 
 const Router = () => {
 	return (
@@ -25,19 +35,53 @@ const Router = () => {
 			<Route path="/sign-up" element={<Signup />} />
 			<Route path="/oauth/kakao" element={<KakaoRedirect />} />
 			<Route path="/oauth/google" element={<GoogleRedirect />} />
-			<Route path="/my-shift" element={<MyShift />} />
-			<Route path="/team-shift" element={<TeamShift />} />
-			<Route path="/ward-admin" element={<WardAdmin />} />
-			<Route path="/create-ward" element={<CreateWard />} />
-			<Route path="/enter-ward" element={<EnterWard />} />
-			<Route path="/extra-info" element={<ExtraInfo />} />
-			<Route path="/community" element={<Community />} />
-			<Route path="/req-admin" element={<ReqAdmin />} />
-			<Route path="/shift-admin" element={<ShiftAdmin />} />
-			<Route path="/my-page" element={<Mypage />} />
+
+			{/* 로그인이 필요한 페이지 */}
+			<Route
+				path="/my-shift"
+				element={<ProtectedRoute element={<MyShift />} />}
+			/>
+			<Route
+				path="/team-shift"
+				element={<ProtectedRoute element={<TeamShift />} />}
+			/>
+			<Route
+				path="/ward-admin"
+				element={<ProtectedRoute element={<WardAdmin />} />}
+			/>
+			<Route
+				path="/create-ward"
+				element={<ProtectedRoute element={<CreateWard />} />}
+			/>
+			<Route
+				path="/enter-ward"
+				element={<ProtectedRoute element={<EnterWard />} />}
+			/>
+			<Route
+				path="/extra-info"
+				element={<ProtectedRoute element={<ExtraInfo />} />}
+			/>
+			<Route
+				path="/community"
+				element={<ProtectedRoute element={<Community />} />}
+			/>
+			<Route
+				path="/req-admin"
+				element={<ProtectedRoute element={<ReqAdmin />} />}
+			/>
+			<Route
+				path="/shift-admin"
+				element={<ProtectedRoute element={<ShiftAdmin />} />}
+			/>
+			<Route
+				path="/my-page"
+				element={<ProtectedRoute element={<Mypage />} />}
+			/>
+
+			{/* 기타 */}
 			<Route path="/error" element={<Error />} />
-			{/* <Route path="/_playgrounds" element={<Playgrounds />} /> */}
 			<Route path="*" element={<Error />} />
+			{/* <Route path="/_playgrounds" element={<Playgrounds />} /> */}
 		</Routes>
 	);
 };
