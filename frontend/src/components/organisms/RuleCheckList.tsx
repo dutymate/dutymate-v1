@@ -15,7 +15,7 @@ const RuleCheckList = () => {
 			<div className="relative h-[300px] flex-1 w-full min-w-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 hover:scrollbar-thumb-gray-500">
 				{issues.length === 0 ? (
 					<div className="flex items-center justify-center h-full text-gray-500">
-						규칙 위반이 없습니다
+						규칙 위반이 없습니다.
 					</div>
 				) : (
 					<div className="space-y-3">

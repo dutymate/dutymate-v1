@@ -11,9 +11,6 @@ import { toast } from "react-toastify";
 import useShiftStore from "../../store/shiftStore";
 import FaultLayer from "../atoms/FaultLayer";
 import { toPng } from "html-to-image";
-import { wardService } from "../../services/wardService";
-import { Nurse } from "../../services/wardService";
-// import ViolationMessage from "../atoms/ViolationMessage";
 
 const THROTTLE_DELAY = 1000; // 1초
 let lastUpdateTime = 0;
@@ -507,23 +504,16 @@ const ShiftAdminTable = ({
 		}
 	}, []); // 컴포넌트 마운트 시 한 번만 실행
 
-	// Comment out the entire useEffect for ward info
-	// useEffect(() => {
-	//   const fetchWardInfo = async () => {
-	//     try {
-	//       const wardInfo = await wardService.getWardInfo();
-	//       const grades: Record<number, number> = {};
-	//       wardInfo.nurses.forEach((nurse: Nurse) => {
-	//         grades[nurse.memberId] = nurse.grade;
-	//       });
-	//       setNurseGrades(grades);
-	//       onUpdate(year, month);
-	//     } catch (error) {
-	//       console.error("Failed to fetch ward info:", error);
-	//     }
-	//   };
-	//   fetchWardInfo();
-	// }, []);
+
+	// 듀티표 초기화하기
+	const handleResetDuty = () =>{
+		const confirm = window.confirm("듀티표와 히스토리 데이터가 초기화 됩니다. 듀티표를 초기화하시겠습니까?")
+		if(confirm){
+			
+		}
+		return;
+	}
+
 
 	return (
 		<div
@@ -556,6 +546,15 @@ const ShiftAdminTable = ({
 									{getDefaultOffDays(year, month)}
 								</span>
 								<span className="text-foreground">일</span>
+							</div>
+							<div>
+							<button
+									className="flex items-center gap-1 text-gray-400 hover:text-gray-600 px-2 py-1 rounded-md hover:bg-gray-100"
+									onClick={() => handleResetDuty()}
+								>
+									<Icon name="reset" size={16} />
+									<span className="text-sm whitespace-nowrap">초기화</span>
+								</button>
 							</div>
 						</div>
 					</div>
