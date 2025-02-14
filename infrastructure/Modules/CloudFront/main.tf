@@ -17,7 +17,7 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
   aliases             = [var.domain_name]
 
   default_cache_behavior {
-    allowed_methods        = ["GET", "HEAD", "DELETE", "OPTIONS", "PATCH", "POST", "PUT"]
+    allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
     min_ttl                = "0"
     default_ttl            = "300"
