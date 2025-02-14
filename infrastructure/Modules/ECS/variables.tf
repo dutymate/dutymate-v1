@@ -1,3 +1,7 @@
+variable "aws_region" {
+  type = string
+}
+
 variable "private_subnets" {
   type = list(string)
 }
@@ -14,7 +18,15 @@ variable "ecs_instance_profile_name" {
   type = string
 }
 
+variable "ecs_service_role_arn" {
+  type = string
+}
+
 variable "ecs_task_execution_role_arn" {
+  type = string
+}
+
+variable "ecs_task_role_arn" {
   type = string
 }
 
@@ -23,5 +35,9 @@ variable "ecr_repository_url" {
 }
 
 variable "asset_bucket_arn" {
+  type = string
+}
+
+variable "log_group_name" {
   type = string
 }

@@ -20,20 +20,41 @@ module "cloudfront" {
   domain_name                          = var.domain_name
 }
 
-module "route53" {
-  source                                 = "./Modules/Route53"
-  cloudfront_distribution_domain_name    = module.cloudfront.cloudfront_distribution_domain_name
-  cloudfront_distribution_hosted_zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
-  alb_dns_name                           = module.alb.alb_dns_name
-  alb_zone_id                            = module.alb.alb_zone_id
-  route53_zone_id                        = var.route53_zone_id
-  domain_name                            = var.domain_name
+module "cloudwatch" {
+  source = "./Modules/CloudWatch"
 }
 
-module "s3" {
-  source                      = "./Modules/S3"
-  vpce_s3_id                  = module.networking.vpce_s3_id
-  cloudfront_distribution_arn = module.cloudfront.cloudfront_distribution_arn
+module "documentdb" {
+  source           = "./Modules/DocumentDB"
+  database_subnets = module.networking.database_subnets
+  sg_mongodb_id    = module.security_group.sg_mongodb_id
+  mongodb_username = var.mongodb_username
+  mongodb_password = var.mongodb_password
+}
+
+module "ecr" {
+  source = "./Modules/ECR"
+}
+
+module "ecs" {
+  source                      = "./Modules/ECS"
+  aws_region                  = var.aws_region
+  private_subnets             = module.networking.private_subnets
+  sg_ecs_id                   = module.security_group.sg_ecs_id
+  target_group_arn            = module.alb.target_group_arn
+  ecs_instance_profile_name   = module.iam.ecs_instance_profile_name
+  ecs_service_role_arn        = module.iam.ecs_service_role_arn
+  ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
+  ecs_task_role_arn           = module.iam.ecs_task_execution_role_arn
+  ecr_repository_url          = module.ecr.ecr_repository_url
+  asset_bucket_arn            = module.s3.asset_bucket_arn
+  log_group_name              = module.cloudwatch.log_group_name
+}
+
+module "elasticache" {
+  source           = "./Modules/ElastiCache"
+  database_subnets = module.networking.database_subnets
+  sg_valkey_id     = module.security_group.sg_valkey_id
 }
 
 module "iam" {
@@ -52,6 +73,30 @@ module "networking" {
   sg_vpce_ssm_id             = module.security_group.sg_vpce_ssm_id
 }
 
+module "rds" {
+  source           = "./Modules/RDS"
+  database_subnets = module.networking.database_subnets
+  sg_mysql_id      = module.security_group.sg_mysql_id
+  mysql_username   = var.mysql_username
+  mysql_password   = var.mysql_password
+}
+
+module "route53" {
+  source                                 = "./Modules/Route53"
+  cloudfront_distribution_domain_name    = module.cloudfront.cloudfront_distribution_domain_name
+  cloudfront_distribution_hosted_zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
+  alb_dns_name                           = module.alb.alb_dns_name
+  alb_zone_id                            = module.alb.alb_zone_id
+  route53_zone_id                        = var.route53_zone_id
+  domain_name                            = var.domain_name
+}
+
+module "s3" {
+  source                      = "./Modules/S3"
+  vpce_s3_id                  = module.networking.vpce_s3_id
+  cloudfront_distribution_arn = module.cloudfront.cloudfront_distribution_arn
+}
+
 module "security_group" {
   source                     = "./Modules/SecurityGroup"
   vpc_id                     = module.networking.vpc_id
@@ -64,41 +109,4 @@ module "ssm" {
   database_subnets          = module.networking.database_subnets
   sg_ssm_ec2_id             = module.security_group.sg_ssm_ec2_id
   ssm_instance_profile_name = module.iam.ssm_instance_profile_name
-}
-
-module "ecs" {
-  source                      = "./Modules/ECS"
-  private_subnets             = module.networking.private_subnets
-  sg_ecs_id                   = module.security_group.sg_ecs_id
-  target_group_arn            = module.alb.target_group_arn
-  ecs_instance_profile_name   = module.iam.ecs_instance_profile_name
-  ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
-  ecr_repository_url          = module.ecr.ecr_repository_url
-  asset_bucket_arn            = module.s3.asset_bucket_arn
-}
-
-module "rds" {
-  source           = "./Modules/RDS"
-  database_subnets = module.networking.database_subnets
-  sg_mysql_id      = module.security_group.sg_mysql_id
-  mysql_username   = var.mysql_username
-  mysql_password   = var.mysql_password
-}
-
-module "elasticache" {
-  source           = "./Modules/ElastiCache"
-  database_subnets = module.networking.database_subnets
-  sg_valkey_id     = module.security_group.sg_valkey_id
-}
-
-module "documentdb" {
-  source           = "./Modules/DocumentDB"
-  database_subnets = module.networking.database_subnets
-  sg_mongodb_id    = module.security_group.sg_mongodb_id
-  mongodb_username = var.mongodb_username
-  mongodb_password = var.mongodb_password
-}
-
-module "ecr" {
-  source = "./Modules/ECR"
 }
