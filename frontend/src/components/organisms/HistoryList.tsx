@@ -4,11 +4,12 @@ import { Icon } from "../atoms/Icon";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import useShiftStore from "../../store/shiftStore";
 import type { DutyHistory } from "../../services/dutyService";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 const HistoryList = () => {
 	const histories = useShiftStore((state) => state.dutyInfo?.histories || []);
 	const fetchDutyInfo = useShiftStore((state) => state.fetchDutyInfo);
+	const [selectedHistoryIdx, setSelectedHistoryIdx] = useState<number | null>(null);
 
 	// 최신 수정 기록이 위에 오도록 정렬
 	const sortedHistories = useMemo(
@@ -16,8 +17,10 @@ const HistoryList = () => {
 		[histories],
 	);
 
+
 	const handleRevert = useCallback(
 		async (historyIdx: number) => {
+			setSelectedHistoryIdx(historyIdx);
 			await fetchDutyInfo(undefined, undefined, historyIdx);
 		},
 		[fetchDutyInfo],
@@ -70,7 +73,7 @@ const HistoryList = () => {
 						{sortedHistories.map((item) => (
 							<div
 								key={item.idx}
-								className={`flex items-center w-full gap-3 px-2 py-1 hover:bg-gray-50 ${""}`}
+								className={`flex items-center w-full gap-3 px-2 py-1 hover:bg-gray-50 ${item.idx === selectedHistoryIdx ? "bg-gray-100": ""}`}
 							>
 								<div className="flex items-center gap-3 flex-1 min-w-0">
 									<span
