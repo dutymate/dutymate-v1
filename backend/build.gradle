@@ -72,7 +72,7 @@ checkstyle {
 
 jib {
     from {
-        image = 'amazoncorretto:17-alpine-jdk'
+        image = 'amazoncorretto:21-alpine-jdk'
     }
     to {
         tags = ['latest', "${project.version}".toString()]
