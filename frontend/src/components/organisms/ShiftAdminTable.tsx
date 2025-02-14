@@ -10,6 +10,7 @@ import { dutyService } from "../../services/dutyService";
 import { toast } from "react-toastify";
 import useShiftStore from "../../store/shiftStore";
 import FaultLayer from "../atoms/FaultLayer";
+import { toPng } from "html-to-image";
 // import ViolationMessage from "../atoms/ViolationMessage";
 
 const THROTTLE_DELAY = 1000; // 1초
@@ -73,6 +74,7 @@ const ShiftAdminTable = ({
 	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const ruleButtonRef = useRef<HTMLButtonElement>(null);
+	const tableRef = useRef<HTMLDivElement>(null);
 
 	const selectedCell = useShiftStore((state) => state.selectedCell);
 	const setSelectedCell = useShiftStore((state) => state.setSelectedCell);
@@ -450,8 +452,32 @@ const ShiftAdminTable = ({
 	};
 
 	// 근무표 다운로드 기능
-	const handleDownloadWardSchedule = () => {
-		toast.info("준비 중입니다.");
+	const handleDownloadWardSchedule = async () => {
+		const tableElement = tableRef.current?.querySelector(".duty-table-content");
+		if (!tableElement) return;
+
+		try {
+			const dataUrl = await toPng(tableElement as HTMLElement, {
+				quality: 1.0,
+				pixelRatio: 2,
+				width: tableElement.scrollWidth + 14.5, // 여백 추가
+				height: tableElement.scrollHeight + 5, // 여백 추가
+				backgroundColor: "#FFFFFF",
+				style: {
+					borderCollapse: "collapse",
+				},
+			});
+
+			const link = document.createElement("a");
+			link.download = `듀티표_${year}년_${month}월.png`;
+			link.href = dataUrl;
+			link.click();
+
+			toast.success("듀티표가 다운로드되었습니다.");
+		} catch (error) {
+			console.error("Download error:", error);
+			toast.error("듀티표 다운로드에 실패했습니다.");
+		}
 	};
 
 	// URL 쿼리 파라미터로부터 초기 데이터 로드
@@ -469,7 +495,10 @@ const ShiftAdminTable = ({
 	}, []); // 컴포넌트 마운트 시 한 번만 실행
 
 	return (
-		<>
+		<div
+			className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6"
+			ref={tableRef}
+		>
 			{/* 월 선택 및 버튼 영역 */}
 			<div className="bg-white rounded-xl py-2 px-2 mb-0.75">
 				<div className="flex items-center justify-between">
@@ -541,7 +570,7 @@ const ShiftAdminTable = ({
 				) : (
 					<div className="relative">
 						<div className="overflow-x-auto">
-							<div className="min-w-[800px]">
+							<div className="min-w-[800px] duty-table-content">
 								<table className="relative w-full border-collapse z-10">
 									<thead>
 										<tr className="text-xs text-gray-600 border-b border-gray-200">
@@ -807,7 +836,7 @@ const ShiftAdminTable = ({
 					buttonRef={ruleButtonRef}
 				/>
 			)}
-		</>
+		</div>
 	);
 };
 
