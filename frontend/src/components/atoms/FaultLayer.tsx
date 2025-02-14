@@ -4,7 +4,7 @@ import ViolationMessage from "./ViolationMessage";
 interface FaultLayerProps {
 	startDate: number;
 	endDate: number;
-	message: string;
+	messages: string[];
 	children?: React.ReactNode;
 	index?: number;
 	total?: number;
@@ -15,7 +15,7 @@ function FaultLayer({
 	startDate,
 	endDate,
 	children,
-	message,
+	messages,
 	index = 0,
 	total = 1,
 	className = "",
@@ -49,7 +49,8 @@ function FaultLayer({
 		return () => observer.disconnect();
 	}, [updateWidth]);
 
-	const width = (endDate - startDate + 1) * cellWidth;
+	// 실제 표시될 너비 계산
+	const width = Math.max(cellWidth, (endDate - startDate + 1) * cellWidth);
 
 	// // 메시지 위치 계산
 	// const getMessagePosition = () => {
@@ -86,7 +87,7 @@ function FaultLayer({
 				position: "absolute",
 				opacity: total > 1 ? 0.7 : 1, // 여러 개일 경우 약간 투명하게
 			}}
-			className={`absolute z-[1] h-8 rounded-lg border-2 border-red-500 bg-red-100/30 transition-opacity duration-200 ${className}`}
+			className={`absolute z-[2] h-8 rounded-lg border-2 border-red-500 bg-red-100/30 transition-opacity duration-200 ${className}`}
 		>
 			{/* 메시지 표시를 위한 점 */}
 			<div
@@ -95,14 +96,14 @@ function FaultLayer({
 				onMouseEnter={() => setIsHovered(true)}
 				onMouseLeave={() => setIsHovered(false)}
 			>
-				{/* 점 안에 느낌표 표시 */}
+				{/* 점 안에 위반 개수 표시 */}
 				<span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white">
-					!
+					{messages.length}
 				</span>
 			</div>
 			{children}
 			<ViolationMessage
-				message={message}
+				messages={messages}
 				targetRef={dotRef}
 				index={index}
 				total={total}

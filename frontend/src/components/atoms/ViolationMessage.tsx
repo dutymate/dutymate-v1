@@ -1,17 +1,18 @@
 import { createPortal } from "react-dom";
 import { useEffect, useState, useCallback } from "react";
 import { throttle } from "lodash";
+import { RefObject } from "react";
 
 interface ViolationMessageProps {
-	message: string;
-	targetRef: React.RefObject<HTMLElement>;
+	messages: string[];
+	targetRef: RefObject<HTMLDivElement>;
 	index?: number;
 	total?: number;
 	isVisible: boolean;
 }
 
 function ViolationMessage({
-	message,
+	messages,
 	targetRef,
 	index = 0,
 	// total = 1,
@@ -68,9 +69,15 @@ function ViolationMessage({
 				visibility: isVisible ? "visible" : "hidden",
 			}}
 		>
-			<div className="whitespace-nowrap rounded-md bg-white px-2 py-1 text-xs text-red-600 shadow-lg">
+			<div className="bg-white px-3 py-2 rounded-md shadow-lg">
+				<ul className="space-y-1.5">
+					{messages.map((message, idx) => (
+						<li key={idx} className="text-xs text-red-600 whitespace-nowrap">
+							• {message}
+						</li>
+					))}
+				</ul>
 				<div className="absolute -left-2 top-1/2 h-0 w-0 -translate-y-1/2 border-y-8 border-r-8 border-y-transparent border-r-white" />
-				{message}
 			</div>
 		</div>,
 		document.body,

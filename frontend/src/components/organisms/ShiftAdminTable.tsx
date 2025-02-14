@@ -184,8 +184,30 @@ const ShiftAdminTable = ({
 			const { row, col } = selectedCell;
 			if (col >= 0 && col < daysInMonth) {
 				const key = e.key.toUpperCase();
-				if (["D", "E", "N", "O", "X"].includes(key)) {
-					handleShiftChange(row, col, key as "D" | "E" | "N" | "O" | "X");
+				// Add Korean character support
+				const validKeys = [
+					"D",
+					"E",
+					"N",
+					"O",
+					"X",
+					"ㅇ",
+					"ㄷ",
+					"ㅜ",
+					"ㅐ",
+					"ㅊ",
+				];
+				const keyMap: { [key: string]: "D" | "E" | "N" | "O" | "X" } = {
+					ㅇ: "D", // Korean character for D
+					ㄷ: "E", // Korean character for E
+					ㅜ: "N", // Korean character for N
+					ㅐ: "O", // Korean character for O
+					ㅊ: "X", // Korean character for X
+				};
+
+				if (validKeys.includes(key)) {
+					const shiftKey = keyMap[key] || key; // Map Korean key to English if needed
+					handleShiftChange(row, col, shiftKey as "D" | "E" | "N" | "O" | "X");
 
 					// 다음 셀로 이동
 					if (col < daysInMonth - 1) {
@@ -322,7 +344,7 @@ const ShiftAdminTable = ({
 
 		// 선택된 셀 자체의 하이라이트
 		if (row === selectedCell.row && col === selectedCell.col) {
-			return `${baseHighlight} bg-duty-off-bg ring-2 ring-primary ring-offset-2 z-10`;
+			return `${baseHighlight} bg-duty-off-bg ring-2 ring-primary ring-offset-2 z-[0]`;
 		}
 
 		// 같은 행 하이라이트 (이름과 이전 근무 포함)
@@ -640,18 +662,26 @@ const ShiftAdminTable = ({
 																	WebkitTapHighlightColor: "transparent",
 																}}
 															>
-																{isAnyViolationStart &&
-																	violations.map((violation, vIndex) => (
-																		<FaultLayer
-																			key={`${violation.startDate}-${violation.endDate}-${violation.message}`}
-																			startDate={violation.startDate}
-																			endDate={violation.endDate}
-																			message={violation.message}
-																			index={vIndex}
-																			total={violations.length}
-																			className={isHovered ? "opacity-90" : ""}
-																		/>
-																	))}
+																{isAnyViolationStart && (
+																	<FaultLayer
+																		key={`violations-${dayIndex + 1}`}
+																		startDate={dayIndex + 1}
+																		endDate={Math.max(
+																			...violations
+																				.filter(
+																					(v) => v.startDate === dayIndex + 1,
+																				)
+																				.map((v) => v.endDate),
+																		)}
+																		messages={violations
+																			.filter(
+																				(v) => v.startDate === dayIndex + 1,
+																			)
+																			.map((v) => v.message)}
+																		total={violations.length}
+																		className={isHovered ? "opacity-90" : ""}
+																	/>
+																)}
 																<div className="relative z-[2]">
 																	<div className="scale-[0.95]">
 																		<DutyBadgeEng
