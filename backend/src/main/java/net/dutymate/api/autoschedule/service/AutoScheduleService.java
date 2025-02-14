@@ -17,6 +17,7 @@ import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.member.service.MemberService;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.request.repository.RequestRepository;
+import net.dutymate.api.request.util.UpdateRequestStatuses;
 import net.dutymate.api.rule.repository.RuleRepository;
 import net.dutymate.api.rule.service.RuleService;
 import net.dutymate.api.ward.repository.WardRepository;
@@ -45,6 +46,7 @@ public class AutoScheduleService {
 	private final WardScheduleRepository wardScheduleRepository;
 	private final RequestRepository requestRepository;
 
+	private final UpdateRequestStatuses updateRequestStatuses;
 	private final NurseScheduler nurseScheduler;
 
 	@Transactional
@@ -83,8 +85,8 @@ public class AutoScheduleService {
 			prevNurseShifts, yearMonth, memberId,
 			requests);
 
-		//scheduleMaker.scheduleMake(wardSchedule, rule, wardMembers, prevWardSchedule, yearMonth);
-
+		//요청 상태 관리
+		updateRequestStatuses.updateRequestStatuses(requests, updateWardSchedule, yearMonth);
 		wardScheduleRepository.save(updateWardSchedule);
 
 		ResponseEntity.ok("자동 생성 완료");

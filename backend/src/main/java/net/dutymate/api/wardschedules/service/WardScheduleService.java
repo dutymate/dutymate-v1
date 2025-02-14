@@ -14,11 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.entity.Request;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.enumclass.Shift;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
+import net.dutymate.api.request.repository.RequestRepository;
+import net.dutymate.api.request.util.UpdateRequestStatuses;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.dto.AllWardDutyResponseDto;
 import net.dutymate.api.wardschedules.dto.EditDutyRequestDto;
@@ -37,8 +40,10 @@ public class WardScheduleService {
 
 	private final MemberRepository memberRepository;
 	private final WardScheduleRepository wardScheduleRepository;
+	private final RequestRepository requestRepository;
 	private final DutyAutoCheck dutyAutoCheck;
 	private final InitialDutyGenerator initialDutyGenerator;
+	private final UpdateRequestStatuses updateRequestStatuses;
 
 	@Transactional
 	public WardScheduleResponseDto getWardSchedule(Member member, final YearMonth yearMonth, Integer nowIdx) {
@@ -249,6 +254,9 @@ public class WardScheduleService {
 		// history 구하기
 		// nowIdx 이하의 모든 history 찾아서 List로 반환
 		List<WardScheduleResponseDto.History> histories = findHistory(duties);
+
+		List<Request> requests = requestRepository.findAllWardRequests(member.getWardMember().getWard());
+		updateRequestStatuses.updateRequestStatuses(requests, updatedWardSchedule, yearMonth);
 
 		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues, histories);
 	}
