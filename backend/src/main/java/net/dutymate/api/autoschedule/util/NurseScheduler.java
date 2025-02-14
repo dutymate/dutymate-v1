@@ -330,7 +330,7 @@ public class NurseScheduler {
 		// 강한 제약 조건
 		score += evaluateShiftRequirements(solution) * 10000;
 		score += evaluateConsecutiveShifts(solution, rule) * 10000;
-		score += evaluatePreviousMonthConstraints(solution, prevMonthSchedules) * 10000;
+		score += evaluatePreviousMonthConstraints(solution, prevMonthSchedules, rule) * 10000;
 
 		score += evaluateShiftRequests(solution, requests) * 10000;
 
@@ -371,7 +371,8 @@ public class NurseScheduler {
 		return violations;
 	}
 
-	private double evaluatePreviousMonthConstraints(Solution solution, Map<Long, String> prevMonthSchedules) {
+	private double evaluatePreviousMonthConstraints(Solution solution, Map<Long, String> prevMonthSchedules,
+		Rule rule) {
 		double violations = 0;
 
 		for (Solution.Nurse nurse : solution.getNurses()) {
@@ -380,15 +381,48 @@ public class NurseScheduler {
 				char lastPrevShift = prevSchedule.charAt(prevSchedule.length() - 1);
 				char firstCurrentShift = nurse.getShift(1);
 
-				// 야간->주간/저녁 패턴 위반 확인
-				if (lastPrevShift == 'N' && (firstCurrentShift == 'D' || firstCurrentShift == 'E')) {
-					violations += 2;
+				// 기존 야간 근무 관련 체크
+				if (lastPrevShift == 'N') {
+					// 야간->주간/저녁 패턴 위반 확인
+					if (firstCurrentShift == 'D' || firstCurrentShift == 'E') {
+						violations += 2;
+					}
+					// 야간 근무 후 휴식 기간 확인
+					if (firstCurrentShift != 'O') {
+						violations += 2;
+					}
 				}
 
-				// 월간 연속 야간 근무 확인
+				// 연속 근무일수 체크 추가
+				int consecutiveShifts = 0;
+				// 이전 달 마지막 부분 체크
+				for (int i = prevSchedule.length() - 1; i >= 0; i--) {
+					char shift = prevSchedule.charAt(i);
+					if (shift != 'O' && shift != 'X') {
+						consecutiveShifts++;
+					} else {
+						break;
+					}
+				}
+
+				// 현재 달 시작 부분 체크
+				for (int day = 1; day <= solution.getDaysInMonth(); day++) {
+					char shift = nurse.getShift(day);
+					if (shift != 'O' && shift != 'X') {
+						consecutiveShifts++;
+					} else {
+						break;
+					}
+				}
+
+				// 최대 연속 근무일수(rule.getMaxShift()) 초과시 패널티
+				if (consecutiveShifts > rule.getMaxShift()) {
+					violations += (consecutiveShifts - rule.getMaxShift()) * 2;  // 가중치 2 적용
+				}
+
+				// 야간 연속 근무 체크 (기존 코드)
 				if (lastPrevShift == 'N' && firstCurrentShift == 'N') {
 					int consecutiveNights = 1;
-					// 이전 달 스케줄에서 역순으로 확인
 					for (int i = prevSchedule.length() - 2; i >= 0; i--) {
 						if (prevSchedule.charAt(i) == 'N') {
 							consecutiveNights++;
@@ -396,7 +430,6 @@ public class NurseScheduler {
 							break;
 						}
 					}
-					// 현재 달의 연속 야간 근무 추가
 					for (int day = 2; day <= solution.getDaysInMonth(); day++) {
 						if (nurse.getShift(day) == 'N') {
 							consecutiveNights++;
@@ -404,15 +437,9 @@ public class NurseScheduler {
 							break;
 						}
 					}
-					// 최대 연속 야간 근무 초과시 패널티
-					if (consecutiveNights > 3) {
-						violations += consecutiveNights - 3;
+					if (consecutiveNights > rule.getMaxN()) {
+						violations += consecutiveNights - rule.getMaxN();
 					}
-				}
-
-				// 야간 근무 후 휴식 기간 확인
-				if (lastPrevShift == 'N' && firstCurrentShift != 'O') {
-					violations += 2;
 				}
 			}
 		}
