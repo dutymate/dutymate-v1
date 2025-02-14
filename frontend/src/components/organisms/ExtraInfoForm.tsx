@@ -15,7 +15,7 @@ interface ExtraInfoFormProps {
 }
 
 // 연차 옵션 배열 생성
-const careerOptions = Array.from({ length: 100 }, (_, i) => ({
+const careerOptions = Array.from({ length: 50 }, (_, i) => ({
 	value: String(i + 1),
 	label: String(i + 1),
 }));

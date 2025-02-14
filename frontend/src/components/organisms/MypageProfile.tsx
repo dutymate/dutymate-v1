@@ -66,18 +66,11 @@ const MypageProfile = () => {
 		{ value: "M", label: "남자" },
 	];
 
-	const gradeOptions = [
-		{ value: "1", label: "1년차" },
-		{ value: "2", label: "2년차" },
-		{ value: "3", label: "3년차" },
-		{ value: "4", label: "4년차" },
-		{ value: "5", label: "5년차" },
-		{ value: "6", label: "6년차" },
-		{ value: "7", label: "7년차" },
-		{ value: "8", label: "8년차" },
-		{ value: "9", label: "9년차" },
-		{ value: "10", label: "10년차" },
-	];
+	// 연차 옵션 배열 생성 (ExtraInfoForm과 동일한 방식)
+	const gradeOptions = Array.from({ length: 50 }, (_, i) => ({
+		value: String(i + 1),
+		label: String(i + 1),
+	}));
 
 	const debouncedCheckNickname = useCallback(
 		debounce(async (nickname: string) => {
