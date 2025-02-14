@@ -17,6 +17,7 @@ import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Request;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
+import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.enumclass.Shift;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
@@ -112,6 +113,11 @@ public class WardScheduleService {
 				now.setPrevShifts(prevShifts.getShifts().substring(prevShifts.getShifts().length() - 4));
 			}
 		});
+
+		// Role이 HN인 사람들 위로 정렬
+		nurseShiftsDto = nurseShiftsDto.stream()
+			.sorted(Comparator.comparing(nurse -> nurse.getRole() != Role.HN))
+			.toList();
 
 		// TODO invalidCnt 구하기
 		// int invalidCnt = calcInvalidCnt(recentNurseShifts);
