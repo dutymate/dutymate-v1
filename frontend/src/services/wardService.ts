@@ -82,6 +82,14 @@ export type Shift = "D" | "E" | "N" | "ALL";
  */
 export type SkillLevel = "LOW" | "MID" | "HIGH";
 
+interface TempNurseResponse {
+	tempMemberId: number;
+	profileImg: string | null;
+	name: string;
+	grade: number;
+	gender: "F" | "M";
+}
+
 // API 서비스
 export const wardService = {
 	/**
@@ -281,6 +289,51 @@ export const wardService = {
 	updateVirtualNurseName: (memberId: number, name: string) => {
 		return axiosInstance
 			.put(`/ward/member/virtual/${memberId}`, { name })
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	getTempNurseList: () => {
+		return axiosInstance
+			.get<TempNurseResponse[]>("/ward/member/temp")
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	updateVirtualNurseInfo: (
+		memberId: number,
+		data: { name?: string; gender?: "F" | "M"; grade?: number },
+	) => {
+		return axiosInstance
+			.put(`/ward/member/virtual/${memberId}/info`, data)
 			.then((response) => response.data)
 			.catch((error) => {
 				if (error.code === "ERR_NETWORK") {

@@ -60,7 +60,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 
 					{/* 노트북 이미지 - 상단에 겹치도록 배치 */}
 					{!isLoginPage && (
-						<div className="absolute -bottom-[17vh] right-[-40%] w-[130%] z-10">
+						<div className="absolute -bottom-[17vh] right-[-40%] w-[130%] z-10 hidden lg:block">
 							<img
 								src={notebookImage}
 								alt="Notebook Preview"

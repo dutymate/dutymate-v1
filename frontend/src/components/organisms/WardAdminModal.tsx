@@ -1,7 +1,8 @@
 import { Icon } from "../atoms/Icon";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { ConnectButton } from "../atoms/Button";
+import { wardService } from "../../services/wardService";
 
 interface Nurse {
 	name: string;
@@ -18,6 +19,15 @@ interface HistoryModalProps {
 interface NurseAssignModalProps {
 	nurse: Nurse;
 	onClose: () => void;
+}
+
+// Add interface for temp nurse
+interface TempNurse {
+	tempMemberId: number;
+	profileImg: string | null;
+	name: string;
+	grade: number;
+	gender: "F" | "M";
 }
 
 // 내역 조회 모달
@@ -129,6 +139,24 @@ export const HistoryModal = ({
 // 간호사 배정 모달
 export const NurseAssignModal = ({ nurse, onClose }: NurseAssignModalProps) => {
 	const [selectedNurse, setSelectedNurse] = useState<number | null>(null);
+	const [tempNurses, setTempNurses] = useState<TempNurse[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchTempNurses = async () => {
+			try {
+				const data = await wardService.getTempNurseList();
+				setTempNurses(data);
+			} catch (error) {
+				console.error("임시 간호사 목록 조회 실패:", error);
+				toast.error("임시 간호사 목록을 불러오는데 실패했습니다");
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchTempNurses();
+	}, []);
 
 	const handleConnect = (nurseNumber: number) => {
 		if (
@@ -199,53 +227,69 @@ export const NurseAssignModal = ({ nurse, onClose }: NurseAssignModalProps) => {
 				<div className="bg-gray-50 rounded-xl p-4 mb-4">
 					<div className="text-sm text-gray-600 mb-2 px-2">근무자</div>
 					<div className="max-h-[280px] overflow-y-auto space-y-2 pr-2">
-						{Array.from({ length: 7 }, (_, i) => i + 1).map((num) => (
-							<div
-								key={num}
-								className="flex items-center justify-between gap-2 px-3 py-2.5 bg-white rounded-xl"
-							>
-								<div className="flex items-center gap-4">
-									<div className="flex items-center gap-1.5 w-[80px]">
-										<Icon
-											name="user"
-											size={18}
-											className="text-gray-500 flex-shrink-0"
-										/>
-										<span className="font-medium truncate text-sm">
-											간호사 {num}
-										</span>
-									</div>
-									<div className="flex items-center gap-1 w-[45px]">
-										<Icon
-											name="female"
-											size={14}
-											className="text-gray-500 flex-shrink-0"
-										/>
-										<span className="text-gray-600 text-sm">여자</span>
-									</div>
-									<div className="flex items-center gap-1 w-[45px]">
-										<Icon
-											name="idCard"
-											size={14}
-											className="text-gray-500 flex-shrink-0"
-										/>
-										<span className="text-gray-600 text-sm whitespace-nowrap">
-											{num}차
-										</span>
-									</div>
-								</div>
-								<button
-									onClick={() => handleConnect(num)}
-									className={`px-3 py-1 rounded-md text-xs transition-colors whitespace-nowrap ${
-										selectedNurse === num
-											? "bg-primary text-white hover:bg-primary-dark"
-											: "bg-white text-primary border border-primary hover:bg-primary hover:text-white"
-									}`}
+						{isLoading ? (
+							<div className="text-center py-4">로딩 중...</div>
+						) : tempNurses.length === 0 ? (
+							<div className="text-center py-4">임시 간호사가 없습니다</div>
+						) : (
+							tempNurses.map((tempNurse) => (
+								<div
+									key={tempNurse.tempMemberId}
+									className="flex items-center justify-between gap-2 px-3 py-2.5 bg-white rounded-xl"
 								>
-									연동
-								</button>
-							</div>
-						))}
+									<div className="flex items-center gap-4">
+										<div className="flex items-center gap-1.5 w-[80px]">
+											{tempNurse.profileImg ? (
+												<img
+													src={tempNurse.profileImg}
+													alt="프로필"
+													className="w-[18px] h-[18px] rounded-full"
+												/>
+											) : (
+												<Icon
+													name="user"
+													size={18}
+													className="text-gray-500 flex-shrink-0"
+												/>
+											)}
+											<span className="font-medium truncate text-sm">
+												{tempNurse.name}
+											</span>
+										</div>
+										<div className="flex items-center gap-1 w-[45px]">
+											<Icon
+												name={tempNurse.gender === "F" ? "female" : "male"}
+												size={14}
+												className="text-gray-500 flex-shrink-0"
+											/>
+											<span className="text-gray-600 text-sm">
+												{tempNurse.gender === "F" ? "여자" : "남자"}
+											</span>
+										</div>
+										<div className="flex items-center gap-1 w-[45px]">
+											<Icon
+												name="idCard"
+												size={14}
+												className="text-gray-500 flex-shrink-0"
+											/>
+											<span className="text-gray-600 text-sm whitespace-nowrap">
+												{tempNurse.grade}차
+											</span>
+										</div>
+									</div>
+									<button
+										onClick={() => handleConnect(tempNurse.tempMemberId)}
+										className={`px-3 py-1 rounded-md text-xs transition-colors whitespace-nowrap ${
+											selectedNurse === tempNurse.tempMemberId
+												? "bg-primary text-white hover:bg-primary-dark"
+												: "bg-white text-primary border border-primary hover:bg-primary hover:text-white"
+										}`}
+									>
+										연동
+									</button>
+								</div>
+							))
+						)}
 					</div>
 				</div>
 

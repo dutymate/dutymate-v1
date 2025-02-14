@@ -11,6 +11,10 @@ interface WardStore {
 	virtualNurseCount: number;
 	addVirtualNurse: () => Promise<void>;
 	updateVirtualNurseName: (memberId: number, name: string) => Promise<void>;
+	updateVirtualNurseInfo: (
+		memberId: number,
+		data: { name?: string; gender?: "F" | "M"; grade?: number },
+	) => Promise<void>;
 }
 
 const useWardStore = create<WardStore>((set, get) => ({
@@ -170,6 +174,37 @@ const useWardStore = create<WardStore>((set, get) => ({
 
 		try {
 			await wardService.updateVirtualNurseName(memberId, name);
+		} catch (error) {
+			// 에러 발생 시 이전 상태로 롤백
+			set({ wardInfo: previousState });
+			throw error;
+		}
+	},
+
+	updateVirtualNurseInfo: async (
+		memberId: number,
+		data: { name?: string; gender?: "F" | "M"; grade?: number },
+	) => {
+		const previousState = get().wardInfo;
+
+		// Optimistic Update
+		set((state) => {
+			if (!state.wardInfo) return state;
+
+			const updatedNurses = state.wardInfo.nurses.map((nurse) =>
+				nurse.memberId === memberId ? { ...nurse, ...data } : nurse,
+			);
+
+			return {
+				wardInfo: {
+					...state.wardInfo,
+					nurses: updatedNurses,
+				},
+			};
+		});
+
+		try {
+			await wardService.updateVirtualNurseInfo(memberId, data);
 		} catch (error) {
 			// 에러 발생 시 이전 상태로 롤백
 			set({ wardInfo: previousState });

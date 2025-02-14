@@ -29,7 +29,8 @@ const WardAdminRowCard = ({
 	const [isEditingMemo, setIsEditingMemo] = useState(false);
 	const [memo, setMemo] = useState(nurse.memo);
 	const memoInputRef = useRef<HTMLInputElement>(null);
-	const { removeNurse, updateVirtualNurseName } = useWardStore();
+	const { removeNurse, updateVirtualNurseName, updateVirtualNurseInfo } =
+		useWardStore();
 	const [dropdownPosition, setDropdownPosition] = useState<"top" | "bottom">(
 		"bottom",
 	);
@@ -40,6 +41,10 @@ const WardAdminRowCard = ({
 	const [isEditingName, setIsEditingName] = useState(false);
 	const [name, setName] = useState(nurse.name);
 	const nameInputRef = useRef<HTMLInputElement>(null);
+	const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false);
+	const [isGradeDropdownOpen, setIsGradeDropdownOpen] = useState(false);
+	const genderDropdownRef = useRef<HTMLDivElement>(null);
+	const gradeDropdownRef = useRef<HTMLDivElement>(null);
 
 	// Add this to verify data flow
 	useEffect(() => {
@@ -119,6 +124,18 @@ const WardAdminRowCard = ({
 				!skillButtonRef.current.contains(event.target as Node)
 			) {
 				setOpenSkillDropdown(false);
+			}
+			if (
+				genderDropdownRef.current &&
+				!genderDropdownRef.current.contains(event.target as Node)
+			) {
+				setIsGenderDropdownOpen(false);
+			}
+			if (
+				gradeDropdownRef.current &&
+				!gradeDropdownRef.current.contains(event.target as Node)
+			) {
+				setIsGradeDropdownOpen(false);
 			}
 		};
 
@@ -219,14 +236,25 @@ const WardAdminRowCard = ({
 		setIsEditingName(false);
 	};
 
-	// const handleNameKeyDown = (e: React.KeyboardEvent) => {
-	// 	if (e.key === "Enter") {
-	// 		handleNameComplete();
-	// 	} else if (e.key === "Escape") {
-	// 		setName(nurse.name);
-	// 		setIsEditingName(false);
-	// 	}
-	// };
+	const handleGenderChange = async (gender: "F" | "M") => {
+		try {
+			await updateVirtualNurseInfo(nurse.memberId, { gender });
+			setIsGenderDropdownOpen(false);
+			toast.success("성별이 수정되었습니다");
+		} catch (error) {
+			toast.error("성별 수정에 실패했습니다");
+		}
+	};
+
+	const handleGradeChange = async (grade: number) => {
+		try {
+			await updateVirtualNurseInfo(nurse.memberId, { grade });
+			setIsGradeDropdownOpen(false);
+			toast.success("연차가 수정되었습니다");
+		} catch (error) {
+			toast.error("연차 수정에 실패했습니다");
+		}
+	};
 
 	return (
 		<div ref={containerRef} className="relative">
@@ -275,17 +303,81 @@ const WardAdminRowCard = ({
 						<div className="w-[60px] flex items-center">
 							<Badge type={nurse.role} className="whitespace-nowrap" />
 						</div>
-						<div className="flex items-center gap-1 w-[60px]">
-							<Icon
-								name={nurse.gender === "F" ? "female" : "male"}
-								size={16}
-								className="text-gray-500"
-							/>
-							<span>{nurse.gender === "F" ? "여자" : "남자"}</span>
+						<div className="relative" ref={genderDropdownRef}>
+							<button
+								onClick={() =>
+									!nurse.isSynced &&
+									setIsGenderDropdownOpen(!isGenderDropdownOpen)
+								}
+								className={`flex items-center gap-1 w-[60px] p-1 rounded ${
+									!nurse.isSynced ? "hover:bg-gray-50" : "cursor-not-allowed"
+								}`}
+							>
+								<Icon
+									name={nurse.gender === "F" ? "female" : "male"}
+									size={16}
+									className="text-gray-500"
+								/>
+								<span>{nurse.gender === "F" ? "여자" : "남자"}</span>
+							</button>
+							{isGenderDropdownOpen && !nurse.isSynced && (
+								<div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg border border-gray-200 z-10 w-[80px]">
+									<button
+										onClick={() => handleGenderChange("F")}
+										className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-50 whitespace-nowrap"
+									>
+										<Icon
+											name="female"
+											size={16}
+											className="text-gray-500 flex-shrink-0"
+										/>
+										<span className="flex-shrink-0">여자</span>
+									</button>
+									<button
+										onClick={() => handleGenderChange("M")}
+										className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-50 whitespace-nowrap"
+									>
+										<Icon
+											name="male"
+											size={16}
+											className="text-gray-500 flex-shrink-0"
+										/>
+										<span className="flex-shrink-0">남자</span>
+									</button>
+								</div>
+							)}
 						</div>
-						<div className="flex items-center gap-1 w-[70px]">
-							<Icon name="idCard" size={16} className="text-gray-500" />
-							<span>{nurse.grade}년차</span>
+						<div className="relative" ref={gradeDropdownRef}>
+							<button
+								onClick={() =>
+									!nurse.isSynced &&
+									setIsGradeDropdownOpen(!isGradeDropdownOpen)
+								}
+								className={`flex items-center gap-1 w-[70px] p-1 rounded ${
+									!nurse.isSynced ? "hover:bg-gray-50" : "cursor-not-allowed"
+								}`}
+							>
+								<Icon name="idCard" size={16} className="text-gray-500" />
+								<span>{nurse.grade}년차</span>
+							</button>
+							{isGradeDropdownOpen && !nurse.isSynced && (
+								<div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg border border-gray-200 z-10 w-[80px]">
+									{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((grade) => (
+										<button
+											key={grade}
+											onClick={() => handleGradeChange(grade)}
+											className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-50 whitespace-nowrap"
+										>
+											<Icon
+												name="idCard"
+												size={16}
+												className="text-gray-500 flex-shrink-0"
+											/>
+											<span className="flex-shrink-0">{grade}년차</span>
+										</button>
+									))}
+								</div>
+							)}
 						</div>
 						<div className="relative w-[80px]">
 							<button
