@@ -353,19 +353,25 @@ const WardAdminRowCard = ({
 									!nurse.isSynced &&
 									setIsGradeDropdownOpen(!isGradeDropdownOpen)
 								}
-								className={`flex items-center gap-1 w-[70px] p-1 rounded ${
+								className={`flex items-center gap-1 w-[90px] p-1 rounded justify-center ${
 									!nurse.isSynced ? "hover:bg-gray-50" : "cursor-not-allowed"
 								}`}
 							>
-								<Icon name="idCard" size={16} className="text-gray-500" />
-								<span>{nurse.grade}년차</span>
+								<div className="flex items-center justify-center w-full">
+									<Icon
+										name="idCard"
+										size={16}
+										className="text-gray-500 flex-shrink-0"
+									/>
+									<span className="ml-1 truncate">{nurse.grade}년차</span>
+								</div>
 							</button>
 							{isGradeDropdownOpen && !nurse.isSynced && (
-								<div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg border border-gray-200 z-10 w-[80px]">
-									{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((grade) => (
+								<div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg border border-gray-200 z-10 w-[100px] max-h-[150px] overflow-y-auto overflow-x-hidden">
+									{[...Array(50).keys()].map((grade) => (
 										<button
-											key={grade}
-											onClick={() => handleGradeChange(grade)}
+											key={grade + 1}
+											onClick={() => handleGradeChange(grade + 1)}
 											className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-50 whitespace-nowrap"
 										>
 											<Icon
@@ -373,7 +379,7 @@ const WardAdminRowCard = ({
 												size={16}
 												className="text-gray-500 flex-shrink-0"
 											/>
-											<span className="flex-shrink-0">{grade}년차</span>
+											<span>{grade + 1}년차</span>
 										</button>
 									))}
 								</div>
