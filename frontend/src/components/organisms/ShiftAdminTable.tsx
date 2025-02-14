@@ -42,7 +42,7 @@ interface ShiftAdminTableProps {
 	invalidCnt: number;
 	year: number;
 	month: number;
-	onUpdate: (year?: number, month?: number, historyIdx?: number) => void;
+	onUpdate: (year: number, month: number, historyIdx?: number) => Promise<void>;
 	issues: {
 		name: string;
 		startDate: number;
@@ -52,21 +52,21 @@ interface ShiftAdminTableProps {
 	}[];
 }
 
-// const getMaxAllowedMonth = () => {
-// 	const today = new Date();
-// 	const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1);
-// 	return {
-// 		year: nextMonth.getFullYear(),
-// 		month: nextMonth.getMonth() + 1,
-// 	};
-// };
+const getMaxAllowedMonth = () => {
+	const today = new Date();
+	const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1);
+	return {
+		year: nextMonth.getFullYear(),
+		month: nextMonth.getMonth() + 1,
+	};
+};
 
 const ShiftAdminTable = ({
 	dutyData,
 	// invalidCnt,
 	year,
 	month,
-	// onUpdate,
+	onUpdate,
 	issues,
 }: ShiftAdminTableProps) => {
 	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
@@ -204,45 +204,56 @@ const ShiftAdminTable = ({
 		setSelectedCell({ row, col });
 	};
 
-	// // 이전 달로 이동
-	// const handlePrevMonth = async () => {
-	// 	const newYear = month === 1 ? year - 1 : year;
-	// 	const newMonth = month === 1 ? 12 : month - 1;
+	// 이전 달로 이동
+	const handlePrevMonth = async () => {
+		const newYear = month === 1 ? year - 1 : year;
+		const newMonth = month === 1 ? 12 : month - 1;
 
-	// 	try {
-	// 		await onUpdate(newYear, newMonth);
-	// 	} catch (error) {
-	// 		toast.error("근무표 조회에 실패했습니다.");
-	// 	}
-	// };
+		try {
+			// URL 쿼리 파라미터 업데이트
+			const url = new URL(window.location.href);
+			url.searchParams.set("year", newYear.toString());
+			url.searchParams.set("month", newMonth.toString());
+			window.history.pushState({}, "", url.toString());
+
+			await onUpdate(newYear, newMonth);
+		} catch (error) {
+			toast.error("근무표 조회에 실패했습니다.");
+		}
+	};
 
 	// 다음 달로 이동
-	// const handleNextMonth = async () => {
-	// 	const maxAllowed = getMaxAllowedMonth();
+	const handleNextMonth = async () => {
+		const maxAllowed = getMaxAllowedMonth();
 
-	// 	// Calculate next month
-	// 	const nextMonthDate = new Date(year, month);
-	// 	const nextYear = nextMonthDate.getMonth() === 11 ? year + 1 : year;
-	// 	const nextMonth = nextMonthDate.getMonth() === 11 ? 1 : month + 1;
+		// Calculate next month (수정된 로직)
+		const nextMonth = month === 12 ? 1 : month + 1;
+		const nextYear = month === 12 ? year + 1 : year;
 
-	// 	// Check if next month exceeds the limit
-	// 	if (
-	// 		nextYear > maxAllowed.year ||
-	// 		(nextYear === maxAllowed.year && nextMonth > maxAllowed.month)
-	// 	) {
-	// 		toast.warning("다음 달까지만 조회할 수 있습니다.", {
-	// 			position: "top-center",
-	// 			autoClose: 2000,
-	// 		});
-	// 		return;
-	// 	}
+		// Check if next month exceeds the limit
+		if (
+			nextYear > maxAllowed.year ||
+			(nextYear === maxAllowed.year && nextMonth > maxAllowed.month)
+		) {
+			toast.warning("다음 달까지만 조회할 수 있습니다.", {
+				position: "top-center",
+				autoClose: 2000,
+			});
+			return;
+		}
 
-	// 	try {
-	// 		await onUpdate(nextYear, nextMonth);
-	// 	} catch (error) {
-	// 		toast.error("근무표 조회에 실패했습니다.");
-	// 	}
-	// };
+		try {
+			// URL 쿼리 파라미터 업데이트
+			const url = new URL(window.location.href);
+			url.searchParams.set("year", nextYear.toString());
+			url.searchParams.set("month", nextMonth.toString());
+			window.history.pushState({}, "", url.toString());
+
+			await onUpdate(nextYear, nextMonth);
+		} catch (error) {
+			toast.error("근무표 조회에 실패했습니다.");
+		}
+	};
 
 	// 날짜별 근무 통계 계산
 	const dutyCounts = Array.from({ length: 31 }, (_, dayIndex) => {
@@ -358,7 +369,10 @@ const ShiftAdminTable = ({
 			});
 
 			// API 호출
-			await dutyService.autoCreateDuty(year, month);
+			const data = await dutyService.autoCreateDuty(year, month);
+
+			// 받아온 데이터로 직접 상태 업데이트
+			useShiftStore.getState().setDutyInfo(data);
 
 			// 성공 알림
 			toast.update(loadingToast, {
@@ -367,22 +381,12 @@ const ShiftAdminTable = ({
 				isLoading: false,
 				autoClose: 1500,
 			});
-
-			// 잠시 후 페이지 새로고침
-			setTimeout(() => {
-				window.location.href = "/shift-admin";
-			}, 1500);
 		} catch (error) {
 			// 실패 알림
 			toast.error("자동생성에 실패했습니다", {
 				position: "top-center",
 				autoClose: 1500,
 			});
-
-			// 잠시 후 페이지 새로고침
-			setTimeout(() => {
-				window.location.href = "/shift-admin";
-			}, 1500);
 		}
 	};
 
@@ -411,6 +415,20 @@ const ShiftAdminTable = ({
 		toast.info("준비 중입니다.");
 	};
 
+	// URL 쿼리 파라미터로부터 초기 데이터 로드
+	useEffect(() => {
+		const url = new URL(window.location.href);
+		const urlYear = url.searchParams.get("year");
+		const urlMonth = url.searchParams.get("month");
+
+		// URL에 year, month가 없을 때만 현재 값으로 설정
+		if (!urlYear || !urlMonth) {
+			url.searchParams.set("year", year.toString());
+			url.searchParams.set("month", month.toString());
+			window.history.replaceState({}, "", url.toString());
+		}
+	}, []); // 컴포넌트 마운트 시 한 번만 실행
+
 	return (
 		<>
 			{/* 월 선택 및 버튼 영역 */}
@@ -422,20 +440,14 @@ const ShiftAdminTable = ({
 								name="left"
 								size={16}
 								className="cursor-pointer text-gray-600 hover:text-gray-800"
-								// onClick={handlePrevMonth}
-								onClick={() => {
-									toast.info("준비중입니다.");
-								}}
+								onClick={handlePrevMonth}
 							/>
 							<span className="text-lg font-medium">{month}월</span>
 							<Icon
 								name="right"
 								size={16}
 								className="cursor-pointer text-gray-600 hover:text-gray-800"
-								// onClick={handleNextMonth}
-								onClick={() => {
-									toast.info("준비중입니다.");
-								}}
+								onClick={handleNextMonth}
 							/>
 							<div className="flex items-center gap-2 ml-1">
 								<span className="text-[11px] sm:text-xs text-gray-400">

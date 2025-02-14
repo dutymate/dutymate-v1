@@ -15,7 +15,16 @@ const DutyManagement = () => {
 	const { dutyInfo, loading, error, fetchDutyInfo } = useShiftStore();
 
 	useEffect(() => {
-		fetchDutyInfo();
+		// URL에서 year와 month 파라미터 가져오기
+		const url = new URL(window.location.href);
+		const urlYear = url.searchParams.get("year");
+		const urlMonth = url.searchParams.get("month");
+
+		// URL에 파라미터가 있으면 해당 값으로, 없으면 undefined로 호출
+		fetchDutyInfo(
+			urlYear ? parseInt(urlYear) : undefined,
+			urlMonth ? parseInt(urlMonth) : undefined,
+		);
 	}, []);
 
 	if (loading && !dutyInfo) {

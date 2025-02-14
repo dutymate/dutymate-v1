@@ -248,20 +248,19 @@ export const dutyService = {
 
 	/**
 	 * 근무표 조회/되돌리기
-	 * @param params - 년도, 월, 히스토리 인덱스 (선택)
+	 * @param params - 조회할 근무표 정보 (year, month, history)
 	 */
-	getDuty: (params?: {
-		year?: number;
-		month?: number;
-		history?: number;
-	}) => {
+	getDuty: (params: { year?: number; month?: number; history?: number }) => {
 		return axiosInstance
 			.get("/duty", { params })
 			.then((response) => {
-				return response.data;
+				return response.data as DutyInfo;
 			})
 			.catch((error) => {
 				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
 					throw new Error("서버 연결 실패");
 				}
 				if (error.response) {
@@ -270,6 +269,7 @@ export const dutyService = {
 							window.location.href = "/login";
 							break;
 						default:
+							console.error("Error occurred:", error);
 							throw error;
 					}
 				}
