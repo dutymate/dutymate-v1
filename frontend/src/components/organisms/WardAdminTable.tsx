@@ -18,9 +18,13 @@ const WardAdminTable = ({ nurses }: WardAdminTableProps) => {
 	const handleNurseUpdate = async (memberId: number, data: any) => {
 		try {
 			await updateNurse(memberId, data);
-			toast.success("간호사 정보가 수정되었습니다");
+			toast.success("간호사 정보가 수정되었습니다", {
+				position: "top-right",
+			});
 		} catch (error) {
-			toast.error("간호사 정보 수정에 실패했습니다");
+			toast.error("간호사 정보 수정에 실패했습니다", {
+				position: "top-right",
+			});
 			// 실패 시 서버와 강제 동기화
 			await syncWithServer();
 		}

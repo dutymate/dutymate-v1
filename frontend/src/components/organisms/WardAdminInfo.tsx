@@ -11,9 +11,14 @@ import { HistoryModal, NurseAssignModal } from "./WardAdminModal";
 interface WardAdminInfoProps {
 	wardInfo: WardInfo;
 	onAddTempNurse: () => void;
+	onViewHistory: () => void;
 }
 
-const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
+const WardAdminInfo = ({
+	wardInfo,
+	onAddTempNurse,
+	onViewHistory,
+}: WardAdminInfoProps) => {
 	const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 	const [selectedNurse, setSelectedNurse] = useState<{
 		name: string;

@@ -10,6 +10,7 @@ import { dutyService } from "../../services/dutyService";
 import { toast } from "react-toastify";
 import useShiftStore from "../../store/shiftStore";
 import FaultLayer from "../atoms/FaultLayer";
+import ViolationMessage from "../atoms/ViolationMessage";
 
 const THROTTLE_DELAY = 1000; // 1초
 let lastUpdateTime = 0;
@@ -374,6 +375,9 @@ const ShiftAdminTable = ({
 			// 받아온 데이터로 직접 상태 업데이트
 			useShiftStore.getState().setDutyInfo(data);
 
+			// onUpdate 함수 호출하여 화면 갱신
+			await onUpdate(year, month);
+
 			// 성공 알림
 			toast.update(loadingToast, {
 				render: "자동생성에 성공했습니다",
@@ -582,16 +586,24 @@ const ShiftAdminTable = ({
 												</div>
 											</td>
 											{Array.from({ length: daysInMonth }, (_, dayIndex) => {
-												const violation = getViolation(i, dayIndex);
-												// 위반 구간의 시작점에서만 FaultLayer를 표시
-												const isViolationStart =
-													violation && dayIndex + 1 === violation.startDate;
+												const violations = issues.filter(
+													(issue) =>
+														issue.name === nurses[i] &&
+														dayIndex + 1 >= issue.startDate &&
+														dayIndex + 1 <= issue.endDate,
+												);
+												const isAnyViolationStart = violations.some(
+													(v) => dayIndex + 1 === v.startDate,
+												);
+												const [isHovered, setIsHovered] = useState(false);
 
 												return (
 													<td
 														key={dayIndex}
 														onClick={() => handleCellClick(i, dayIndex)}
 														className={`p-0 text-center border-r border-gray-200 relative ${isHighlighted(i, dayIndex)}`}
+														onMouseEnter={() => setIsHovered(true)}
+														onMouseLeave={() => setIsHovered(false)}
 													>
 														<div
 															className="flex items-center justify-center cursor-pointer relative outline-none"
@@ -601,30 +613,19 @@ const ShiftAdminTable = ({
 															aria-label={`${nurses[i]}의 ${dayIndex + 1}일 근무`}
 															style={{ WebkitTapHighlightColor: "transparent" }}
 														>
-															{isViolationStart && (
-																<>
+															{isAnyViolationStart &&
+																violations.map((violation, vIndex) => (
 																	<FaultLayer
+																		key={`${violation.startDate}-${violation.endDate}-${violation.message}`}
 																		startDate={violation.startDate}
 																		endDate={violation.endDate}
 																		message={violation.message}
+																		index={vIndex}
+																		total={violations.length}
+																		className={isHovered ? "opacity-90" : ""}
 																	/>
-																	<div
-																		style={{
-																			width: `${(violation.endDate - violation.startDate + 1) * 40}px`,
-																			left: "0",
-																			position: "absolute",
-																			top: "32px",
-																		}}
-																		className="invisible group-hover:visible"
-																	>
-																		<div className="absolute top-0 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md bg-white px-2 py-1 text-xs text-red-600 shadow-lg">
-																			<div className="absolute -top-2 left-1/2 h-0 w-0 -translate-x-1/2 border-x-8 border-b-8 border-x-transparent border-b-white" />
-																			{violation.message}
-																		</div>
-																	</div>
-																</>
-															)}
-															<div className="relative z-20">
+																))}
+															<div className="relative z-[2]">
 																<div className="scale-[0.95]">
 																	<DutyBadgeEng
 																		type={
