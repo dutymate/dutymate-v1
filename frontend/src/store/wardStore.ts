@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { WardInfo, wardService } from "../services/wardService";
 
-interface WardStore {
+export interface WardStore {
 	wardInfo: WardInfo | null;
 	setWardInfo: (wardInfo: WardInfo) => void;
 	updateNurse: (memberId: number, updatedData: any) => Promise<void>;
@@ -15,6 +15,7 @@ interface WardStore {
 		memberId: number,
 		data: { name?: string; gender?: "F" | "M"; grade?: number },
 	) => Promise<void>;
+	getSortedNurses: () => any[];
 }
 
 const useWardStore = create<WardStore>((set, get) => ({
@@ -210,6 +211,21 @@ const useWardStore = create<WardStore>((set, get) => ({
 			set({ wardInfo: previousState });
 			throw error;
 		}
+	},
+
+	// 정렬된 간호사 목록을 반환하는 getter
+	getSortedNurses: () => {
+		const wardInfo = get().wardInfo;
+		if (!wardInfo) return [];
+
+		return [...wardInfo.nurses].sort((a, b) => {
+			// 먼저 role로 정렬 (HN이 위로)
+			if (a.role === "HN" && b.role !== "HN") return -1;
+			if (a.role !== "HN" && b.role === "HN") return 1;
+
+			// role이 같은 경우 grade로 정렬 (내림차순)
+			return b.grade - a.grade;
+		});
 	},
 }));
 

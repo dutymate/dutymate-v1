@@ -95,7 +95,7 @@ const WardAdmin = () => {
 								onAddTempNurse={handleAddVirtualNurse}
 								onViewHistory={handleViewHistory}
 							/>
-							<WardAdminTable nurses={wardInfo.nurses} />
+							<WardAdminTable />
 						</>
 					)}
 				</div>

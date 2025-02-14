@@ -29,6 +29,8 @@ interface WardDuty {
 		memberId: number;
 		name: string;
 		shifts: string;
+		role: string;
+		grade: number;
 	}[];
 }
 
@@ -104,6 +106,15 @@ const TeamShiftTable = () => {
 		toast.info("준비 중입니다.");
 	};
 
+	const sortedDuty = wardDuty.duty.sort((a, b) => {
+		// 먼저 role로 정렬 (HN이 위로)
+		if (a.role === "HN" && b.role !== "HN") return -1;
+		if (a.role !== "HN" && b.role === "HN") return 1;
+
+		// role이 같은 경우 grade로 정렬 (내림차순)
+		return b.grade - a.grade;
+	});
+
 	return (
 		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6">
 			<div className="flex flex-col sm:flex-row items-center justify-between mb-4">
@@ -168,7 +179,7 @@ const TeamShiftTable = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{wardDuty.duty.map((member) => (
+						{sortedDuty.map((member) => (
 							<tr key={member.memberId} className="border-b border-gray-100">
 								<td className="w-[120px] pl-2 pr-2 py-2 font-medium sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white text-center group">
 									<div className="bg-gray-50 rounded-lg px-2 py-0.5 relative">

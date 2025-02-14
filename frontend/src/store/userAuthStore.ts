@@ -11,6 +11,7 @@ interface UserInfo {
 	profileImg: string | null;
 	existAdditionalInfo: boolean;
 	existMyWard: boolean;
+	sentWardCode: boolean;
 }
 
 // 부가 정보 타입

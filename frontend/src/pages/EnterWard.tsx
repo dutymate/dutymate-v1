@@ -36,18 +36,14 @@ const EnterWard = () => {
 			userAuthStore.setUserInfo({
 				...userAuthStore.userInfo!,
 				existMyWard: true,
+				sentWardCode: true,
 			});
 
 			// 3. 성공 메시지 표시
-			toast.success("병동 입장에 성공했습니다", {
+			toast.success("병동 입장 요청이 완료되었습니다.", {
 				position: "top-center",
 				autoClose: 3000,
 			});
-
-			// 4. 근무표 페이지로 이동
-			setTimeout(() => {
-				navigate("/my-shift");
-			}, 1000);
 		} catch (error: any) {
 			console.error("병동 입장 실패:", error);
 			if (error) {

@@ -17,7 +17,7 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
   aliases             = [var.domain_name]
 
   default_cache_behavior {
-    allowed_methods        = ["GET", "HEAD", "DELETE", "OPTIONS", "PATCH", "POST", "PUT"]
+    allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
     min_ttl                = "0"
     default_ttl            = "300"
@@ -32,6 +32,20 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
         forward = "none"
       }
     }
+  }
+
+  custom_error_response {
+    error_code            = 403
+    response_code         = 200
+    response_page_path    = "/index.html"
+    error_caching_min_ttl = 10
+  }
+
+  custom_error_response {
+    error_code            = 404
+    response_code         = 200
+    response_page_path    = "/index.html"
+    error_caching_min_ttl = 10
   }
 
   restrictions {

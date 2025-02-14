@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Button } from "../atoms/Button";
 import { WardCodeInput } from "../atoms/WardCodeInput";
+import useUserAuthStore from "@/store/userAuthStore";
+import { useNavigate } from "react-router-dom";
 
 interface EnterWardFormProps {
 	onSubmit: (wardCode: string) => Promise<void>;
@@ -12,6 +14,7 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 	const [wardCode, setWardCode] = useState("");
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+	const navigate = useNavigate();
 
 	const validateWardCode = (code: string) => {
 		if (!code) {
@@ -58,6 +61,34 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 		setWardCode(value);
 		setError("");
 	};
+
+	const handleLogoutButton = () => {
+		useUserAuthStore.getState().logout();
+		navigate("/login");
+	};
+
+	if (useUserAuthStore.getState().userInfo?.sentWardCode) {
+		return (
+			<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 lg:py-16 w-[25rem] h-[25.5rem] flex flex-col items-center justify-center">
+				<div className="flex flex-col items-center text-center w-full">
+					<h1 className="text-2xl font-bold text-gray-800 mb-1">
+						병동 입장 대기 중입니다.
+					</h1>
+					<p className="text-gray-400 text-lg mb-8">
+						관리자의 승인 후 입장이 가능합니다. <br />
+						병동 관리자에게 문의해주세요!
+					</p>
+					<div className="w-full mt-0 lg:mt-0 -mb-0"></div>
+					<button
+						onClick={handleLogoutButton}
+						className="w-full lg:w-[100px] px-3 py-2 bg-white text-gray-900 border border-gray-400 rounded-md hover:bg-gray-100 text-xs lg:text-sm h-[35px] ml-3"
+					>
+						로그아웃
+					</button>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 w-[25rem]">
