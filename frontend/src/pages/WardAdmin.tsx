@@ -39,8 +39,10 @@ const WardAdmin = () => {
 	const handleAddVirtualNurse = async () => {
 		try {
 			await addVirtualNurse();
+			// 임시 간호사 추가 후 병동 정보 다시 불러오기
+			const data = await wardService.getWardInfo();
+			setWardInfo(data);
 			toast.success("임시 간호사가 추가되었습니다.");
-			window.location.reload();
 		} catch (error) {
 			toast.error("임시 간호사 추가에 실패했습니다.");
 		}
