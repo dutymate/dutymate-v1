@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "../atoms/Button";
 import { Input } from "../atoms/Input";
+import { HospitalInfo } from "@/services/wardService";
+import PageLoadingSpinner from "../atoms/Loadingspinner";
 // import { useNavigate } from "react-router-dom";
 
 interface CreateWardFormProps {
 	onSubmit: (hospitalName: string, wardName: string) => Promise<void>;
+	onSearchHospitals: (searchTerm: string) => Promise<void>;
+	hospitals: HospitalInfo[];
+	isSearching: boolean;
 	initialSuccess?: boolean;
 }
 
@@ -15,6 +20,9 @@ interface FormErrors {
 
 const CreateWardForm = ({
 	onSubmit,
+	onSearchHospitals,
+	hospitals,
+	isSearching,
 	initialSuccess = false,
 }: CreateWardFormProps) => {
 	const [hospitalName, setHospitalName] = useState("");
@@ -23,24 +31,24 @@ const CreateWardForm = ({
 	const [isSuccess, setIsSuccess] = useState(initialSuccess);
 	const [errors, setErrors] = useState<FormErrors>({});
 	const [showDropdown, setShowDropdown] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
 	// const navigate = useNavigate();
-	const hospitals = [
-		{
-			name: "강북 삼성병원",
-			location: "서울",
-			address: "서울특별시 종로구 새문안로 29, (평동)",
-		},
-		{
-			name: "삼성서울병원",
-			location: "서울",
-			address: "서울특별시 강남구 일원로 81, (일원동, 삼성의료원)",
-		},
-		{
-			name: "SG삼성조은병원",
-			location: "충남",
-			address: "충청남도 천안시 서북구 불당25로 200, 2,3,4,5층 (불당동)",
-		},
-	];
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target as Node)
+			) {
+				setShowDropdown(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
 
 	const validateForm = () => {
 		const newErrors: FormErrors = {};
@@ -80,12 +88,22 @@ const CreateWardForm = ({
 		}
 	};
 
-	const handleHospitalNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setHospitalName(e.target.value);
+	const handleHospitalNameChange = async (
+		e: React.ChangeEvent<HTMLInputElement>,
+	) => {
+		const value = e.target.value;
+		setHospitalName(value);
+
+		if (value.trim() === "") {
+			setShowDropdown(false);
+			return;
+		}
+
 		setShowDropdown(true);
 		if (errors.hospitalName) {
 			setErrors((prev) => ({ ...prev, hospitalName: undefined }));
 		}
+		await onSearchHospitals(value);
 	};
 
 	const handleHospitalSelect = (hospital: string) => {
@@ -125,13 +143,14 @@ const CreateWardForm = ({
 
 	return (
 		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 lg:py-16 w-[25rem] flex flex-col items-center">
+			{isSearching && <PageLoadingSpinner />}
 			<form
 				noValidate
 				onSubmit={handleSubmit}
 				className="flex flex-col gap-6 w-full"
 			>
 				<div className="flex flex-col gap-4">
-					<div className="relative">
+					<div className="relative" ref={dropdownRef}>
 						<Input
 							id="hospital-name"
 							name="hospitalName"
@@ -144,18 +163,20 @@ const CreateWardForm = ({
 							required
 						/>
 						{showDropdown && (
-							<div className="absolute top-[calc(100%+0.5rem)] left-0 w-full bg-white border border-gray-200 rounded-md shadow-lg z-10">
+							<div className="absolute top-[calc(100%rem)] left-0 w-full bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
 								{hospitals
 									.filter((hospital) =>
-										hospital.name
+										hospital.hospitalName
 											.toLowerCase()
 											.includes(hospitalName.toLowerCase()),
 									)
 									.map((hospital) => (
 										<div
-											key={hospital.name}
+											key={hospital.hospitalName}
 											className="px-4 py-3 rounded-md cursor-pointer hover:bg-primary-10 active:bg-primary-10"
-											onClick={() => handleHospitalSelect(hospital.name)}
+											onClick={() =>
+												handleHospitalSelect(hospital.hospitalName)
+											}
 											onMouseEnter={(e) =>
 												e.currentTarget.classList.add("bg-primary-10")
 											}
@@ -173,9 +194,8 @@ const CreateWardForm = ({
 											}
 										>
 											<div className="flex items-center gap-2">
-												<span className="font-medium">{hospital.name}</span>
-												<span className="text-xs text-gray-500">
-													{hospital.location}
+												<span className="font-medium">
+													{hospital.hospitalName}
 												</span>
 											</div>
 											<div className="text-sm text-gray-500 mt-1">

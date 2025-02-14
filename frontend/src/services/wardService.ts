@@ -90,6 +90,12 @@ interface TempNurseResponse {
 	gender: "F" | "M";
 }
 
+export interface HospitalInfo {
+	hospitalName: string;
+	address: string;
+	sido: string;
+}
+
 // API 서비스
 export const wardService = {
 	/**
@@ -334,6 +340,29 @@ export const wardService = {
 	) => {
 		return axiosInstance
 			.put(`/ward/member/virtual/${memberId}/info`, data)
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	searchHospitals: (name: string) => {
+		return axiosInstance
+			.get<HospitalInfo[]>(`/ward/hospital`, {
+				params: { name },
+			})
 			.then((response) => response.data)
 			.catch((error) => {
 				if (error.code === "ERR_NETWORK") {

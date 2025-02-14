@@ -3,7 +3,7 @@ import NextTemplate from "../components/templates/NextTemplate";
 import CreateWardForm from "../components/organisms/CreateWardForm";
 import { useNavigate } from "react-router-dom";
 import useUserAuthStore from "../store/userAuthStore";
-import { wardService } from "../services/wardService";
+import { wardService, HospitalInfo } from "../services/wardService";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
@@ -12,6 +12,8 @@ const CreateWard = () => {
 	const navigate = useNavigate();
 	const userAuthStore = useUserAuthStore();
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+	const [hospitals, setHospitals] = useState<HospitalInfo[]>([]);
+	const [isSearching, setIsSearching] = useState(false);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -21,6 +23,24 @@ const CreateWard = () => {
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
+
+	const handleSearchHospitals = async (searchTerm: string) => {
+		if (!searchTerm.trim()) {
+			setHospitals([]);
+			return;
+		}
+
+		setIsSearching(true);
+		try {
+			const results = await wardService.searchHospitals(searchTerm);
+			setHospitals(results);
+		} catch (error) {
+			console.error("병원 검색 실패:", error);
+			toast.error("병원 검색에 실패했습니다");
+		} finally {
+			setIsSearching(false);
+		}
+	};
 
 	const handleCreateWard = async (hospitalName: string, wardName: string) => {
 		// console.log("handleCreateWard 함수 호출됨:", { hospitalName, wardName });
@@ -79,7 +99,12 @@ const CreateWard = () => {
 				<p className="text-gray-600 text-base mt-8 mb-8">
 					병동 생성을 위한 기본 정보를 입력해주세요.
 				</p>
-				<CreateWardForm onSubmit={handleCreateWard} />
+				<CreateWardForm
+					onSubmit={handleCreateWard}
+					onSearchHospitals={handleSearchHospitals}
+					hospitals={hospitals}
+					isSearching={isSearching}
+				/>
 			</div>
 		</Template>
 	);
