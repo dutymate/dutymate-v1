@@ -16,6 +16,7 @@ import net.dutymate.api.entity.Rule;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
+import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +29,11 @@ public class NurseScheduler {
 	private static final int MAX_ITERATIONS = 50000;
 	private static final int MAX_NO_IMPROVEMENT = 1000;
 	private static final Random random = new Random();
+	private final WardScheduleRepository wardScheduleRepository;
+
+	public NurseScheduler(WardScheduleRepository wardScheduleRepository) {
+		this.wardScheduleRepository = wardScheduleRepository;
+	}
 
 	@Getter
 	@Builder
@@ -87,7 +93,7 @@ public class NurseScheduler {
 		}
 	}
 
-	public void generateSchedule(WardSchedule wardSchedule,
+	public WardSchedule generateSchedule(WardSchedule wardSchedule,
 		Rule rule,
 		List<WardMember> wardMembers,
 		List<WardSchedule.NurseShift> prevNurseShifts,
@@ -136,7 +142,7 @@ public class NurseScheduler {
 			}
 		}
 
-		applyFinalSchedule(wardSchedule, bestSolution, currentMemberId);
+		return applyFinalSchedule(wardSchedule, bestSolution, currentMemberId);
 	}
 
 	private Map<Long, String> getPreviousMonthSchedules(List<WardSchedule.NurseShift> prevNurseShifts) {
@@ -552,7 +558,7 @@ public class NurseScheduler {
 			));
 	}
 
-	private void applyFinalSchedule(WardSchedule wardSchedule, Solution solution, Long currentMemberId) {
+	private WardSchedule applyFinalSchedule(WardSchedule wardSchedule, Solution solution, Long currentMemberId) {
 		List<WardSchedule.NurseShift> nurseShifts = solution.getNurses().stream()
 			.map(nurse -> WardSchedule.NurseShift.builder()
 				.memberId(nurse.getId())
@@ -563,19 +569,30 @@ public class NurseScheduler {
 		WardSchedule.History history = WardSchedule.History.builder()
 			.memberId(currentMemberId)
 			.name("auto")
-			.before("D")
-			.after("E")
+			.before("X")
+			.after("X")
 			.modifiedDay(0)
 			.isAutoCreated(true)
 			.build();
 
 		WardSchedule.Duty newDuty = WardSchedule.Duty.builder()
-			.idx(wardSchedule.getNowIdx())
+			.idx(wardSchedule.getNowIdx() + 1)
 			.duty(nurseShifts)
 			.history(history)
 			.build();
 
-		wardSchedule.getDuties().set(wardSchedule.getNowIdx(), newDuty);
+		List<WardSchedule.Duty> duties = wardSchedule.getDuties().subList(0, wardSchedule.getNowIdx() + 1);
+
+		duties.add(newDuty);
+
+		return WardSchedule.builder()
+			.id(wardSchedule.getId())
+			.wardId(wardSchedule.getWardId())
+			.year(wardSchedule.getYear())
+			.month(wardSchedule.getMonth())
+			.nowIdx(wardSchedule.getNowIdx() + 1)
+			.duties(duties)
+			.build();
 	}
 
 	private Solution generateNeighborSolution(Solution current) {

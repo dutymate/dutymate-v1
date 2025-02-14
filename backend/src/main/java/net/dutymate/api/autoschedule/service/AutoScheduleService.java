@@ -48,7 +48,7 @@ public class AutoScheduleService {
 	private final NurseScheduler nurseScheduler;
 
 	@Transactional
-	public ResponseEntity<String> generateAutoSchedule(YearMonth yearMonth, Member member) {
+	public void generateAutoSchedule(YearMonth yearMonth, Member member) {
 
 		Long wardId = member.getWardMember().getWard().getWardId();
 		//전월 달 근무 호출
@@ -78,13 +78,15 @@ public class AutoScheduleService {
 		Long memberId = member.getMemberId();
 
 		List<Request> requests = requestRepository.findAllWardRequests(member.getWardMember().getWard());
-		nurseScheduler.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth, memberId,
+
+		WardSchedule updateWardSchedule = nurseScheduler.generateSchedule(wardSchedule, rule, wardMembers,
+			prevNurseShifts, yearMonth, memberId,
 			requests);
 
-		// scheduleMaker.scheduleMake(wardSchedule, rule, wardMembers, prevWardSchedule, yearMonth);
+		//scheduleMaker.scheduleMake(wardSchedule, rule, wardMembers, prevWardSchedule, yearMonth);
 
-		wardScheduleRepository.save(wardSchedule);
+		wardScheduleRepository.save(updateWardSchedule);
 
-		return ResponseEntity.ok("자동 생성 완료");
+		ResponseEntity.ok("자동 생성 완료");
 	}
 }

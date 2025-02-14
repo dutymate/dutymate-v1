@@ -97,11 +97,11 @@ public class RequestService {
 
 		//      IF) 승인 						 THEN) 무조건 요청 내용대로 듀티표 업데이트
 		// ELSE IF) 기존 칸 Shift == 요청 Shift	 THEN) X로 변경
-		if (changedStatus == RequestStatus.ACCEPTED) {
-			shiftUtil.changeShift(year, month, date, requestMember, request.getRequestShift());
+		if (changedStatus == RequestStatus.ACCEPTED && prevShift != request.getRequestShift()) {
+			shiftUtil.changeShift(year, month, date, requestMember, prevShift, request.getRequestShift());
 
 		} else if (prevShift == request.getRequestShift()) {
-			shiftUtil.changeShift(year, month, date, requestMember, Shift.X);
+			shiftUtil.changeShift(year, month, date, requestMember, prevShift, Shift.X);
 		}
 	}
 }

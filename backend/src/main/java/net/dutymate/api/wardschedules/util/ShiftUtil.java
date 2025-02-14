@@ -42,7 +42,7 @@ public class ShiftUtil {
 	}
 
 	// 병동 스케줄에서 Shift 변경 메서드
-	public void changeShift(int year, int month, int date, Member member, Shift shift) {
+	public void changeShift(int year, int month, int date, Member member, Shift prevShift, Shift shift) {
 		Ward ward = member.getWardMember().getWard();
 		WardSchedule wardSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(), year, month)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 병동입니다."));
@@ -67,13 +67,22 @@ public class ShiftUtil {
 				prev.changeShifts(after);
 			});
 
-		wardSchedule.setNowIdx(wardSchedule.getNowIdx() + 1);
 		// 기존 병동 스케줄에 새로운 스냅샷 추가 및 저장
 		wardSchedule.getDuties().add(WardSchedule.Duty.builder()
 			.idx(wardSchedule.getNowIdx() + 1)
 			.duty(newDuty)
-			.history(initialDutyGenerator.createInitialHistory())
+			.history(WardSchedule.History.builder()
+				.memberId(member.getMemberId())
+				.name(member.getName())
+				.before(String.valueOf(prevShift))
+				.after(String.valueOf(shift))
+				.modifiedDay(date)
+				.isAutoCreated(false)
+				.build()
+			)
 			.build());
+
+		wardSchedule.setNowIdx(wardSchedule.getNowIdx() + 1);
 		wardScheduleRepository.save(wardSchedule);
 	}
 }
