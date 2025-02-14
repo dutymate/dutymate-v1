@@ -11,7 +11,6 @@ import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 
-import net.dutymate.api.entity.Member;
 import net.dutymate.api.enumclass.Shift;
 import net.dutymate.api.member.service.MemberService;
 import net.dutymate.api.rule.dto.RuleResponseDto;
@@ -34,9 +33,11 @@ public class DutyAutoCheck {
 	public List<WardScheduleResponseDto.Issue> check(List<WardScheduleResponseDto.NurseShifts> nurseShiftsDto, int year,
 		int month) {
 		List<WardScheduleResponseDto.Issue> issues = new ArrayList<>();
+		RuleResponseDto rule = ruleService.getRule(
+			memberService.getMemberById(nurseShiftsDto.getFirst().getMemberId()));
 
 		for (WardScheduleResponseDto.NurseShifts ns : nurseShiftsDto) {
-			List<WardScheduleResponseDto.Issue> personalIssues = checkPersonalDuty(ns);
+			List<WardScheduleResponseDto.Issue> personalIssues = checkPersonalDuty(ns, rule);
 			if (!personalIssues.isEmpty()) {
 				issues.addAll(personalIssues);
 			}
@@ -45,12 +46,11 @@ public class DutyAutoCheck {
 		return issues;
 	}
 
-	private List<WardScheduleResponseDto.Issue> checkPersonalDuty(WardScheduleResponseDto.NurseShifts ns) {
+	private List<WardScheduleResponseDto.Issue> checkPersonalDuty(WardScheduleResponseDto.NurseShifts ns,
+		RuleResponseDto rule) {
 
 		List<WardScheduleResponseDto.Issue> result = new ArrayList<>();
 		String shifts = ns.getPrevShifts().concat(ns.getShifts());
-		Member member = memberService.getMemberById(ns.getMemberId());
-		RuleResponseDto rule = ruleService.getRule(member);
 		String name = ns.getName();
 		int prevShfitsDay = ns.getPrevShifts().length();
 
