@@ -7,6 +7,8 @@ import { Badge } from "../atoms/Badge";
 import { Dropdown } from "../atoms/Dropdown";
 import useWardStore from "../../store/wardStore";
 import { toast } from "react-toastify";
+import useUserAuthStore from "@/store/userAuthStore";
+import { useNavigate } from "react-router-dom";
 
 interface WardAdminRowCardProps {
 	nurse: Nurse;
@@ -46,6 +48,9 @@ const WardAdminRowCard = ({
 	const genderDropdownRef = useRef<HTMLDivElement>(null);
 	const gradeDropdownRef = useRef<HTMLDivElement>(null);
 
+	const userAuthStore = useUserAuthStore();
+	const navigate = useNavigate();
+	
 	// Add this to verify data flow
 	useEffect(() => {
 		// console.log("Nurse data:", nurse);
@@ -195,14 +200,32 @@ const WardAdminRowCard = ({
 
 	const handleRemoveNurse = async () => {
 		try {
+			// 관리자 본인 : 병동 관리 페이지에서 내보내기 불가(마이페이지로 이동)
+			if(nurse.memberId === userAuthStore.userInfo?.memberId){
+				const confirm = window.confirm("관리자는 마이페이지에서 병동 나가기를 통해 병동을 나갈 수 있습니다. 마이페이지로 이동하시겠습니까?")
+				if(confirm) {
+					navigate("/my-page");
+				}
+				return;
+			}
+
+			// 본인 제외 관리자 : 병동 내보내기 시, confirm 띄우기기
+			if(nurse.memberId !== userAuthStore.userInfo?.memberId && nurse.role === "HN"){
+				const confirm = window.confirm("관리자를 내보내시겠습니까?");
+				if(confirm) {
+					await removeNurse(nurse.memberId);
+				}
+				return;
+			}
+			// 그 외 내보내기
 			await removeNurse(nurse.memberId);
 			toast.success("간호사가 병동에서 제외되었습니다");
 		} catch (error) {
 			if (error instanceof Error && error.message === "LAST_HN") {
-				toast.error("새로운 관리자를 임명하세요");
+				toast.error("새로운 관리자를 임명하세요.");
 				return;
 			}
-			toast.error("간호사 제외에 실패했습니다");
+			toast.error("간호사 제외에 실패했습니다.");
 		}
 	};
 
