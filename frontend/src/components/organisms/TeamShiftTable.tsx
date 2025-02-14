@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import { Button } from "../atoms/Button";
 // import { Icon } from "../atoms/Icon";
@@ -6,6 +6,7 @@ import ReqShiftModal from "./ReqShiftModal";
 import { dutyService } from "../../services/dutyService"; //실제 API 호출에 필요한 axios import
 import { toast } from "react-toastify";
 import { useLoadingStore } from "@/store/loadingStore";
+import { toPng } from "html-to-image";
 // import mockData from "../../services/response-json/duty/GetApiDutyWard.json"; // 임시 데이터 import
 
 // interface DutyMember {
@@ -45,6 +46,7 @@ const TeamShiftTable = () => {
 			month: now.getMonth() + 1,
 		};
 	});
+	const tableRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		const fetchWardDuty = async () => {
@@ -83,27 +85,33 @@ const TeamShiftTable = () => {
 		return date.getDay() === 0 || date.getDay() === 6;
 	};
 
-	// const handlePrevMonth = () => {
-	// 	setCurrentDate((prev) => {
-	// 		if (prev.month === 1) {
-	// 			return { year: prev.year - 1, month: 12 };
-	// 		}
-	// 		return { year: prev.year, month: prev.month - 1 };
-	// 	});
-	// };
+	// 근무표 다운로드 기능
+	const handleDownloadWardSchedule = async () => {
+		const tableElement = tableRef.current?.querySelector(".duty-table-content");
+		if (!tableElement) return;
 
-	// const handleNextMonth = () => {
-	// 	setCurrentDate((prev) => {
-	// 		if (prev.month === 12) {
-	// 			return { year: prev.year + 1, month: 1 };
-	// 		}
-	// 		return { year: prev.year, month: prev.month + 1 };
-	// 	});
-	// };
+		try {
+			const dataUrl = await toPng(tableElement as HTMLElement, {
+				quality: 1.0,
+				pixelRatio: 2,
+				width: tableElement.scrollWidth + 5,
+				height: tableElement.scrollHeight + 5,
+				backgroundColor: "#FFFFFF",
+				style: {
+					borderCollapse: "collapse",
+				},
+			});
 
-	// 근무표 다운로드 기능능
-	const handleDownloadWardSchedule = () => {
-		toast.info("준비 중입니다.");
+			const link = document.createElement("a");
+			link.download = `듀티표_${currentDate.year}년_${currentDate.month}월.png`;
+			link.href = dataUrl;
+			link.click();
+
+			toast.success("듀티표가 다운로드되었습니다.");
+		} catch (error) {
+			console.error("Download error:", error);
+			toast.error("듀티표 다운로드에 실패했습니다.");
+		}
 	};
 
 	const sortedDuty = wardDuty.duty.sort((a, b) => {
@@ -116,7 +124,10 @@ const TeamShiftTable = () => {
 	});
 
 	return (
-		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6">
+		<div
+			ref={tableRef}
+			className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6"
+		>
 			<div className="flex flex-col sm:flex-row items-center justify-between mb-4">
 				<div className="w-[180px] hidden sm:block">{/* 왼쪽 여백 공간 */}</div>
 				<div className="flex items-center gap-4 sm:gap-14 mb-4 sm:mb-0">
@@ -158,64 +169,66 @@ const TeamShiftTable = () => {
 				</div>
 			</div>
 			<div className="overflow-x-auto relative max-w-full md:max-w-none -mx-6 md:mx-0 px-6 md:px-0">
-				<table className="w-full border-separate border-spacing-0">
-					<thead>
-						<tr className="bg-gray-50">
-							<th className="w-[120px] px-2 py-2 sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white">
-								<span className="text-gray-50"></span>
-							</th>
-							{days.map((day) => (
-								<th
-									key={day}
-									className={`w-[calc((100%-120px)/31)] px-1 py-2 ${
-										isWeekend(wardDuty.year, wardDuty.month, day)
-											? "text-red-500"
-											: ""
-									} font-normal`}
-								>
-									{day}
+				<div className="duty-table-content">
+					<table className="w-full border-separate border-spacing-0">
+						<thead>
+							<tr className="bg-gray-50">
+								<th className="w-[120px] px-2 py-2 sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white">
+									<span className="text-gray-50"></span>
 								</th>
-							))}
-						</tr>
-					</thead>
-					<tbody>
-						{sortedDuty.map((member) => (
-							<tr key={member.memberId} className="border-b border-gray-100">
-								<td className="w-[120px] pl-2 pr-2 py-2 font-medium sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white text-center group">
-									<div className="bg-gray-50 rounded-lg px-2 py-0.5 relative">
-										<span className="block truncate max-w-[120px]">
-											{member.name}
-										</span>
-										{member.name.length > 3 && (
-											<div className="absolute left-1/2 -translate-x-1/2 -top-8 hidden group-hover:block bg-gray-800 text-white px-2 py-1 rounded text-sm whitespace-nowrap z-30">
-												{member.name}
-											</div>
-										)}
-									</div>
-								</td>
-								{member.shifts.split("").map((shift, index) => (
-									<td
-										key={index}
-										className="w-[calc((100%-120px)/31)] px-1 py-1.5 text-center"
+								{days.map((day) => (
+									<th
+										key={day}
+										className={`w-[calc((100%-120px)/31)] px-1 py-2 ${
+											isWeekend(wardDuty.year, wardDuty.month, day)
+												? "text-red-500"
+												: ""
+										} font-normal`}
 									>
-										<DutyBadgeEng
-											type={
-												(shift === "X" ? "X" : shift) as
-													| "D"
-													| "E"
-													| "N"
-													| "O"
-													| "X"
-											}
-											variant="letter"
-											size="sm"
-										/>
-									</td>
+										{day}
+									</th>
 								))}
 							</tr>
-						))}
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							{sortedDuty.map((member) => (
+								<tr key={member.memberId} className="border-b border-gray-100">
+									<td className="w-[120px] pl-2 pr-2 py-2 font-medium sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white text-center group">
+										<div className="bg-gray-50 rounded-lg px-2 py-0.5 relative">
+											<span className="block truncate max-w-[120px]">
+												{member.name}
+											</span>
+											{member.name.length > 3 && (
+												<div className="absolute left-1/2 -translate-x-1/2 -top-8 hidden group-hover:block bg-gray-800 text-white px-2 py-1 rounded text-sm whitespace-nowrap z-30">
+													{member.name}
+												</div>
+											)}
+										</div>
+									</td>
+									{member.shifts.split("").map((shift, index) => (
+										<td
+											key={index}
+											className="w-[calc((100%-120px)/31)] px-1 py-1.5 text-center"
+										>
+											<DutyBadgeEng
+												type={
+													(shift === "X" ? "X" : shift) as
+														| "D"
+														| "E"
+														| "N"
+														| "O"
+														| "X"
+												}
+												variant="letter"
+												size="sm"
+											/>
+										</td>
+									))}
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
 			</div>
 			{isReqModalOpen && (
 				<div
