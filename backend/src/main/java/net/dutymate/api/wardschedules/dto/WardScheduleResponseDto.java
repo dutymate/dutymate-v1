@@ -2,6 +2,8 @@ package net.dutymate.api.wardschedules.dto;
 
 import java.util.List;
 
+import net.dutymate.api.entity.Request;
+import net.dutymate.api.enumclass.RequestStatus;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.enumclass.Shift;
 import net.dutymate.api.records.YearMonth;
@@ -22,10 +24,11 @@ public class WardScheduleResponseDto {
 	private List<NurseShifts> duty;
 	private List<Issue> issues;
 	private List<History> histories;
+	private List<RequestDto> requests;
 
 	public static WardScheduleResponseDto of(
 		String id, YearMonth yearMonth, Integer invalidCnt, List<NurseShifts> duty, List<Issue> issues,
-		List<History> histories) {
+		List<History> histories, List<RequestDto> requests) {
 		return WardScheduleResponseDto.builder()
 			.id(id)
 			.year(yearMonth.year())
@@ -34,6 +37,7 @@ public class WardScheduleResponseDto {
 			.duty(duty)
 			.issues(issues)
 			.histories(histories)
+			.requests(requests)
 			.build();
 	}
 
@@ -78,5 +82,26 @@ public class WardScheduleResponseDto {
 		private Shift after;
 		private Integer modifiedDay;
 		private Boolean isAutoCreated;
+	}
+
+	@Data
+	@Builder
+	public static class RequestDto {
+
+		private Long requestId;
+		private Long memberId;
+		private String name;
+		private Integer date;
+		private RequestStatus status;
+
+		public static RequestDto of(Request request) {
+			return RequestDto.builder()
+				.requestId(request.getRequestId())
+				.memberId(request.getWardMember().getMember().getMemberId())
+				.name(request.getWardMember().getMember().getName())
+				.date(request.getRequestDate().getDate())
+				.status(request.getStatus())
+				.build();
+		}
 	}
 }

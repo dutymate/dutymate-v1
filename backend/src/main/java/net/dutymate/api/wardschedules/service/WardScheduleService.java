@@ -17,10 +17,12 @@ import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Request;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
+import net.dutymate.api.enumclass.RequestStatus;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.enumclass.Shift;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
+import net.dutymate.api.request.repository.RequestRepository;
 import net.dutymate.api.request.repository.RequestRepository;
 import net.dutymate.api.request.util.UpdateRequestStatuses;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
@@ -41,10 +43,10 @@ public class WardScheduleService {
 
 	private final MemberRepository memberRepository;
 	private final WardScheduleRepository wardScheduleRepository;
-	private final RequestRepository requestRepository;
 	private final DutyAutoCheck dutyAutoCheck;
 	private final InitialDutyGenerator initialDutyGenerator;
 	private final UpdateRequestStatuses updateRequestStatuses;
+	private final RequestRepository requestRepository;
 
 	@Transactional
 	public WardScheduleResponseDto getWardSchedule(Member member, final YearMonth yearMonth, Integer nowIdx) {
@@ -129,7 +131,19 @@ public class WardScheduleService {
 		// History 구하기
 		List<WardScheduleResponseDto.History> histories = findHistory(wardSchedule.getDuties());
 
-		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues, histories);
+		// 승인, 대기 상태인 요청 구하기
+		List<WardScheduleResponseDto.RequestDto> requests = findRequest(ward);
+
+		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues, histories,
+			requests);
+	}
+
+	private List<WardScheduleResponseDto.RequestDto> findRequest(Ward ward) {
+		return requestRepository.findAllWardRequests(ward)
+			.stream()
+			.filter(o -> o.getStatus() != RequestStatus.DENIED)
+			.map(WardScheduleResponseDto.RequestDto::of)
+			.toList();
 	}
 
 	private boolean isInNextMonth(YearMonth yearMonth) {
@@ -261,10 +275,14 @@ public class WardScheduleService {
 		// nowIdx 이하의 모든 history 찾아서 List로 반환
 		List<WardScheduleResponseDto.History> histories = findHistory(duties);
 
+		// 승인, 대기 상태인 요청 구하기
+		List<WardScheduleResponseDto.RequestDto> requestDtoList = findRequest(ward);
+
 		List<Request> requests = requestRepository.findAllWardRequests(member.getWardMember().getWard());
 		updateRequestStatuses.updateRequestStatuses(requests, updatedWardSchedule, yearMonth);
 
-		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues, histories);
+		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues, histories,
+			requestDtoList);
 	}
 
 	private List<WardScheduleResponseDto.History> findHistory(List<WardSchedule.Duty> duties) {
