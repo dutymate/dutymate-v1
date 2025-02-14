@@ -1,17 +1,18 @@
 // import { useState } from "react";
 import WardAdminRowCard from "./WardAdminRowCard";
-import { Nurse } from "../../services/wardService";
+// import { Nurse } from "../../services/wardService";
 // import { wardService } from "../../services/wardService";
 
 import { toast } from "react-toastify";
 import useWardStore from "../../store/wardStore";
 
 interface WardAdminTableProps {
-	nurses: Nurse[];
+	// nurses: Nurse[];
 }
 
-const WardAdminTable = ({ nurses }: WardAdminTableProps) => {
-	const { updateNurse, syncWithServer } = useWardStore();
+const WardAdminTable = ({}: WardAdminTableProps) => {
+	const { updateNurse, syncWithServer, getSortedNurses } = useWardStore();
+	const sortedNurses = getSortedNurses();
 	// const [setSelectedNurses] = useState<string[]>([]);
 	// const [selectedNurses] = useState<string[]>([]);
 
@@ -66,7 +67,7 @@ const WardAdminTable = ({ nurses }: WardAdminTableProps) => {
 					</div>
 
 					{/* Nurse List */}
-					{nurses.map((nurse) => (
+					{sortedNurses.map((nurse) => (
 						<WardAdminRowCard
 							key={nurse.memberId}
 							nurse={nurse}

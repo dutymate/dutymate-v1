@@ -10,6 +10,8 @@ import { dutyService } from "../../services/dutyService";
 import { toast } from "react-toastify";
 import useShiftStore from "../../store/shiftStore";
 import FaultLayer from "../atoms/FaultLayer";
+import { wardService } from "../../services/wardService";
+import { Nurse } from "../../services/wardService";
 // import ViolationMessage from "../atoms/ViolationMessage";
 
 const THROTTLE_DELAY = 1000; // 1초
@@ -77,6 +79,7 @@ const ShiftAdminTable = ({
 	const selectedCell = useShiftStore((state) => state.selectedCell);
 	const setSelectedCell = useShiftStore((state) => state.setSelectedCell);
 	const updateShift = useShiftStore((state) => state.updateShift);
+	const setNurseGrades = useShiftStore((state) => state.setNurseGrades);
 
 	// Add hover state management at component level
 	const [hoveredCell, setHoveredCell] = useState<{
@@ -467,6 +470,28 @@ const ShiftAdminTable = ({
 			window.history.replaceState({}, "", url.toString());
 		}
 	}, []); // 컴포넌트 마운트 시 한 번만 실행
+
+	// Fetch ward info and set nurse grades
+	useEffect(() => {
+		const fetchWardInfo = async () => {
+			try {
+				const wardInfo = await wardService.getWardInfo();
+				const grades: Record<number, number> = {};
+
+				wardInfo.nurses.forEach((nurse: Nurse) => {
+					grades[nurse.memberId] = nurse.grade;
+				});
+
+				setNurseGrades(grades);
+				// This will trigger a re-sort in the store
+				onUpdate(year, month);
+			} catch (error) {
+				console.error("Failed to fetch ward info:", error);
+			}
+		};
+
+		fetchWardInfo();
+	}, []);
 
 	return (
 		<>

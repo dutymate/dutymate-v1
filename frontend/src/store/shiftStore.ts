@@ -31,6 +31,8 @@ export interface ShiftState {
 	updateShift: (params: UpdateQueueItem["params"]) => Promise<void>;
 	setSelectedCell: (cell: { row: number; col: number } | null) => void;
 	setDutyInfo: (data: DutyInfo) => void;
+	nurseGrades: Record<number, number>;
+	setNurseGrades: (grades: Record<number, number>) => void;
 }
 
 const BATCH_DELAY = 500; // 0.5초 동안 수집된 업데이트를 배치로 처리
@@ -42,9 +44,11 @@ const useShiftStore = create<ShiftState>((set, get) => ({
 	selectedCell: null,
 	updateQueue: [],
 	isProcessing: false,
+	nurseGrades: {},
 
 	setSelectedCell: (cell) => set({ selectedCell: cell }),
 	setDutyInfo: (data) => set({ dutyInfo: data }),
+	setNurseGrades: (grades) => set({ nurseGrades: grades }),
 
 	fetchDutyInfo: async (year?: number, month?: number, historyIdx?: number) => {
 		try {
@@ -56,7 +60,25 @@ const useShiftStore = create<ShiftState>((set, get) => ({
 			if (typeof historyIdx === "number") params.history = historyIdx;
 
 			const data = await dutyService.getDuty(params);
-			set({ dutyInfo: data, error: null });
+
+			// Sort with nurseGrades if available
+			const nurseGrades = get().nurseGrades;
+			set({
+				dutyInfo: {
+					...data,
+					duty: data.duty.sort((a, b) => {
+						// HN should always be at the top
+						if (a.role === "HN" && b.role !== "HN") return -1;
+						if (a.role !== "HN" && b.role === "HN") return 1;
+
+						// Sort by grade if available
+						const gradeA = nurseGrades[a.memberId] || 0;
+						const gradeB = nurseGrades[b.memberId] || 0;
+						return gradeB - gradeA;
+					}),
+				},
+				error: null,
+			});
 		} catch (err) {
 			console.error("Error fetching duty info:", err);
 			set({
