@@ -14,6 +14,6 @@ variable "health_check_path" {
   type = string
 }
 
-variable "api_cert_arn" {
+variable "alb_certificate_arn" {
   type = string
 }

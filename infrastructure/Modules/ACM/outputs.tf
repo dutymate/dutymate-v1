@@ -1,15 +1,7 @@
-output "frontend_cert_arn" {
-  value = aws_acm_certificate.frontend_cert.arn
+output "cloudfront_certificate_arn" {
+  value = aws_acm_certificate.cloudfront_certificate.arn
 }
 
-output "frontend_cert_domain_validation_options" {
-  value = aws_acm_certificate.frontend_cert.domain_validation_options
-}
-
-output "api_cert_arn" {
-  value = aws_acm_certificate.api_cert.arn
-}
-
-output "api_cert_domain_validation_options" {
-  value = aws_acm_certificate.api_cert.domain_validation_options
+output "alb_certificate_arn" {
+  value = aws_acm_certificate.alb_certificate.arn
 }
