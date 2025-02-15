@@ -74,18 +74,18 @@ const ExtraInfo = () => {
 					navigate("/enter-ward");
 				} else {
 					console.error("Invalid role in response:", response);
-					toast.error("역할 정보가 올바르지 않습니다");
+					toast.error("역할 정보가 올바르지 않습니다.");
 				}
 			}, 1000);
 		} catch (error) {
 			console.error("부가 정보 제출 중 에러 발생:", error);
 			if (error instanceof Error) {
 				if (error.message === "서버 연결 실패") {
-					toast.error("잠시 후 다시 시도해주세요");
+					toast.error("잠시 후 다시 시도해주세요.");
 					return;
 				}
 			}
-			toast.error("부가 정보 저장에 실패했습니다");
+			toast.error("부가 정보 저장에 실패했습니다.");
 		}
 	};
 

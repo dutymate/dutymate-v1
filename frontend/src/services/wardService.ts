@@ -339,7 +339,7 @@ export const wardService = {
 		data: { name?: string; gender?: "F" | "M"; grade?: number },
 	) => {
 		return axiosInstance
-			.put(`/ward/member/virtual/${memberId}/info`, data)
+			.put(`/ward/member/virtual/${memberId}`, data)
 			.then((response) => response.data)
 			.catch((error) => {
 				if (error.code === "ERR_NETWORK") {

@@ -265,22 +265,26 @@ const WardAdminRowCard = ({
 	};
 
 	const handleGenderChange = async (gender: "F" | "M") => {
-		try {
-			await updateVirtualNurseInfo(nurse.memberId, { gender });
-			setIsGenderDropdownOpen(false);
-			toast.success("성별이 수정되었습니다");
-		} catch (error) {
-			toast.error("성별 수정에 실패했습니다");
+		if (!nurse.isSynced && gender !== nurse.gender) {
+			try {
+				await updateVirtualNurseInfo(nurse.memberId, { gender });
+				setIsGenderDropdownOpen(false);
+				toast.success("성별이 수정되었습니다.");
+			} catch (error) {
+				toast.error("성별 수정에 실패했습니다.");
+			}
 		}
 	};
 
 	const handleGradeChange = async (grade: number) => {
-		try {
-			await updateVirtualNurseInfo(nurse.memberId, { grade });
-			setIsGradeDropdownOpen(false);
-			toast.success("연차가 수정되었습니다");
-		} catch (error) {
-			toast.error("연차 수정에 실패했습니다");
+		if (!nurse.isSynced && grade !== nurse.grade) {
+			try {
+				await updateVirtualNurseInfo(nurse.memberId, { grade });
+				setIsGradeDropdownOpen(false);
+				toast.success("연차가 수정되었습니다.");
+			} catch (error) {
+				toast.error("연차 수정에 실패했습니다.");
+			}
 		}
 	};
 

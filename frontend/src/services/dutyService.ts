@@ -170,8 +170,8 @@ export const dutyService = {
 							window.location.href = "/login";
 							break;
 						case 400:
-							console.error("잘못된 요청입니다:", error);
-							throw new Error("잘못된 요청입니다");
+							console.error("잘못된 요청입니다.:", error);
+							throw new Error("잘못된 요청입니다.");
 						default:
 							console.error("Error occurred:", error);
 							throw error;
@@ -255,6 +255,40 @@ export const dutyService = {
 			.get("/duty", { params })
 			.then((response) => {
 				return response.data as DutyInfo;
+			})
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error(
+						"서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.",
+					);
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							console.error("Error occurred:", error);
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	/**
+	 * 근무표 초기화하기
+	 * @param year - 년도
+	 * @param month - 월
+	 */
+	resetDuty: (year: number, month: number) => {
+		return axiosInstance
+			.post("/duty/reset", null, {
+				params: { year, month },
+			})
+			.then((response) => {
+				return response.data;
 			})
 			.catch((error) => {
 				if (error.code === "ERR_NETWORK") {

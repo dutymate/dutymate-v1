@@ -20,6 +20,7 @@ import {
 } from "react-icons/md";
 import { BsThreeDotsVertical, BsFunnel } from "react-icons/bs";
 import { GrUndo } from "react-icons/gr";
+import { GrPowerReset } from "react-icons/gr";
 
 const iconComponents = {
 	alert: HiExclamationCircle,
@@ -50,6 +51,7 @@ const iconComponents = {
 	close: IoCloseOutline,
 	history: MdHistory,
 	chevronDown: FaChevronDown,
+	reset: GrPowerReset,
 };
 
 export type IconName =

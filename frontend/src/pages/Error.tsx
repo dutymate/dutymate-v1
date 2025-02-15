@@ -27,7 +27,7 @@ const Error = () => {
 				{/* Error Message */}
 				<div className="space-y-4">
 					<h1 className="text-2xl font-bold text-base-foreground">
-						페이지를 찾을 수 없습니다
+						페이지를 찾을 수 없습니다.
 					</h1>
 					<p className="text-base-foreground/70">
 						요청하신 페이지를 찾을 수 없거나 접근 권한이 없습니다.
