@@ -1,9 +1,13 @@
 package net.dutymate.api.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import net.dutymate.api.entity.community.Board;
+import net.dutymate.api.entity.community.BoardLikes;
+import net.dutymate.api.entity.community.Comment;
 import net.dutymate.api.enumclass.Gender;
 import net.dutymate.api.enumclass.Provider;
 import net.dutymate.api.enumclass.Role;
@@ -17,6 +21,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import lombok.AccessLevel;
@@ -69,6 +74,15 @@ public class Member {
 
 	@OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
 	private WardMember wardMember;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Board> boardList;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Comment> commentList;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<BoardLikes> boardLikesList;
 
 	// 멤버 초기값 설정 (닉네임, 생성시각, 활성화여부)
 	@PrePersist
