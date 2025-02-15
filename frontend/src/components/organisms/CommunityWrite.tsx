@@ -4,9 +4,23 @@
 // import { Button } from "../atoms/Button";
 import { BsImage } from "react-icons/bs";
 import { CommunityRegisterButton } from "../atoms/Button";
+import { useRef, useState } from "react";
 
 const CommunityWrite = () => {
 	const categories = ["일상글", "간호지식 Q&A", "이직 정보"];
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [selectedFileName, setSelectedFileName] = useState<string>("");
+
+	const handleImageClick = () => {
+		fileInputRef.current?.click();
+	};
+
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			setSelectedFileName(file.name);
+		}
+	};
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -54,10 +68,22 @@ const CommunityWrite = () => {
 				<div className="flex gap-4">
 					<div className="w-20 shrink-0" />
 					<div className="flex items-center gap-2">
-						<button className="p-2 hover:bg-gray-100 rounded-lg">
+						<input
+							type="file"
+							ref={fileInputRef}
+							className="hidden"
+							accept="image/*"
+							onChange={handleFileChange}
+						/>
+						<button
+							onClick={handleImageClick}
+							className="p-2 hover:bg-gray-100 rounded-lg"
+						>
 							<BsImage className="w-6 h-6 text-gray-600" />
 						</button>
-						<span className="text-gray-400 text-sm">파일명.jpg</span>
+						<span className="text-gray-400 text-sm">
+							{selectedFileName || "이미지를 선택해주세요"}
+						</span>
 					</div>
 				</div>
 			</div>

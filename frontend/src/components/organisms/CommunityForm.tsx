@@ -14,6 +14,11 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 	const [selectedCategory, setSelectedCategory] = useState("전체글");
 	const location = useLocation();
 
+	// 컴포넌트 마운트 시 상단으로 스크롤
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, []);
+
 	useEffect(() => {
 		// location이 변경될 때마다 카테고리를 기본값으로 리셋
 		setSelectedCategory("전체글");
