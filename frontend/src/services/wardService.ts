@@ -96,6 +96,13 @@ export interface HospitalInfo {
 	sido: string;
 }
 
+export interface WaitingNurseInfo {
+	memberId: number;
+	grade: number;
+	gender: string;
+	name: string;
+}
+
 // API 서비스
 export const wardService = {
 	/**
@@ -363,6 +370,96 @@ export const wardService = {
 			.get<HospitalInfo[]>(`/ward/hospital`, {
 				params: { name },
 			})
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	getNurseWaitList: () => {
+		return axiosInstance
+			.get<WaitingNurseInfo[]>(`/ward/enter`)
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	deniedWaitingNurse: (memberId: number) => {
+		return axiosInstance
+			.post(`/ward/member/${memberId}/denied`)
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	connectWithEnterMember: (
+		enterMemberId: number,
+		tempMemberId: { tempMemberId: number },
+	) => {
+		console.log("enterMemberId :>> ", enterMemberId);
+		console.log("tempMemberId :>> ", tempMemberId);
+
+		return axiosInstance
+			.post(`/ward/member/${enterMemberId}/link`, { tempMemberId })
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	addNurseWithoutConnect: (enterMemberId: number) => {
+		return axiosInstance
+			.post(`/ward/member/${enterMemberId}`)
 			.then((response) => response.data)
 			.catch((error) => {
 				if (error.code === "ERR_NETWORK") {

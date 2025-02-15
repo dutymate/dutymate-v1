@@ -226,6 +226,10 @@ const useWardStore = create<WardStore>((set, get) => ({
 			// role이 같은 경우 grade로 정렬 (내림차순)
 			return b.grade - a.grade;
 		});
+
+		// set({wardInfo : {...wardInfo, nurses : sortedNures}})
+
+		// return sortedNures;
 	},
 }));
 

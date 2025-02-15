@@ -123,7 +123,10 @@ const MyShift = () => {
 				</button>
 
 				<div className="mb-3">
-					<Title title="나의 근무표" subtitle="나의 근무 일정을 확인해보세요." />
+					<Title
+						title="나의 근무표"
+						subtitle="나의 근무 일정을 확인해보세요."
+					/>
 				</div>
 				<div className="block lg:flex lg:gap-8">
 					<MyShiftCalendar
