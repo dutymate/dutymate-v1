@@ -13,7 +13,7 @@ import FaultLayer from "../atoms/FaultLayer";
 import { toPng } from "html-to-image";
 import { requestService, WardRequest } from "../../services/requestService";
 import RequestStatusLayer from "../atoms/RequestStatusLayer";
-import { AutoSpinner } from "../atoms/AutoSpinner";
+// import { AutoSpinner } from "../atoms/AutoSpinner";
 import { debounce } from "lodash";
 // import { wardService } from "../../services/wardService";
 // import { Nurse } from "../../services/wardService";
@@ -66,7 +66,7 @@ const getMaxAllowedMonth = () => {
 };
 
 const ShiftAdminTable = ({
-	dutyData,
+	dutyData = [],
 	// invalidCnt,
 	year,
 	month,
@@ -74,7 +74,7 @@ const ShiftAdminTable = ({
 	issues,
 }: ShiftAdminTableProps) => {
 	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
-	const [isAutoSpinnerOpen, setIsAutoSpinnerOpen] = useState(false);
+	// const [isAutoSpinnerOpen, setIsAutoSpinnerOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const ruleButtonRef = useRef<HTMLButtonElement>(null);
 	const tableRef = useRef<HTMLDivElement>(null);
@@ -492,10 +492,10 @@ const ShiftAdminTable = ({
 		try {
 			setIsAutoCreating(true);
 			// 자동생성 중임을 알림
-			// const loadingToast = toast.loading("자동생성 중입니다...", {
-			// 	position: "top-center",
-			// });
-			setIsAutoSpinnerOpen(true);
+			const loadingToast = toast.loading("근무표에 마침표를 찍고 있습니다...", {
+				position: "top-center",
+			});
+			// setIsAutoSpinnerOpen(true);
 
 			// API 호출
 			const data = await dutyService.autoCreateDuty(year, month);
@@ -507,7 +507,15 @@ const ShiftAdminTable = ({
 			await onUpdate(year, month);
 
 			// 성공 알림
-			toast.success("자동생성에 성공했습니다");
+			toast.update(loadingToast, {
+				render: "자동생성에 성공했습니다",
+				type: "success",
+				isLoading: false,
+				autoClose: 2000,
+				position: "top-center",
+			});
+
+			// toast.success("자동생성에 성공했습니다");
 			// setIsAutoSpinnerOpen(false)
 		} catch (error) {
 			// setIsAutoSpinnerOpen(false)
@@ -965,12 +973,12 @@ const ShiftAdminTable = ({
 			)}
 
 			{/* 모달 컴포넌트 */}
-			{isAutoSpinnerOpen && (
+			{/* {isAutoSpinnerOpen && (
 				<AutoSpinner
 					isOpen={isAutoSpinnerOpen}
 					onClose={() => setIsAutoSpinnerOpen(false)}
 				/>
-			)}
+			)} */}
 		</div>
 	);
 };
