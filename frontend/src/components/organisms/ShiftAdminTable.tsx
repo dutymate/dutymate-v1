@@ -18,6 +18,8 @@ import { debounce } from "lodash";
 import { useNavigate } from "react-router-dom";
 // import { wardService } from "../../services/wardService";
 // import { Nurse } from "../../services/wardService";
+import { Tooltip } from "../atoms/Tooltip";
+import KeyboardGuide from "../atoms/KeyboardGuide";
 
 // 월별 주말과 공휴일 계산 유틸리티 함수 수정
 const getWeekendAndHolidayPairs = (year: number, month: number): number[][] => {
@@ -648,7 +650,9 @@ const ShiftAdminTable = ({
 						</div>
 					</div>
 					{/* 버튼 영역 */}
-					<div className="flex gap-1 sm:gap-2">
+					<div className="flex gap-1 sm:gap-2 items-center">
+						<KeyboardGuide />
+						<div className="h-6 w-[1px] bg-gray-200 mx-1" />
 						<Button
 							ref={ruleButtonRef}
 							size="register"
@@ -658,15 +662,48 @@ const ShiftAdminTable = ({
 						>
 							규칙 조회
 						</Button>
-						<Button
-							text-size="md"
-							size="register"
-							color="evening"
-							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
-							onClick={handleAutoCreate}
-						>
-							자동 생성
-						</Button>
+						<div className="flex items-center gap-1">
+							<Button
+								text-size="md"
+								size="register"
+								color="evening"
+								className="py-0.5 px-1.5 sm:py-1 sm:px-2 flex items-center gap-2 group"
+								onClick={handleAutoCreate}
+							>
+								자동 생성
+								<Tooltip
+									content={
+										<div className="text-left space-y-1.5">
+											<p>
+												근무표는 다음 조건들을 고려하여 자동으로 생성됩니다:
+											</p>
+											<ul className="list-disc pl-4 space-y-1">
+												<li>주중/주말별 필요 최소 인원</li>
+												<li>근무표 규칙</li>
+												<li>개인별 근무 요청</li>
+												<li>간호사 간 균등한 근무 배분</li>
+												<li>지난 달 말일 근무 고려</li>
+											</ul>
+											<p className="mt-2 text-gray-300">
+												완성도 100%일 시 새로운 근무표가 생성되지 않을 수
+												있습니다.
+												<br />
+												변경이 필요한 칸을 X로 눌러 자동생성을 재실행하는 것을
+												추천드립니다.
+											</p>
+										</div>
+									}
+									className="ml-1"
+									width="w-96"
+									icon={{
+										name: "alert",
+										size: 16,
+										className:
+											"text-duty-evening group-hover:text-white transition-colors cursor-help",
+									}}
+								/>
+							</Button>
+						</div>
 						<Button
 							text-size="md"
 							size="register"
