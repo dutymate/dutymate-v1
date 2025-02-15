@@ -105,7 +105,7 @@ const ShiftAdminTable = ({
 		) => {
 			const now = Date.now();
 			if (now - lastUpdateTime < THROTTLE_DELAY) {
-				toast.warning("잠시 후 다시 시도해주세요", {
+				toast.warning("잠시 후 다시 시도해주세요.", {
 					position: "top-center",
 					autoClose: 1000,
 				});

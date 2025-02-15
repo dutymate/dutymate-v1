@@ -220,7 +220,7 @@ export const NurseAssignModal = ({ nurse, onClose }: NurseAssignModalProps) => {
 				</div>
 
 				<p className="text-sm text-gray-500 mb-3">
-					연동할 간호사를 선택해주세요
+					연동할 간호사를 선택해주세요.
 				</p>
 
 				{/* 간호사 선택 리스트 */}
@@ -230,7 +230,7 @@ export const NurseAssignModal = ({ nurse, onClose }: NurseAssignModalProps) => {
 						{isLoading ? (
 							<div className="text-center py-4">로딩 중...</div>
 						) : tempNurses.length === 0 ? (
-							<div className="text-center py-4">임시 간호사가 없습니다</div>
+							<div className="text-center py-4">임시 간호사가 없습니다.</div>
 						) : (
 							tempNurses.map((tempNurse) => (
 								<div

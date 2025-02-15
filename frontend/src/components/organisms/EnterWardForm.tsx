@@ -18,15 +18,15 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 
 	const validateWardCode = (code: string) => {
 		if (!code) {
-			setError("병동 코드를 입력해주세요");
+			setError("병동 코드를 입력해주세요.");
 			return false;
 		}
 		if (code.length !== 6) {
-			setError("병동 코드는 6자리여야 합니다");
+			setError("병동 코드는 6자리여야 합니다.");
 			return false;
 		}
 		if (!/^[A-Za-z0-9]+$/.test(code)) {
-			setError("영문과 숫자만 입력 가능합니다");
+			setError("영문과 숫자만 입력 가능합니다.");
 			return false;
 		}
 		return true;

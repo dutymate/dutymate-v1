@@ -54,19 +54,19 @@ const CreateWardForm = ({
 		const newErrors: FormErrors = {};
 
 		if (!hospitalName.trim()) {
-			newErrors.hospitalName = "병원명을 입력해주세요";
+			newErrors.hospitalName = "병원명을 입력해주세요.";
 		} else if (hospitalName.length < 2) {
-			newErrors.hospitalName = "병원명은 2자 이상 입력해주세요";
+			newErrors.hospitalName = "병원명은 2자 이상 입력해주세요.";
 		} else if (hospitalName.length > 50) {
-			newErrors.hospitalName = "병원명은 50자 이하로 입력해주세요";
+			newErrors.hospitalName = "병원명은 50자 이하로 입력해주세요.";
 		}
 
 		if (!wardName.trim()) {
-			newErrors.wardName = "병동명을 입력해주세요";
+			newErrors.wardName = "병동명을 입력해주세요.";
 		} else if (wardName.length < 2) {
-			newErrors.wardName = "병동명은 2자 이상 입력해주세요";
+			newErrors.wardName = "병동명은 2자 이상 입력해주세요.";
 		} else if (wardName.length > 20) {
-			newErrors.wardName = "병동명은 20자 이하로 입력해주세요";
+			newErrors.wardName = "병동명은 20자 이하로 입력해주세요.";
 		}
 
 		setErrors(newErrors);
@@ -155,7 +155,7 @@ const CreateWardForm = ({
 							id="hospital-name"
 							name="hospitalName"
 							label="병원명"
-							placeholder="병원명을 입력해주세요"
+							placeholder="병원명을 입력해주세요."
 							value={hospitalName}
 							onChange={handleHospitalNameChange}
 							onFocus={handleInputFocus}
@@ -210,7 +210,7 @@ const CreateWardForm = ({
 						id="ward-name"
 						name="wardName"
 						label="병동명"
-						placeholder="병동명을 입력해주세요"
+						placeholder="병동명을 입력해주세요."
 						value={wardName}
 						onChange={handleWardNameChange}
 						error={errors.wardName}

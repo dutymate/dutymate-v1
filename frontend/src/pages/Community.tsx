@@ -34,7 +34,7 @@ const Community = () => {
 					<IoMdMenu className="w-6 h-6 text-gray-600" />
 				</button>
 
-				<Title title="커뮤니티" subtitle="동료들과 소통해보세요" />
+				<Title title="커뮤니티" subtitle="동료들과 소통해보세요." />
 				<div className="mt-6">
 					<CommunityForm />
 				</div>

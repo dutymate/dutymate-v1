@@ -54,7 +54,7 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 
 	const validateForm = () => {
 		if (!formState.grade || formState.grade <= 0) {
-			setCareerError("간호사 연차를 선택해주세요");
+			setCareerError("간호사 연차를 선택해주세요.");
 			return false;
 		}
 		return true;
@@ -90,7 +90,7 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 						id="career"
 						name="career"
 						label="간호사 연차"
-						placeholder="연차를 선택해주세요"
+						placeholder="연차를 선택해주세요."
 						options={careerOptions}
 						value={formState.grade > 0 ? String(formState.grade) : ""}
 						onChange={handleCareerChange}
