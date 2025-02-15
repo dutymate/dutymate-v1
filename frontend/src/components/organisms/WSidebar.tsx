@@ -92,7 +92,7 @@ const Sidebar = ({ userType }: SidebarProps) => {
 			{/* Logo */}
 			<div className="flex items-center justify-center px-[1.875rem] pt-7">
 				<div className="w-[140px]">
-					<img alt="듀티메이트" src="/src/assets/logo.svg" className="w-full" />
+					<img alt="듀티메이트" src="/images/logo.svg" className="w-full" />
 				</div>
 			</div>
 

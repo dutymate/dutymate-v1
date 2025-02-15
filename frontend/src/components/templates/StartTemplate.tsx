@@ -1,6 +1,5 @@
 // StartTemplate.tsx
 
-import dutyMateLogo from "../../assets/logo.svg";
 import notebookImage from "../../assets/notebook.svg";
 
 interface StartTemplateProps {
@@ -24,7 +23,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 					>
 						<div className="flex justify-center">
 							<img
-								src={dutyMateLogo}
+								src="/images/logo.svg"
 								alt="DutyMate Logo"
 								className="w-[60%] max-w-[280px]"
 							/>
@@ -122,7 +121,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 				</div>
 				<div className="relative z-10 h-full flex flex-col items-center justify-center translate-y-[2vh]">
 					<img
-						src={dutyMateLogo}
+						src="/images/logo.svg"
 						alt="DutyMate Logo"
 						className="w-[35%] -mb-3"
 					/>

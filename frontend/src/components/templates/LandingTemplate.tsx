@@ -1,5 +1,4 @@
 import React from "react";
-import dutyMateLogo from "../../assets/logo.svg";
 import notebookImage from "../../assets/notebook.svg";
 
 interface LandingTemplateProps {
@@ -13,7 +12,7 @@ const LandingTemplate: React.FC<LandingTemplateProps> = ({ children }) => {
 			<div className="lg:hidden flex flex-col h-screen overflow-hidden">
 				<div className="flex-1 bg-base-muted-30 animate-wave-bg flex flex-col items-center justify-center p-6">
 					<img
-						src={dutyMateLogo}
+						src="/images/logo.svg"
 						alt="DutyMate Logo"
 						className="w-[60%] max-w-[280px] mb-12"
 					/>
@@ -60,7 +59,7 @@ const LandingTemplate: React.FC<LandingTemplateProps> = ({ children }) => {
 			<div className="hidden lg:flex flex-1 bg-base-muted-30">
 				<div className="w-full flex flex-col items-center justify-center">
 					<img
-						src={dutyMateLogo}
+						src="/images/logo.svg"
 						alt="DutyMate Logo"
 						className="w-[35%] mb-8"
 					/>
