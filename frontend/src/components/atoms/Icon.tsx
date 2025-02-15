@@ -4,7 +4,13 @@ import { HiExclamationCircle, HiMagnifyingGlass } from "react-icons/hi2";
 import { SlCalender } from "react-icons/sl";
 import { FaHospital, FaUserCircle, FaDoorOpen } from "react-icons/fa";
 import { FaChevronRight, FaChevronLeft, FaChevronDown } from "react-icons/fa6";
-import { AiFillSchedule, AiOutlineIdcard } from "react-icons/ai";
+import {
+	AiFillSchedule,
+	AiOutlineIdcard,
+	AiOutlineHeart,
+	AiOutlineMessage,
+	AiOutlineEye,
+} from "react-icons/ai";
 import { BiSolidUserPin } from "react-icons/bi";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { IoIosChatboxes, IoMdMenu } from "react-icons/io";
@@ -52,6 +58,9 @@ const iconComponents = {
 	history: MdHistory,
 	chevronDown: FaChevronDown,
 	reset: GrPowerReset,
+	heart: AiOutlineHeart,
+	message: AiOutlineMessage,
+	eye: AiOutlineEye,
 };
 
 export type IconName =

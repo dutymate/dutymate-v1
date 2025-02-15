@@ -2,6 +2,7 @@ import Sidebar from "../components/organisms/WSidebar";
 import MSidebar from "../components/organisms/MSidebar";
 import Title from "../components/atoms/Title";
 import CommunityForm from "../components/organisms/CommunityForm";
+import CommunityWrite from "../components/organisms/CommunityWrite";
 import { useState } from "react";
 import { IoMdMenu } from "react-icons/io";
 import useUserAuthStore from "../store/userAuthStore";
@@ -9,6 +10,7 @@ import useUserAuthStore from "../store/userAuthStore";
 const Community = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const { userInfo } = useUserAuthStore();
+	const [isWriting, setIsWriting] = useState(false);
 
 	return (
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
@@ -34,10 +36,16 @@ const Community = () => {
 					<IoMdMenu className="w-6 h-6 text-gray-600" />
 				</button>
 
-				<Title title="커뮤니티" subtitle="동료들과 소통해보세요" />
-				<div className="mt-6">
-					<CommunityForm />
-				</div>
+				{isWriting ? (
+					<CommunityWrite />
+				) : (
+					<>
+						<Title title="커뮤니티" subtitle="동료들과 소통해보세요" />
+						<div className="mt-6">
+							<CommunityForm onWrite={() => setIsWriting(true)} />
+						</div>
+					</>
+				)}
 			</div>
 		</div>
 	);

@@ -43,7 +43,7 @@ const NavigationItem = React.memo(
 		const handleClick = (
 			e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
 		) => {
-			if (item.name === "커뮤니티" || item.name === "튜토리얼") {
+			if (item.name === "튜토리얼") {
 				e.preventDefault(); // 🔹 링크 이동 막기
 				toast.info("준비 중입니다."); // 🔹 Toast 메시지 출력
 			}
@@ -52,11 +52,7 @@ const NavigationItem = React.memo(
 		return (
 			<li className="flex justify-center px-[1.3rem]">
 				<Link
-					to={
-						item.name === "커뮤니티" || item.name === "튜토리얼"
-							? "#"
-							: item.href
-					}
+					to={item.name === "튜토리얼" ? "#" : item.href}
 					className={`
 					flex items-center gap-x-3 px-4 py-2.5 w-full rounded-lg
 					font-['Pretendard Variable'] text-[0.9rem] group
