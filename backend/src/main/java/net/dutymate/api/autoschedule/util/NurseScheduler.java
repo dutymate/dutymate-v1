@@ -91,6 +91,7 @@ public class NurseScheduler {
 				.score(score)
 				.build();
 		}
+
 	}
 
 	public WardSchedule generateSchedule(WardSchedule wardSchedule,
@@ -111,12 +112,10 @@ public class NurseScheduler {
 				.requestedShift(request.getRequestShift().getValue().charAt(0))
 				.build())
 			.toList();
-
 		double currentScore = evaluateSolution(currentSolution, rule, prevMonthSchedules, shiftRequests);
 		double bestScore = currentScore;
 		double temperature = INITIAL_TEMPERATURE;
 		int noImprovementCount = 0;
-
 		for (int iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
 			Solution neighborSolution = generateNeighborSolution(currentSolution);
 			double neighborScore = evaluateSolution(neighborSolution, rule, prevMonthSchedules, shiftRequests);
