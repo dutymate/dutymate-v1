@@ -173,12 +173,14 @@ const MypageProfile = () => {
 	};
 
 	return (
-		<div className="bg-white rounded-lg shadow-md p-4">
-			<h2 className="text-sm font-semibold text-gray-900 mb-2">프로필 설정</h2>
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+		<div className="bg-white rounded-lg shadow-md p-[1rem]">
+			<h2 className="text-sm font-semibold text-gray-900 mb-[0.5rem]">
+				프로필 설정
+			</h2>
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-[1rem]">
 				{/* 왼쪽 프로필 아이콘 */}
-				<div className="flex flex-col items-center justify-center space-y-6">
-					<div className="text-center mb-1">
+				<div className="flex flex-col items-center justify-center space-y-[1.5rem]">
+					<div className="text-center mb-[0.25rem]">
 						<h3 className="text-sm font-bold">{profile?.hospitalName}</h3>
 						<p className="text-xs text-gray-600">{profile?.wardName}</p>
 					</div>
@@ -186,7 +188,7 @@ const MypageProfile = () => {
 						<img
 							src={profile.profileImg}
 							alt="프로필 이미지"
-							className="w-20 h-20 lg:w-24 lg:h-24 rounded-full object-cover"
+							className="w-[5rem] h-[5rem] lg:w-[6rem] lg:h-[6rem] rounded-full object-cover"
 							onError={(e) => {
 								e.currentTarget.onerror = null;
 								e.currentTarget.style.display = "none";
@@ -195,7 +197,7 @@ const MypageProfile = () => {
 					) : (
 						<Icon
 							name="user"
-							className="w-20 h-20 lg:w-24 lg:h-24 text-gray-400"
+							className="w-[5rem] h-[5rem] lg:w-[6rem] lg:h-[6rem] text-gray-400"
 						/>
 					)}
 					<input
@@ -212,7 +214,7 @@ const MypageProfile = () => {
 					/>
 				</div>
 				{/* 오른쪽 정보 */}
-				<div className="space-y-2">
+				<div className="space-y-[0.5rem]">
 					<MypageInput
 						id="email"
 						name="email"
@@ -276,12 +278,12 @@ const MypageProfile = () => {
 					</div>
 				</div>
 			</div>
-			<div className="flex justify-center lg:justify-end mt-6">
+			<div className="flex justify-center lg:justify-end mt-[1.5rem]">
 				<Button
 					type="button"
 					size="sm"
 					color="primary"
-					className="w-full lg:w-[120px] h-[36px] max-w-[380px]"
+					className="w-full lg:w-[7.5rem] h-[2.25rem]"
 					onClick={handleSubmit}
 				>
 					저장하기

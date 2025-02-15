@@ -1,7 +1,7 @@
 import React from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 
-type ButtonSize = "xs" | "sm" | "md" | "lg" | "register";
+type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl" | "register";
 type ButtonWidth = "short" | "long" | "fit" | "full";
 type ButtonColor =
 	| "primary"
@@ -26,36 +26,40 @@ interface ButtonProps {
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
-	xs: `h-[1.5rem] sm:h-[2rem] rounded-[4px] px-2 py-0.5 text-[0.75rem] sm:text-sm`,
-	sm: `h-[1.75rem] sm:h-[1.9rem] rounded-[6px] px-2.5 py-1 text-sm sm:text-base`,
-	md: `h-[2rem] sm:h-[3rem] rounded-[8px] px-3 py-1.5 text-base sm:text-lg`,
-	lg: `h-[2.5rem] sm:h-[3.5rem] rounded-[10px] px-3.5 py-2 text-lg sm:text-xl`,
-	register: `h-[2.25rem] rounded-lg px-8 min-w-[8rem] text-md`,
+	xs: `h-[1.5rem] sm:h-[2rem] rounded-[0.25rem] px-[0.5rem] py-[0.125rem] text-[0.75rem] sm:text-sm`,
+	sm: `h-[1.75rem] sm:h-[1.9rem] rounded-[0.375rem] px-[0.625rem] py-[0.25rem] text-sm sm:text-base`,
+	md: `h-[2rem] sm:h-[3rem] rounded-[0.5rem] px-[0.75rem] py-[0.375rem] text-base sm:text-lg`,
+	lg: `h-[2.5rem] sm:h-[3.5rem] rounded-[0.625rem] px-[0.875rem] py-[0.5rem] text-lg sm:text-xl`,
+	xl: `h-[3rem] sm:h-[4rem] rounded-[0.75rem] px-[1rem] py-[0.625rem] text-xl sm:text-2xl`,
+	register: `h-[2.25rem] rounded-lg px-[2rem] min-w-[8rem] text-md`,
 };
 
 const widthStyles: Record<ButtonWidth, Record<ButtonSize, string>> = {
 	// Short 버튼: sm 사이즈 기준으로 xs는 조금 작게, md는 조금 크게
 	short: {
-		xs: "w-[4.5rem]", // 60px
-		sm: "w-[4.375rem] sm:w-[7rem]", // 모바일: 70px, 데스크톱: 112px
-		md: "w-[4.6875rem] sm:w-[7.5rem]", // 모바일: 75px, 데스크톱: 120px
-		lg: "w-[5rem] sm:w-[8rem]", // 모바일: 80px, 데스크톱: 128px
-		register: "w-[7rem]", // 추가
+		xs: "w-[4.5rem]",
+		sm: "w-full sm:w-[7rem]", // 모바일에서는 full, 데스크톱에서는 7rem
+		md: "w-[4.6875rem] sm:w-[7.5rem]",
+		lg: "w-[5rem] sm:w-[8rem]",
+		xl: "w-full",
+		register: "w-[7rem]",
 	},
 	// Long 버튼: sm 사이즈 기준으로 xs는 조금 작게, md는 조금 크게
 	long: {
-		xs: "w-[12rem]", // 160px
-		sm: "w-[11.25rem] sm:w-[20.625rem]", // 모바일: 180px, 데스크톱: 330px
-		md: "w-[11.75rem] sm:w-[21.875rem]", // 모바일: 188px, 데스크톱: 350px
-		lg: "w-[12.5rem] sm:w-[23.125rem]", // 모바일: 200px, 데스크톱: 370px
-		register: "w-[7rem]", // 추가
+		xs: "w-[12rem]",
+		sm: "w-full sm:w-[20.625rem]", // 모바일에서는 full, 데스크톱에서는 20.625rem
+		md: "w-[11.75rem] sm:w-[21.875rem]",
+		lg: "w-[12.5rem] sm:w-[23.125rem]",
+		xl: "w-full",
+		register: "w-[7rem]",
 	},
 
 	fit: {
 		xs: "w-fit",
-		sm: "w-fit",
+		sm: "w-full sm:w-fit", // 모바일에서는 full, 데스크톱에서는 fit
 		md: "w-fit",
 		lg: "w-fit",
+		xl: "w-full",
 		register: "w-fit",
 	},
 
@@ -64,6 +68,7 @@ const widthStyles: Record<ButtonWidth, Record<ButtonSize, string>> = {
 		sm: "w-full",
 		md: "w-full",
 		lg: "w-full",
+		xl: "w-full",
 		register: "w-full",
 	},
 };
