@@ -1,9 +1,17 @@
 import React from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 
-type ButtonSize = "xs" | "sm" | "md" | "lg";
-type ButtonWidth = "short" | "long";
-type ButtonColor = "primary" | "evening" | "night" | "day" | "off" | "muted";
+type ButtonSize = "xs" | "sm" | "md" | "lg" | "register";
+type ButtonWidth = "short" | "long" | "fit" | "full";
+type ButtonColor =
+	| "primary"
+	| "evening"
+	| "night"
+	| "day"
+	| "off"
+	| "muted"
+	| "secondary"
+	| "tertiary";
 
 interface ButtonProps {
 	size?: ButtonSize;
@@ -18,21 +26,11 @@ interface ButtonProps {
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
-	xs: `h-[1.5rem] sm:h-[2rem] 
-      rounded-[4px] px-2 py-0.5 
-      text-[0.75rem] sm:text-sm`, // 모바일: 12px, 데스크톱: 14px
-
-	sm: `h-[1.75rem] sm:h-[1.9rem] 
-      rounded-[6px] px-2.5 py-1 
-      text-sm sm:text-base`, // 모바일: 14px, 데스크톱: 16px
-
-	md: `h-[2rem] sm:h-[3rem] 
-      rounded-[8px] px-3 py-1.5 
-      text-base sm:text-lg`, // 모바일: 16px, 데스크톱: 18px
-
-	lg: `h-[2.5rem] sm:h-[3.5rem] 
-      rounded-[10px] px-3.5 py-2 
-      text-lg sm:text-xl`, // 모바일: 18px, 데스크톱: 20px
+	xs: `h-[1.5rem] sm:h-[2rem] rounded-[4px] px-2 py-0.5 text-[0.75rem] sm:text-sm`,
+	sm: `h-[1.75rem] sm:h-[1.9rem] rounded-[6px] px-2.5 py-1 text-sm sm:text-base`,
+	md: `h-[2rem] sm:h-[3rem] rounded-[8px] px-3 py-1.5 text-base sm:text-lg`,
+	lg: `h-[2.5rem] sm:h-[3.5rem] rounded-[10px] px-3.5 py-2 text-lg sm:text-xl`,
+	register: `h-[2.25rem] rounded-lg px-8 min-w-[8rem] text-sm`,
 };
 
 const widthStyles: Record<ButtonWidth, Record<ButtonSize, string>> = {
@@ -42,6 +40,7 @@ const widthStyles: Record<ButtonWidth, Record<ButtonSize, string>> = {
 		sm: "w-[4.375rem] sm:w-[7rem]", // 모바일: 70px, 데스크톱: 112px
 		md: "w-[4.6875rem] sm:w-[7.5rem]", // 모바일: 75px, 데스크톱: 120px
 		lg: "w-[5rem] sm:w-[8rem]", // 모바일: 80px, 데스크톱: 128px
+		register: "w-[7rem]", // 추가
 	},
 	// Long 버튼: sm 사이즈 기준으로 xs는 조금 작게, md는 조금 크게
 	long: {
@@ -49,6 +48,23 @@ const widthStyles: Record<ButtonWidth, Record<ButtonSize, string>> = {
 		sm: "w-[11.25rem] sm:w-[20.625rem]", // 모바일: 180px, 데스크톱: 330px
 		md: "w-[11.75rem] sm:w-[21.875rem]", // 모바일: 188px, 데스크톱: 350px
 		lg: "w-[12.5rem] sm:w-[23.125rem]", // 모바일: 200px, 데스크톱: 370px
+		register: "w-[7rem]", // 추가
+	},
+
+	fit: {
+		xs: "w-fit",
+		sm: "w-fit",
+		md: "w-fit",
+		lg: "w-fit",
+		register: "w-fit",
+	},
+
+	full: {
+		xs: "w-full",
+		sm: "w-full",
+		md: "w-full",
+		lg: "w-full",
+		register: "w-full",
 	},
 };
 
@@ -86,13 +102,23 @@ const colorStyles: Record<
 		hover: "hover:bg-base-muted hover:text-white",
 		pressed: "active:bg-base-foreground active:text-white",
 	},
+	secondary: {
+		active: "bg-secondary-bg text-secondary",
+		hover: "hover:bg-secondary hover:text-white",
+		pressed: "active:bg-secondary-dark active:text-white",
+	},
+	tertiary: {
+		active: "bg-tertiary-bg text-tertiary",
+		hover: "hover:bg-tertiary hover:text-white",
+		pressed: "active:bg-tertiary-dark active:text-white",
+	},
 };
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 	(
 		{
 			size = "md",
-			width = "short",
+			width = "fit",
 			color = "primary",
 			children,
 			onClick,
@@ -168,6 +194,35 @@ export const ConnectButton = ({
 			className={`w-[90vw] max-w-[400px] h-[44px] bg-primary-20 hover:bg-primary text-primary hover:text-white transition-colors whitespace-nowrap rounded-lg ${className}`}
 		>
 			연동하지 않고 추가하기
+		</button>
+	);
+};
+
+// 커뮤니티 전용 버튼
+export const CommunityWriteButton = ({
+	onClick,
+	className,
+}: { onClick?: () => void; className?: string }) => {
+	return (
+		<button
+			onClick={onClick}
+			className={`px-6 py-2 min-w-[7rem] bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors text-sm ${className || ""}`}
+		>
+			글쓰기
+		</button>
+	);
+};
+
+export const CommunityRegisterButton = ({
+	onClick,
+	className,
+}: { onClick?: () => void; className?: string }) => {
+	return (
+		<button
+			onClick={onClick}
+			className={`px-8 py-2.5 min-w-[8rem] bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors text-sm ${className || ""}`}
+		>
+			등록
 		</button>
 	);
 };

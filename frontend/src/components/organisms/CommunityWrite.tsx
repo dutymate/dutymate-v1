@@ -1,9 +1,9 @@
 //글쓰기
 
-import React from "react";
-import { Button } from "../atoms/Button";
-import { Icon } from "../atoms/Icon";
+// import React from "react";
+// import { Button } from "../atoms/Button";
 import { BsImage } from "react-icons/bs";
+import { CommunityRegisterButton } from "../atoms/Button";
 
 const CommunityWrite = () => {
 	const categories = ["일상글", "간호지식 Q&A", "이직 정보"];
@@ -12,69 +12,156 @@ const CommunityWrite = () => {
 		<div className="flex flex-col gap-6">
 			{/* 글쓰기 폼 */}
 			<div className="bg-white rounded-lg p-6 shadow-sm">
-				<h2 className="text-2xl font-bold mb-6">글쓰기</h2>
-
 				{/* 카테고리 선택 */}
-				<select className="w-full p-3 border border-gray-200 rounded-lg mb-4 text-gray-600">
-					<option value="">카테고리를 선택해주세요</option>
-					{categories.map((category) => (
-						<option key={category} value={category}>
-							{category}
-						</option>
-					))}
-				</select>
-
-				{/* 제목 입력 */}
-				<input
-					type="text"
-					placeholder="제목을 입력해주세요"
-					className="w-full p-3 border border-gray-200 rounded-lg mb-4"
-				/>
-
-				{/* 내용 입력 */}
-				<textarea
-					placeholder="내용을 입력해주세요"
-					className="w-full h-[200px] p-3 border border-gray-200 rounded-lg mb-4 resize-none"
-				/>
-
-				{/* 이미지 업로드 */}
-				<div className="flex items-center gap-2 mb-6">
-					<button className="p-2 hover:bg-gray-100 rounded-lg">
-						<BsImage className="w-6 h-6 text-gray-600" />
-					</button>
+				<div className="flex items-center gap-4 mb-4">
+					<label className="w-20 text-gray-700 font-medium shrink-0">
+						카테고리
+					</label>
+					<select className="flex-1 p-3 border border-gray-200 rounded-lg text-gray-600">
+						<option value="">카테고리를 선택해주세요</option>
+						{categories.map((category) => (
+							<option key={category} value={category}>
+								{category}
+							</option>
+						))}
+					</select>
 				</div>
 
-				{/* 등록 버튼 */}
-				<div className="flex justify-center">
-					<Button color="primary" size="lg" width="long">
-						등록
-					</Button>
+				{/* 제목 입력 */}
+				<div className="flex items-center gap-4 mb-4">
+					<label className="w-20 text-gray-700 font-medium shrink-0">
+						제목
+					</label>
+					<input
+						type="text"
+						placeholder="제목을 입력해주세요"
+						className="flex-1 p-3 border border-gray-200 rounded-lg"
+					/>
+				</div>
+
+				{/* 내용 입력 */}
+				<div className="flex gap-4 mb-2">
+					<label className="w-20 text-gray-700 font-medium shrink-0 pt-3">
+						내용
+					</label>
+					<textarea
+						placeholder="내용을 입력해주세요"
+						className="flex-1 h-[200px] p-3 border border-gray-200 rounded-lg resize-none"
+					/>
+				</div>
+
+				{/* 이미지 업로드 영역 */}
+				<div className="flex gap-4">
+					<div className="w-20 shrink-0" />
+					<div className="flex items-center gap-2">
+						<button className="p-2 hover:bg-gray-100 rounded-lg">
+							<BsImage className="w-6 h-6 text-gray-600" />
+						</button>
+						<span className="text-gray-400 text-sm">파일명.jpg</span>
+					</div>
 				</div>
 			</div>
 
+			{/* 등록 버튼 */}
+			<div className="flex justify-end -mt-2">
+				<CommunityRegisterButton />
+			</div>
+
 			{/* 커뮤니티 규칙 */}
-			<div className="bg-white rounded-lg p-6 shadow-sm">
-				<h3 className="text-lg font-bold mb-4">
+			<div className="rounded-lg p-6 text-gray-700">
+				<h3 className="text-xl font-bold mb-4 text-gray-500 text-left">
 					간호사 커뮤니티 이용 규칙 및 운영 정책
 				</h3>
-				<p className="text-gray-600 text-sm mb-4">
+				<p className="text-gray-500 text-sm mb-6 text-left leading-relaxed break-words">
 					듀티메이트는 간호사 및 의료 종사자 간의 원활한 정보 공유와 건강한
-					소통을 위한 공간입니다. 커뮤니티 이용 시 아래의 규칙을 반드시 준수하여
-					주시기 바라며, 이를 위반할 경우 경고, 이용 제한 및 법적 조치가
-					이루어질 수 있습니다.
+					소통을 위한 공간입니다.
+					<br /> 커뮤니티 이용 시 아래의 규칙을 반드시 준수하여 주시기 바라며,
+					이를 위반할 경우 경고, 이용 제한 및 법적 조치가 이루어질 수 있습니다.
 				</p>
 
-				<div className="text-sm text-gray-600 space-y-4">
-					<div>
-						<h4 className="font-bold mb-2">1. 홍보 및 상업적 활동 금지</h4>
-						<p>
-							본 커뮤니티에서는 개인 또는 기업의 홍보 및 상업적 활동을 일절
-							금지합니다. 제품 판매, 의료기관 및 특정 강의 홍보, 리크루팅
-							게시글, 영리 목적의 광고 등은 사전 경고 없이 삭제될 수 있으며,
-							반복적인 위반 시 계정 이용이 제한될 수 있습니다.
+				<div className="text-sm text-gray-500 space-y-5">
+					<div className="space-y-3">
+						<h4 className="font-semibold text-gray-500">
+							1. 홍보 및 상업적 활동 금지
+						</h4>
+						<p className="leading-relaxed break-words">
+							본 커뮤니티에서는 개인 또는 기업의 홍보 및 상업적 활동을
+							금지합니다.
+							<br />
+							제품 판매, 의료기관 및 특정 강의 홍보, 리크루팅 게시글, 영리
+							목적의 광고 등은
+							<br />
+							사전 경고 없이 삭제될 수 있으며, 반복적인 위반 시 계정 이용이
+							제한될 수 있습니다.
 						</p>
 					</div>
-					{/* 나머지 규칙들도 동일한 형식으로 추가 */}
+
+					<div className="space-y-3">
+						<h4 className="font-semibold text-gray-500">
+							2. 정치·사회적 이슈 관련 게시물 금지
+						</h4>
+						<p className="leading-relaxed break-words">
+							커뮤니티 내에서는 정치적 성향을 띠거나 사회적으로 논란이 될 수
+							있는 게시물을 금지합니다.
+							<br />
+							특정 정당, 사회적 이슈, 종교, 이념과 관련된 게시물은 불필요한
+							갈등을 초래할 수 있으므로 허용되지 않습니다.
+						</p>
+					</div>
+
+					<div className="space-y-3">
+						<h4 className="font-semibold text-gray-500">
+							3. 비방, 욕설 및 혐오 표현 금지
+						</h4>
+						<p className="leading-relaxed break-words">
+							타 회원을 대상으로 한 비방, 모욕적인 언행, 차별적 발언 및 혐오
+							표현은 엄격히 금지됩니다.
+							<br />
+							특정 개인, 단체, 직군을 향한 공격적인 표현 및 명예훼손 게시글 작성
+							시 즉시 삭제 및 경고 조치가 이루어지며,
+							<br />
+							반복될 경우 강제 탈퇴 및 법적 조치가 이루어질 수 있습니다.
+						</p>
+					</div>
+
+					<div className="space-y-3">
+						<h4 className="font-semibold text-gray-500">
+							4. 성적 수치심을 유발하는 콘텐츠 금지
+						</h4>
+						<p className="leading-relaxed break-words">
+							성적 수치심을 유발할 수 있는 게시물, 이미지, 발언, 링크 등을
+							게시하는 행위는 금지됩니다.
+							<br />
+							이와 관련된 게시물은 즉시 삭제되며, 작성자는 커뮤니티 이용이
+							제한될 수 있습니다.
+						</p>
+					</div>
+
+					<div className="space-y-3">
+						<h4 className="font-semibold text-gray-500">
+							5. 허위 정보 및 명예훼손 금지
+						</h4>
+						<p className="leading-relaxed break-words">
+							근거 없는 의료 정보, 특정 병원 및 의료진에 대한 허위 사실 유포,
+							악의적인 루머 확산은 금지됩니다.
+							<br />
+							이는 커뮤니티의 신뢰도를 저하시킬 뿐만 아니라 법적 문제를 초래할
+							수 있으므로 정확한 정보만 공유해 주시기 바랍니다.
+						</p>
+					</div>
+
+					<div className="space-y-3">
+						<h4 className="font-semibold text-gray-500">
+							6. 반복적인 도배 및 무의미한 게시물 제한
+						</h4>
+						<p className="leading-relaxed break-words">
+							같은 내용의 게시글을 반복적으로 작성하거나, 의미 없는 문자 나열,
+							채팅형 댓글 도배 등은 금지됩니다.
+							<br />
+							이러한 행위가 발견될 경우 게시물이 삭제되며, 지속적으로 규칙을
+							위반하는 경우 커뮤니티 이용이 제한될 수 있습니다.
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>

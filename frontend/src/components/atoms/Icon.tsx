@@ -10,6 +10,7 @@ import {
 	AiOutlineHeart,
 	AiOutlineMessage,
 	AiOutlineEye,
+	AiFillHeart,
 } from "react-icons/ai";
 import { BiSolidUserPin } from "react-icons/bi";
 import { HiOutlineUsers } from "react-icons/hi2";
@@ -59,6 +60,7 @@ const iconComponents = {
 	chevronDown: FaChevronDown,
 	reset: GrPowerReset,
 	heart: AiOutlineHeart,
+	heartFilled: AiFillHeart,
 	message: AiOutlineMessage,
 	eye: AiOutlineEye,
 };
@@ -67,6 +69,10 @@ export type IconName =
 	| "sort"
 	| "filter"
 	| "chevronDown"
+	| "heart"
+	| "heartFilled"
+	| "message"
+	| "eye"
 	| keyof typeof iconComponents;
 
 interface IconProps {
