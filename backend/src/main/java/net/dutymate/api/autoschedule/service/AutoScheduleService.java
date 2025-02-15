@@ -3,7 +3,6 @@ package net.dutymate.api.autoschedule.service;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -50,7 +49,7 @@ public class AutoScheduleService {
 	private final NurseScheduler nurseScheduler;
 
 	@Transactional
-	public ResponseEntity<?> generateAutoSchedule(YearMonth yearMonth, Member member) {
+	public void generateAutoSchedule(YearMonth yearMonth, Member member) {
 
 		Long wardId = member.getWardMember().getWard().getWardId();
 		//전월 달 근무 호출
@@ -101,12 +100,10 @@ public class AutoScheduleService {
 		String response = isChanged ? "자동 생성 완료" : "모든 조건을 만족하는 최적의 근무표입니다";
 
 		//요청 상태 관리
-		if (isChanged) {
-			updateRequestStatuses.updateRequestStatuses(requests, updateWardSchedule, yearMonth);
-		}
+		updateRequestStatuses.updateRequestStatuses(requests, updateWardSchedule, yearMonth);
+
 		wardScheduleRepository.save(updateWardSchedule);
 
-		return ResponseEntity.ok(response);
 	}
 
 }
