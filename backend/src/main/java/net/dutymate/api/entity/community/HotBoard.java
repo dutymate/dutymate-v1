@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,4 +33,9 @@ public class HotBoard {
 
 	@Column(nullable = false, updatable = false)
 	private Timestamp uploadAtHotBoard;
+
+	@PrePersist
+	protected void prePersist() {
+		this.uploadAtHotBoard = new Timestamp(System.currentTimeMillis());
+	}
 }
