@@ -11,6 +11,7 @@ export interface LoginResponse {
 	profileImg: string;
 	existAdditionalInfo: boolean;
 	existMyWard: boolean;
+	sentWardCode: boolean;
 }
 
 interface AdditionalInfoRequest {

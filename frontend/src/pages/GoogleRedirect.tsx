@@ -33,7 +33,11 @@ export function GoogleRedirect() {
 			(data: LoginResponse) => {
 				useLoadingStore.getState().setLoading(false);
 				const { role, existAdditionalInfo, existMyWard } = data;
-				userAuthStore.setUserInfo({ ...data, provider: "google" });
+				userAuthStore.setUserInfo({
+					...data,
+					provider: "google",
+					sentWardCode: false,
+				});
 				toast.success("정상적으로 로그인되었습니다.");
 
 				if (!existAdditionalInfo) {

@@ -2,14 +2,14 @@ import StartTemplate from "../components/templates/StartTemplate";
 import NextTemplate from "../components/templates/NextTemplate";
 import EnterWardForm from "../components/organisms/EnterWardForm";
 import useUserAuthStore from "../store/userAuthStore";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { wardService } from "../services/wardService";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 
 const EnterWard = () => {
 	const { userInfo } = useUserAuthStore();
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const userAuthStore = useUserAuthStore();
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 

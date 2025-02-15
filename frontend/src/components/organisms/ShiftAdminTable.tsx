@@ -11,8 +11,10 @@ import { toast } from "react-toastify";
 import useShiftStore from "../../store/shiftStore";
 import FaultLayer from "../atoms/FaultLayer";
 import { toPng } from "html-to-image";
-import { wardService } from "../../services/wardService";
-import { Nurse } from "../../services/wardService";
+import { requestService, WardRequest } from "../../services/requestService";
+import RequestStatusLayer from "../atoms/RequestStatusLayer";
+// import { wardService } from "../../services/wardService";
+// import { Nurse } from "../../services/wardService";
 // import ViolationMessage from "../atoms/ViolationMessage";
 
 const THROTTLE_DELAY = 1000; // 1초
@@ -81,7 +83,7 @@ const ShiftAdminTable = ({
 	const selectedCell = useShiftStore((state) => state.selectedCell);
 	const setSelectedCell = useShiftStore((state) => state.setSelectedCell);
 	const updateShift = useShiftStore((state) => state.updateShift);
-	const setNurseGrades = useShiftStore((state) => state.setNurseGrades);
+	// const setNurseGrades = useShiftStore((state) => state.setNurseGrades);
 
 	// Add hover state management at component level
 	const [hoveredCell, setHoveredCell] = useState<{
@@ -525,6 +527,21 @@ const ShiftAdminTable = ({
 	//   fetchWardInfo();
 	// }, []);
 
+	const [requests, setRequests] = useState<WardRequest[]>([]);
+
+	useEffect(() => {
+		const fetchRequests = async () => {
+			try {
+				const data = await requestService.getWardRequests();
+				setRequests(data);
+			} catch (error) {
+				console.error("Failed to fetch requests:", error);
+			}
+		};
+
+		fetchRequests();
+	}, []);
+
 	return (
 		<div
 			className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6"
@@ -702,6 +719,16 @@ const ShiftAdminTable = ({
 														hoveredCell?.row === i &&
 														hoveredCell?.day === dayIndex;
 
+													const requestStatus = requests.find((request) => {
+														const requestDate = new Date(request.date);
+														return (
+															requestDate.getFullYear() === year &&
+															requestDate.getMonth() + 1 === month &&
+															requestDate.getDate() === dayIndex + 1 &&
+															request.name === nurses[i]
+														);
+													});
+
 													return (
 														<td
 															key={dayIndex}
@@ -739,6 +766,14 @@ const ShiftAdminTable = ({
 																			)
 																			.map((v) => v.message)}
 																		total={violations.length}
+																		className={isHovered ? "opacity-90" : ""}
+																	/>
+																)}
+																{requestStatus && (
+																	<RequestStatusLayer
+																		date={dayIndex + 1}
+																		status={requestStatus.status}
+																		message={requestStatus.memo}
 																		className={isHovered ? "opacity-90" : ""}
 																	/>
 																)}

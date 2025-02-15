@@ -33,7 +33,11 @@ export function KakaoRedirect() {
 			(data: LoginResponse) => {
 				useLoadingStore.getState().setLoading(false);
 				const { role, existAdditionalInfo, existMyWard } = data;
-				userAuthStore.setUserInfo({ ...data, provider: "kakao" });
+				userAuthStore.setUserInfo({
+					...data,
+					provider: "kakao",
+					sentWardCode: false,
+				});
 				toast.success("정상적으로 로그인되었습니다.");
 
 				if (!existAdditionalInfo) {
