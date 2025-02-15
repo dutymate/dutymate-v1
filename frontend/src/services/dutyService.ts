@@ -79,7 +79,7 @@ export interface DutyUpdateRequest {
 // API 서비스
 export const dutyService = {
 	/**
-	 * 나의 특정 날짜 근무 조회
+	 * 특정 날짜 근무 조회
 	 * @param year - 년도
 	 * @param month - 월
 	 * @param date - 일
@@ -309,5 +309,15 @@ export const dutyService = {
 				}
 				throw error;
 			});
+	},
+
+	updateShiftBatch: async (requests: any[]) => {
+		try {
+			const response = await axiosInstance.put("/duty", requests);
+			return response.data;
+		} catch (error) {
+			console.error("Failed to update shifts:", error);
+			throw error;
+		}
 	},
 };
