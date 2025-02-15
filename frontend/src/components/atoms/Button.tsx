@@ -30,7 +30,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 	sm: `h-[1.75rem] sm:h-[1.9rem] rounded-[6px] px-2.5 py-1 text-sm sm:text-base`,
 	md: `h-[2rem] sm:h-[3rem] rounded-[8px] px-3 py-1.5 text-base sm:text-lg`,
 	lg: `h-[2.5rem] sm:h-[3.5rem] rounded-[10px] px-3.5 py-2 text-lg sm:text-xl`,
-	register: `h-[2.25rem] rounded-lg px-8 min-w-[8rem] text-sm`,
+	register: `h-[2.25rem] rounded-lg px-8 min-w-[8rem] text-md`,
 };
 
 const widthStyles: Record<ButtonWidth, Record<ButtonSize, string>> = {
@@ -172,7 +172,7 @@ export const TempNurseButton = ({
 	return (
 		<button
 			onClick={onClick}
-			className={`flex items-center justify-center gap-1.5 py-1 w-[100px] bg-duty-day rounded-lg border hover:bg-duty-day-dark transition-colors ${className}`}
+			className={`flex items-center justify-center gap-1.5 py-1 w-[100px] rounded-lg border transition-colors bg-[#999786] hover:bg-[#88866f] ${className}`}
 		>
 			<IoIosAddCircleOutline className="text-white text-[0.95rem]" />
 			<span className="text-[0.8rem] text-white">임시 간호사</span>

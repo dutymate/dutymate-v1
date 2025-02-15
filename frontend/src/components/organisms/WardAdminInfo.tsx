@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 // import { ConnectButton } from "../atoms/Button";
 // import { TempNurseButton } from "../atoms/Button";
 import { HistoryModal, NurseAssignModal } from "./WardAdminModal";
-import useWardStore from "@/store/wardStore";
+import { TempNurseButton } from "../atoms/Button";
 
 interface WardAdminInfoProps {
 	wardInfo: WardInfo;
@@ -21,7 +21,6 @@ interface WardAdminInfoProps {
 
 const WardAdminInfo = ({
 	wardInfo,
-	onAddTempNurse,
 	// onViewHistory,
 }: WardAdminInfoProps) => {
 	const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
@@ -82,13 +81,7 @@ const WardAdminInfo = ({
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								병동 인원
 							</h3>
-							<button
-								onClick={onAddTempNurse}
-								className="flex items-center justify-center gap-1 py-1 px-3 bg-[#999786] hover:bg-[#88866f] rounded-lg transition-colors"
-							>
-								<Icon name="edit" size={14} className="text-white" />
-								<span className="text-[0.8rem] text-white">임시 간호사</span>
-							</button>
+							<TempNurseButton />
 						</div>
 						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
 							{wardInfo.nursesTotalCnt}명
@@ -96,19 +89,21 @@ const WardAdminInfo = ({
 					</div>
 
 					<div className="bg-white rounded-xl p-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-						<h3 className="text-[0.95rem] text-gray-600 mb-1 font-medium">
-							병동 코드
-						</h3>
-						<div className="flex items-center gap-2">
-							<p className="flex-1 font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
-								{wardInfo.wardCode}
-							</p>
+						<div className="flex gap-2 items-center text-center">
+							<h3 className="text-[0.95rem] text-gray-600 font-medium">
+								병동 코드
+							</h3>
 							<button
 								onClick={handleCopyCode}
 								className="flex items-center justify-center p-2 hover:bg-gray-100 rounded-lg transition-colors"
 							>
 								<Icon name="copy" size={20} className="text-gray-600" />
 							</button>
+						</div>
+						<div className="flex items-center gap-2">
+							<p className="flex-1 font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
+								{wardInfo.wardCode}
+							</p>
 						</div>
 					</div>
 

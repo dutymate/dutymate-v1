@@ -510,7 +510,7 @@ const ShiftAdminTable = ({
 
 			// 성공 알림
 			toast.success("자동생성에 성공했습니다");
-			
+
 			// setIsAutoSpinnerOpen(false)
 		} catch (error) {
 			// setIsAutoSpinnerOpen(false)
@@ -519,7 +519,7 @@ const ShiftAdminTable = ({
 				position: "top-center",
 				autoClose: 2000,
 			});
-		}finally {
+		} finally {
 			setIsAutoCreating(false);
 		}
 	};
@@ -644,7 +644,7 @@ const ShiftAdminTable = ({
 					<div className="flex gap-1 sm:gap-2">
 						<Button
 							ref={ruleButtonRef}
-							size="sm"
+							size="register"
 							color="primary"
 							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
 							onClick={() => setIsRuleModalOpen(true)}
@@ -652,8 +652,8 @@ const ShiftAdminTable = ({
 							규칙 조회
 						</Button>
 						<Button
-							text-size="sm"
-							size="sm"
+							text-size="md"
+							size="register"
 							color="evening"
 							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
 							onClick={handleAutoCreate}
@@ -661,8 +661,8 @@ const ShiftAdminTable = ({
 							자동 생성
 						</Button>
 						<Button
-							text-size="sm"
-							size="sm"
+							text-size="md"
+							size="register"
 							color="off"
 							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
 							onClick={handleDownloadWardSchedule}
