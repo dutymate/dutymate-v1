@@ -25,8 +25,8 @@ public class AutoScheduleController {
 		@RequestParam(value = "year", required = false) Integer year,
 		@RequestParam(value = "month", required = false) Integer month,
 		@Auth Member member) {
-		return autoScheduleService.generateAutoSchedule(new YearMonth(year, month), member);
-
+		autoScheduleService.generateAutoSchedule(new YearMonth(year, month), member);
+		return ResponseEntity.ok().build();
 	}
 
 }
