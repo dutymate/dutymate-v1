@@ -1,22 +1,7 @@
-.custom-scrollbar::-webkit-scrollbar {
-	width: 6px;
+:root {
+	--primary-20: rgba(235, 109, 59, 0.2); /* primary 색상의 20% 투명도 */
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-	background: #f1f1f1;
-	border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-	background: #c1c1c1;
-	border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-	background: #a8a8a8;
-}
-
-/* 애니메이션 스타일 추가 */
 @keyframes drift {
 	0% {
 		transform: rotate(0deg);
@@ -47,11 +32,34 @@
 .animate-drift {
 	animation: drift 5s linear infinite;
 }
-
 .animate-drift-slow {
 	animation: drift-slow 7s linear infinite;
 }
-
 .animate-drift-fast {
 	animation: drift-fast 3s linear infinite;
+}
+
+@keyframes wave {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.animate-wave-bg {
+	background: linear-gradient(
+		-45deg,
+		var(--primary-20) 0%,
+		#ffffff 25%,
+		var(--primary-20) 50%,
+		#ffffff 75%,
+		var(--primary-20) 100%
+	);
+	background-size: 400% 400%;
+	animation: wave 8s ease infinite;
 }
