@@ -179,6 +179,10 @@ const ShiftAdminTable = ({
 	// 현재 달의 일수 계산
 	const daysInMonth = new Date(year, month, 0).getDate();
 
+	// 상단에 state 추가
+	const [isKeyboardGuideOpen, setIsKeyboardGuideOpen] = useState(false);
+	const keyboardGuideButtonRef = useRef<HTMLButtonElement>(null);
+
 	// 키보드 이벤트 핸들러
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -651,7 +655,36 @@ const ShiftAdminTable = ({
 					</div>
 					{/* 버튼 영역 */}
 					<div className="flex gap-1 sm:gap-2 items-center">
-						<KeyboardGuide />
+						<div className="flex items-center gap-2">
+							<Button
+								ref={keyboardGuideButtonRef}
+								text-size="md"
+								size="register"
+								color="off"
+								className="py-0.5 px-1.5 sm:py-1 sm:px-2"
+								onClick={() => setIsKeyboardGuideOpen(!isKeyboardGuideOpen)}
+							>
+								<div className="flex items-center gap-1">
+									<span>키보드 가이드</span>
+								</div>
+							</Button>
+
+							{isKeyboardGuideOpen && (
+								<div
+									className="absolute z-50 mt-2"
+									style={{
+										top: keyboardGuideButtonRef.current?.getBoundingClientRect()
+											.bottom,
+										left: keyboardGuideButtonRef.current?.getBoundingClientRect()
+											.left,
+									}}
+								>
+									<KeyboardGuide
+										onClose={() => setIsKeyboardGuideOpen(false)}
+									/>
+								</div>
+							)}
+						</div>
 						<div className="h-6 w-[1px] bg-gray-200 mx-1" />
 						<Button
 							ref={ruleButtonRef}

@@ -1,8 +1,24 @@
 import DutyBadgeEng from "./DutyBadgeEng";
+import { useEffect } from "react";
 
-const KeyboardGuide = () => {
+interface KeyboardGuideProps {
+	onClose: () => void;
+}
+
+const KeyboardGuide = ({ onClose }: KeyboardGuideProps) => {
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (!(event.target as Element).closest(".keyboard-guide")) {
+				onClose();
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, [onClose]);
+
 	return (
-		<div className="flex items-center gap-2 p-2 bg-white rounded-lg shadow-sm text-[11px]">
+		<div className="keyboard-guide flex items-center gap-2 p-2 bg-white rounded-lg shadow-lg text-[11px] border border-gray-200">
 			{/* 근무 타입 */}
 			<div className="flex items-center gap-2">
 				<span className="text-xs font-bold text-gray-500">입력 키</span>
