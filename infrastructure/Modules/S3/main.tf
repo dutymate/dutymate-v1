@@ -55,11 +55,10 @@ resource "aws_s3_bucket_policy" "asset_bucket_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid       = "AllowPublicReadWriteAccess"
+        Sid       = "AllowPrivateWriteAccess"
         Effect    = "Allow"
         Principal = "*"
         Action = [
-          "s3:GetObject",
           "s3:PutObject"
         ]
         Resource = "${aws_s3_bucket.asset_bucket.arn}/*"
@@ -68,6 +67,15 @@ resource "aws_s3_bucket_policy" "asset_bucket_policy" {
             "aws:SourceVpce" = "${var.vpce_s3_id}"
           }
         }
+      },
+      {
+        Sid       = "AllowPublicReadAccess"
+        Effect    = "Allow"
+        Principal = "*"
+        Action = [
+          "s3:GetObject"
+        ]
+        Resource = "${aws_s3_bucket.asset_bucket.arn}/*"
       }
     ]
   })
