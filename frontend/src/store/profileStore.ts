@@ -30,6 +30,7 @@ const useProfileStore = create<ProfileStore>((set) => ({
 			set({ profile, error: null });
 		} catch (error) {
 			set({ error: "프로필 정보를 불러오는데 실패했습니다." });
+			window.location.href = "/error";
 		} finally {
 			set({ isLoading: false });
 		}
@@ -50,7 +51,7 @@ const useProfileStore = create<ProfileStore>((set) => ({
 		} catch (error) {
 			console.error("프로필 수정 에러:", error);
 			set({ error: "프로필 수정에 실패했습니다." });
-			throw error;
+			window.location.href = "/error";
 		} finally {
 			set({ isLoading: false });
 		}

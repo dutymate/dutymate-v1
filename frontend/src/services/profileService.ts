@@ -36,17 +36,48 @@ export const profileService = {
 	getProfile: () => {
 		return axiosInstance
 			.get<ProfileResponse>("/member")
-			.then((response) => response.data);
+			.then((response) => response.data)
+			.catch((error) => {
+				if (error.code === "ERR_NETWORK") {
+					console.error("서버에 연결할 수 없습니다.");
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							console.error("Error occurred:", error);
+							window.location.href = "/error";
+							break;
+					}
+				}
+				throw error;
+			});
 	},
 
 	// 프로필 정보 수정
 	updateProfile: (data: ProfileUpdateRequest) => {
-		// console.log("서버로 보내는 데이터:", data); // 디버깅용
 		return axiosInstance
 			.put("/member", data)
 			.then((response) => response.data)
 			.catch((error) => {
-				console.error("서버 응답 에러:", error.response?.data); // 디버깅용
+				if (error.code === "ERR_NETWORK") {
+					console.error("서버에 연결할 수 없습니다.");
+					throw new Error("서버 연결 실패");
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							console.error("Error occurred:", error);
+							window.location.href = "/error";
+							break;
+					}
+				}
 				throw error;
 			});
 	},

@@ -20,6 +20,15 @@ const DutyManagement = () => {
 		const urlYear = url.searchParams.get("year");
 		const urlMonth = url.searchParams.get("month");
 
+		// month가 1-12 범위를 벗어나거나 유효하지 않은 숫자인 경우
+		if (urlMonth) {
+			const monthNum = parseInt(urlMonth);
+			if (isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+				window.location.href = "/error";
+				return;
+			}
+		}
+
 		// URL에 파라미터가 있으면 해당 값으로, 없으면 undefined로 호출
 		fetchDutyInfo(
 			urlYear ? parseInt(urlYear) : undefined,

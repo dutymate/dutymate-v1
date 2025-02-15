@@ -129,7 +129,8 @@ export const wardService = {
 							break;
 						default:
 							console.error("Error occurred:", error);
-							throw error;
+							window.location.href = "/error";
+							break;
 					}
 				}
 				throw error;

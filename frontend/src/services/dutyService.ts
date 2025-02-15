@@ -174,7 +174,8 @@ export const dutyService = {
 							throw new Error("잘못된 요청입니다.");
 						default:
 							console.error("Error occurred:", error);
-							throw error;
+							window.location.href = "/error";
+							break;
 					}
 				}
 				throw error;

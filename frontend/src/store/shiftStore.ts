@@ -79,6 +79,7 @@ const useShiftStore = create<ShiftState>((set, get) => ({
 			set({
 				error: err instanceof Error ? err.message : "Failed to fetch duty info",
 			});
+			window.location.href = "/error";
 		} finally {
 			set({ loading: false });
 		}

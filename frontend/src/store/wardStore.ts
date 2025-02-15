@@ -30,26 +30,27 @@ const useWardStore = create<WardStore>((set, get) => ({
 		}),
 
 	updateNurse: async (memberId, updatedData) => {
-		// 이전 상태 저장
 		const previousState = get().wardInfo;
-
-		// Optimistic Update
-		set((state) => {
-			if (!state.wardInfo) return state;
-
-			const updatedNurses = state.wardInfo.nurses.map((nurse) =>
-				nurse.memberId === memberId ? { ...nurse, ...updatedData } : nurse,
-			);
-
-			return {
-				wardInfo: {
-					...state.wardInfo,
-					nurses: updatedNurses,
-				},
-			};
-		});
-
 		try {
+			// 이전 상태 저장
+			const previousState = get().wardInfo;
+
+			// Optimistic Update
+			set((state) => {
+				if (!state.wardInfo) return state;
+
+				const updatedNurses = state.wardInfo.nurses.map((nurse) =>
+					nurse.memberId === memberId ? { ...nurse, ...updatedData } : nurse,
+				);
+
+				return {
+					wardInfo: {
+						...state.wardInfo,
+						nurses: updatedNurses,
+					},
+				};
+			});
+
 			// API 호출
 			await wardService.updateNurseInfo(memberId, {
 				shift: updatedData.shift,
@@ -60,6 +61,7 @@ const useWardStore = create<WardStore>((set, get) => ({
 		} catch (error) {
 			// 에러 발생 시 이전 상태로 롤백
 			set({ wardInfo: previousState });
+			window.location.href = "/error";
 			throw error;
 		}
 	},
@@ -101,6 +103,10 @@ const useWardStore = create<WardStore>((set, get) => ({
 		} catch (error) {
 			// 에러 발생 시 이전 상태로 롤백
 			set({ wardInfo: previousState });
+			if (error instanceof Error && error.message === "LAST_HN") {
+				throw error;
+			}
+			window.location.href = "/error";
 			throw error;
 		}
 	},
