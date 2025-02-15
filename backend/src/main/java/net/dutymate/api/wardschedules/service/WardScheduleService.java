@@ -156,28 +156,30 @@ public class WardScheduleService {
 		// 연, 월, 수정일, 수정할 멤버 변수 초기화
 		final YearMonth yearMonth =
 			new YearMonth(editDutyRequestDtoList.getFirst().getYear(), editDutyRequestDtoList.getFirst().getMonth());
-		int lastIdx = 0;
 
 		// 병동멤버와 병동 초기화
 		Ward ward = Optional.of(member.getWardMember())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."))
 			.getWard();
 
+		// 몽고 DB에서 이번달 병동 스케줄 불러오기
+		WardSchedule wardSchedule = wardScheduleRepository
+			.findByWardIdAndYearAndMonth(ward.getWardId(), yearMonth.year(), yearMonth.month())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무표가 생성되지 않았습니다."));
+
+		// PUT 요청 : 히스토리로 nowIdx가 중간으로 돌아간 상황에서 수동 수정이 일어난 경우,
+		List<WardSchedule.Duty> recentDuties = wardSchedule.getDuties();
+		int nowIdx = wardSchedule.getNowIdx();
+
+		// 히스토리 포인트로 돌아 갔을 때, 수정 요청이 들어오면, 히스토리 이후 데이터 날리기
+		List<WardSchedule.Duty> duties = recentDuties.subList(0, nowIdx + 1); // nowIdx 이후 데이터 제거
+
 		for (EditDutyRequestDto editDutyRequestDto : editDutyRequestDtoList) {
 			final int modifiedIndex = editDutyRequestDto.getHistory().getModifiedDay() - 1;
 			final Long modifiedMemberId = editDutyRequestDto.getHistory().getMemberId();
 
-			// 몽고 DB에서 이번달 병동 스케줄 불러오기
-			WardSchedule wardSchedule = wardScheduleRepository
-				.findByWardIdAndYearAndMonth(ward.getWardId(), yearMonth.year(), yearMonth.month())
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무표가 생성되지 않았습니다."));
-
-			// PUT 요청 : 히스토리로 nowIdx가 중간으로 돌아간 상황에서 수동 수정이 일어난 경우,
-			List<WardSchedule.Duty> recentDuties = wardSchedule.getDuties();
-			int nowIdx = wardSchedule.getNowIdx();
-
 			// 가장 최근 스냅샷
-			List<WardSchedule.NurseShift> recentDuty = wardSchedule.getDuties().get(nowIdx).getDuty();
+			List<WardSchedule.NurseShift> recentDuty = duties.get(nowIdx).getDuty();
 
 			// 새로 만들 스냅샷
 			List<WardSchedule.NurseShift> newDuty = new ArrayList<>();
@@ -199,9 +201,6 @@ public class WardScheduleService {
 					prev.changeShifts(after);
 				});
 
-			// 히스토리 포인트로 돌아 갔을 때, 수정 요청이 들어오면, 히스토리 이후 데이터 날리기
-			List<WardSchedule.Duty> duties = recentDuties.subList(0, nowIdx + 1); // nowIdx 이후 데이터 제거
-
 			// 기존 병동 스케줄에 새로운 스냅샷 추가 및 저장
 			duties.add(WardSchedule.Duty.builder()
 				.idx(nowIdx + 1)
@@ -216,19 +215,21 @@ public class WardScheduleService {
 					.build())
 				.build());
 
-			WardSchedule updatedWardSchedule = WardSchedule.builder()
-				.id(wardSchedule.getId())
-				.wardId(wardSchedule.getWardId())
-				.year(yearMonth.year())
-				.month(yearMonth.month())
-				.nowIdx(nowIdx + 1)
-				.duties(duties)
-				.build();
-
-			lastIdx = updatedWardSchedule.getNowIdx();
-			wardScheduleRepository.save(updatedWardSchedule);
+			nowIdx++;
 		}
-		return getWardSchedule(member, yearMonth, lastIdx);
+
+		/*WardSchedule updatedWardSchedule = WardSchedule.builder()
+			.id(wardSchedule.getId())
+			.wardId(wardSchedule.getWardId())
+			.year(yearMonth.year())
+			.month(yearMonth.month())
+			.nowIdx(nowIdx)
+			.duties(duties)
+			.build();*/
+		wardSchedule.setDuties(duties);
+		wardSchedule.setNowIdx(nowIdx);
+		wardScheduleRepository.save(wardSchedule);
+		return getWardSchedule(member, yearMonth, nowIdx);
 	}
 
 	private List<WardScheduleResponseDto.History> findHistory(List<WardSchedule.Duty> duties) {
