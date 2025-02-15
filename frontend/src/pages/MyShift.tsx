@@ -9,6 +9,7 @@ import { dutyService } from "../services/dutyService";
 import useUserAuthStore from "../store/userAuthStore";
 import { toast } from "react-toastify";
 import { useLoadingStore } from "@/store/loadingStore";
+import { useNavigate } from "react-router-dom";
 
 // Duty 타입 변환 유틸리티 함수
 const convertDutyType = (
@@ -46,6 +47,7 @@ const MyShift = () => {
 	} | null>(null);
 	const [loading, setLoading] = useState(false);
 	const { userInfo } = useUserAuthStore(); // 전역 상태에서 role 가져오기
+	const navigate = useNavigate();
 
 	// 초기 데이터 로딩
 	useEffect(() => {
@@ -62,10 +64,11 @@ const MyShift = () => {
 			} catch (error) {
 				useLoadingStore.getState().setLoading(false);
 				console.error("Failed to fetch duty data:", error);
+				navigate("/error");
 			}
 		};
 		fetchMyDuty();
-	}, []);
+	}, [navigate]);
 
 	// 날짜 선택 시 해당 날짜의 근무 데이터 로딩
 	const handleDateSelect = async (date: Date) => {

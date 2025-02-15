@@ -10,24 +10,46 @@ import useUserAuthStore from "../store/userAuthStore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ApiErrorResponse, profileService } from "@/services/profileService";
+import { AxiosError } from "axios";
 
 const Mypage = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const { userInfo } = useUserAuthStore();
 	const navigate = useNavigate();
 	const userAuthStore = useUserAuthStore();
-	const handleLogoutButton = () => {
-		profileService.logout(
-			() => {
-				userAuthStore.logout();
-				navigate("/login");
-			},
-			(error: ApiErrorResponse) => {
-				toast.error(error.message);
-			},
-		);
 
-		navigate("/login");
+	const handleLogoutButton = async () => {
+		try {
+			await profileService.logout(
+				() => {
+					userAuthStore.logout();
+					toast.success("로그아웃되었습니다.");
+					navigate("/login");
+				},
+				(error: ApiErrorResponse) => {
+					console.error("로그아웃 실패:", error);
+					if (error instanceof Error) {
+						if (error.message === "서버 연결 실패") {
+							toast.error("잠시 후 다시 시도해주세요.");
+							return;
+						}
+						if (error.message === "UNAUTHORIZED") {
+							navigate("/login");
+							return;
+						}
+					}
+					if ((error as unknown as AxiosError)?.response?.status === 400) {
+						toast.error("잘못된 요청입니다.");
+						return;
+					}
+					// 그 외의 모든 에러는 에러 페이지로 이동
+					navigate("/error");
+				},
+			);
+		} catch (error) {
+			console.error("로그아웃 중 에러 발생:", error);
+			navigate("/error");
+		}
 	};
 
 	return (

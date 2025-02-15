@@ -20,6 +20,15 @@ const DutyManagement = () => {
 		const urlYear = url.searchParams.get("year");
 		const urlMonth = url.searchParams.get("month");
 
+		// year가 2000-2099 범위를 벗어나거나 유효하지 않은 숫자인 경우
+		if (urlYear) {
+			const yearNum = parseInt(urlYear);
+			if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2099) {
+				window.location.href = "/error";
+				return;
+			}
+		}
+
 		// month가 1-12 범위를 벗어나거나 유효하지 않은 숫자인 경우
 		if (urlMonth) {
 			const monthNum = parseInt(urlMonth);

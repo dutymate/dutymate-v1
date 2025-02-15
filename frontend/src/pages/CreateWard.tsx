@@ -79,15 +79,18 @@ const CreateWard = () => {
 					toast.error("잠시 후 다시 시도해주세요.");
 					return;
 				}
+				if (error.message === "UNAUTHORIZED") {
+					navigate("/login");
+					return;
+				}
 			}
 			if ((error as AxiosError)?.response?.status === 400) {
 				toast.error("병동 생성에 실패했습니다.");
 				navigate("/ward-admin");
-			} else if (error instanceof Error && error.message === "UNAUTHORIZED") {
-				navigate("/login");
-			} else {
-				navigate("/error");
+				return;
 			}
+			// 그 외의 모든 에러는 에러 페이지로 이동
+			navigate("/error");
 		}
 	};
 

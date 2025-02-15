@@ -2,14 +2,14 @@ import StartTemplate from "../components/templates/StartTemplate";
 import NextTemplate from "../components/templates/NextTemplate";
 import EnterWardForm from "../components/organisms/EnterWardForm";
 import useUserAuthStore from "../store/userAuthStore";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { wardService } from "../services/wardService";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 
 const EnterWard = () => {
 	const { userInfo } = useUserAuthStore();
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 	const userAuthStore = useUserAuthStore();
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
@@ -25,12 +25,9 @@ const EnterWard = () => {
 	const Template = isMobile ? NextTemplate : StartTemplate;
 
 	const handleEnterWard = async (wardCode: string) => {
-		// console.log("Attempting to enter ward with code:", wardCode);
-
 		try {
 			// 1. 병동 코드 확인
 			await wardService.checkWardCode(wardCode);
-			// console.log("Ward code check result:", response);
 
 			// 2. 병동 입장 성공 시 사용자 정보 업데이트
 			userAuthStore.setUserInfo({
@@ -46,15 +43,22 @@ const EnterWard = () => {
 			});
 		} catch (error: any) {
 			console.error("병동 입장 실패:", error);
-			if (error) {
-				switch (error.response.data.message) {
-					case "서버 연결 실패":
-						toast.error("잠시 후 다시 시도해주세요");
-						return;
-					default:
-						toast.error(error.response.data.message);
+			if (error instanceof Error) {
+				if (error.message === "서버 연결 실패") {
+					toast.error("잠시 후 다시 시도해주세요");
+					return;
+				}
+				if (error.message === "UNAUTHORIZED") {
+					navigate("/login");
+					return;
 				}
 			}
+			if (error?.response?.status === 400) {
+				toast.error(error.response.data.message);
+				return;
+			}
+			// 그 외의 모든 에러는 에러 페이지로 이동
+			navigate("/error");
 		}
 	};
 

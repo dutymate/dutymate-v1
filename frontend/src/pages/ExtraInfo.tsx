@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import userService from "../services/userService";
 import useUserAuthStore from "../store/userAuthStore";
 import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 // Mock 응답 데이터 import (임시로 주석 처리)
 // import mockResponse from "../services/response-json/user/PostApiMemberInfo.json";
 
@@ -75,6 +76,7 @@ const ExtraInfo = () => {
 				} else {
 					console.error("Invalid role in response:", response);
 					toast.error("역할 정보가 올바르지 않습니다.");
+					navigate("/error");
 				}
 			}, 1000);
 		} catch (error) {
@@ -84,8 +86,17 @@ const ExtraInfo = () => {
 					toast.error("잠시 후 다시 시도해주세요.");
 					return;
 				}
+				if (error.message === "UNAUTHORIZED") {
+					navigate("/login");
+					return;
+				}
 			}
-			toast.error("부가 정보 저장에 실패했습니다.");
+			if ((error as AxiosError)?.response?.status === 400) {
+				toast.error("부가 정보 저장에 실패했습니다.");
+				return;
+			}
+			// 그 외의 모든 에러는 에러 페이지로 이동
+			navigate("/error");
 		}
 	};
 

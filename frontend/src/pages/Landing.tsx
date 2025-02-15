@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LandingTemplate from "../components/templates/LandingTemplate"; // 모바일 버전 전용 랜딩 템플릿 임포트
 import "../styles/animations.css";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 const Landing = () => {
 	const navigate = useNavigate();
@@ -19,8 +21,28 @@ const Landing = () => {
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
-	const handleStart = () => {
-		navigate("/login");
+	const handleStart = async () => {
+		try {
+			navigate("/login");
+		} catch (error) {
+			console.error("페이지 이동 실패:", error);
+			if (error instanceof Error) {
+				if (error.message === "서버 연결 실패") {
+					toast.error("잠시 후 다시 시도해주세요.");
+					return;
+				}
+				if (error.message === "UNAUTHORIZED") {
+					navigate("/login");
+					return;
+				}
+			}
+			if ((error as AxiosError)?.response?.status === 400) {
+				toast.error("잘못된 접근입니다.");
+				return;
+			}
+			// 그 외의 모든 에러는 에러 페이지로 이동
+			navigate("/error");
+		}
 	};
 
 	return isMobile ? (
