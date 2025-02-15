@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { ruleService } from "../../services/ruleService";
-// import { Button } from "../atoms/Button";
+import { Button } from "../atoms/Button";
 import { toast } from "react-toastify";
 
 interface RuleEditModalProps {
@@ -514,92 +514,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 										</div>
 									</div>
 
-									{/* 연속 근무 후 오프 수 */}
-									<div className="flex items-center justify-between py-1.5 border-b">
-										<span className="text-sm text-foreground">
-											연속 근무 후 오프 수
-										</span>
-										<div className="flex items-center gap-1.5">
-											<select
-												disabled
-												value={rules.offCntAfterMaxShift}
-												onChange={(e) =>
-													handleChange(
-														"offCntAfterMaxShift",
-														Number(e.target.value),
-													)
-												}
-												className="
-                        appearance-none
-                        border rounded
-                        px-2 py-0.5
-                        text-sm
-                        bg-gray-50
-                        w-10
-                        text-center
-                        cursor-pointer
-                        hover:border-primary
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-primary
-                        focus:border-primary
-                      "
-											>
-												{[...Array(5)].map((_, i) => (
-													<option
-														key={i + 1}
-														value={i + 1}
-														className="text-center"
-													>
-														{i + 1}
-													</option>
-												))}
-											</select>
-											<span className="text-xs text-foreground">일 이상</span>
-											<select
-												disabled
-												value={rules.prioOffCntAfterMaxShift}
-												onChange={(e) =>
-													handleChange(
-														"prioOffCntAfterMaxShift",
-														Number(e.target.value),
-													)
-												}
-												className={`
-                        appearance-none
-                        border rounded
-                        px-2 py-0.5
-                        text-xs
-                        bg-gray-50
-                        w-20
-                        text-foreground
-                        text-center
-                        cursor-pointer
-                        hover:border-primary
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-primary
-                        focus:border-primary
-                        ${getFontWeight(rules.prioOffCntAfterMaxShift)}
-                      `}
-											>
-												{[
-													{ value: 3, label: "매우 중요", weight: "font-bold" },
-													{ value: 2, label: "중요", weight: "font-medium" },
-													{ value: 1, label: "보통", weight: "font-light" },
-												].map((item) => (
-													<option
-														key={item.value}
-														value={item.value}
-														className={`text-center ${item.weight}`}
-													>
-														{item.label}
-													</option>
-												))}
-											</select>
-										</div>
-									</div>
-
 									{/* 나이트 연속 근무 수 최대 */}
 									<div className="flex items-center justify-between py-1.5 border-b">
 										<span className="text-sm text-foreground">
@@ -740,89 +654,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                         focus:ring-primary
                         focus:border-primary
                         ${getFontWeight(rules.prioMinN)}
-                      `}
-											>
-												{[
-													{ value: 3, label: "매우 중요", weight: "font-bold" },
-													{ value: 2, label: "중요", weight: "font-medium" },
-													{ value: 1, label: "보통", weight: "font-light" },
-												].map((item) => (
-													<option
-														key={item.value}
-														value={item.value}
-														className={`text-center ${item.weight}`}
-													>
-														{item.label}
-													</option>
-												))}
-											</select>
-										</div>
-									</div>
-
-									{/* 나이트 후 오프 수 */}
-									<div className="flex items-center justify-between py-1.5 border-b">
-										<span className="text-sm text-foreground">
-											나이트 후 오프 수
-										</span>
-										<div className="flex items-center gap-1.5">
-											<select
-												disabled
-												value={rules.offCntAfterN}
-												onChange={(e) =>
-													handleChange("offCntAfterN", Number(e.target.value))
-												}
-												className="
-                        appearance-none
-                        border rounded
-                        px-2 py-0.5
-                        text-sm
-                        bg-gray-50
-                        w-10
-                        text-center
-                        cursor-pointer
-                        hover:border-primary
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-primary
-                        focus:border-primary
-                      "
-											>
-												{[...Array(5)].map((_, i) => (
-													<option
-														key={i + 1}
-														value={i + 1}
-														className="text-center"
-													>
-														{i + 1}
-													</option>
-												))}
-											</select>
-											<span className="text-xs text-foreground">일 이상</span>
-											<select
-												disabled
-												value={rules.prioOffCntAfterN}
-												onChange={(e) =>
-													handleChange(
-														"prioOffCntAfterN",
-														Number(e.target.value),
-													)
-												}
-												className={`
-                        appearance-none
-                        border rounded
-                        px-2 py-0.5
-                        text-xs
-                        bg-gray-50
-                        w-20
-                        text-foreground
-                        text-center
-                        cursor-pointer
-                        hover:border-primary
-                        focus:outline-none
-                        focus:ring-1
-                        focus:ring-primary
-                        focus:border-primary
-                        ${getFontWeight(rules.prioOffCntAfterN)}
                       `}
 											>
 												{[

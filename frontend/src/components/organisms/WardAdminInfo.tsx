@@ -1,12 +1,17 @@
 import { Icon } from "../atoms/Icon";
 // import { SmallSearchInput } from "../atoms/Input";
 // import { SortButton, FilterButton } from "../atoms/SubButton";
-import { WardInfo } from "../../services/wardService";
+import {
+	WaitingNurseInfo,
+	WardInfo,
+	wardService,
+} from "../../services/wardService";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { ConnectButton } from "../atoms/Button";
 // import { TempNurseButton } from "../atoms/Button";
 import { HistoryModal, NurseAssignModal } from "./WardAdminModal";
+import useWardStore from "@/store/wardStore";
 
 interface WardAdminInfoProps {
 	wardInfo: WardInfo;
@@ -23,13 +28,41 @@ const WardAdminInfo = ({
 	const [selectedNurse, setSelectedNurse] = useState<{
 		name: string;
 		gender: string;
-		year: number;
+		grade: number;
+		memberId: number;
 	} | null>(null);
 
 	const handleCopyCode = () => {
 		navigator.clipboard.writeText(wardInfo.wardCode);
 		toast.success("병동 코드가 복사되었습니다");
 	};
+
+	const handleOpenNurseWaitModal = () => {
+		setIsHistoryModalOpen(true);
+	};
+
+	const [nurses, setNurses] = useState<WaitingNurseInfo[]>([]);
+	const [waitingCount, setWaitingfCount] = useState(0);
+
+	// const wardStore = useWardStore();
+
+	// 입장 대기 간호사 목록 조회
+	const fetchNurses = async () => {
+		try {
+			const data = await wardService.getNurseWaitList();
+			setNurses(data);
+			setWaitingfCount(data.length);
+
+			// wardStore.getSortedNurses();
+		} catch (error) {
+			console.error(error);
+			toast.error("간호사 대기 목록을 조회하는데 실패했습니다.");
+		}
+	};
+
+	useEffect(() => {
+		fetchNurses();
+	}, [wardInfo.nurses]);
 
 	return (
 		<div className="w-full">
@@ -85,7 +118,7 @@ const WardAdminInfo = ({
 								입장 신청
 							</h3>
 							<button
-								onClick={() => setIsHistoryModalOpen(true)}
+								onClick={handleOpenNurseWaitModal}
 								className="flex items-center justify-center gap-1 py-1 px-3 bg-[#999786] hover:bg-[#88866f] rounded-lg transition-colors"
 							>
 								<Icon name="history" size={14} className="text-white" />
@@ -93,7 +126,7 @@ const WardAdminInfo = ({
 							</button>
 						</div>
 						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
-							1명 대기
+							{waitingCount > 0 ? `${waitingCount}명 대기` : "대기 원인 없음"}
 						</p>
 					</div>
 				</div>
@@ -126,12 +159,18 @@ const WardAdminInfo = ({
 					setSelectedNurse(nurse);
 					setIsHistoryModalOpen(false);
 				}}
+				nurses={nurses}
+				fetchNurses={fetchNurses}
 			/>
 
 			{selectedNurse && (
 				<NurseAssignModal
 					nurse={selectedNurse}
-					onClose={() => setSelectedNurse(null)}
+					onClose={() => {
+						setSelectedNurse(null);
+						fetchNurses();
+					}}
+					fetchNurses={fetchNurses}
 				/>
 			)}
 		</div>

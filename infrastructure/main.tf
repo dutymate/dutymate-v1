@@ -17,6 +17,7 @@ module "cloudfront" {
   source                               = "./Modules/CloudFront"
   frontend_bucket_regional_domain_name = module.s3.frontend_bucket_regional_domain_name
   cloudfront_certificate_arn           = module.acm.cloudfront_certificate_arn
+  aws_region                           = var.aws_region
   domain_name                          = var.domain_name
 }
 

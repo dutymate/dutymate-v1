@@ -54,7 +54,7 @@ const Mypage = () => {
 					<IoMdMenu className="w-6 h-6 text-gray-600" />
 				</button>
 				<div className="flex">
-					<Title title="마이페이지" subtitle="나의 정보를 확인해보세요" />
+					<Title title="마이페이지" subtitle="나의 정보를 확인해보세요." />
 					<button
 						onClick={handleLogoutButton}
 						className="w-full lg:w-[100px] px-3 py-2 bg-white text-gray-900 border border-gray-200 rounded-md hover:bg-gray-50 text-xs lg:text-sm h-[35px] ml-3"

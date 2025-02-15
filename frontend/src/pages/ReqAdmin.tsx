@@ -36,7 +36,7 @@ const ReqAdmin = () => {
 
 				<Title
 					title="요청 근무 관리"
-					subtitle="간호사들의 근무 요청을 관리해보세요"
+					subtitle="간호사들의 근무 요청을 관리해보세요."
 				/>
 				<div className="mt-3">
 					<ReqAdminTable />

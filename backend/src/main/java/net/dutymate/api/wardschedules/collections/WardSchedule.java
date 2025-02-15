@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
 @Getter
@@ -37,6 +38,7 @@ public class WardSchedule {
 	private int nowIdx;
 
 	// 듀티표 리스트
+	@Setter
 	private List<Duty> duties;
 
 	public void setNowIdx(Integer nowIdx) {

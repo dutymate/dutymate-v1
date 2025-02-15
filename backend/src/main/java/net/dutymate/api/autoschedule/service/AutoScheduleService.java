@@ -50,7 +50,7 @@ public class AutoScheduleService {
 	private final NurseScheduler nurseScheduler;
 
 	@Transactional
-	public void generateAutoSchedule(YearMonth yearMonth, Member member) {
+	public ResponseEntity<?> generateAutoSchedule(YearMonth yearMonth, Member member) {
 
 		Long wardId = member.getWardMember().getWard().getWardId();
 		//전월 달 근무 호출
@@ -80,15 +80,33 @@ public class AutoScheduleService {
 		Long memberId = member.getMemberId();
 
 		List<Request> requests = requestRepository.findAllWardRequests(member.getWardMember().getWard());
-
 		WardSchedule updateWardSchedule = nurseScheduler.generateSchedule(wardSchedule, rule, wardMembers,
 			prevNurseShifts, yearMonth, memberId,
 			requests);
 
+		List<WardSchedule.NurseShift> originalShifts = wardSchedule.getDuties().get(wardSchedule.getNowIdx()).getDuty();
+		List<WardSchedule.NurseShift> updatedShifts = updateWardSchedule.getDuties()
+			.get(updateWardSchedule.getNowIdx())
+			.getDuty();
+		boolean isChanged = false;
+		for (int nurseCnt = 0; nurseCnt < originalShifts.size(); nurseCnt++) {
+			if (!originalShifts.get(nurseCnt).getShifts().equals(
+				updatedShifts.get(nurseCnt).getShifts()
+			)) {
+				isChanged = true;
+				break;
+			}
+		}
+
+		String response = isChanged ? "자동 생성 완료" : "모든 조건을 만족하는 최적의 근무표입니다";
+
 		//요청 상태 관리
-		updateRequestStatuses.updateRequestStatuses(requests, updateWardSchedule, yearMonth);
+		if (isChanged) {
+			updateRequestStatuses.updateRequestStatuses(requests, updateWardSchedule, yearMonth);
+		}
 		wardScheduleRepository.save(updateWardSchedule);
 
-		ResponseEntity.ok("자동 생성 완료");
+		return ResponseEntity.ok(response);
 	}
+
 }

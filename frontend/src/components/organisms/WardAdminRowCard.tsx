@@ -315,7 +315,12 @@ const WardAdminRowCard = ({
 										/>
 									) : (
 										<div className="flex items-center w-full">
-											<span className="flex-1">{name}</span>
+											{/* <Icon
+													name="edit"
+													size={12}
+													className="text-gray-400 hover:text-primary-dark"
+												/> */}
+											<span className="flex-1  text-duty-off">{name}</span>
 											<button
 												onClick={() => setIsEditingName(true)}
 												className="opacity-0 group-hover:opacity-100 transition-opacity ml-1"

@@ -10,6 +10,11 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
     domain_name              = var.frontend_bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.cloudfront_origin_access_control.id
     origin_id                = "s3-frontend"
+
+    origin_shield {
+      enabled              = true
+      origin_shield_region = var.aws_region
+    }
   }
 
   enabled             = true
@@ -36,21 +41,22 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
 
   custom_error_response {
     error_code            = 403
-    response_code         = 200
+    response_code         = 403
     response_page_path    = "/index.html"
     error_caching_min_ttl = 10
   }
 
   custom_error_response {
     error_code            = 404
-    response_code         = 200
+    response_code         = 404
     response_page_path    = "/index.html"
     error_caching_min_ttl = 10
   }
 
   restrictions {
     geo_restriction {
-      restriction_type = "none"
+      restriction_type = "whitelist"
+      locations        = ["KR"]
     }
   }
 

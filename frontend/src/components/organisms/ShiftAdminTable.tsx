@@ -13,12 +13,10 @@ import FaultLayer from "../atoms/FaultLayer";
 import { toPng } from "html-to-image";
 import { requestService, WardRequest } from "../../services/requestService";
 import RequestStatusLayer from "../atoms/RequestStatusLayer";
+import { AutoSpinner } from "../atoms/AutoSpinner";
+import { debounce } from "lodash";
 // import { wardService } from "../../services/wardService";
 // import { Nurse } from "../../services/wardService";
-// import ViolationMessage from "../atoms/ViolationMessage";
-
-const THROTTLE_DELAY = 1000; // 1초
-let lastUpdateTime = 0;
 
 // 월별 주말과 공휴일 계산 유틸리티 함수 수정
 const getWeekendAndHolidayPairs = (year: number, month: number): number[][] => {
@@ -76,13 +74,14 @@ const ShiftAdminTable = ({
 	issues,
 }: ShiftAdminTableProps) => {
 	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
+	const [isAutoSpinnerOpen, setIsAutoSpinnerOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const ruleButtonRef = useRef<HTMLButtonElement>(null);
 	const tableRef = useRef<HTMLDivElement>(null);
 
 	const selectedCell = useShiftStore((state) => state.selectedCell);
 	const setSelectedCell = useShiftStore((state) => state.setSelectedCell);
-	const updateShift = useShiftStore((state) => state.updateShift);
+	// const updateShift = useShiftStore((state) => state.updateShift);
 	// const setNurseGrades = useShiftStore((state) => state.setNurseGrades);
 
 	// Add hover state management at component level
@@ -93,45 +92,85 @@ const ShiftAdminTable = ({
 
 	// 근무표 데이터 변환
 	const nurses = dutyData.map((nurse) => nurse.name);
-	const duties = dutyData.map((nurse) => nurse.shifts.split(""));
+	const [duties, setDuties] = useState(
+		dutyData.map((nurse) => nurse.shifts.split("")),
+	);
 	const prevShifts = dutyData.map((nurse) => nurse.prevShifts.split(""));
+
+	const [pendingRequests, setPendingRequests] = useState<any[]>([]);
+
+	const sendBatchRequest = useCallback(
+		debounce(async (requests) => {
+			try {
+				// Start timing the batch request
+				console.time("BatchRequestTime");
+
+				// Send the batched requests to the server
+				await dutyService.updateShiftBatch(requests);
+
+				// Fetch the updated duty data
+				const updatedData = await dutyService.getDuty({ year, month });
+
+				// Update the state with the new data
+				useShiftStore.getState().setDutyInfo(updatedData);
+
+				// Clear the pending requests
+				setPendingRequests([]);
+
+				// End timing after the get request is completed
+				console.timeEnd("BatchRequestTime");
+			} catch (error) {
+				console.error("Failed to update shifts:", error);
+				// Optionally, revert the optimistic update or notify the user
+				toast.error("근무표 수정에 실패했습니다. 다시 시도해주세요.", {
+					position: "bottom-left",
+					autoClose: 1000,
+				});
+			}
+		}, 600),
+		[year, month],
+	);
 
 	// 근무 변경 핸들러
 	const handleShiftChange = useCallback(
-		async (
+		(
 			nurseIndex: number,
 			dayIndex: number,
 			shift: "D" | "E" | "N" | "O" | "X",
 		) => {
-			const now = Date.now();
-			if (now - lastUpdateTime < THROTTLE_DELAY) {
-				toast.warning("잠시 후 다시 시도해주세요", {
-					position: "top-center",
-					autoClose: 1000,
-				});
-				return;
+			const nurse = dutyData[nurseIndex];
+			const currentShift = nurse.shifts.split("")[dayIndex];
+
+			// Check if the new shift is the same as the current shift
+			if (currentShift === shift) {
+				return; // Exit early if no change is needed
 			}
 
-			const nurse = dutyData[nurseIndex];
-			const shifts = nurse.shifts.split("");
-			const currentShift = shifts[dayIndex];
+			// Optimistically update the UI
+			const updatedDuties = [...duties];
+			updatedDuties[nurseIndex][dayIndex] = shift;
+			setDuties(updatedDuties);
 
-			try {
-				lastUpdateTime = now;
-				await updateShift({
-					year,
-					month,
+			const request = {
+				year,
+				month,
+				history: {
 					memberId: nurse.memberId,
 					name: nurse.name,
-					dayIndex,
 					before: currentShift,
 					after: shift,
-				});
-			} catch (error) {
-				toast.error("근무 수정에 실패했습니다.");
-			}
+					modifiedDay: dayIndex + 1,
+					isAutoCreated: false,
+				},
+			};
+
+			// Add the request to the pending requests
+			setPendingRequests((prevRequests) => [...prevRequests, request]);
+
+			// Trigger the debounced function
+			sendBatchRequest([...pendingRequests, request]);
 		},
-		[dutyData, year, month, updateShift],
+		[dutyData, year, month, pendingRequests, sendBatchRequest],
 	);
 
 	// 현재 달의 일수 계산
@@ -143,55 +182,51 @@ const ShiftAdminTable = ({
 			if (!selectedCell) return;
 			const { row, col } = selectedCell;
 
-			switch (e.key) {
-				case "ArrowRight":
-					if (col < daysInMonth - 1) {
-						setSelectedCell({ row, col: col + 1 });
-					} else if (row < nurses.length - 1) {
-						// 마지막 열에서 다음 행의 첫 열로 이동
-						setSelectedCell({ row: row + 1, col: 0 });
-					}
-					break;
-				case "ArrowLeft":
-					if (col > 0) {
-						setSelectedCell({ row, col: col - 1 });
-					} else if (row > 0) {
-						// 첫 열에서 이전 행의 마지막 열로 이동
-						setSelectedCell({ row: row - 1, col: daysInMonth - 1 });
-					}
-					break;
-				case "ArrowUp":
-					if (row > 0) {
-						setSelectedCell({ row: row - 1, col });
-					}
-					break;
-				case "ArrowDown":
-					if (row < nurses.length - 1) {
-						setSelectedCell({ row: row + 1, col });
-					}
-					break;
-				case "Delete":
-					handleShiftChange(row, col, "X");
-					break;
-				case "Backspace":
-					handleShiftChange(row, col, "X");
-					if (col > 0) {
-						setSelectedCell({ row, col: col - 1 });
-					} else if (row > 0) {
-						// 첫 열에서 이전 행의 마지막 열로 이동
-						setSelectedCell({ row: row - 1, col: daysInMonth - 1 });
-					}
-					break;
+			// 방향키 및 삭제 키 처리
+			if (!e.repeat) {
+				// 키를 꾹 누르고 있을 때는 무시
+				switch (e.key) {
+					case "ArrowRight":
+						if (col < daysInMonth - 1) {
+							setSelectedCell({ row, col: col + 1 });
+						} else if (row < nurses.length - 1) {
+							setSelectedCell({ row: row + 1, col: 0 });
+						}
+						break;
+					case "ArrowLeft":
+						if (col > 0) {
+							setSelectedCell({ row, col: col - 1 });
+						} else if (row > 0) {
+							setSelectedCell({ row: row - 1, col: daysInMonth - 1 });
+						}
+						break;
+					case "ArrowUp":
+						if (row > 0) {
+							setSelectedCell({ row: row - 1, col });
+						}
+						break;
+					case "ArrowDown":
+						if (row < nurses.length - 1) {
+							setSelectedCell({ row: row + 1, col });
+						}
+						break;
+					case "Delete":
+						handleShiftChange(row, col, "X");
+						break;
+					case "Backspace":
+						handleShiftChange(row, col, "X");
+						if (col > 0) {
+							setSelectedCell({ row, col: col - 1 });
+						} else if (row > 0) {
+							setSelectedCell({ row: row - 1, col: daysInMonth - 1 });
+						}
+						break;
+				}
 			}
-		};
 
-		const handleKeyPress = (e: KeyboardEvent) => {
-			if (!selectedCell) return;
-
-			const { row, col } = selectedCell;
-			if (col >= 0 && col < daysInMonth) {
+			// 근무 입력 키 처리
+			if (!e.repeat && col >= 0 && col < daysInMonth) {
 				const key = e.key.toUpperCase();
-				// Add Korean character support
 				const validKeys = [
 					"D",
 					"E",
@@ -202,25 +237,23 @@ const ShiftAdminTable = ({
 					"ㄷ",
 					"ㅜ",
 					"ㅐ",
-					"ㅊ",
+					"ㅌ",
 				];
 				const keyMap: { [key: string]: "D" | "E" | "N" | "O" | "X" } = {
-					ㅇ: "D", // Korean character for D
-					ㄷ: "E", // Korean character for E
-					ㅜ: "N", // Korean character for N
-					ㅐ: "O", // Korean character for O
-					ㅊ: "X", // Korean character for X
+					ㅇ: "D",
+					ㄷ: "E",
+					ㅜ: "N",
+					ㅐ: "O",
+					ㅌ: "X",
 				};
 
 				if (validKeys.includes(key)) {
-					const shiftKey = keyMap[key] || key; // Map Korean key to English if needed
+					const shiftKey = keyMap[key] || key;
 					handleShiftChange(row, col, shiftKey as "D" | "E" | "N" | "O" | "X");
 
-					// 다음 셀로 이동
 					if (col < daysInMonth - 1) {
 						setSelectedCell({ row, col: col + 1 });
 					} else if (row < nurses.length - 1) {
-						// 마지막 열에서 다음 행의 첫 열로 이동
 						setSelectedCell({ row: row + 1, col: 0 });
 					}
 				}
@@ -228,11 +261,9 @@ const ShiftAdminTable = ({
 		};
 
 		window.addEventListener("keydown", handleKeyDown);
-		window.addEventListener("keypress", handleKeyPress);
 
 		return () => {
 			window.removeEventListener("keydown", handleKeyDown);
-			window.removeEventListener("keypress", handleKeyPress);
 		};
 	}, [selectedCell, nurses.length, daysInMonth, handleShiftChange]);
 
@@ -256,7 +287,10 @@ const ShiftAdminTable = ({
 
 			await onUpdate(newYear, newMonth);
 		} catch (error) {
-			toast.error("근무표 조회에 실패했습니다.");
+			toast.error("근무표 조회에 실패했습니다.", {
+				position: "top-center",
+				autoClose: 2000,
+			});
 		} finally {
 			setIsLoading(false);
 		}
@@ -292,7 +326,10 @@ const ShiftAdminTable = ({
 
 			await onUpdate(nextYear, nextMonth);
 		} catch (error) {
-			toast.error("근무표 조회에 실패했습니다.");
+			toast.error("근무표 조회에 실패했습니다.", {
+				position: "top-center",
+				autoClose: 2000,
+			});
 		} finally {
 			setIsLoading(false);
 		}
@@ -402,24 +439,63 @@ const ShiftAdminTable = ({
 		return Math.max(0, Math.round(progress));
 	};
 
-	// 자동생성 핸들러 수정
+	// Add a state to track if auto-create is in progress
+	const [isAutoCreating, setIsAutoCreating] = useState(false);
+
+	// Modify handleResetDuty to prevent full page reload
+	const handleResetDuty = async () => {
+		const confirm = window.confirm(
+			"듀티표와 수정 기록이 초기화 됩니다. 듀티표를 초기화하시겠습니까?",
+		);
+		if (!confirm) return;
+
+		try {
+			// API 호출
+			const data = await dutyService.resetDuty(year, month);
+
+			// 받아온 데이터로 직접 상태 업데이트
+			useShiftStore.getState().setDutyInfo(data);
+
+			// onUpdate 함수 호출하여 화면 갱신
+			await onUpdate(year, month);
+		} catch (error) {
+			// 실패 알림
+			toast.error("초기화에 실패하였습니다.", {
+				position: "top-center",
+				autoClose: 2000,
+			});
+		}
+	};
+
+	// Modify handleAutoCreate to prevent full page reload and show toast if already in progress
 	const handleAutoCreate = async () => {
+		if (isAutoCreating) {
+			toast.warning("이미 자동생성 중입니다.", {
+				position: "top-center",
+				autoClose: 2000,
+			});
+			return;
+		}
+
 		// 총 간호사 수 확인
 		if (nurses.length < 10) {
 			const confirmed = window.confirm(
 				"해당 기능 최소 인원은 10명입니다. 임시 간호사를 추가해주세요.",
 			);
 			if (confirmed) {
-				window.location.href = "/ward-admin";
+				// Navigate to ward-admin without reloading the page
+				window.history.pushState({}, "", "/ward-admin");
 			}
 			return;
 		}
 
 		try {
+			setIsAutoCreating(true);
 			// 자동생성 중임을 알림
-			const loadingToast = toast.loading("자동생성 중입니다...", {
-				position: "top-center",
-			});
+			// const loadingToast = toast.loading("자동생성 중입니다...", {
+			// 	position: "top-center",
+			// });
+			setIsAutoSpinnerOpen(true);
 
 			// API 호출
 			const data = await dutyService.autoCreateDuty(year, month);
@@ -431,31 +507,19 @@ const ShiftAdminTable = ({
 			await onUpdate(year, month);
 
 			// 성공 알림
-			toast.update(loadingToast, {
-				render: "자동생성에 성공했습니다",
-				type: "success",
-				isLoading: false,
-				autoClose: 1500,
-			});
+			toast.success("자동생성에 성공했습니다");
+			// setIsAutoSpinnerOpen(false)
 		} catch (error) {
+			// setIsAutoSpinnerOpen(false)
 			// 실패 알림
 			toast.error("자동생성에 실패했습니다", {
 				position: "top-center",
-				autoClose: 1500,
+				autoClose: 2000,
 			});
+		} finally {
+			setIsAutoCreating(false);
 		}
 	};
-
-	// // 위반 사항 체크 함수 추가
-	// const getViolation = (nurseIndex: number, dayIndex: number) => {
-	// 	const nurseName = nurses[nurseIndex];
-	// 	return issues.find(
-	// 		(issue) =>
-	// 			issue.name === nurseName &&
-	// 			dayIndex + 1 >= issue.startDate &&
-	// 			dayIndex + 1 <= issue.endDate,
-	// 	);
-	// };
 
 	// 해당 월의 기본 OFF 일수 계산 (주말/공휴일)
 	const getDefaultOffDays = (year: number, month: number) => {
@@ -488,10 +552,16 @@ const ShiftAdminTable = ({
 			link.href = dataUrl;
 			link.click();
 
-			toast.success("듀티표가 다운로드되었습니다.");
+			toast.success("듀티표가 다운로드되었습니다.", {
+				position: "top-center",
+				autoClose: 2000,
+			});
 		} catch (error) {
 			console.error("Download error:", error);
-			toast.error("듀티표 다운로드에 실패했습니다.");
+			toast.error("듀티표 다운로드에 실패했습니다.", {
+				position: "top-center",
+				autoClose: 2000,
+			});
 		}
 	};
 
@@ -508,31 +578,6 @@ const ShiftAdminTable = ({
 			window.history.replaceState({}, "", url.toString());
 		}
 	}, []); // 컴포넌트 마운트 시 한 번만 실행
-
-	// 듀티표 초기화하기
-	const handleResetDuty = async () => {
-		const confirm = window.confirm(
-			"듀티표와 수정 기록이 초기화 됩니다. 듀티표를 초기화하시겠습니까?",
-		);
-		if (!confirm) return;
-
-		try {
-			// API 호출
-			const data = await dutyService.resetDuty(year, month);
-
-			// 받아온 데이터로 직접 상태 업데이트
-			useShiftStore.getState().setDutyInfo(data);
-
-			// onUpdate 함수 호출하여 화면 갱신
-			await onUpdate(year, month);
-		} catch (error) {
-			// 실패 알림
-			toast.error("초기화에 실패하였습니다.", {
-				position: "top-center",
-				autoClose: 1500,
-			});
-		}
-	};
 
 	const [requests, setRequests] = useState<WardRequest[]>([]);
 
@@ -916,6 +961,14 @@ const ShiftAdminTable = ({
 				<RuleEditModal
 					onClose={() => setIsRuleModalOpen(false)}
 					buttonRef={ruleButtonRef}
+				/>
+			)}
+
+			{/* 모달 컴포넌트 */}
+			{isAutoSpinnerOpen && (
+				<AutoSpinner
+					isOpen={isAutoSpinnerOpen}
+					onClose={() => setIsAutoSpinnerOpen(false)}
 				/>
 			)}
 		</div>
