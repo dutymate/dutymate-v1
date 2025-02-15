@@ -70,4 +70,8 @@ public class Board {
 	protected void prePersist() {
 		this.createdAt = new Timestamp(System.currentTimeMillis());
 	}
+
+	public void increaseViewCnt() {
+		this.viewCnt++;
+	}
 }

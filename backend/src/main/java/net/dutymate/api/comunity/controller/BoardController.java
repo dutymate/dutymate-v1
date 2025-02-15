@@ -1,15 +1,20 @@
 package net.dutymate.api.comunity.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.comunity.dto.BoardCreateRequestDto;
 import net.dutymate.api.comunity.service.BoardService;
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.enumclass.Category;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,4 +33,19 @@ public class BoardController {
 		return boardService.createBoard(boardCreateRequestDto, member);
 	}
 
+	@GetMapping
+	public ResponseEntity<?> getAllBoard(@RequestParam(required = false) Category category) {
+		return ResponseEntity.ok(boardService.getAllBoard(category));
+	}
+
+	@GetMapping("/{boardId}")
+	public ResponseEntity<?> getBoard(@PathVariable Long boardId, @Auth Member member) {
+		return ResponseEntity.ok(boardService.getBoard(boardId, member));
+	}
+
+	@DeleteMapping("/{boardId}")
+	public ResponseEntity<?> removeBoard(@PathVariable Long boardId, @Auth Member member) {
+		boardService.removeBoard(boardId, member);
+		return ResponseEntity.ok().build();
+	}
 }
