@@ -10,6 +10,11 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
     domain_name              = var.frontend_bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.cloudfront_origin_access_control.id
     origin_id                = "s3-frontend"
+
+    origin_shield {
+      enabled              = true
+      origin_shield_region = var.aws_region
+    }
   }
 
   enabled             = true
