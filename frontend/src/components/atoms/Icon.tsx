@@ -51,7 +51,7 @@ const iconComponents = {
 	close: IoCloseOutline,
 	history: MdHistory,
 	chevronDown: FaChevronDown,
-	reset: GrPowerReset
+	reset: GrPowerReset,
 };
 
 export type IconName =

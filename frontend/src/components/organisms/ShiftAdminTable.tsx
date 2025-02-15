@@ -504,16 +504,30 @@ const ShiftAdminTable = ({
 		}
 	}, []); // 컴포넌트 마운트 시 한 번만 실행
 
-
 	// 듀티표 초기화하기
-	const handleResetDuty = () =>{
-		const confirm = window.confirm("듀티표와 히스토리 데이터가 초기화 됩니다. 듀티표를 초기화하시겠습니까?")
-		if(confirm){
-			
-		}
-		return;
-	}
+	const handleResetDuty = async () => {
+		const confirm = window.confirm(
+			"듀티표와 수정 기록이 초기화 됩니다. 듀티표를 초기화하시겠습니까?",
+		);
+		if (!confirm) return;
 
+		try {
+			// API 호출
+			const data = await dutyService.resetDuty(year, month);
+
+			// 받아온 데이터로 직접 상태 업데이트
+			useShiftStore.getState().setDutyInfo(data);
+
+			// onUpdate 함수 호출하여 화면 갱신
+			await onUpdate(year, month);
+		} catch (error) {
+			// 실패 알림
+			toast.error("초기화에 실패하였습니다.", {
+				position: "top-center",
+				autoClose: 1500,
+			});
+		}
+	};
 
 	return (
 		<div
@@ -548,9 +562,9 @@ const ShiftAdminTable = ({
 								<span className="text-foreground">일</span>
 							</div>
 							<div>
-							<button
+								<button
 									className="flex items-center gap-1 text-gray-400 hover:text-gray-600 px-2 py-1 rounded-md hover:bg-gray-100"
-									onClick={() => handleResetDuty()}
+									onClick={handleResetDuty}
 								>
 									<Icon name="reset" size={16} />
 									<span className="text-sm whitespace-nowrap">초기화</span>

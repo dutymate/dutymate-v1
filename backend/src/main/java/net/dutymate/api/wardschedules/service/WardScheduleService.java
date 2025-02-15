@@ -23,7 +23,6 @@ import net.dutymate.api.enumclass.Shift;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.request.repository.RequestRepository;
-import net.dutymate.api.request.repository.RequestRepository;
 import net.dutymate.api.request.util.UpdateRequestStatuses;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.dto.AllWardDutyResponseDto;
@@ -424,6 +423,43 @@ public class WardScheduleService {
 			}).toList();
 
 		return AllWardDutyResponseDto.of(wardSchedule.getId(), yearMonth, nurseShiftList);
+	}
+
+	public void resetWardSchedule(Member member, final YearMonth yearMonth) {
+		// 병동멤버와 병동 불러오기
+		WardMember wardMember = Optional.ofNullable(member.getWardMember())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."));
+
+		Ward ward = wardMember.getWard();
+
+		// 해당 월의 근무표 불러오기
+		WardSchedule wardSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(),
+				yearMonth.year(), yearMonth.month())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "아직 해당 월의 근무표가 생성되지 않았습니다."));
+
+		// 모든 근무자의 듀티 기본값 초기화
+		String emptyShifts = yearMonth.initializeShifts();
+
+		// 초기화된 duty 추가
+		List<WardSchedule.NurseShift> resetShift = ward.getWardMemberList()
+			.stream()
+			.map(nurse -> WardSchedule.NurseShift.builder()
+				.memberId(nurse.getMember().getMemberId())
+				.shifts(emptyShifts)
+				.build())
+			.toList();
+
+		WardSchedule.Duty resetDuty = WardSchedule.Duty.builder()
+			.idx(0)
+			.duty(resetShift)
+			.history(initialDutyGenerator.createInitialHistory())
+			.build();
+
+		wardSchedule.getDuties().clear();
+		wardSchedule.getDuties().add(resetDuty);
+		wardSchedule.setNowIdx(0);
+
+		wardScheduleRepository.save(wardSchedule);
 	}
 }
 

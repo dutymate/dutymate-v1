@@ -2,6 +2,7 @@ package net.dutymate.api.wardschedules.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,5 +74,14 @@ public class WardScheduleController {
 	public ResponseEntity<?> getAllWardDuty(@Auth Member member) {
 		AllWardDutyResponseDto allWardDutyResponseDto = wardScheduleService.getAllWardDuty(member);
 		return ResponseEntity.ok(allWardDutyResponseDto);
+	}
+
+	@PostMapping("/reset")
+	public ResponseEntity<?> resetWardDuty(@Auth Member member,
+		@RequestParam(required = false) Integer year,
+		@RequestParam(required = false) Integer month) {
+		YearMonth yearMonth = new YearMonth(year, month);
+		wardScheduleService.resetWardSchedule(member, yearMonth);
+		return ResponseEntity.ok().build();
 	}
 }
