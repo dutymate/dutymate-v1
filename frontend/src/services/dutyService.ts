@@ -284,7 +284,7 @@ export const dutyService = {
 	 */
 	resetDuty: (year: number, month: number) => {
 		return axiosInstance
-			.post("/duty/reset", null , {
+			.post("/duty/reset", null, {
 				params: { year, month },
 			})
 			.then((response) => {
