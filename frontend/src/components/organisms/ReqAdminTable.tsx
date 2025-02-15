@@ -90,7 +90,7 @@ const ReqAdminTable = () => {
 				<div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-4 px-2">
 					{/* 제목과 정렬/필터 버튼을 한 줄에 */}
 					<div className="w-full flex justify-between items-center mb-2 lg:mb-0">
-						<h2 className="text-lg font-semibold">요청 내역</h2>
+						{/* <h2 className="text-lg font-semibold">요청 내역</h2> */}
 					</div>
 
 					{/* 검색창과 데스크톱용 정렬/필터 */}
@@ -120,7 +120,7 @@ const ReqAdminTable = () => {
 
 				{/* 요청 목록 */}
 				<div className="overflow-y-auto overflow-x-auto px-2">
-					<div className="flex flex-col gap-2 min-w-[80vw] lg:min-w-[60vw]">
+					<div className="flex flex-col gap-2 min-w-[80vw] lg:min-w-[60vw] min-h-[600px]">
 						{/* 헤더 */}
 						<div className="flex items-center p-1.5 lg:p-2 mb-2 text-sm lg:text-base text-gray-600 font-medium bg-base-muted-30 rounded-xl">
 							<div className="flex items-center justify-between flex-1 gap-10">
@@ -136,77 +136,83 @@ const ReqAdminTable = () => {
 							</div>
 						</div>
 
-						{/* 기존 요청 목록 */}
-						{filteredRequests.map((request) => (
-							<div
-								key={request.requestId}
-								className="flex items-center justify-between p-2 lg:p-3 bg-white rounded-xl shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow"
-							>
-								<div className="flex items-center gap-2 lg:gap-4 flex-1 min-w-0">
-									{/* 프로필 및 이름 */}
-									<div className="w-[15vw] min-w-[120px] max-w-[180px] flex items-center pl-2 lg:pl-4">
-										<FaUserCircle className="w-6 h-6 text-gray-500 flex-shrink-0" />
-										<span className="font-medium truncate ml-2">
-											{request.name}
-										</span>
+						{/* 요청 목록 또는 빈 상태 메시지 */}
+						{filteredRequests.length === 0 ? (
+							<div className="flex items-center justify-center h-[400px] text-gray-500">
+								요청 내역이 없습니다.
+							</div>
+						) : (
+							filteredRequests.map((request) => (
+								<div
+									key={request.requestId}
+									className="flex items-center justify-between p-2 lg:p-3 bg-white rounded-xl shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow"
+								>
+									<div className="flex items-center gap-2 lg:gap-4 flex-1 min-w-0">
+										{/* 프로필 및 이름 */}
+										<div className="w-[15vw] min-w-[120px] max-w-[180px] flex items-center pl-2 lg:pl-4">
+											<FaUserCircle className="w-6 h-6 text-gray-500 flex-shrink-0" />
+											<span className="font-medium truncate ml-2">
+												{request.name}
+											</span>
+										</div>
+
+										{/* 날짜 */}
+										<div className="w-[12vw] min-w-[90px] max-w-[120px] text-gray-600 text-xs lg:text-sm text-center">
+											{request.date}
+										</div>
+
+										{/* Duty 뱃지 */}
+										<div className="w-[8vw] min-w-[66px] max-w-[88px] flex justify-center scale-75 lg:scale-90">
+											<DutyBadgeKor
+												type={
+													request.shift === "D"
+														? "day"
+														: request.shift === "E"
+															? "evening"
+															: request.shift === "N"
+																? "night"
+																: "off"
+												}
+												size="xs"
+											/>
+										</div>
+
+										{/* 요청 내용 */}
+										<div className="w-[25vw] lg:w-[30vw] truncate text-gray-600 text-xs lg:text-sm text-center">
+											{request.memo}
+										</div>
 									</div>
 
-									{/* 날짜 */}
-									<div className="w-[12vw] min-w-[90px] max-w-[120px] text-gray-600 text-xs lg:text-sm text-center">
-										{request.date}
-									</div>
-
-									{/* Duty 뱃지 */}
-									<div className="w-[8vw] min-w-[66px] max-w-[88px] flex justify-center scale-75 lg:scale-90">
-										<DutyBadgeKor
-											type={
-												request.shift === "D"
-													? "day"
-													: request.shift === "E"
-														? "evening"
-														: request.shift === "N"
-															? "night"
-															: "off"
+									{/* 승인/거절 버튼 */}
+									<div className="w-[15vw] min-w-[180px] max-w-[240px] flex justify-end scale-75 lg:scale-90">
+										<ApprovalBtn
+											onApprove={() =>
+												handleStatusChange(
+													request.requestId,
+													request.memberId,
+													"ACCEPTED",
+												)
 											}
-											size="xs"
+											onReject={() =>
+												handleStatusChange(
+													request.requestId,
+													request.memberId,
+													"DENIED",
+												)
+											}
+											onHold={() =>
+												handleStatusChange(
+													request.requestId,
+													request.memberId,
+													"HOLD",
+												)
+											}
+											currentStatus={request.status}
 										/>
 									</div>
-
-									{/* 요청 내용 */}
-									<div className="w-[25vw] lg:w-[30vw] truncate text-gray-600 text-xs lg:text-sm text-center">
-										{request.memo}
-									</div>
 								</div>
-
-								{/* 승인/거절 버튼 */}
-								<div className="w-[15vw] min-w-[180px] max-w-[240px] flex justify-end scale-75 lg:scale-90">
-									<ApprovalBtn
-										onApprove={() =>
-											handleStatusChange(
-												request.requestId,
-												request.memberId,
-												"ACCEPTED",
-											)
-										}
-										onReject={() =>
-											handleStatusChange(
-												request.requestId,
-												request.memberId,
-												"DENIED",
-											)
-										}
-										onHold={() =>
-											handleStatusChange(
-												request.requestId,
-												request.memberId,
-												"HOLD",
-											)
-										}
-										currentStatus={request.status}
-									/>
-								</div>
-							</div>
-						))}
+							))
+						)}
 					</div>
 				</div>
 			</div>

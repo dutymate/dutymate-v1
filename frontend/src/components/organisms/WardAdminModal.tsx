@@ -1,5 +1,5 @@
 import { Icon } from "../atoms/Icon";
-import { useState, useEffect, useDebugValue, useDeferredValue } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { ConnectButton } from "../atoms/Button";
 import { WaitingNurseInfo, wardService } from "../../services/wardService";

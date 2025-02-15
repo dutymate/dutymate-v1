@@ -41,39 +41,41 @@ const WardAdminTable = ({}: WardAdminTableProps) => {
 
 	return (
 		<div className="bg-white rounded-[1.154375rem] p-4">
-			<div className="overflow-x-auto">
-				<div className="flex flex-col gap-2 min-w-[900px]">
-					{/* Header */}
-					<div className="flex items-center p-1.5 lg:p-2 mb-2 text-sm lg:text-base text-gray-600 font-medium bg-base-muted-30 rounded-xl">
-						{/* <input
-							type="checkbox"
-							className="mr-3 min-w-[20px] flex-shrink-0"
-							onChange={handleSelectAll}
-							checked={selectedNurses.length === nurses.length}
-						/> */}
-						<div className="flex items-center justify-between flex-1 gap-10">
-							<div className="flex items-center gap-6 flex-shrink-0">
-								<div className="w-[120px] pl-2">이름</div>
-								<div className="w-[60px] text-center">직위</div>
-								<div className="w-[60px] text-center">성별</div>
-								<div className="w-[70px] text-center">경력</div>
-								<div className="w-[80px] text-center">숙련도</div>
-								<div className="w-[120px] text-center">근무 유형</div>
-							</div>
-							<div className="flex items-center gap-6 flex-1 min-w-0">
-								<div className="flex-1 text-center">메모</div>
+			<div className="relative overflow-visible">
+				<div className="overflow-x-auto">
+					<div className="flex flex-col gap-2 min-w-[900px] min-h-[600px]">
+						{/* Header */}
+						<div className="flex items-center p-1.5 lg:p-2 mb-2 text-sm lg:text-base text-gray-600 font-medium bg-base-muted-30 rounded-xl">
+							{/* <input
+								type="checkbox"
+								className="mr-3 min-w-[20px] flex-shrink-0"
+								onChange={handleSelectAll}
+								checked={selectedNurses.length === nurses.length}
+							/> */}
+							<div className="flex items-center justify-between flex-1 gap-10">
+								<div className="flex items-center gap-6 flex-shrink-0">
+									<div className="w-[120px] pl-2">이름</div>
+									<div className="w-[60px] text-center">직위</div>
+									<div className="w-[60px] text-center">성별</div>
+									<div className="w-[70px] text-center">경력</div>
+									<div className="w-[80px] text-center">숙련도</div>
+									<div className="w-[120px] text-center">근무 유형</div>
+								</div>
+								<div className="flex items-center gap-6 flex-1 min-w-0">
+									<div className="flex-1 text-center">메모</div>
+								</div>
 							</div>
 						</div>
-					</div>
 
-					{/* Nurse List */}
-					{sortedNurses.map((nurse) => (
-						<WardAdminRowCard
-							key={nurse.memberId}
-							nurse={nurse}
-							onUpdate={handleNurseUpdate}
-						/>
-					))}
+						{/* Nurse List */}
+						{sortedNurses.map((nurse) => (
+							<WardAdminRowCard
+								key={nurse.memberId}
+								nurse={nurse}
+								onUpdate={handleNurseUpdate}
+							/>
+						))}
+					</div>
 				</div>
 			</div>
 		</div>

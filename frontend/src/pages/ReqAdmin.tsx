@@ -25,7 +25,7 @@ const ReqAdmin = () => {
 			/>
 
 			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 px-4 lg:px-8 py-3 overflow-y-auto pb-8">
+			<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 overflow-y-auto pb-8">
 				{/* 모바일 메뉴 버튼 */}
 				<button
 					onClick={() => setIsSidebarOpen(true)}

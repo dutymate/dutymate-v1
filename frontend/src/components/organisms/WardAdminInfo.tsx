@@ -19,10 +19,7 @@ interface WardAdminInfoProps {
 	onViewHistory: () => void;
 }
 
-const WardAdminInfo = ({
-	wardInfo,
-	// onViewHistory,
-}: WardAdminInfoProps) => {
+const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 	const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 	const [selectedNurse, setSelectedNurse] = useState<{
 		name: string;
@@ -81,7 +78,7 @@ const WardAdminInfo = ({
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								병동 인원
 							</h3>
-							<TempNurseButton />
+							<TempNurseButton onClick={onAddTempNurse} />
 						</div>
 						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
 							{wardInfo.nursesTotalCnt}명
