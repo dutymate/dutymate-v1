@@ -126,7 +126,7 @@ const WardAdminInfo = ({
 							</button>
 						</div>
 						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
-							{waitingCount > 0 ? `${waitingCount}명 대기` : "대기 원인 없음"}
+							{waitingCount > 0 ? `${waitingCount}명 대기` : "0명 대기"}
 						</p>
 					</div>
 				</div>

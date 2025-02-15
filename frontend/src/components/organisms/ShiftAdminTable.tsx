@@ -15,6 +15,7 @@ import { requestService, WardRequest } from "../../services/requestService";
 import RequestStatusLayer from "../atoms/RequestStatusLayer";
 import { AutoSpinner } from "../atoms/AutoSpinner";
 import { debounce } from "lodash";
+import { useNavigate } from "react-router-dom";
 // import { wardService } from "../../services/wardService";
 // import { Nurse } from "../../services/wardService";
 
@@ -467,6 +468,7 @@ const ShiftAdminTable = ({
 		}
 	};
 
+	const navigate = useNavigate();
 	// Modify handleAutoCreate to prevent full page reload and show toast if already in progress
 	const handleAutoCreate = async () => {
 		if (isAutoCreating) {
@@ -474,6 +476,7 @@ const ShiftAdminTable = ({
 				position: "top-center",
 				autoClose: 2000,
 			});
+
 			return;
 		}
 
@@ -483,8 +486,7 @@ const ShiftAdminTable = ({
 				"해당 기능 최소 인원은 10명입니다. 임시 간호사를 추가해주세요.",
 			);
 			if (confirmed) {
-				// Navigate to ward-admin without reloading the page
-				window.history.pushState({}, "", "/ward-admin");
+				navigate("/ward-admin");
 			}
 			return;
 		}
@@ -508,6 +510,7 @@ const ShiftAdminTable = ({
 
 			// 성공 알림
 			toast.success("자동생성에 성공했습니다");
+			
 			// setIsAutoSpinnerOpen(false)
 		} catch (error) {
 			// setIsAutoSpinnerOpen(false)
@@ -516,7 +519,7 @@ const ShiftAdminTable = ({
 				position: "top-center",
 				autoClose: 2000,
 			});
-		} finally {
+		}finally {
 			setIsAutoCreating(false);
 		}
 	};
