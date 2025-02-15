@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { ruleService } from "../../services/ruleService";
-import { Button } from "../atoms/Button";
+// import { Button } from "../atoms/Button";
 import { toast } from "react-toastify";
 
 interface RuleEditModalProps {

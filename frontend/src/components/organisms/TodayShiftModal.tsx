@@ -114,7 +114,16 @@ const TodayShiftModal = ({
 					<div className="flex-1 overflow-y-auto">
 						<div className="space-y-0.5">
 							{dutyData.otherShifts
-								.sort((a, b) => b.grade - a.grade)
+								.sort((a, b) => {
+									const dutyOrder = {
+										D: 0, // day
+										E: 1, // evening
+										N: 2, // night
+										O: 3, // off
+										X: 4, // 근무 없음
+									};
+									return dutyOrder[a.shift] - dutyOrder[b.shift];
+								})
 								.map((nurse, index) => (
 									<div
 										key={index}

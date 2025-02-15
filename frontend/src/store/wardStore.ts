@@ -32,9 +32,6 @@ const useWardStore = create<WardStore>((set, get) => ({
 	updateNurse: async (memberId, updatedData) => {
 		const previousState = get().wardInfo;
 		try {
-			// 이전 상태 저장
-			const previousState = get().wardInfo;
-
 			// Optimistic Update
 			set((state) => {
 				if (!state.wardInfo) return state;
