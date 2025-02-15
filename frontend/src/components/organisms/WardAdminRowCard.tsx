@@ -269,9 +269,9 @@ const WardAdminRowCard = ({
 			try {
 				await updateVirtualNurseInfo(nurse.memberId, { gender });
 				setIsGenderDropdownOpen(false);
-				toast.success("성별이 수정되었습니다");
+				toast.success("성별이 수정되었습니다.");
 			} catch (error) {
-				toast.error("성별 수정에 실패했습니다");
+				toast.error("성별 수정에 실패했습니다.");
 			}
 		}
 	};
@@ -281,9 +281,9 @@ const WardAdminRowCard = ({
 			try {
 				await updateVirtualNurseInfo(nurse.memberId, { grade });
 				setIsGradeDropdownOpen(false);
-				toast.success("연차가 수정되었습니다");
+				toast.success("연차가 수정되었습니다.");
 			} catch (error) {
-				toast.error("연차 수정에 실패했습니다");
+				toast.error("연차 수정에 실패했습니다.");
 			}
 		}
 	};

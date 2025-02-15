@@ -96,7 +96,7 @@ export const WardCodeInput = ({
 			</div>
 			{showInvalidMessage && invalidInput && (
 				<p className="text-[0.875rem] text-red-600 sm:text-[1rem]">
-					영문자와 숫자만 입력 가능합니다
+					영문자와 숫자만 입력 가능합니다.
 				</p>
 			)}
 			{error && (

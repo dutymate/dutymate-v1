@@ -170,8 +170,8 @@ export const dutyService = {
 							window.location.href = "/login";
 							break;
 						case 400:
-							console.error("잘못된 요청입니다:", error);
-							throw new Error("잘못된 요청입니다");
+							console.error("잘못된 요청입니다.:", error);
+							throw new Error("잘못된 요청입니다.");
 						default:
 							console.error("Error occurred:", error);
 							throw error;

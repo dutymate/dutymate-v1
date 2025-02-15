@@ -36,7 +36,7 @@ const CreateWard = () => {
 			setHospitals(results);
 		} catch (error) {
 			console.error("병원 검색 실패:", error);
-			toast.error("병원 검색에 실패했습니다");
+			toast.error("병원 검색에 실패했습니다.");
 		} finally {
 			setIsSearching(false);
 		}
@@ -63,7 +63,7 @@ const CreateWard = () => {
 			}
 
 			// 성공 토스트 메시지 표시
-			toast.success("병동이 생성되었습니다", {
+			toast.success("병동이 생성되었습니다.", {
 				position: "top-center",
 				autoClose: 3000,
 			});
@@ -81,7 +81,7 @@ const CreateWard = () => {
 				}
 			}
 			if ((error as AxiosError)?.response?.status === 400) {
-				toast.error("병동 생성에 실패했습니다");
+				toast.error("병동 생성에 실패했습니다.");
 				navigate("/ward-admin");
 			} else if (error instanceof Error && error.message === "UNAUTHORIZED") {
 				navigate("/login");
