@@ -13,7 +13,7 @@ const ReqAdmin = () => {
 	return (
 		<div className="w-full min-h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
-			<div className="hidden lg:block w-[238px] shrink-0">
+			<div className="hidden lg:block w-[14.875rem] shrink-0">
 				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 			</div>
 
@@ -25,7 +25,7 @@ const ReqAdmin = () => {
 			/>
 
 			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 overflow-y-auto pb-8">
+			<div className="flex-1 min-w-0 px-4 md:px-6 lg:px-8 py-3 overflow-y-auto pb-8">
 				{/* 모바일 메뉴 버튼 */}
 				<button
 					onClick={() => setIsSidebarOpen(true)}

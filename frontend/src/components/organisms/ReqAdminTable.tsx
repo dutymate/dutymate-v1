@@ -86,10 +86,9 @@ const ReqAdminTable = () => {
 	return (
 		<div className="w-full">
 			<div className="bg-white rounded-[1.154375rem] p-4">
-				{/* 검색 및 필터 영역 */}
 				<div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-4 px-2">
-					{/* 제목과 정렬/필터 버튼을 한 줄에 */}
 					<div className="w-full flex justify-between items-center mb-2 lg:mb-0">
+						<h2 className="text-base lg:text-lg font-semibold">요청 내역</h2>
 						{/* <h2 className="text-lg font-semibold">요청 내역</h2> */}
 					</div>
 
@@ -119,101 +118,128 @@ const ReqAdminTable = () => {
 				</div>
 
 				{/* 요청 목록 */}
-				<div className="overflow-y-auto overflow-x-auto px-2">
-					<div className="flex flex-col gap-2 min-w-[80vw] lg:min-w-[60vw] min-h-[600px]">
+				<div className="overflow-x-auto">
+					<table className="w-full min-w-[20rem] md:min-w-[40rem] lg:min-w-[60rem]">
 						{/* 헤더 */}
-						<div className="flex items-center p-1.5 lg:p-2 mb-2 text-sm lg:text-base text-gray-600 font-medium bg-base-muted-30 rounded-xl">
-							<div className="flex items-center justify-between flex-1 gap-10">
-								<div className="flex items-center gap-6 flex-shrink-0">
-									<div className="w-[120px] pl-2">이름</div>
-									<div className="w-[90px] text-center">날짜</div>
-									<div className="w-[66px] text-center">근무</div>
-									<div className="w-[180px] text-center">요청 내용</div>
-								</div>
-								<div className="flex items-center gap-6 flex-1 min-w-0">
-									<div className="flex-1 text-center">상태</div>
-								</div>
-							</div>
-						</div>
-
-						{/* 요청 목록 또는 빈 상태 메시지 */}
-						{filteredRequests.length === 0 ? (
-							<div className="flex items-center justify-center h-[400px] text-gray-500">
-								요청 내역이 없습니다.
-							</div>
-						) : (
-							filteredRequests.map((request) => (
-								<div
-									key={request.requestId}
-									className="flex items-center justify-between p-2 lg:p-3 bg-white rounded-xl shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow"
-								>
-									<div className="flex items-center gap-2 lg:gap-4 flex-1 min-w-0">
-										{/* 프로필 및 이름 */}
-										<div className="w-[15vw] min-w-[120px] max-w-[180px] flex items-center pl-2 lg:pl-4">
-											<FaUserCircle className="w-6 h-6 text-gray-500 flex-shrink-0" />
-											<span className="font-medium truncate ml-2">
-												{request.name}
-											</span>
-										</div>
-
-										{/* 날짜 */}
-										<div className="w-[12vw] min-w-[90px] max-w-[120px] text-gray-600 text-xs lg:text-sm text-center">
-											{request.date}
-										</div>
-
-										{/* Duty 뱃지 */}
-										<div className="w-[8vw] min-w-[66px] max-w-[88px] flex justify-center scale-75 lg:scale-90">
-											<DutyBadgeKor
-												type={
-													request.shift === "D"
-														? "day"
-														: request.shift === "E"
-															? "evening"
-															: request.shift === "N"
-																? "night"
-																: "off"
-												}
-												size="xs"
-											/>
-										</div>
-
-										{/* 요청 내용 */}
-										<div className="w-[25vw] lg:w-[30vw] truncate text-gray-600 text-xs lg:text-sm text-center">
-											{request.memo}
-										</div>
+						<thead>
+							<tr>
+								<th className="bg-base-muted-30 first:rounded-l-xl w-[5rem] lg:w-[7.5rem] p-2 text-left whitespace-nowrap">
+									<div className="flex justify-center translate-x-[2rem] lg:translate-x-0">
+										<span className="text-xs lg:text-sm text-gray-600 font-medium mr-[2rem]">
+											이름
+										</span>
 									</div>
-
-									{/* 승인/거절 버튼 */}
-									<div className="w-[15vw] min-w-[180px] max-w-[240px] flex justify-end scale-75 lg:scale-90">
-										<ApprovalBtn
-											onApprove={() =>
-												handleStatusChange(
-													request.requestId,
-													request.memberId,
-													"ACCEPTED",
-												)
-											}
-											onReject={() =>
-												handleStatusChange(
-													request.requestId,
-													request.memberId,
-													"DENIED",
-												)
-											}
-											onHold={() =>
-												handleStatusChange(
-													request.requestId,
-													request.memberId,
-													"HOLD",
-												)
-											}
-											currentStatus={request.status}
-										/>
+								</th>
+								<th className="bg-base-muted-30 w-[4rem] lg:w-[5.625rem] p-2 whitespace-nowrap">
+									<span className="text-xs lg:text-sm text-gray-600 font-medium text-center block">
+										날짜
+									</span>
+								</th>
+								<th className="bg-base-muted-30 w-[3.5rem] lg:w-[4.125rem] p-2 whitespace-nowrap">
+									<span className="text-xs lg:text-sm text-gray-600 font-medium text-center block">
+										근무
+									</span>
+								</th>
+								<th className="bg-base-muted-30 hidden md:table-cell w-[8rem] lg:w-[11.25rem] p-2 whitespace-nowrap">
+									<span className="text-xs lg:text-sm text-gray-600 font-medium text-center block">
+										요청 내용
+									</span>
+								</th>
+								<th className="bg-base-muted-30 rounded-r-xl w-auto lg:w-[11.25rem] p-2 whitespace-nowrap">
+									<div className="flex justify-center translate-x-[0.1rem] lg:translate-x-0">
+										<span className="text-xs lg:text-sm text-gray-600 font-medium">
+											상태
+										</span>
 									</div>
-								</div>
-							))
-						)}
-					</div>
+								</th>
+							</tr>
+						</thead>
+
+						{/* 요청 목록 본문 */}
+						<tbody>
+							{filteredRequests.length === 0 ? (
+								<tr>
+									<td colSpan={5}>
+										<div className="flex items-center justify-center h-[400px] text-gray-500">
+											요청 내역이 없습니다.
+										</div>
+									</td>
+								</tr>
+							) : (
+								filteredRequests.map((request) => (
+									<tr
+										key={request.requestId}
+										className="border-b border-gray-100"
+									>
+										<td className="w-[5rem] lg:w-[7.5rem] p-2">
+											<div className="flex items-center justify-start pl-2">
+												<FaUserCircle className="w-4 h-4 lg:w-6 lg:h-6 text-gray-500 flex-shrink-0" />
+												<span className="font-medium truncate ml-1 lg:ml-2 text-xs lg:text-base whitespace-nowrap">
+													{request.name}
+												</span>
+											</div>
+										</td>
+										<td className="w-[4rem] lg:w-[5.625rem] p-2">
+											<div className="text-gray-600 text-xs lg:text-sm text-center whitespace-nowrap">
+												{request.date}
+											</div>
+										</td>
+										<td className="w-[3.5rem] lg:w-[4.125rem] p-2">
+											<div className="flex justify-center scale-75 lg:scale-90">
+												<DutyBadgeKor
+													type={
+														request.shift === "D"
+															? "day"
+															: request.shift === "E"
+																? "evening"
+																: request.shift === "N"
+																	? "night"
+																	: "off"
+													}
+													size="xs"
+												/>
+											</div>
+										</td>
+										<td className="hidden md:table-cell w-[8rem] lg:w-[11.25rem] p-2">
+											<div className="truncate text-gray-600 text-xs lg:text-sm text-center whitespace-nowrap">
+												{request.memo}
+											</div>
+										</td>
+										<td className="w-auto lg:w-[11.25rem] p-2">
+											<div className="flex justify-end items-center h-full whitespace-nowrap">
+												<div className="scale-[0.65] lg:scale-90 transform-gpu">
+													<ApprovalBtn
+														onApprove={() =>
+															handleStatusChange(
+																request.requestId,
+																request.memberId,
+																"ACCEPTED",
+															)
+														}
+														onReject={() =>
+															handleStatusChange(
+																request.requestId,
+																request.memberId,
+																"DENIED",
+															)
+														}
+														onHold={() =>
+															handleStatusChange(
+																request.requestId,
+																request.memberId,
+																"HOLD",
+															)
+														}
+														currentStatus={request.status}
+													/>
+												</div>
+											</div>
+										</td>
+									</tr>
+								))
+							)}
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
