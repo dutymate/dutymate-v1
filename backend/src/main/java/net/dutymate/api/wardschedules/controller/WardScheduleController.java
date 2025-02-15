@@ -1,5 +1,7 @@
 package net.dutymate.api.wardschedules.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,10 +44,10 @@ public class WardScheduleController {
 	@PutMapping
 	public ResponseEntity<?> editWardSchedule(
 		@Auth Member member,
-		@RequestBody EditDutyRequestDto editDutyRequestDto
+		@RequestBody List<EditDutyRequestDto> editDutyRequestDtoList
 	) {
 		WardScheduleResponseDto wardScheduleResponseDto =
-			wardScheduleService.editWardSchedule(member, editDutyRequestDto);
+			wardScheduleService.editWardSchedule(member, editDutyRequestDtoList);
 		return ResponseEntity.ok(wardScheduleResponseDto);
 	}
 

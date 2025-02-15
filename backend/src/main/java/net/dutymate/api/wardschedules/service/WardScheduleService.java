@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import net.dutymate.api.entity.Member;
-import net.dutymate.api.entity.Request;
 import net.dutymate.api.entity.Ward;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.enumclass.RequestStatus;
@@ -131,7 +130,8 @@ public class WardScheduleService {
 		List<WardScheduleResponseDto.History> histories = findHistory(wardSchedule.getDuties());
 
 		// 승인, 대기 상태인 요청 구하기
-		List<WardScheduleResponseDto.RequestDto> requests = findRequest(ward);
+		// List<WardScheduleResponseDto.RequestDto> requests = findRequest(ward);
+		List<WardScheduleResponseDto.RequestDto> requests = null;
 
 		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues, histories,
 			requests);
@@ -152,136 +152,83 @@ public class WardScheduleService {
 	}
 
 	@Transactional
-	public WardScheduleResponseDto editWardSchedule(Member member, EditDutyRequestDto editDutyRequestDto) {
+	public WardScheduleResponseDto editWardSchedule(Member member, List<EditDutyRequestDto> editDutyRequestDtoList) {
 		// 연, 월, 수정일, 수정할 멤버 변수 초기화
-		final YearMonth yearMonth = new YearMonth(editDutyRequestDto.getYear(), editDutyRequestDto.getMonth());
-		final int modifiedIndex = editDutyRequestDto.getHistory().getModifiedDay() - 1;
-		final Long modifiedMemberId = editDutyRequestDto.getHistory().getMemberId();
-
-		// 이전 연, 월 초기화
-		YearMonth prevYearMonth = yearMonth.prevYearMonth();
+		final YearMonth yearMonth =
+			new YearMonth(editDutyRequestDtoList.getFirst().getYear(), editDutyRequestDtoList.getFirst().getMonth());
+		int lastIdx = 0;
 
 		// 병동멤버와 병동 초기화
 		Ward ward = Optional.of(member.getWardMember())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."))
 			.getWard();
 
-		// 몽고 DB에서 이번달 병동 스케줄 불러오기
-		WardSchedule wardSchedule = wardScheduleRepository
-			.findByWardIdAndYearAndMonth(ward.getWardId(), yearMonth.year(), yearMonth.month())
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무표가 생성되지 않았습니다."));
+		for (EditDutyRequestDto editDutyRequestDto : editDutyRequestDtoList) {
+			final int modifiedIndex = editDutyRequestDto.getHistory().getModifiedDay() - 1;
+			final Long modifiedMemberId = editDutyRequestDto.getHistory().getMemberId();
 
-		// 몽고 DB에서 전달 병동 스케줄 가져오기
-		WardSchedule prevWardSchedule = wardScheduleRepository
-			.findByWardIdAndYearAndMonth(ward.getWardId(), prevYearMonth.year(), prevYearMonth.month())
-			.orElse(null);
+			// 몽고 DB에서 이번달 병동 스케줄 불러오기
+			WardSchedule wardSchedule = wardScheduleRepository
+				.findByWardIdAndYearAndMonth(ward.getWardId(), yearMonth.year(), yearMonth.month())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무표가 생성되지 않았습니다."));
 
-		// 전달 듀티표 가져오기
-		List<WardSchedule.NurseShift> prevNurseShifts;
-		if (prevWardSchedule != null) {
-			prevNurseShifts = prevWardSchedule.getDuties().get(prevWardSchedule.getNowIdx()).getDuty();
-		} else {
-			prevNurseShifts = null;
+			// PUT 요청 : 히스토리로 nowIdx가 중간으로 돌아간 상황에서 수동 수정이 일어난 경우,
+			List<WardSchedule.Duty> recentDuties = wardSchedule.getDuties();
+			int nowIdx = wardSchedule.getNowIdx();
+
+			// 가장 최근 스냅샷
+			List<WardSchedule.NurseShift> recentDuty = wardSchedule.getDuties().get(nowIdx).getDuty();
+
+			// 새로 만들 스냅샷
+			List<WardSchedule.NurseShift> newDuty = new ArrayList<>();
+
+			// 가장 최근 스냅샷 -> 새로 만들 스냅샷 복사 (깊은 복사)
+			recentDuty.forEach(nurseShift -> newDuty.add(WardSchedule.NurseShift.builder()
+				.memberId(nurseShift.getMemberId())
+				.shifts(nurseShift.getShifts())
+				.build()));
+
+			// 새로 만들 스냅샷에 수정사항 반영
+			newDuty.stream()
+				.filter(prev -> Objects.equals(prev.getMemberId(), modifiedMemberId))
+				.forEach(prev -> {
+					String before = prev.getShifts();
+					String after = before.substring(0, modifiedIndex) + editDutyRequestDto.getHistory().getAfter()
+						+ before.substring(modifiedIndex + 1);
+
+					prev.changeShifts(after);
+				});
+
+			// 히스토리 포인트로 돌아 갔을 때, 수정 요청이 들어오면, 히스토리 이후 데이터 날리기
+			List<WardSchedule.Duty> duties = recentDuties.subList(0, nowIdx + 1); // nowIdx 이후 데이터 제거
+
+			// 기존 병동 스케줄에 새로운 스냅샷 추가 및 저장
+			duties.add(WardSchedule.Duty.builder()
+				.idx(nowIdx + 1)
+				.duty(newDuty)
+				.history(WardSchedule.History.builder()
+					.memberId(editDutyRequestDto.getHistory().getMemberId())
+					.name(editDutyRequestDto.getHistory().getName())
+					.before(editDutyRequestDto.getHistory().getBefore())
+					.after(editDutyRequestDto.getHistory().getAfter())
+					.modifiedDay(editDutyRequestDto.getHistory().getModifiedDay())
+					.isAutoCreated(editDutyRequestDto.getHistory().getIsAutoCreated())
+					.build())
+				.build());
+
+			WardSchedule updatedWardSchedule = WardSchedule.builder()
+				.id(wardSchedule.getId())
+				.wardId(wardSchedule.getWardId())
+				.year(yearMonth.year())
+				.month(yearMonth.month())
+				.nowIdx(nowIdx + 1)
+				.duties(duties)
+				.build();
+
+			lastIdx = updatedWardSchedule.getNowIdx();
+			wardScheduleRepository.save(updatedWardSchedule);
 		}
-
-		// PUT 요청 : 히스토리로 nowIdx가 중간으로 돌아간 상황에서 수동 수정이 일어난 경우,
-		List<WardSchedule.Duty> recentDuties = wardSchedule.getDuties();
-		int nowIdx = wardSchedule.getNowIdx();
-
-		// 가장 최근 스냅샷
-		List<WardSchedule.NurseShift> recentDuty = wardSchedule.getDuties().get(nowIdx).getDuty();
-
-		// 새로 만들 스냅샷
-		List<WardSchedule.NurseShift> newDuty = new ArrayList<>();
-
-		// 가장 최근 스냅샷 -> 새로 만들 스냅샷 복사 (깊은 복사)
-		recentDuty.forEach(nurseShift -> newDuty.add(WardSchedule.NurseShift.builder()
-			.memberId(nurseShift.getMemberId())
-			.shifts(nurseShift.getShifts())
-			.build()));
-
-		// 새로 만들 스냅샷에 수정사항 반영
-		newDuty.stream()
-			.filter(prev -> Objects.equals(prev.getMemberId(), modifiedMemberId))
-			.forEach(prev -> {
-				String before = prev.getShifts();
-				String after = before.substring(0, modifiedIndex) + editDutyRequestDto.getHistory().getAfter()
-					+ before.substring(modifiedIndex + 1);
-
-				prev.changeShifts(after);
-			});
-
-		// 히스토리 포인트로 돌아 갔을 때, 수정 요청이 들어오면, 히스토리 이후 데이터 날리기
-		List<WardSchedule.Duty> duties = recentDuties.subList(0, nowIdx + 1); // nowIdx 이후 데이터 제거
-
-		// 기존 병동 스케줄에 새로운 스냅샷 추가 및 저장
-		duties.add(WardSchedule.Duty.builder()
-			.idx(nowIdx + 1)
-			.duty(newDuty)
-			.history(WardSchedule.History.builder()
-				.memberId(editDutyRequestDto.getHistory().getMemberId())
-				.name(editDutyRequestDto.getHistory().getName())
-				.before(editDutyRequestDto.getHistory().getBefore())
-				.after(editDutyRequestDto.getHistory().getAfter())
-				.modifiedDay(editDutyRequestDto.getHistory().getModifiedDay())
-				.isAutoCreated(editDutyRequestDto.getHistory().getIsAutoCreated())
-				.build())
-			.build());
-
-		WardSchedule updatedWardSchedule = WardSchedule.builder()
-			.id(wardSchedule.getId())
-			.wardId(wardSchedule.getWardId())
-			.year(yearMonth.year())
-			.month(yearMonth.month())
-			.nowIdx(nowIdx + 1)
-			.duties(duties)
-			.build();
-
-		wardScheduleRepository.save(updatedWardSchedule);
-
-		// newDuty -> DTO 변환
-		List<WardScheduleResponseDto.NurseShifts> nurseShiftsDto = newDuty.stream()
-			.map(WardScheduleResponseDto.NurseShifts::of)
-			.toList();
-
-		// DTO에 값 넣어주기
-		nurseShiftsDto.forEach(now -> {
-			Member nurse = memberRepository.findById(now.getMemberId())
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사 매핑 오류"));
-			now.setName(nurse.getName());
-			now.setRole(nurse.getRole());
-
-			// prevShifts 구하기
-			if (prevNurseShifts == null) {
-				now.setPrevShifts("XXXX");
-			} else {
-				WardSchedule.NurseShift prevShifts = prevNurseShifts.stream()
-					.filter(prev -> Objects.equals(prev.getMemberId(), nurse.getMemberId()))
-					.findAny()
-					.orElseGet(() -> WardSchedule.NurseShift.builder().shifts("XXXX").build());
-				now.setPrevShifts(prevShifts.getShifts().substring(prevShifts.getShifts().length() - 4));
-			}
-		});
-
-		// TODO invalidCnt 구하기 (퍼센트 %)
-		// int invalidCnt = calcInvalidCnt(recentNurseShifts);
-
-		// Issues 구하기
-		List<WardScheduleResponseDto.Issue> issues =
-			dutyAutoCheck.check(nurseShiftsDto, yearMonth.year(), yearMonth.month());
-
-		// history 구하기
-		// nowIdx 이하의 모든 history 찾아서 List로 반환
-		List<WardScheduleResponseDto.History> histories = findHistory(duties);
-
-		// 승인, 대기 상태인 요청 구하기
-		List<WardScheduleResponseDto.RequestDto> requestDtoList = findRequest(ward);
-
-		List<Request> requests = requestRepository.findAllWardRequests(member.getWardMember().getWard());
-		updateRequestStatuses.updateRequestStatuses(requests, updatedWardSchedule, yearMonth);
-
-		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues, histories,
-			requestDtoList);
+		return getWardSchedule(member, yearMonth, lastIdx);
 	}
 
 	private List<WardScheduleResponseDto.History> findHistory(List<WardSchedule.Duty> duties) {
