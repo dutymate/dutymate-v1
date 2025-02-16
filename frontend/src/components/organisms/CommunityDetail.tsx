@@ -107,34 +107,38 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 				</div>
 
 				{/* 드롭다운 메뉴 */}
-				<div className="relative">
-					<button
-						onClick={(e) => {
-							e.stopPropagation();
-							setShowDropdown(!showDropdown);
-						}}
-						className="p-1 hover:bg-gray-100 rounded-full"
-					>
-						<BsThreeDotsVertical className="w-5 h-5 text-gray-500" />
-					</button>
+				{post.isMyWrite ? (
+					<div className="relative">
+						<button
+							onClick={(e) => {
+								e.stopPropagation();
+								setShowDropdown(!showDropdown);
+							}}
+							className="p-1 hover:bg-gray-100 rounded-full"
+						>
+							<BsThreeDotsVertical className="w-5 h-5 text-gray-500" />
+						</button>
 
-					{showDropdown && (
-						<div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-							<button
-								onClick={handleUpdateBoard}
-								className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
-							>
-								수정하기
-							</button>
-							<button
-								onClick={handleDeleteBoard}
-								className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 rounded-b-lg"
-							>
-								삭제하기
-							</button>
-						</div>
-					)}
-				</div>
+						{showDropdown && (
+							<div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+								<button
+									onClick={handleUpdateBoard}
+									className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+								>
+									수정하기
+								</button>
+								<button
+									onClick={handleDeleteBoard}
+									className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 rounded-b-lg"
+								>
+									삭제하기
+								</button>
+							</div>
+						)}
+					</div>
+				) : (
+					""
+				)}
 			</div>
 
 			{/* 게시글 제목 */}
