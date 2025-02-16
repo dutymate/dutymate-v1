@@ -60,3 +60,17 @@ cloud:
       bucket: ${CLOUD_AWS_S3_BUCKET}   # 버킷 이름
     stack:
       auto: ${CLOUD_AWS_STACK_AUTO}
+
+# NAVER 환경변수
+naver:
+  client:
+    id: ${NAVER_CLIENT_ID}
+    secret: ${NAVER_CLIENT_SECRET}
+  news:
+    uri: https://openapi.naver.com/v1/search/news.json?query=간호사관련뉴스&display=30&start=1&sort=sim
+
+# OPENAI 환경변수
+openai:
+  uri: https://api.openai.com/v1/chat/completions
+  model: ${OPENAI_MODEL}
+  secret-key: ${OPENAI_SECRET_KEY}
