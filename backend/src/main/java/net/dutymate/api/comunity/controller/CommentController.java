@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
+import net.dutymate.api.comunity.dto.BoardDetailResponseDto;
 import net.dutymate.api.comunity.dto.CommentRequestDto;
 import net.dutymate.api.comunity.service.CommentService;
 import net.dutymate.api.entity.Member;
@@ -28,8 +29,9 @@ public class CommentController {
 		@RequestBody CommentRequestDto commentRequestDto,
 		@Auth Member member
 	) {
-		commentService.writeComment(boardId, commentRequestDto, member);
-		return ResponseEntity.ok().build();
+		BoardDetailResponseDto.CommentDto commentResponseDto = commentService.writeComment(boardId, commentRequestDto,
+			member);
+		return ResponseEntity.ok(commentResponseDto);
 	}
 
 	@DeleteMapping("/{boardId}/comment/{commentId}")

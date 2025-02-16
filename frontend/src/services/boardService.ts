@@ -167,6 +167,52 @@ export const boardService = {
 				throw error;
 			});
 	},
+
+	writeComment: async (contents: string, boardId: number) => {
+		return axiosInstance
+			.post(`/board/${boardId}/comment`, { content: contents })
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (axios.isAxiosError(error)) {
+					throw error.response?.data;
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	deleteComment: async (boardId: number, commentId: number) => {
+		return axiosInstance
+			.delete(`/board/${boardId}/comment/${commentId}`)
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (axios.isAxiosError(error)) {
+					throw error.response?.data;
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
 };
 
 export default boardService;

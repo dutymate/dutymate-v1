@@ -1,6 +1,12 @@
 export const formatTimeAgo = (dateString: string) => {
-	const date = new Date(dateString);
+	const date = dateString ? new Date(dateString) : new Date();
 	const now = new Date();
+
+	// 날짜 변환에 실패한 경우
+	if (isNaN(date.getTime())) {
+		return "방금";
+	}
+
 	const diffInMinutes = Math.floor(
 		(now.getTime() - date.getTime()) / (1000 * 60),
 	);

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import net.dutymate.api.comunity.dto.BoardDetailResponseDto;
 import net.dutymate.api.comunity.dto.CommentRequestDto;
 import net.dutymate.api.comunity.repository.BoardRepository;
 import net.dutymate.api.comunity.repository.CommentRepository;
@@ -22,12 +23,15 @@ public class CommentService {
 	private final BoardRepository boardRepository;
 
 	@Transactional
-	public void writeComment(Long boardId, CommentRequestDto commentRequestDto, Member member) {
+	public BoardDetailResponseDto.CommentDto writeComment(Long boardId, CommentRequestDto commentRequestDto,
+		Member member) {
 		Board board = boardRepository.findById(boardId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 게시글입니다."));
 		Comment comment = commentRequestDto.toComment(board, member);
 		commentRepository.save(comment);
 		board.getCommentList().add(comment);
+
+		return BoardDetailResponseDto.CommentDto.of(comment, member);
 	}
 
 	@Transactional

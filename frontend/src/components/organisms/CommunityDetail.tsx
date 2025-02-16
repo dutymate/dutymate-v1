@@ -45,6 +45,8 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 	const [isLiked, setIsLiked] = useState(false);
 	const [likeCount, setLikeCount] = useState(post.likeCnt);
+	const [commentCount, setCommentCount] = useState(post.commentCnt);
+	const [commentList, setCommentList] = useState<Comment[]>(post.comments);
 
 	const navigate = useNavigate();
 
@@ -87,6 +89,61 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		}
 	};
 
+	const handleUpdateComment = async () => {
+		console.log("수정 기능");
+	};
+
+	const handleDeleteComment = async (
+		event: React.MouseEvent,
+		commentId: number,
+	) => {
+		event.stopPropagation();
+
+		try {
+			await boardService.deleteComment(post.boardId, commentId);
+			setShowCommentDropdown(commentId);
+			setCommentList((preComments) =>
+				preComments.filter((comment) => comment.commentId !== commentId),
+			);
+			setCommentCount(commentCount - 1);
+			toast.success("댓글이 성공적으로 삭제 되었습니다.");
+		} catch (error) {
+			console.error("댓글 삭제 오류:", error);
+			toast.error("댓글 삭제를 실패했습니다.");
+		}
+	};
+
+	const handleAddComment = async () => {
+		if (!newComment.trim()) {
+			toast.error("댓글을 입력해주세요.");
+			return;
+		}
+
+		try {
+			const response = await boardService.writeComment(
+				newComment,
+				post.boardId,
+			);
+
+			const newCommentData: Comment = {
+				commentId: response.commentId,
+				nickname: response.nickname,
+				profileImg: response.profileImg || "",
+				content: response.content,
+				createdAt: formatTimeAgo(new Date(response.createdAt).toISOString()), // 현재 시간
+				isMyWrite: response.isMyWrite,
+			};
+
+			setCommentList((preComments) => [...preComments, newCommentData]);
+			setCommentCount(commentCount + 1);
+
+			// 댓글 입력창 초기화
+			setNewComment("");
+		} catch (error) {
+			console.error("댓글 작성 오류:", error);
+		}
+	};
+
 	return (
 		<div className="bg-white rounded-xl p-4 lg:p-6 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
 			{/* 게시글 헤더 */}
@@ -108,7 +165,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 				{/* 드롭다운 메뉴 */}
 				{post.isMyWrite ? (
-					<div className="relative">
+					<div className="relative" ref={dropdownRef}>
 						<button
 							onClick={(e) => {
 								e.stopPropagation();
@@ -179,7 +236,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 				</button>
 				<div className="flex items-center gap-1">
 					<Icon name="message" size={16} />
-					<span>{post.comments.length}</span>
+					<span>{commentCount}</span>
 				</div>
 				<div className="flex items-center gap-1">
 					<Icon name="eye" size={16} />
@@ -189,10 +246,10 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 			{/* 댓글 목록 */}
 			<div className="mb-3 divide-y divide-gray-200">
-				{post.comments.length === 0 ? (
+				{commentList.length === 0 ? (
 					<div className="py-4 text-center text-gray-400">댓글이 없습니다.</div>
 				) : (
-					post.comments.map((comment) => (
+					commentList.map((comment) => (
 						<div key={comment.commentId} className="py-4 first:pt-0 last:pb-0">
 							<div className="flex justify-between items-start">
 								<div className="flex items-center gap-2">
@@ -207,41 +264,51 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 								</div>
 
 								{/* 댓글 드롭다운 */}
-								<div className="relative dropdown-container">
-									<button
-										onClick={() =>
-											setShowCommentDropdown(
-												showCommentDropdown === comment.commentId
-													? null
-													: comment.commentId,
-											)
-										}
-										className="p-1 hover:bg-gray-100 rounded-full"
+								{comment.isMyWrite ? (
+									<div
+										className="relative dropdown-container"
+										ref={dropdownRef}
 									>
-										<BsThreeDotsVertical className="w-4 h-4 text-gray-500" />
-									</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												setShowCommentDropdown(
+													showCommentDropdown === comment.commentId
+														? null
+														: comment.commentId,
+												);
+											}}
+											className="p-1 hover:bg-gray-100 rounded-full"
+										>
+											<BsThreeDotsVertical className="w-4 h-4 text-gray-500" />
+										</button>
 
-									{showCommentDropdown === comment.commentId && (
-										<div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-											<button
-												onClick={() => {
-													setShowCommentDropdown(null);
-												}}
-												className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
-											>
-												수정하기
-											</button>
-											<button
-												onClick={() => {
-													setShowCommentDropdown(null);
-												}}
-												className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 rounded-b-lg"
-											>
-												삭제하기
-											</button>
-										</div>
-									)}
-								</div>
+										{showCommentDropdown === comment.commentId && (
+											<div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+												<button
+													onClick={(e) => {
+														e.stopPropagation();
+														handleUpdateComment();
+													}}
+													className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+												>
+													수정하기
+												</button>
+												<button
+													onClick={(e) => {
+														e.stopPropagation();
+														handleDeleteComment(e, comment.commentId);
+													}}
+													className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 rounded-b-lg"
+												>
+													삭제하기
+												</button>
+											</div>
+										)}
+									</div>
+								) : (
+									""
+								)}
 							</div>
 							<p className="text-gray-700 text-sm mt-2">{comment.content}</p>
 						</div>
@@ -258,7 +325,12 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 					className="w-full p-4 border border-gray-200 rounded-lg resize-none h-24"
 				/>
 
-				<Button color="primary" size="sm" className="absolute bottom-3 right-2">
+				<Button
+					color="primary"
+					size="sm"
+					className="absolute bottom-3 right-2"
+					onClick={handleAddComment}
+				>
 					<FaArrowUpLong />
 				</Button>
 			</div>
