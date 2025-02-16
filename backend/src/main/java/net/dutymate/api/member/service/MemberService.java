@@ -40,6 +40,7 @@ import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.member.util.JwtUtil;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.ward.repository.EnterWaitingRepository;
+import net.dutymate.api.ward.repository.WardRepository;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
 import net.dutymate.api.wardmember.service.WardMemberService;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
@@ -63,6 +64,7 @@ public class MemberService {
 	private final WardScheduleRepository wardScheduleRepository;
 	private final WardMemberService wardMemberService;
 	private final EnterWaitingRepository enterWaitingRepository;
+	private final WardRepository wardRepository;
 
 	@Value("${kakao.client.id}")
 	private String kakaoClientId;
@@ -435,10 +437,10 @@ public class MemberService {
 	public void exitWard(Member member) {
 		Ward ward = member.getWardMember().getWard();
 
-		if (member.getRole() == Role.RN) {
-			WardMember wardMember = wardMemberRepository.findById(member.getWardMember().getWardMemberId())
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
+		WardMember wardMember = wardMemberRepository.findById(member.getWardMember().getWardMemberId())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
 
+		if (member.getRole() == Role.RN) {
 			ward.removeWardMember(wardMember);
 			deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
 			return;
@@ -447,19 +449,17 @@ public class MemberService {
 		if (member.getRole() == Role.HN) {
 			List<WardMember> wardMemberList = wardMemberRepository.findAllByWard(ward);
 
-			boolean hasOtherHN = wardMemberList.stream()
-				.anyMatch(wardMember ->
-					!wardMember.getMember().getMemberId().equals(member.getMemberId())
-						&& wardMember.getMember().getRole() == Role.HN);
+			if (wardMemberList.size() > 1) {
+				boolean hasOtherHN = wardMemberList.stream()
+					.anyMatch(wm -> !wm.getMember().getMemberId().equals(member.getMemberId())
+						&& wm.getMember().getRole() == Role.HN);
 
-			if (!hasOtherHN) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 관리자 권한을 넘겨주세요.");
+				if (!hasOtherHN) {
+					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 관리자 권한을 넘겨주세요.");
+				}
 			}
 
-			WardMember wardMember = wardMemberRepository.findById(member.getWardMember().getWardMemberId())
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
-
-			ward.removeWardMember(wardMember); // 병동에서 제거
+			ward.removeWardMember(wardMember);
 			deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
 			member.updateRole(null);
 		}
@@ -484,20 +484,23 @@ public class MemberService {
 		if (member.getRole() == Role.HN) {
 			List<WardMember> wardMemberList = wardMemberRepository.findAllByWard(ward);
 
-			// 병동 내 다른 HN이 있는지 확인
-			boolean hasOtherHN = wardMemberList.stream()
-				.anyMatch(wardMember ->
-					!wardMember.getMember().getMemberId().equals(member.getMemberId())
-						&& wardMember.getMember().getRole() == Role.HN);
+			if (wardMemberList.size() > 1) {
+				// 병동 내 다른 HN이 있는지 확인
+				boolean hasOtherHN = wardMemberList.stream()
+					.anyMatch(wardMember ->
+						!wardMember.getMember().getMemberId().equals(member.getMemberId())
+							&& wardMember.getMember().getRole() == Role.HN);
 
-			if (!hasOtherHN) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 멤버에게 관리자 권한 부여 후, 탈퇴가 가능합니다.");
+				if (!hasOtherHN) {
+					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 멤버에게 관리자 권한 부여 후, 탈퇴가 가능합니다.");
+				}
 			}
 
 			if (member.getWardMember() != null) {
-				ward.removeWardMember(member.getWardMember());
+				ward.removeWardMember(member.getWardMember()); // 병동에서 마지막 관리자 삭제
+				wardRepository.delete(ward); // 해당 병동도 같이 삭제
 			}
-			memberRepository.delete(member);
+			memberRepository.delete(member); // 멤버 자체를 삭제
 			deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
 		}
 	}
@@ -542,4 +545,11 @@ public class MemberService {
 		member.updatePassword(checkPasswordDto.getNewPassword());
 		memberRepository.save(member);
 	}
+
+	// @Transactional
+	// public void deleteWardIfEmpty(Ward ward) {
+	// 	if (wardMemberRepository.findAllByWard(ward).isEmpty()) {
+	// 		wardRepository.delete(ward);
+	// 	}
+	// }
 }

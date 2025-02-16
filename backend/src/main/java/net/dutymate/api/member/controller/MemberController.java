@@ -113,6 +113,9 @@ public class MemberController {
 	@DeleteMapping("/ward")
 	public ResponseEntity<?> deleteWardMember(@Auth Member member) {
 		memberService.exitWard(member);
+
+		// Ward ward = member.getWardMember().getWard();
+		// memberService.deleteWardIfEmpty(ward);
 		return ResponseEntity.ok().build();
 	}
 

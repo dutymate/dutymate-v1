@@ -37,7 +37,7 @@ public class Ward {
 	private List<WardMember> wardMemberList;
 
 	// OneToOne => Ward : Rule = 1 : 1
-	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "rule_id", nullable = false)
 	private Rule rule;
 
