@@ -33,7 +33,7 @@ public class Ward {
 	private Long wardId;
 
 	// OneToMany => Ward : WardMember = 1 : N
-	@OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "ward", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<WardMember> wardMemberList;
 
 	// OneToOne => Ward : Rule = 1 : 1
