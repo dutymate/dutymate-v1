@@ -1,10 +1,14 @@
 package net.dutymate.api.ward.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +24,7 @@ import net.dutymate.api.enumclass.Provider;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
+import net.dutymate.api.ward.dto.AddNurseCntRequestDto;
 import net.dutymate.api.ward.dto.EnterWaitingResponseDto;
 import net.dutymate.api.ward.dto.HospitalNameResponseDto;
 import net.dutymate.api.ward.dto.TempLinkRequestDto;
@@ -35,6 +40,7 @@ import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 import net.dutymate.api.wardschedules.util.InitialDutyGenerator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -48,6 +54,12 @@ public class WardService {
 	private final MemberRepository memberRepository;
 	private final EnterWaitingRepository enterWaitingRepository;
 	private final HospitalRepository hospitalRepository;
+
+	private final StringRedisTemplate stringRedisTemplate;
+	private static final String QUEUE_KEY = "virtualMemberQueue";
+	private final RedisTemplate<String, String> redisTemplate;
+	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final AtomicBoolean isProcessing = new AtomicBoolean(false);
 
 	@Transactional
 	public void createWard(WardRequestDto requestWardDto, Member member) {
@@ -308,63 +320,100 @@ public class WardService {
 	}
 
 	@Transactional
-	public void addVirtualMember(Member member) {
-		// 수간호사가 아니면 예외 처리
+	public void addVirtualMember(AddNurseCntRequestDto addNurseCntRequestDto, Member member) {
+		System.out.println(
+			"addNurseCntRequestDto.getVirtualNurseCnt() = " + addNurseCntRequestDto.getVirtualNurseCnt());
+
+		int addNurseCnt = addNurseCntRequestDto.getVirtualNurseCnt();
+
+		// 1. 수간호사가 아니면 예외 처리
 		if (!member.getRole().equals(Role.HN)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자가 아닙니다.");
 		}
 
-		// 1. 병동 불러오기
+		// 2. 병동 불러오기
 		Ward ward = Optional.ofNullable(member.getWardMember())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동에 속해있지 않은 회원입니다."))
 			.getWard();
 
-		// 2. 병동 회원으로 가상 간호사 추가하기
-		Member virtualMember = Member.builder()
-			.email("tempEmail@temp.com")
-			.name(generateTempName(ward))
-			.password("tempPassword123!!")
-			.grade(1)
-			.role(Role.RN)
-			.gender(Gender.F)
-			.provider(Provider.NONE)
-			.build();
-		memberRepository.save(virtualMember);
+		// 3. 새로운 임시간호사와 WardMember 만들기
+		List<Member> newMemberList = new ArrayList<>();
+		List<WardMember> newWardMemberList = new ArrayList<>();
 
-		WardMember virtualNurse = WardMember.builder()
-			.isSynced(false)
-			.ward(ward)
-			.member(virtualMember)
-			.build();
-		wardMemberRepository.save(virtualNurse);
-		ward.addWardMember(virtualNurse);
+		for (int newNurse = 0; newNurse < addNurseCnt; newNurse++) {
 
-		// 4. 병동 Id로 MongoDB에 추가된 현재달과 다음달 듀티 확인
-		// 4-1. 이번달 듀티
+			String virtualNurseName = generateTempName(ward, newNurse + 1);
+
+			// 4. 병동 회원으로 가상 간호사 추가하기
+			Member virtualMember = Member.builder()
+				.email("tempEmail@temp.com")
+				.name(virtualNurseName)
+				.password("tempPassword123!!")
+				.grade(1)
+				.role(Role.RN)
+				.gender(Gender.F)
+				.provider(Provider.NONE)
+				.build();
+			newMemberList.add(virtualMember);
+		}
+		memberRepository.saveAll(newMemberList);
+
+		for (Member virtualMember : newMemberList) {
+			// 새로운 병동 멤버로 추가
+			WardMember virtualNurse = WardMember.builder()
+				.isSynced(false)
+				.ward(ward)
+				.member(virtualMember)
+				.build();
+			// wardMemberRepository.save(virtualNurse);
+			newWardMemberList.add(virtualNurse);
+			ward.addWardMember(virtualNurse);
+		}
+
+		// RDB에 한 번에 저장
+		wardMemberRepository.saveAll(newWardMemberList);
+
+		// 5. MongoDB 듀티표 업데이트
+		// 이번달 듀티
 		YearMonth yearMonth = YearMonth.nowYearMonth();
 
 		WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
 			ward.getWardId(), yearMonth.year(), yearMonth.month()).orElse(null);
 
-		// 4-2. 다음달 듀티
+		// 다음달 듀티
 		YearMonth nextYearMonth = yearMonth.nextYearMonth();
-
 		WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
 			ward.getWardId(), nextYearMonth.year(), nextYearMonth.month()).orElse(null);
 
-		// 5. 기존 스케줄이 존재한다면, 새로운 스냅샷 생성 및 초기화된 duty 추가하기
+		List<WardSchedule> updatedScheduleList = new ArrayList<>();
+
+		// 6. 기존 스케줄이 존재한다면, 새로운 스냅샷 생성 및 초기화된 duty 추가하기
 		if (currMonthSchedule != null) {
-			initialDutyGenerator.updateDutyWithNewMember(currMonthSchedule, virtualNurse);
+			for (WardMember nurse : newWardMemberList) {
+				initialDutyGenerator.updateDutyWithNewMember(currMonthSchedule, nurse);
+			}
+			updatedScheduleList.add(currMonthSchedule);
 		}
 
 		if (nextMonthSchedule != null) {
-			initialDutyGenerator.updateDutyWithNewMember(nextMonthSchedule, virtualNurse);
+			for (WardMember nurse : newWardMemberList) {
+				initialDutyGenerator.updateDutyWithNewMember(nextMonthSchedule, nurse);
+			}
+			updatedScheduleList.add(nextMonthSchedule);
 		}
 
 		// 6. 기존 스케줄이 없다면, 입장한 멤버의 듀티표 초기화하여 저장하기
 		// 사실 이미 병동이 생성된 이상, 무조건 기존 스케줄이 있어야만 함
 		if (currMonthSchedule == null && nextMonthSchedule == null) {
-			initialDutyGenerator.initializedDuty(virtualNurse, yearMonth);
+			for (WardMember nurse : newWardMemberList) {
+				updatedScheduleList.add(initialDutyGenerator.initializedDuty(nurse, yearMonth));
+			}
+		}
+
+		// 7. MongoDB에 한 번만 접근하여 데이터 넣기
+		if (!updatedScheduleList.isEmpty()) {
+			System.out.println(" ========Mongo 접근========== ");
+			wardScheduleRepository.saveAll(updatedScheduleList);
 		}
 	}
 
@@ -380,9 +429,11 @@ public class WardService {
 		return code.toString();
 	}
 
-	private String generateTempName(Ward ward) {
+	private String generateTempName(Ward ward, int index) {
+		// 기존 Ward에 임시간호사 목록 조회
 		List<WardMember> tempNurses = wardMemberRepository.findByWardAndIsSynced(ward, false);
-		return "간호사" + (tempNurses.size() + 1);
+
+		return "간호사" + (tempNurses.size() + index);
 	}
 
 	@Transactional

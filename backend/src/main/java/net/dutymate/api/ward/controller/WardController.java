@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.entity.Member;
+import net.dutymate.api.ward.dto.AddNurseCntRequestDto;
 import net.dutymate.api.ward.dto.EnterWaitingResponseDto;
 import net.dutymate.api.ward.dto.HospitalNameResponseDto;
 import net.dutymate.api.ward.dto.TempLinkRequestDto;
@@ -56,8 +57,9 @@ public class WardController {
 
 	// 가상 간호사 추가 (관리자)
 	@PostMapping("/member/virtual")
-	public ResponseEntity<?> addVirtualMember(@Auth Member member) {
-		wardService.addVirtualMember(member);
+	public ResponseEntity<?> addVirtualMember(@RequestBody AddNurseCntRequestDto addNurseCntRequestDto,
+		@Auth Member member) {
+		wardService.addVirtualMember(addNurseCntRequestDto, member);
 		return ResponseEntity.ok().build();
 	}
 

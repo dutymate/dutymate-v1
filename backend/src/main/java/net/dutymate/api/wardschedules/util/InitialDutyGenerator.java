@@ -21,9 +21,11 @@ public class InitialDutyGenerator {
 
 	/**
 	 * Duty 초기화 메서드 (병동 생성 시에만 사용)
+	 *
+	 * @return
 	 */
-	public void initializedDuty(WardMember wardMember, YearMonth yearMonth) {
-		createNewWardSchedule(wardMember.getWard(), List.of(wardMember), yearMonth);
+	public WardSchedule initializedDuty(WardMember wardMember, YearMonth yearMonth) {
+		return createNewWardSchedule(wardMember.getWard(), List.of(wardMember), yearMonth);
 	}
 
 	/**
@@ -53,7 +55,7 @@ public class InitialDutyGenerator {
 	/**
 	 * 기존 스케줄에 새로운 멤버 추가하여 새 스냅샷 생성 (병동 입장 시)
 	 */
-	public void updateDutyWithNewMember(WardSchedule existingSchedule, WardMember newWardMember) {
+	public WardSchedule updateDutyWithNewMember(WardSchedule existingSchedule, WardMember newWardMember) {
 
 		String initializedShifts
 			= new YearMonth(existingSchedule.getYear(), existingSchedule.getMonth()).initializeShifts();
@@ -80,8 +82,7 @@ public class InitialDutyGenerator {
 		// 마지막 duty에 새로운 멤버 초기화된 값 추가
 		newDuty.addNurseShift(nurseShift);
 
-		// 3. 기존 duties 초기화 후, 새 멤버 추가된 Duty 추가하기
-		WardSchedule updatedSchedule = WardSchedule.builder()
+		return WardSchedule.builder()
 			.id(existingSchedule.getId())
 			.wardId(newWardMember.getWard().getWardId())
 			.year(existingSchedule.getYear())
@@ -89,9 +90,6 @@ public class InitialDutyGenerator {
 			.nowIdx(0)
 			.duties(new ArrayList<>(List.of(newDuty)))
 			.build();
-
-		// mongodb 저장
-		wardScheduleRepository.save(updatedSchedule);
 	}
 
 	// duty 초기화하기
