@@ -116,6 +116,29 @@ export const boardService = {
 				throw error;
 			});
 	},
+
+	getSinglePosts: async (boardId: number) => {
+		return axiosInstance
+			.get(`/board/${boardId}`)
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (axios.isAxiosError(error)) {
+					throw error.response?.data;
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
 };
 
 export default boardService;

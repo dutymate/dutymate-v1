@@ -5,6 +5,7 @@ import CommunityCategories from "./CommunityCategories";
 import { useState, useEffect } from "react";
 import { CommunityWriteButton } from "../atoms/Button";
 import boardService, { AllPostResponse } from "@/services/boardService";
+import { formatTimeAgo } from "@/utils/dateUtiles";
 
 interface CommunityFormProps {
 	onWrite: () => void;
@@ -36,28 +37,6 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 			(data) => setPosts(data),
 			(error) => console.error(error),
 		);
-
-	const formatTimeAgo = (dateString: string) => {
-		const date = new Date(dateString);
-		const now = new Date();
-		const diffInMinutes = Math.floor(
-			(now.getTime() - date.getTime()) / (1000 * 60),
-		);
-
-		if (diffInMinutes === 0) {
-			return "방금";
-		} else if (diffInMinutes < 60) {
-			return `${diffInMinutes}분 전`;
-		} else {
-			const diffInHours = Math.floor(diffInMinutes / 60);
-			if (diffInHours < 24) {
-				return `${diffInHours}시간 전`;
-			} else {
-				const diffInDays = Math.floor(diffInHours / 24);
-				return `${diffInDays}일 전`;
-			}
-		}
-	};
 
 	// 빈 카테고리 메시지 표시 여부 확인
 	const shouldShowEmptyMessage = posts.length === 0;

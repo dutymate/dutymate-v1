@@ -3,26 +3,32 @@ import { Button } from "../atoms/Button";
 import { useState, useEffect } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaArrowUpLong } from "react-icons/fa6";
+import { formatTimeAgo } from "@/utils/dateUtiles";
 
 interface Comment {
-	id: number;
+	commentId: number;
 	nickname: string;
+	profileImg: string;
 	content: string;
-	timeAgo: string;
+	createdAt: string;
+	isMyWrite: boolean;
 }
 
 interface CommunityDetailProps {
 	post: {
-		id: number;
+		boardId: number;
 		nickname: string;
+		profileImg: string;
 		category: string;
-		timeAgo: string;
+		createdAt: string;
 		title: string;
 		content: string;
-		image?: string;
-		likes: number;
-		comments: number;
-		views: number;
+		boardImgUrl?: string;
+		likeCnt: number;
+		commentCnt: number;
+		viewCnt: number;
+		isMyWrite: boolean;
+		comments: Comment[];
 	};
 }
 
@@ -32,59 +38,9 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 	const [showCommentDropdown, setShowCommentDropdown] = useState<number | null>(
 		null,
 	);
-	const [comments] = useState<Comment[]>([
-		{
-			id: 1,
-			nickname: "나는멋진간호사",
-			content:
-				"와 3년 차 대단해요! 👏 저도 입사 1년 차인데 병씨 지치는 중이에요 ㅠㅠ 동기들이랑 여행 가는 거 진짜 부러워요!",
-			timeAgo: "2시간 전",
-		},
-		{
-			id: 2,
-			nickname: "참먹는간호사23",
-			content:
-				"감사합니다 😊 1년 차 때가 제일 해탈하는 순간이었죠, 그래도 동기들이랑 같이 해서 여기까지 왔네요! 스트레스 확 풀리는 노곤",
-			timeAgo: "방금 전",
-		},
-		{
-			id: 3,
-			nickname: "야근마스터",
-			content:
-				"저도 3년 차인데 아직도 적응 안 되는 일 투성이네요 ㅋㅋ 그래도 다들 같이 버티면서 성장하는 거 같아요!",
-			timeAgo: "30분 전",
-		},
-		{
-			id: 4,
-			nickname: "커피중독간호사",
-			content:
-				"진짜 3년 차 되면 여유가 생기나요? 저는 아직 2년 차인데 하루하루 버티는 중이네요 😂",
-			timeAgo: "1시간 전",
-		},
-		{
-			id: 5,
-			nickname: "주사천재",
-			content:
-				"3년 차면 웬만한 처치 다 익숙해지지 않나요? 그래도 힘든 건 마찬가지죠 ㅋㅋ 화이팅!",
-			timeAgo: "3시간 전",
-		},
-		{
-			id: 6,
-			nickname: "간호일기",
-			content:
-				"동기들이랑 여행 가는 거 너무 부러워요! 저희도 2년 차 기념으로 계획 중인데 추천할만한 곳 있나요?",
-			timeAgo: "5시간 전",
-		},
-		{
-			id: 7,
-			nickname: "메롱간호사",
-			content:
-				"간호사 생활하면서 스트레스 푸는 법 좀 알려주세요! 여행 말고 다른 꿀팁 있나요? 😂",
-			timeAgo: "6시간 전",
-		},
-	]);
+
 	const [isLiked, setIsLiked] = useState(false);
-	const [likeCount, setLikeCount] = useState(post.likes);
+	const [likeCount, setLikeCount] = useState(post.likeCnt);
 
 	// 드롭다운 외부 클릭 처리
 	useEffect(() => {
@@ -127,7 +83,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 					<span className="text-gray-400">·</span>
 					<span className="text-gray-600">{post.category}</span>
 					<span className="text-gray-400">·</span>
-					<span className="text-gray-400">{post.timeAgo}</span>
+					<span className="text-gray-400">{formatTimeAgo(post.createdAt)}</span>
 				</div>
 
 				{/* 드롭다운 메뉴 */}
@@ -169,10 +125,10 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 			</p>
 
 			{/* 게시글 이미지 */}
-			{post.image && (
+			{post.boardImgUrl && (
 				<div className="mb-6">
 					<img
-						src={post.image}
+						src={post.boardImgUrl}
 						alt="게시글 이미지"
 						className="rounded-lg w-full"
 					/>
@@ -196,24 +152,26 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 				</button>
 				<div className="flex items-center gap-1">
 					<Icon name="message" size={16} />
-					<span>{post.comments}</span>
+					<span>{post.comments.length}</span>
 				</div>
 				<div className="flex items-center gap-1">
 					<Icon name="eye" size={16} />
-					<span>{post.views}</span>
+					<span>{post.viewCnt}</span>
 				</div>
 			</div>
 
 			{/* 댓글 목록 */}
 			<div className="mb-3 divide-y divide-gray-200">
-				{comments.map((comment) => (
-					<div key={comment.id} className="py-4 first:pt-0 last:pb-0">
+				{post.comments.map((comment) => (
+					<div key={comment.commentId} className="py-4 first:pt-0 last:pb-0">
 						<div className="flex justify-between items-start">
 							<div className="flex items-center gap-2">
 								<Icon name="user" size={20} className="text-gray-400" />
 								<span className="font-medium text-sm">{comment.nickname}</span>
 								<span className="text-gray-400 text-sm">·</span>
-								<span className="text-gray-400 text-sm">{comment.timeAgo}</span>
+								<span className="text-gray-400 text-sm">
+									{formatTimeAgo(comment.createdAt)}
+								</span>
 							</div>
 
 							{/* 댓글 드롭다운 */}
@@ -221,7 +179,9 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 								<button
 									onClick={() =>
 										setShowCommentDropdown(
-											showCommentDropdown === comment.id ? null : comment.id,
+											showCommentDropdown === comment.commentId
+												? null
+												: comment.commentId,
 										)
 									}
 									className="p-1 hover:bg-gray-100 rounded-full"
@@ -229,7 +189,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 									<BsThreeDotsVertical className="w-4 h-4 text-gray-500" />
 								</button>
 
-								{showCommentDropdown === comment.id && (
+								{showCommentDropdown === comment.commentId && (
 									<div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
 										<button
 											onClick={() => {

@@ -279,7 +279,6 @@ export const wardService = {
 
 	// 임시 간호사 추가
 	addVirtualNurse: (virtualNurseCnt: number) => {
-		console.log("virtualNurseCnt :>> ", virtualNurseCnt);
 		return axiosInstance
 			.post("/ward/member/virtual", { virtualNurseCnt })
 			.then((response) => response.data)
