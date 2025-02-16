@@ -409,5 +409,61 @@ public class WardScheduleService {
 
 		wardScheduleRepository.save(wardSchedule);
 	}
+
+	// 임시간호사 생성 시, mongo update
+	public void updateWardSchedules(Long wardId, List<WardMember> newWardMemberList) {
+		// 5. MongoDB 듀티표 업데이트
+		// 이번달 듀티
+		YearMonth yearMonth = YearMonth.nowYearMonth();
+
+		WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
+			wardId, yearMonth.year(), yearMonth.month()).orElse(null);
+
+		// 다음달 듀티
+		YearMonth nextYearMonth = yearMonth.nextYearMonth();
+		WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
+			wardId, nextYearMonth.year(), nextYearMonth.month()).orElse(null);
+
+		List<WardSchedule> updatedScheduleList = new ArrayList<>();
+
+		// 기존 스케줄이 존재한다면, 새로운 스냅샷 생성 및 초기화된 duty 추가하기
+		if (currMonthSchedule != null) {
+			for (WardMember nurse : newWardMemberList) {
+				currMonthSchedule = initialDutyGenerator.updateDutyWithNewMember(currMonthSchedule, nurse);
+			}
+			updatedScheduleList.add(currMonthSchedule);
+		}
+
+		if (nextMonthSchedule != null) {
+			for (WardMember nurse : newWardMemberList) {
+				nextMonthSchedule = initialDutyGenerator.updateDutyWithNewMember(nextMonthSchedule, nurse);
+			}
+			updatedScheduleList.add(nextMonthSchedule);
+		}
+
+		// 6. 기존 스케줄이 없다면, 입장한 멤버의 듀티표 초기화하여 저장하기
+		// 사실 이미 병동이 생성된 이상, 무조건 기존 스케줄이 있어야만 함
+		if (currMonthSchedule == null && nextMonthSchedule == null) {
+			for (WardMember nurse : newWardMemberList) {
+				updatedScheduleList.add(initialDutyGenerator.initializedDuty(nurse, yearMonth));
+			}
+		}
+
+		// 7. MongoDB에 한 번만 접근하여 데이터 넣기
+		if (!updatedScheduleList.isEmpty()) {
+			for (WardSchedule schedule : updatedScheduleList) {
+
+				WardSchedule existingSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(schedule.getWardId(),
+					schedule.getYear(), schedule.getMonth()).orElse(null);
+
+				if (existingSchedule != null) {
+					schedule.setIdIfNotExist(existingSchedule.getId());
+				}
+				schedule.setDuties(new ArrayList<>(schedule.getDuties()));
+			}
+
+			wardScheduleRepository.saveAll(updatedScheduleList);
+		}
+	}
 }
 

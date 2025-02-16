@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,9 +35,9 @@ import net.dutymate.api.ward.repository.WardRepository;
 import net.dutymate.api.wardmember.repository.WardMemberRepository;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
+import net.dutymate.api.wardschedules.service.WardScheduleService;
 import net.dutymate.api.wardschedules.util.InitialDutyGenerator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -54,12 +51,7 @@ public class WardService {
 	private final MemberRepository memberRepository;
 	private final EnterWaitingRepository enterWaitingRepository;
 	private final HospitalRepository hospitalRepository;
-
-	private final StringRedisTemplate stringRedisTemplate;
-	private static final String QUEUE_KEY = "virtualMemberQueue";
-	private final RedisTemplate<String, String> redisTemplate;
-	private final ObjectMapper objectMapper = new ObjectMapper();
-	private final AtomicBoolean isProcessing = new AtomicBoolean(false);
+	private final WardScheduleService wardScheduleService;
 
 	@Transactional
 	public void createWard(WardRequestDto requestWardDto, Member member) {
@@ -373,48 +365,8 @@ public class WardService {
 		// RDB에 한 번에 저장
 		wardMemberRepository.saveAll(newWardMemberList);
 
-		// 5. MongoDB 듀티표 업데이트
-		// 이번달 듀티
-		YearMonth yearMonth = YearMonth.nowYearMonth();
-
-		WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
-			ward.getWardId(), yearMonth.year(), yearMonth.month()).orElse(null);
-
-		// 다음달 듀티
-		YearMonth nextYearMonth = yearMonth.nextYearMonth();
-		WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
-			ward.getWardId(), nextYearMonth.year(), nextYearMonth.month()).orElse(null);
-
-		List<WardSchedule> updatedScheduleList = new ArrayList<>();
-
-		// 6. 기존 스케줄이 존재한다면, 새로운 스냅샷 생성 및 초기화된 duty 추가하기
-		if (currMonthSchedule != null) {
-			for (WardMember nurse : newWardMemberList) {
-				initialDutyGenerator.updateDutyWithNewMember(currMonthSchedule, nurse);
-			}
-			updatedScheduleList.add(currMonthSchedule);
-		}
-
-		if (nextMonthSchedule != null) {
-			for (WardMember nurse : newWardMemberList) {
-				initialDutyGenerator.updateDutyWithNewMember(nextMonthSchedule, nurse);
-			}
-			updatedScheduleList.add(nextMonthSchedule);
-		}
-
-		// 6. 기존 스케줄이 없다면, 입장한 멤버의 듀티표 초기화하여 저장하기
-		// 사실 이미 병동이 생성된 이상, 무조건 기존 스케줄이 있어야만 함
-		if (currMonthSchedule == null && nextMonthSchedule == null) {
-			for (WardMember nurse : newWardMemberList) {
-				updatedScheduleList.add(initialDutyGenerator.initializedDuty(nurse, yearMonth));
-			}
-		}
-
-		// 7. MongoDB에 한 번만 접근하여 데이터 넣기
-		if (!updatedScheduleList.isEmpty()) {
-			System.out.println(" ========Mongo 접근========== ");
-			wardScheduleRepository.saveAll(updatedScheduleList);
-		}
+		// MongoDB 저장 (JPA 트랜잭션과 분리)
+		wardScheduleService.updateWardSchedules(ward.getWardId(), newWardMemberList);
 	}
 
 	// wardCode : 랜덤한 6자리 대문자 + 숫자 조합 코드 생성

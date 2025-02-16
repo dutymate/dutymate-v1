@@ -45,6 +45,12 @@ public class WardSchedule {
 		this.nowIdx = nowIdx;
 	}
 
+	public void setIdIfNotExist(String id) {
+		if (this.id == null) {
+			this.id = id;
+		}
+	}
+
 	@Getter
 	@NoArgsConstructor(access = AccessLevel.PROTECTED)
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
