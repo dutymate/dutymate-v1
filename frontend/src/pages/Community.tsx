@@ -45,21 +45,22 @@ const Community = () => {
 	// 게시글 클릭 핸들러
 	const handlePostClick = (post: any) => {
 		setSelectedPost(post);
-		// 게시글 상태 변경 시 history 스택에 상태 추가
-		window.history.pushState(null, "", "/community");
+		const url = new URL(window.location.href + "/" + post.boardId);
+		window.history.pushState({}, "", url.toString());
 	};
 
 	// 글쓰기 핸들러
 	const handleWrite = () => {
 		setIsWriting(true);
 		// 글쓰기 상태 변경 시 history 스택에 상태 추가
-		window.history.pushState(null, "", "/community");
+		window.history.pushState(null, "", "/community/write");
 	};
 
 	// 뒤로가기 핸들러
 	const handleBack = () => {
 		setSelectedPost(null);
 		setIsWriting(false);
+		window.history.pushState(null, "", "/community");
 	};
 
 	return (

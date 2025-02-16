@@ -4,6 +4,7 @@ import { Icon } from "../atoms/Icon";
 import CommunityCategories from "./CommunityCategories";
 import { useState, useEffect } from "react";
 import { CommunityWriteButton } from "../atoms/Button";
+import boardService, { AllPostResponse } from "@/services/boardService";
 
 interface CommunityFormProps {
 	onWrite: () => void;
@@ -11,7 +12,8 @@ interface CommunityFormProps {
 }
 
 const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
-	const [selectedCategory, setSelectedCategory] = useState("전체글");
+	const [selectedCategory, setSelectedCategory] = useState("ALL");
+	const [posts, setPosts] = useState<AllPostResponse[]>([]);
 	const location = useLocation();
 
 	// 컴포넌트 마운트 시 상단으로 스크롤
@@ -20,87 +22,45 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 	}, []);
 
 	useEffect(() => {
+		fetchPosts(selectedCategory);
+	}, [selectedCategory]);
+
+	useEffect(() => {
 		// location이 변경될 때마다 카테고리를 기본값으로 리셋
-		setSelectedCategory("전체글");
+		fetchPosts(selectedCategory);
 	}, [location.pathname]);
 
-	const posts = [
-		{
-			id: 1,
-			nickname: "참먹는간호사23",
-			category: "간호지식 Q&A",
-			timeAgo: "21시간 전",
-			title: "수혈 시 생리식염수(Normal Saline)만 사용하는 이유는?",
-			content:
-				"안녕하세요! 😊 최근 병동에서 혈액 수혈을 준비하면서 궁금한 점이 생겼습니다. 혈액 수혈 시 생리식염수(NS)만 함께 사용할 수 있고, 링거액(Ringer's lactate) 같은 다른 수액은 사용하면 안 된다고...",
-			likes: 5,
-			comments: 5,
-			views: 5,
-		},
-		{
-			id: 2,
-			nickname: "참먹는간호사23",
-			category: "일상",
-			timeAgo: "21시간 전",
-			title: "동기들이랑 3년 차 기념 여행 다녀왔어요! ⛰️",
-			content:
-				"입사한 지 벌써 3년! 힘든 순간도 많았지만, 그래도 동기들이랑 같이 버틴 덕분에 여기까지 왔네요. 이번에 제주도 가서 푹 쉬고 왔어요! 🍊",
-			likes: 5,
-			comments: 5,
-			views: 5,
-		},
-		{
-			id: 3,
-			nickname: "야근마스터",
-			category: "이직 정보",
-			timeAgo: "12시간 전",
-			title: "대학병원 이직 준비 중인데 팁 있을까요?",
-			content:
-				"현재 종합병원에서 2년 차 근무 중인데 대학병원으로 이직을 준비하고 있어요! 면접 팁이나 경력 인정 관련해서 조언해주실 분 계신가요? 🤔",
-			likes: 8,
-			comments: 3,
-			views: 12,
-		},
-		{
-			id: 4,
-			nickname: "메디컬러버",
-			category: "간호지식 Q&A",
-			timeAgo: "8시간 전",
-			title: "수술 후 환자 관리 시 가장 중요한 점은?",
-			content:
-				"수술 후 회복기 환자를 돌보는 중인데, 가장 신경 써야 할 부분이 뭘까요? 감염 예방 외에도 중요한 관리 포인트가 있다면 알려주세요! 🙏",
-			likes: 6,
-			comments: 7,
-			views: 20,
-		},
-		{
-			id: 5,
-			nickname: "커피중독간호사",
-			category: "일상",
-			timeAgo: "5시간 전",
-			title: "야간 근무 후 피로 푸는 법 공유해요!",
-			content:
-				"야간 근무 끝나고 피로를 풀기 위해 다들 어떻게 하나요? 저는 스트레칭이랑 반신욕을 자주 하는데, 더 좋은 방법 있을까요? ☕",
-			likes: 10,
-			comments: 4,
-			views: 15,
-		},
-	];
+	const fetchPosts = (category: string) =>
+		boardService.getAllPosts(
+			category,
+			(data) => setPosts(data),
+			(error) => console.error(error),
+		);
 
-	// 선택된 카테고리의 게시글만 필터링
-	const filteredPosts = posts.filter((post) =>
-		selectedCategory === "전체글"
-			? true
-			: selectedCategory === "HOT"
-				? true
-				: post.category === selectedCategory,
-	);
+	const formatTimeAgo = (dateString: string) => {
+		const date = new Date(dateString);
+		const now = new Date();
+		const diffInMinutes = Math.floor(
+			(now.getTime() - date.getTime()) / (1000 * 60),
+		);
+
+		if (diffInMinutes === 0) {
+			return "방금";
+		} else if (diffInMinutes < 60) {
+			return `${diffInMinutes}분 전`;
+		} else {
+			const diffInHours = Math.floor(diffInMinutes / 60);
+			if (diffInHours < 24) {
+				return `${diffInHours}시간 전`;
+			} else {
+				const diffInDays = Math.floor(diffInHours / 24);
+				return `${diffInDays}일 전`;
+			}
+		}
+	};
 
 	// 빈 카테고리 메시지 표시 여부 확인
-	const shouldShowEmptyMessage =
-		selectedCategory !== "전체글" &&
-		selectedCategory !== "HOT" &&
-		filteredPosts.length === 0;
+	const shouldShowEmptyMessage = posts.length === 0;
 
 	// 추천 게시글 데이터
 	const recommendedPosts = [
@@ -118,7 +78,7 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 
 	// 추천 게시글 클릭 핸들러
 	const handleRecommendedClick = (recommendedId: number) => {
-		const post = posts.find((p) => p.id === recommendedId);
+		const post = posts.find((p) => p.boardId === recommendedId);
 		if (post) {
 			onPostClick(post);
 		}
@@ -173,9 +133,9 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 							이 카테고리에 첫 번째 글을 작성해보세요!
 						</div>
 					) : (
-						filteredPosts.map((post) => (
+						posts.map((post) => (
 							<div
-								key={post.id}
+								key={post.boardId}
 								className="p-4 border border-gray-200 rounded-lg hover:border-primary-dark cursor-pointer transition-colors"
 								onClick={() => handlePostClick(post)}
 							>
@@ -183,17 +143,36 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 									<div className="flex-1">
 										{/* 게시글 헤더 */}
 										<div className="flex flex-wrap items-center gap-2 mb-2">
-											<Icon name="user" size={20} className="text-gray-400" />
+											{post.profileImg ? (
+												<img
+													src={post.profileImg}
+													alt="프로필 이미지"
+													className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500 rounded-full"
+													onError={(e) => {
+														e.currentTarget.onerror = null;
+														e.currentTarget.style.display = "none";
+													}}
+												/>
+											) : (
+												<Icon
+													name="user"
+													className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500 rounded-full"
+												/>
+											)}
 											<span className="font-medium text-sm">
 												{post.nickname}
 											</span>
 											<span className="text-gray-400 text-sm">·</span>
 											<span className="text-gray-600 text-sm">
-												{post.category}
+												{post.category === "DAILY"
+													? "일상글"
+													: post.category === "QNA"
+														? "간호지식 Q&A"
+														: "이직 정보"}
 											</span>
 											<span className="text-gray-400 text-sm">·</span>
 											<span className="text-gray-400 text-sm">
-												{post.timeAgo}
+												{formatTimeAgo(post.createdAt)}
 											</span>
 										</div>
 
@@ -209,23 +188,27 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 										<div className="flex items-center gap-4 text-gray-400 text-sm">
 											<div className="flex items-center gap-1">
 												<Icon name="heart" size={16} />
-												<span>{post.likes}</span>
+												<span>{post.likeCnt}</span>
 											</div>
 											<div className="flex items-center gap-1">
 												<Icon name="message" size={16} />
-												<span>{post.comments}</span>
+												<span>{post.commentCnt}</span>
 											</div>
 											<div className="flex items-center gap-1">
 												<Icon name="eye" size={16} />
-												<span>{post.views}</span>
+												<span>{post.viewCnt}</span>
 											</div>
 										</div>
 									</div>
 
-									{/* 이미지 영역 - 두 번째 게시글에만 표시 */}
-									{post.id === 2 && (
+									{/* 이미지 영역 */}
+									{post.boardImgUrl !== null && (
 										<div className="hidden sm:flex items-center justify-center w-[7.5rem] h-[7.5rem] bg-gray-50 rounded-lg shrink-0">
-											<span className="text-gray-400 text-sm">이미지</span>
+											<img
+												src={post.boardImgUrl}
+												alt={post.title}
+												className="w-full h-full object-cover rounded-lg"
+											/>
 										</div>
 									)}
 								</div>

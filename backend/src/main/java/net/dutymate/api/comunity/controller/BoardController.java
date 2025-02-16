@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import net.dutymate.api.annotation.Auth;
 import net.dutymate.api.comunity.dto.BoardCreateRequestDto;
@@ -34,7 +35,7 @@ public class BoardController {
 	}
 
 	@GetMapping
-	public ResponseEntity<?> getAllBoard(@RequestParam(required = false) Category category) {
+	public ResponseEntity<?> getAllBoard(@RequestParam Category category) {
 		return ResponseEntity.ok(boardService.getAllBoard(category));
 	}
 
@@ -47,5 +48,10 @@ public class BoardController {
 	public ResponseEntity<?> removeBoard(@PathVariable Long boardId, @Auth Member member) {
 		boardService.removeBoard(boardId, member);
 		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/image")
+	public ResponseEntity<?> uploadBoardImage(@RequestParam("file") MultipartFile multipartFile) {
+		return ResponseEntity.ok(boardService.uploadBoardImage(multipartFile));
 	}
 }

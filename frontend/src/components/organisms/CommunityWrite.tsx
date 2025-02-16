@@ -5,21 +5,96 @@
 import { BsImage } from "react-icons/bs";
 import { CommunityRegisterButton } from "../atoms/Button";
 import { useRef, useState } from "react";
+import { toast } from "react-toastify";
+import boardService, { BoardRequest } from "@/services/boardService";
+import { useNavigate } from "react-router-dom";
 
 const CommunityWrite = () => {
-	const categories = ["일상글", "간호지식 Q&A", "이직 정보"];
+	const categories = [
+		{ key: "DAILY", value: "일상글" },
+		{ key: "QNA", value: "간호지식 Q&A" },
+		{ key: "INFO", value: "이직 정보" },
+	];
+	const navigate = useNavigate();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [selectedFileName, setSelectedFileName] = useState<string>("");
+	const [formData, setFormData] = useState<BoardRequest>({
+		category: "",
+		title: "",
+		content: "",
+		boardImgUrl: "",
+	});
 
 	const handleImageClick = () => {
 		fileInputRef.current?.click();
 	};
 
+	const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const { name, value } = e.target;
+		console.log(name, value);
+
+		setFormData((preData) => ({
+			...preData,
+			[name]: value,
+		}));
+	};
+
+	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+
+		setFormData((preData) => ({
+			...preData,
+			[name]: value,
+		}));
+	};
+
+	const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		const { name, value } = e.target;
+
+		setFormData((preData) => ({
+			...preData,
+			[name]: value,
+		}));
+	};
+
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
-		if (file) {
-			setSelectedFileName(file.name);
+		if (!file) return;
+
+		// 파일 형식 검사
+		const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+		if (!validTypes.includes(file.type)) {
+			toast.error("JPG, PNG, JPEG 형식의 이미지만 업로드 가능합니다.");
+			return;
 		}
+
+		setSelectedFileName(file.name);
+
+		boardService.uploadBoardImage(
+			file,
+			({ boardImgUrl }) => {
+				setFormData((preData) => ({
+					...preData,
+					boardImgUrl: boardImgUrl,
+				}));
+			},
+			(error) => toast.error(error.message),
+		);
+
+		// 파일 input 초기화
+		if (fileInputRef.current) {
+			fileInputRef.current.value = "";
+		}
+	};
+
+	const onRegister = () => {
+		boardService.writePost(
+			formData,
+			() => toast.success("게시글이 작성되었습니다."),
+			(error) => toast.error(error.message),
+		);
+		window.history.pushState(null, "", "/community");
+		navigate("/community");
 	};
 
 	return (
@@ -31,11 +106,16 @@ const CommunityWrite = () => {
 					<label className="w-20 text-gray-700 font-medium shrink-0">
 						카테고리
 					</label>
-					<select className="flex-1 p-3 border border-gray-200 rounded-lg text-gray-600">
+					<select
+						className="flex-1 p-3 border border-gray-200 rounded-lg text-gray-600"
+						name="category"
+						value={formData.category}
+						onChange={handleSelectChange}
+					>
 						<option value="">카테고리를 선택해주세요</option>
 						{categories.map((category) => (
-							<option key={category} value={category}>
-								{category}
+							<option key={category.key} value={category.key}>
+								{category.value}
 							</option>
 						))}
 					</select>
@@ -50,6 +130,9 @@ const CommunityWrite = () => {
 						type="text"
 						placeholder="제목을 입력해주세요"
 						className="flex-1 p-3 border border-gray-200 rounded-lg"
+						name="title"
+						value={formData.title}
+						onChange={handleTitleChange}
 					/>
 				</div>
 
@@ -61,6 +144,9 @@ const CommunityWrite = () => {
 					<textarea
 						placeholder="내용을 입력해주세요"
 						className="flex-1 h-[200px] p-3 border border-gray-200 rounded-lg resize-none"
+						name="content"
+						value={formData.content}
+						onChange={handleContentChange}
 					/>
 				</div>
 
@@ -90,7 +176,7 @@ const CommunityWrite = () => {
 
 			{/* 등록 버튼 */}
 			<div className="flex justify-end -mt-2">
-				<CommunityRegisterButton />
+				<CommunityRegisterButton onClick={onRegister} />
 			</div>
 
 			{/* 커뮤니티 규칙 */}
