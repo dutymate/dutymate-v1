@@ -551,8 +551,24 @@ const ShiftAdminTable = ({
 	// Add a state to track if auto-create is in progress
 	const [isAutoCreating, setIsAutoCreating] = useState(false);
 
+	// 모든 셀이 X인지 확인하는 함수
+	const isAllCellsEmpty = useMemo(() => {
+		return duties.every((nurseShifts) =>
+			nurseShifts.every((shift) => shift === "X" || !shift),
+		);
+	}, [duties]);
+
 	// Modify handleResetDuty to prevent full page reload
 	const handleResetDuty = async () => {
+		// 모든 셀이 이미 X인 경우
+		if (isAllCellsEmpty) {
+			toast.warning("이미 초기화되었습니다.", {
+				position: "top-center",
+				autoClose: 1000,
+			});
+			return;
+		}
+
 		const confirm = window.confirm(
 			"듀티표와 수정 기록이 초기화 됩니다. 듀티표를 초기화하시겠습니까?",
 		);
@@ -737,7 +753,11 @@ const ShiftAdminTable = ({
 							</div>
 							<div>
 								<button
-									className="flex items-center gap-1 text-gray-400 hover:text-gray-600 px-2 py-1 rounded-md hover:bg-gray-100"
+									className={`flex items-center gap-1 text-gray-400 hover:text-gray-600 px-2 py-1 rounded-md ${
+										isAllCellsEmpty
+											? "opacity-50 cursor-not-allowed hover:bg-transparent hover:text-gray-400"
+											: "hover:bg-gray-100"
+									}`}
 									onClick={handleResetDuty}
 								>
 									<Icon name="reset" size={16} />

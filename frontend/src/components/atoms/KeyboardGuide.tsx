@@ -1,10 +1,6 @@
 import DutyBadgeEng from "./DutyBadgeEng";
 
-interface KeyboardGuideProps {
-	onClose?: () => void;
-}
-
-const KeyboardGuide = ({ onClose }: KeyboardGuideProps) => {
+const KeyboardGuide = () => {
 	return (
 		<div className="keyboard-guide flex items-center gap-2 p-2 bg-white rounded-lg shadow-lg text-[11px] border border-gray-200 whitespace-nowrap">
 			{/* 근무 타입 */}
