@@ -144,6 +144,13 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		}
 	};
 
+	const handleEnterPress = (e:React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if(e.key === "Enter" && !e.shiftKey){
+			e.preventDefault(); // 기본 줄바꿈 방지
+			handleAddComment(); // 댓글 작성 실행 
+		}
+	}
+
 	return (
 		<div className="bg-white rounded-xl p-4 lg:p-6 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
 			{/* 게시글 헤더 */}
@@ -321,6 +328,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 				<textarea
 					value={newComment}
 					onChange={(e) => setNewComment(e.target.value)}
+					onKeyDown={handleEnterPress}
 					placeholder="댓글을 입력해주세요."
 					className="w-full p-4 border border-gray-200 rounded-lg resize-none h-24"
 				/>
