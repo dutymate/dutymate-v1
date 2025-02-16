@@ -31,7 +31,6 @@ const CommunityWrite = () => {
 
 	const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const { name, value } = e.target;
-		console.log(name, value);
 
 		setFormData((preData) => ({
 			...preData,
@@ -59,7 +58,9 @@ const CommunityWrite = () => {
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
-		if (!file) return;
+		if (!file) {
+			return;
+		}
 
 		// 파일 형식 검사
 		const validTypes = ["image/jpeg", "image/png", "image/jpg"];
@@ -67,7 +68,6 @@ const CommunityWrite = () => {
 			toast.error("JPG, PNG, JPEG 형식의 이미지만 업로드 가능합니다.");
 			return;
 		}
-
 		setSelectedFileName(file.name);
 
 		boardService.uploadBoardImage(

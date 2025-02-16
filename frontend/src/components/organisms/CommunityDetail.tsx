@@ -1,9 +1,12 @@
 import { Icon } from "../atoms/Icon";
 import { Button } from "../atoms/Button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaArrowUpLong } from "react-icons/fa6";
 import { formatTimeAgo } from "@/utils/dateUtiles";
+import boardService from "@/services/boardService";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface Comment {
 	commentId: number;
@@ -38,14 +41,17 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 	const [showCommentDropdown, setShowCommentDropdown] = useState<number | null>(
 		null,
 	);
+	const dropdownRef = useRef<HTMLDivElement>(null);
 
 	const [isLiked, setIsLiked] = useState(false);
 	const [likeCount, setLikeCount] = useState(post.likeCnt);
 
+	const navigate = useNavigate();
+
 	// 드롭다운 외부 클릭 처리
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if (!(event.target as Element).closest(".dropdown-container")) {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
 				setShowDropdown(false);
 				setShowCommentDropdown(null);
 			}
@@ -55,22 +61,29 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
 
-	const handleDropdownClick = (action: "edit" | "delete") => {
-		setShowDropdown(false);
-		if (action === "edit") {
-			console.log("수정하기");
-		} else {
-			console.log("삭제하기");
-		}
-	};
 
 	const handleLikeClick = () => {
-		if (isLiked) {
-			setLikeCount((prev) => prev - 1);
-		} else {
-			setLikeCount((prev) => prev + 1);
-		}
+		setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
 		setIsLiked(!isLiked);
+	};
+
+	const handleUpdateBoard = async () => {
+		console.log("수정 기능");
+	};
+
+	const handleDeleteBoard = async (event: React.MouseEvent) => {
+		event.stopPropagation();
+		console.log("뭐야");
+
+		try {
+			await boardService.deleteBoard(post.boardId);
+			setShowDropdown(false);
+			toast.success("게시글이 성공적으로 삭제 되었습니다.");
+			navigate("/community");
+		} catch (error) {
+			console.error("게시글 삭제 오류:", error);
+			toast.error("게시글 삭제를 실패했습니다.");
+		}
 	};
 
 	return (
@@ -81,7 +94,13 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 					<Icon name="user" size={24} className="text-gray-400" />
 					<span className="font-medium">{post.nickname}</span>
 					<span className="text-gray-400">·</span>
-					<span className="text-gray-600">{post.category}</span>
+					<span className="text-gray-600">
+						{post.category === "DAILY"
+							? "일상글"
+							: post.category === "QNA"
+								? "간호지식 Q&A"
+								: "이직 정보"}
+					</span>
 					<span className="text-gray-400">·</span>
 					<span className="text-gray-400">{formatTimeAgo(post.createdAt)}</span>
 				</div>
@@ -89,7 +108,10 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 				{/* 드롭다운 메뉴 */}
 				<div className="relative">
 					<button
-						onClick={() => setShowDropdown(!showDropdown)}
+						onClick={(e) => {
+							e.stopPropagation();
+							setShowDropdown(!showDropdown);
+						}}
 						className="p-1 hover:bg-gray-100 rounded-full"
 					>
 						<BsThreeDotsVertical className="w-5 h-5 text-gray-500" />
@@ -98,13 +120,13 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 					{showDropdown && (
 						<div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
 							<button
-								onClick={() => handleDropdownClick("edit")}
+								onClick={handleUpdateBoard}
 								className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
 							>
 								수정하기
 							</button>
 							<button
-								onClick={() => handleDropdownClick("delete")}
+								onClick={handleDeleteBoard}
 								className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 rounded-b-lg"
 							>
 								삭제하기
@@ -162,60 +184,64 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 			{/* 댓글 목록 */}
 			<div className="mb-3 divide-y divide-gray-200">
-				{post.comments.map((comment) => (
-					<div key={comment.commentId} className="py-4 first:pt-0 last:pb-0">
-						<div className="flex justify-between items-start">
-							<div className="flex items-center gap-2">
-								<Icon name="user" size={20} className="text-gray-400" />
-								<span className="font-medium text-sm">{comment.nickname}</span>
-								<span className="text-gray-400 text-sm">·</span>
-								<span className="text-gray-400 text-sm">
-									{formatTimeAgo(comment.createdAt)}
-								</span>
-							</div>
+				{post.comments.length === 0 ? (
+					<div className="py-4 text-center text-gray-400">댓글이 없습니다.</div>
+				) : (
+					post.comments.map((comment) => (
+						<div key={comment.commentId} className="py-4 first:pt-0 last:pb-0">
+							<div className="flex justify-between items-start">
+								<div className="flex items-center gap-2">
+									<Icon name="user" size={20} className="text-gray-400" />
+									<span className="font-medium text-sm">
+										{comment.nickname}
+									</span>
+									<span className="text-gray-400 text-sm">·</span>
+									<span className="text-gray-400 text-sm">
+										{formatTimeAgo(comment.createdAt)}
+									</span>
+								</div>
 
-							{/* 댓글 드롭다운 */}
-							<div className="relative dropdown-container">
-								<button
-									onClick={() =>
-										setShowCommentDropdown(
-											showCommentDropdown === comment.commentId
-												? null
-												: comment.commentId,
-										)
-									}
-									className="p-1 hover:bg-gray-100 rounded-full"
-								>
-									<BsThreeDotsVertical className="w-4 h-4 text-gray-500" />
-								</button>
+								{/* 댓글 드롭다운 */}
+								<div className="relative dropdown-container">
+									<button
+										onClick={() =>
+											setShowCommentDropdown(
+												showCommentDropdown === comment.commentId
+													? null
+													: comment.commentId,
+											)
+										}
+										className="p-1 hover:bg-gray-100 rounded-full"
+									>
+										<BsThreeDotsVertical className="w-4 h-4 text-gray-500" />
+									</button>
 
-								{showCommentDropdown === comment.commentId && (
-									<div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-										<button
-											onClick={() => {
-												console.log("댓글 수정");
-												setShowCommentDropdown(null);
-											}}
-											className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
-										>
-											수정하기
-										</button>
-										<button
-											onClick={() => {
-												console.log("댓글 삭제");
-												setShowCommentDropdown(null);
-											}}
-											className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 rounded-b-lg"
-										>
-											삭제하기
-										</button>
-									</div>
-								)}
+									{showCommentDropdown === comment.commentId && (
+										<div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+											<button
+												onClick={() => {
+													setShowCommentDropdown(null);
+												}}
+												className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+											>
+												수정하기
+											</button>
+											<button
+												onClick={() => {
+													setShowCommentDropdown(null);
+												}}
+												className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 rounded-b-lg"
+											>
+												삭제하기
+											</button>
+										</div>
+									)}
+								</div>
 							</div>
+							<p className="text-gray-700 text-sm mt-2">{comment.content}</p>
 						</div>
-						<p className="text-gray-700 text-sm mt-2">{comment.content}</p>
-					</div>
-				))}
+					))
+				)}
 			</div>
 
 			{/* 댓글 작성 */}
@@ -223,7 +249,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 				<textarea
 					value={newComment}
 					onChange={(e) => setNewComment(e.target.value)}
-					placeholder="댓글을 입력해주세요"
+					placeholder="댓글을 입력해주세요."
 					className="w-full p-4 border border-gray-200 rounded-lg resize-none h-24"
 				/>
 

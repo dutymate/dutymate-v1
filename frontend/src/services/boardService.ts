@@ -117,9 +117,37 @@ export const boardService = {
 			});
 	},
 
+	/**
+	 * 게시글 하나 조회
+	 * @param boardId
+	 * @returns
+	 */
 	getSinglePosts: async (boardId: number) => {
 		return axiosInstance
 			.get(`/board/${boardId}`)
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (axios.isAxiosError(error)) {
+					throw error.response?.data;
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	deleteBoard: async (boardId: number) => {
+		return axiosInstance
+			.delete(`/board/${boardId}`)
 			.then((response) => {
 				return response.data;
 			})

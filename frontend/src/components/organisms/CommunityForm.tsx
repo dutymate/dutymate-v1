@@ -181,15 +181,16 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 									</div>
 
 									{/* 이미지 영역 */}
-									{post.boardImgUrl !== null && (
-										<div className="hidden sm:flex items-center justify-center w-[7.5rem] h-[7.5rem] bg-gray-50 rounded-lg shrink-0">
-											<img
-												src={post.boardImgUrl}
-												alt={post.title}
-												className="w-full h-full object-cover rounded-lg"
-											/>
-										</div>
-									)}
+									{post.boardImgUrl !== null &&
+										post.boardImgUrl.trim() !== "" && (
+											<div className="hidden sm:flex items-center justify-center w-[7.5rem] h-[7.5rem] bg-gray-50 rounded-lg shrink-0">
+												<img
+													src={post.boardImgUrl}
+													alt={post.title}
+													className="w-full h-full object-cover rounded-lg"
+												/>
+											</div>
+										)}
 								</div>
 							</div>
 						))
