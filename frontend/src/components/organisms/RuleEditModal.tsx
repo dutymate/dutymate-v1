@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { ruleService } from "../../services/ruleService";
-// import { Button } from "../atoms/Button";
+import { Button } from "../atoms/Button";
 import { toast } from "react-toastify";
 
 interface RuleEditModalProps {
@@ -22,14 +22,10 @@ interface WardRule {
 	prioMaxN: number;
 	minN: number;
 	prioMinN: number;
-	offCntAfterN: number;
-	prioOffCntAfterN: number;
 
 	// 연속 근무 규칙
 	maxShift: number;
 	prioMaxShift: number;
-	offCntAfterMaxShift: number;
-	prioOffCntAfterMaxShift: number;
 }
 
 const getFontWeight = (value: number) => {
@@ -47,9 +43,8 @@ const getFontWeight = (value: number) => {
 
 const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 	const [rules, setRules] = useState<WardRule | null>(null);
-	// const [isSubmitting] = useState(false);
-	// const [setIsSubmitting] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const modalRef = useRef<HTMLDivElement>(null);
 
 	// 버튼 위치 기반으로 모달 위치 계산
@@ -119,26 +114,43 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 		});
 	};
 
-	// const handleSubmit = async () => {
-	// 	if (!rules) return;
+	const handleSubmit = async () => {
+		if (!rules) return;
 
-	// 	// TODO: API 연동 후 제거
-	// 	toast.info("준비 중입니다.");
-	// 	onClose();
-	// 	return;
-
-	// 	// setIsSubmitting(true);
-	// 	// try {
-	// 	//   await ruleService.updateWardRules(rules);
-	// 	//   toast.success("규칙이 저장되었습니다");
-	// 	//   onClose();
-	// 	// } catch (error) {
-	// 	//   console.error("Failed to update rules:", error);
-	// 	//   toast.error("규칙 저장에 실패했습니다");
-	// 	// } finally {
-	// 	//   setIsSubmitting(false);
-	// 	// }
-	// };
+		setIsSubmitting(true);
+		try {
+			await ruleService.updateWardRules(rules);
+			toast.success("규칙이 저장되었습니다");
+			onClose();
+		} catch (error: any) {
+			console.error("Failed to update rules:", error);
+			if (error.response) {
+				switch (error.response.status) {
+					case 400:
+						toast.error(
+							"유효하지 않은 입력 값이 제공되어 규칙 수정을 실패했습니다",
+						);
+						break;
+					case 401:
+						toast.error("로그인 토큰이 만료되었습니다");
+						window.location.href = "/login";
+						break;
+					case 404:
+						toast.error(
+							"병동 ID에 해당하는 규칙이 존재하지 않아 수정을 할 수 없습니다",
+						);
+						break;
+					default:
+						toast.error("규칙 저장에 실패했습니다");
+						break;
+				}
+			} else {
+				toast.error("규칙 저장에 실패했습니다");
+			}
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
 	return (
 		<div className="fixed inset-0 z-50" style={{ background: "transparent" }}>
@@ -192,7 +204,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 													D
 												</span>
 												<select
-													disabled
 													value={rules.wdayDCnt}
 													onChange={(e) =>
 														handleChange("wdayDCnt", Number(e.target.value))
@@ -202,7 +213,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           border rounded
                           px-2 py-0.5
                           text-sm
-                          bg-gray-50
+                          bg-white
                           w-12
                           text-foreground
                           text-center
@@ -235,7 +246,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 													E
 												</span>
 												<select
-													disabled
 													value={rules.wdayECnt}
 													onChange={(e) =>
 														handleChange("wdayECnt", Number(e.target.value))
@@ -245,7 +255,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           border rounded
                           px-2 py-0.5
                           text-sm
-                          bg-gray-50
+                          bg-white
                           w-12
                           text-foreground
                           text-center
@@ -273,7 +283,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 													N
 												</span>
 												<select
-													disabled
 													value={rules.wdayNCnt}
 													onChange={(e) =>
 														handleChange("wdayNCnt", Number(e.target.value))
@@ -283,7 +292,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           border rounded
                           px-2 py-0.5
                           text-sm
-                          bg-gray-50
+                          bg-white
                           w-12
                           text-foreground
                           text-center
@@ -320,7 +329,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 													D
 												</span>
 												<select
-													disabled
 													value={rules.wendDCnt}
 													onChange={(e) =>
 														handleChange("wendDCnt", Number(e.target.value))
@@ -330,7 +338,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           border rounded
                           px-2 py-0.5
                           text-sm
-                          bg-gray-50
+                          bg-white
                           w-12
                           text-foreground
                           text-center
@@ -358,7 +366,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 													E
 												</span>
 												<select
-													disabled
 													value={rules.wendECnt}
 													onChange={(e) =>
 														handleChange("wendECnt", Number(e.target.value))
@@ -368,7 +375,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           border rounded
                           px-2 py-0.5
                           text-sm
-                          bg-gray-50
+                          bg-white
                           w-12
                           text-foreground
                           text-center
@@ -396,7 +403,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 													N
 												</span>
 												<select
-													disabled
 													value={rules.wendNCnt}
 													onChange={(e) =>
 														handleChange("wendNCnt", Number(e.target.value))
@@ -406,7 +412,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           border rounded
                           px-2 py-0.5
                           text-sm
-                          bg-gray-50
+                          bg-white
                           w-12
                           text-foreground
                           text-center
@@ -440,7 +446,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 										<div className="flex items-center gap-9">
 											<div className="flex items-center gap-1.5">
 												<select
-													disabled
 													value={rules.maxShift}
 													onChange={(e) =>
 														handleChange("maxShift", Number(e.target.value))
@@ -450,7 +455,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                             border rounded
                             px-2 py-0.5
                             text-sm
-                            bg-gray-50
+                            bg-white
                             w-10
                             text-center
                             cursor-pointer
@@ -474,7 +479,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 												<span className="text-xs text-foreground">일 이하</span>
 											</div>
 											<select
-												disabled
 												value={rules.prioMaxShift}
 												onChange={(e) =>
 													handleChange("prioMaxShift", Number(e.target.value))
@@ -484,7 +488,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                         border rounded
                         px-2 py-0.5
                         text-xs
-                        bg-gray-50
+                        bg-white
                         w-20
                         text-foreground
                         text-center
@@ -521,7 +525,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 										</span>
 										<div className="flex items-center gap-1.5">
 											<select
-												disabled
 												value={rules.maxN}
 												onChange={(e) =>
 													handleChange("maxN", Number(e.target.value))
@@ -531,7 +534,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                         border rounded
                         px-2 py-0.5
                         text-sm
-                        bg-gray-50
+                        bg-white
                         w-10
                         text-center
                         cursor-pointer
@@ -554,7 +557,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 											</select>
 											<span className="text-xs text-foreground">일 이하</span>
 											<select
-												disabled
 												value={rules.prioMaxN}
 												onChange={(e) =>
 													handleChange("prioMaxN", Number(e.target.value))
@@ -563,7 +565,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                         border rounded
                         px-2 py-0.5
                         text-xs
-                        bg-gray-50
+                        bg-white
                         w-20
                         text-foreground
                         text-center
@@ -600,7 +602,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 										</span>
 										<div className="flex items-center gap-1.5">
 											<select
-												disabled
 												value={rules.minN}
 												onChange={(e) =>
 													handleChange("minN", Number(e.target.value))
@@ -610,7 +611,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                         border rounded
                         px-2 py-0.5
                         text-sm
-                        bg-gray-50
+                        bg-white
                         w-10
                         text-center
                         cursor-pointer
@@ -633,7 +634,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 											</select>
 											<span className="text-xs text-foreground">일 이상</span>
 											<select
-												disabled
 												value={rules.prioMinN}
 												onChange={(e) =>
 													handleChange("prioMinN", Number(e.target.value))
@@ -643,7 +643,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                         border rounded
                         px-2 py-0.5
                         text-xs
-                        bg-gray-50
+                        bg-white
                         w-20
                         text-foreground
                         text-center
@@ -675,7 +675,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 								</div>
 
 								{/* 저장 버튼 */}
-								{/* <div className="flex justify-end gap-1 mt-3">
+								<div className="flex justify-end gap-1 mt-3">
 									<Button
 										size="xs"
 										color="muted"
@@ -692,7 +692,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 									>
 										{isSubmitting ? "저장 중..." : "저장"}
 									</Button>
-								</div> */}
+								</div>
 							</>
 						)
 					)}

@@ -15,14 +15,10 @@ interface WardRule {
 	prioMaxN: number; // 최대 연속 N 근무 중요도
 	minN: number; // 최소 연속 N 근무
 	prioMinN: number; // 최소 연속 N 근무 중요도
-	offCntAfterN: number; // N 후 최소 오프 개수
-	prioOffCntAfterN: number; // N 후 최소 오프 개수 중요도
 
 	// 연속 근무 규칙
 	maxShift: number; // 최대 연속 근무일
 	prioMaxShift: number; // 최대 연속 근무일 중요도
-	offCntAfterMaxShift: number; // 최대 연속 근무일 후 오프 개수
-	prioOffCntAfterMaxShift: number; // 최대 연속 근무일 후 오프 개수 중요도
 }
 
 // API 서비스
