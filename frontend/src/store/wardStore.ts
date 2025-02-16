@@ -9,7 +9,7 @@ export interface WardStore {
 	syncWithServer: () => Promise<void>;
 	lastSyncTime: number | null;
 	virtualNurseCount: number;
-	addVirtualNurse: () => Promise<void>;
+	addVirtualNurse: (count : number) => Promise<void>;
 	updateVirtualNurseName: (memberId: number, name: string) => Promise<void>;
 	updateVirtualNurseInfo: (
 		memberId: number,
@@ -127,12 +127,11 @@ const useWardStore = create<WardStore>((set, get) => ({
 		}
 	},
 
-	addVirtualNurse: async () => {
-		const count = get().virtualNurseCount + 1;
-		const nurseName = `간호사${count}`;
+	addVirtualNurse: async (count : number) => {
+		// const count = get().virtualNurseCount + 1;
 
 		try {
-			const newNurse = await wardService.addVirtualNurse(nurseName);
+			const newNurse = await wardService.addVirtualNurse(count);
 
 			// Optimistic Update
 			set((state) => {

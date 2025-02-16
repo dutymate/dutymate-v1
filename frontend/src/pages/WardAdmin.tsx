@@ -38,9 +38,9 @@ const WardAdmin = () => {
 		fetchWardInfo();
 	}, [setWardInfo]);
 
-	const handleAddVirtualNurse = async () => {
+	const handleAddVirtualNurse = async (count : number) => {
 		try {
-			await addVirtualNurse();
+			await addVirtualNurse(count);
 			// 임시 간호사 추가 후 병동 정보 다시 불러오기
 			const data = await wardService.getWardInfo();
 			setWardInfo(data);

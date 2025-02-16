@@ -16,7 +16,7 @@ import WardAdminTemp from "./WardAdminTemp";
 
 interface WardAdminInfoProps {
 	wardInfo: WardInfo;
-	onAddTempNurse: () => void;
+	onAddTempNurse: (count : number) => void;
 	onViewHistory: () => void;
 }
 
@@ -51,7 +51,6 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 			setNurses(data);
 			setWaitingfCount(data.length);
 
-			// wardStore.getSortedNurses();
 		} catch (error) {
 			console.error(error);
 			toast.error("간호사 대기 목록을 조회하는데 실패했습니다.");
@@ -64,7 +63,9 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 
 	const handleTempNurseAdd = (count: number) => {
 		// 여기에 임시 간호사 추가 로직 구현
-		onAddTempNurse();
+		
+
+		onAddTempNurse(count);
 		setIsTempModalOpen(false);
 	};
 
@@ -86,12 +87,7 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								병동 인원
 							</h3>
-							{/* To 현진 임시 간호사 추가 버튼의 기능을 잠시 중단하기 위해 아래 두줄을 주석처리 해두었습니다.  */}
 							<TempNurseButton
-								// onClick={() => {
-								// 	// onAddTempNurse();  // 기존 기능 주석처리
-								// 	// 여기에 모달 오픈 핸들러가 들어갈 예정
-								// }}
 								onClick={() => setIsTempModalOpen(true)}
 							/>
 						</div>
@@ -185,6 +181,7 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 				isOpen={isTempModalOpen}
 				onClose={() => setIsTempModalOpen(false)}
 				onConfirm={handleTempNurseAdd}
+				
 			/>
 		</div>
 	);
