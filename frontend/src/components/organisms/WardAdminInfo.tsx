@@ -16,7 +16,7 @@ import WardAdminTemp from "./WardAdminTemp";
 
 interface WardAdminInfoProps {
 	wardInfo: WardInfo;
-	onAddTempNurse: (count : number) => void;
+	onAddTempNurse: (count: number) => void;
 	onViewHistory: () => void;
 }
 
@@ -50,7 +50,6 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 			const data = await wardService.getNurseWaitList();
 			setNurses(data);
 			setWaitingfCount(data.length);
-
 		} catch (error) {
 			console.error(error);
 			toast.error("간호사 대기 목록을 조회하는데 실패했습니다.");
@@ -63,7 +62,6 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 
 	const handleTempNurseAdd = (count: number) => {
 		// 여기에 임시 간호사 추가 로직 구현
-		
 
 		onAddTempNurse(count);
 		setIsTempModalOpen(false);
@@ -87,9 +85,7 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								병동 인원
 							</h3>
-							<TempNurseButton
-								onClick={() => setIsTempModalOpen(true)}
-							/>
+							<TempNurseButton onClick={() => setIsTempModalOpen(true)} />
 						</div>
 						<p className="font-semibold border border-gray-300 rounded-[0.375rem] px-3 py-1 text-center">
 							{wardInfo.nursesTotalCnt}명
@@ -181,7 +177,6 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 				isOpen={isTempModalOpen}
 				onClose={() => setIsTempModalOpen(false)}
 				onConfirm={handleTempNurseAdd}
-				
 			/>
 		</div>
 	);
