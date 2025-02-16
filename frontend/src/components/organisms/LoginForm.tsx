@@ -1,6 +1,6 @@
 import { EmailInput, PasswordInput } from "../atoms/Input";
-import kakaoIcon from "../../assets/kakaotalk.svg";
-import googleIcon from "../../assets/google.svg";
+import googleIcon from "../../assets/google.logo.png";
+import kakao_logo from "../../assets/kakao_logo.png";
 import { useState } from "react";
 import userService from "@/services/userService";
 import { toast } from "react-toastify";
@@ -158,13 +158,13 @@ const LoginForm = () => {
 				<div className="mt-[2rem] space-y-[0.75rem]">
 					<button
 						type="button"
-						className="w-full px-[0.75rem] py-[0.5rem] text-[0.875rem] font-medium text-[#000000] bg-[#FEE500] rounded-md hover:bg-[#e6cf00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] relative"
+						className="w-full px-[0.75rem] py-[0.5rem] text-[0.875rem] font-medium text-[#000000] bg-[#FEE500] rounded-md hover:bg-[#FDD835] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] relative"
 						onClick={handleKakaoLogin}
 					>
 						<img
-							src={kakaoIcon}
+							src={kakao_logo}
 							alt="카카오 아이콘"
-							className="w-[1rem] h-[1rem] absolute left-[1.5rem] top-1/2 transform -translate-y-1/2"
+							className="w-[1rem] h-[1rem] absolute left-[0.8rem] top-1/2 transform -translate-y-1/2"
 						/>
 						<span className="w-full text-center">카카오 계정으로 시작하기</span>
 					</button>
@@ -176,7 +176,7 @@ const LoginForm = () => {
 						<img
 							src={googleIcon}
 							alt="구글 아이콘"
-							className="w-[1rem] h-[1rem] absolute left-[1.5rem] top-1/2 transform -translate-y-1/2"
+							className="w-[1rem] h-[1rem] absolute left-[0.8rem] top-1/2 transform -translate-y-1/2"
 						/>
 						<span className="w-full text-center">구글 계정으로 시작하기</span>
 					</button>

@@ -1,6 +1,6 @@
 import { EmailInput, PasswordInput, Input } from "../atoms/Input";
-import kakaoIcon from "../../assets/kakaotalk.svg";
-import googleIcon from "../../assets/google.svg";
+import googleIcon from "../../assets/google.logo.png";
+import kakao_logo from "../../assets/kakao_logo.png";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import userService from "@/services/userService";
@@ -282,13 +282,13 @@ const SignupForm = () => {
 					</div>
 					<button
 						type="button"
-						className="w-full px-[0.75rem] py-[0.6rem] sm:py-[0.5rem] text-[0.75rem] sm:text-[0.875rem] font-medium text-[#000000] bg-[#FEE500] rounded-md hover:bg-[#e6cf00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] relative"
+						className="w-full px-[0.75rem] py-[0.6rem] sm:py-[0.5rem] text-[0.75rem] sm:text-[0.875rem] font-medium text-[#000000] bg-[#FEE500] rounded-md hover:bg-[#FDD835] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] relative"
 						onClick={handleKakaoSignup}
 					>
 						<img
-							src={kakaoIcon}
+							src={kakao_logo}
 							alt="카카오 아이콘"
-							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] absolute left-[1.25rem] sm:left-[1.5rem] top-1/2 transform -translate-y-1/2"
+							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] absolute left-[1.05rem] sm:left-[1.05rem] top-1/2 transform -translate-y-1/2"
 						/>
 						<span className="w-full text-center">카카오 계정으로 시작하기</span>
 					</button>
@@ -300,7 +300,7 @@ const SignupForm = () => {
 						<img
 							src={googleIcon}
 							alt="구글 아이콘"
-							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] absolute left-[1.25rem] sm:left-[1.5rem] top-1/2 transform -translate-y-1/2"
+							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] absolute left-[1.05rem] sm:left-[1.05rem] top-1/2 transform -translate-y-1/2"
 						/>
 						<span className="w-full text-center">구글 계정으로 시작하기</span>
 					</button>
