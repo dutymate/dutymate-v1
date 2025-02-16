@@ -51,7 +51,10 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 	// 드롭다운 외부 클릭 처리
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+			if (
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target as Node)
+			) {
 				setShowDropdown(false);
 				setShowCommentDropdown(null);
 			}
@@ -60,7 +63,6 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
-
 
 	const handleLikeClick = () => {
 		setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
@@ -73,7 +75,6 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 	const handleDeleteBoard = async (event: React.MouseEvent) => {
 		event.stopPropagation();
-		console.log("뭐야");
 
 		try {
 			await boardService.deleteBoard(post.boardId);
