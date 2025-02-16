@@ -111,3 +111,8 @@ module "ssm" {
   sg_ssm_ec2_id             = module.security_group.sg_ssm_ec2_id
   ssm_instance_profile_name = module.iam.ssm_instance_profile_name
 }
+
+module "waf" {
+  source  = "./Modules/WAF"
+  alb_arn = module.alb.alb_arn
+}
