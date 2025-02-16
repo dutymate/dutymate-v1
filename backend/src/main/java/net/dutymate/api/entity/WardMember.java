@@ -19,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -83,5 +84,10 @@ public class WardMember {
 
 	public void changeIsSynced(boolean isSynced) {
 		this.isSynced = isSynced;
+	}
+
+	@PrePersist
+	protected void prePersist() {
+		this.shiftType = ShiftType.ALL;
 	}
 }
