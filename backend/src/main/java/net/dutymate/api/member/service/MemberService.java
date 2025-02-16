@@ -3,7 +3,6 @@ package net.dutymate.api.member.service;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
@@ -472,32 +471,27 @@ public class MemberService {
 
 			System.out.println("🔥 deleteWardMemberInMongo 실행 전");
 
-			CompletableFuture.runAsync(() -> {
-				try {
-					deleteWardMemberInMongo(member, ward);
-					System.out.println("🔥 deleteWardMemberInMongo 실행 후");
-				} catch (Exception e) {
-					System.out.println("❌ deleteWardMemberInMongo 실행 중 예외 발생: " + e.getMessage());
-					e.printStackTrace();
-				}
-			});
+			try {
+				deleteWardMemberInMongo(member, ward);
+				System.out.println("🔥 deleteWardMemberInMongo 실행 후");
+			} catch (Exception e) {
+				System.out.println("❌ deleteWardMemberInMongo 실행 중 예외 발생: " + e.getMessage());
+				e.printStackTrace();
+			}
 
-			// 병동에 한 명만 남아 있는 경우,
+			member.updateRole(null);
 			ward.removeWardMember(wardMember);
 
 			System.out.println(
 				"222222= " + wardMemberRepository.existsByWard(
 					ward)); // false
 
-			member.updateRole(null);
-
-			System.out.println(
-				"44444= " + wardMemberRepository.existsByWard(
-					ward)); //
+			// 💡 삭제 후 즉시 반영 및 영속성 컨텍스트 정리
+			wardMemberRepository.delete(wardMember);
+			wardMemberRepository.flush();
 
 			if (!wardMemberRepository.existsByWard(ward)) {
-				Ward managedWard = wardRepository.findById(wardId).orElseThrow();
-				wardRepository.delete(managedWard); // 이게 실행이 안 됨
+				wardRepository.deleteById(wardId);
 			}
 		}
 	}
