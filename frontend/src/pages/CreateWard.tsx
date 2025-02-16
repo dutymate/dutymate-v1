@@ -99,7 +99,7 @@ const CreateWard = () => {
 	return (
 		<Template>
 			<div className="flex flex-col items-center">
-				<p className="text-gray-600 text-base mt-8 mb-8">
+				<p className="text-gray-600 text-[1rem] mt-[2rem] mb-[2rem]">
 					병동 생성을 위한 기본 정보를 입력해주세요.
 				</p>
 				<CreateWardForm

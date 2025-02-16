@@ -64,12 +64,12 @@ const EnterWard = () => {
 
 	return (
 		<Template>
-			<div className="flex flex-col items-center justify-center text-center -mt-[5vh]">
-				<div className={`${isMobile ? "" : "mt-16"}`}>
-					<p className="text-[#FF8282] font-semibold text-lg mb-1 ">
+			<div className="flex flex-col items-center justify-center text-center -mt-[3vh]">
+				<div className={`${isMobile ? "" : "mt-[4rem]"}`}>
+					<p className="text-[#FF8282] font-semibold text-[1.125rem] mb-[0.25rem]">
 						{userInfo?.name}님 환영합니다!
 					</p>
-					<p className="text-gray-600 text-base mb-8">
+					<p className="text-gray-600 text-[1rem] mb-[2rem]">
 						병동 입장하기 위해 전달 받은 병동 코드를 입력해주세요.
 					</p>
 					<EnterWardForm onSubmit={handleEnterWard} />

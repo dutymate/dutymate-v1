@@ -15,49 +15,43 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 		<div className="w-full h-screen lg:grid lg:grid-cols-2">
 			{/* 모바일 레이아웃 */}
 			<div className="lg:hidden flex flex-col h-screen overflow-hidden">
-				{/* 로고 영역 */}
 				<div className="flex-1 bg-base-muted-30 flex flex-col relative">
-					{/* 로고 컨테이너를 absolute로 분리 */}
 					<div
-						className={`absolute w-full ${isLoginPage ? "top-[14vh]" : "top-20"}`}
+						className={`absolute w-full ${
+							isLoginPage ? "top-[14rem]" : "top-[5rem]"
+						}`}
 					>
 						<div className="flex justify-center">
 							<img
 								src="/images/logo.svg"
 								alt="DutyMate Logo"
-								className="w-[60%] max-w-[280px]"
+								className="w-[60%] max-w-[17.5rem]"
 							/>
 						</div>
 					</div>
 
-					{/* 텍스트 영역과 버튼 - 로그인 페이지가 아닐 때만 표시 */}
 					{!isLoginPage && (
-						<div className="px-10 py-20 mt-32">
-							{" "}
-							{/* mt-32로 로고 아래 여백 확보 */}
-							<div className="flex flex-col gap-2 mb-8 lg:text-left text-center">
-								<h1 className="text-2xl font-bold text-gray-800">
+						<div className="px-[2.5rem] py-[5rem] mt-[8rem]">
+							<div className="flex flex-col gap-[0.5rem] mb-[2rem] lg:text-left text-center">
+								<h1 className="text-[1.5rem] font-bold text-gray-800">
 									"듀티표의 마침표, 듀티메이트."
 								</h1>
-								<p className="text-base text-gray-600">
+								<p className="text-[1rem] text-gray-600">
 									간호사 업무의 효율성과 공정성을 높이는
 									<br />
 									자동화 듀티표 생성 서비스.
 								</p>
 							</div>
-							{/* 시작하기 버튼 */}
 							<div className="flex justify-center">{children}</div>
 						</div>
 					)}
 
-					{/* 로그인 폼 - 로그인 페이지일 때만 표시 */}
 					{isLoginPage && (
 						<div className="flex-1 flex items-center justify-center">
 							{children}
 						</div>
 					)}
 
-					{/* 노트북 이미지 - 상단에 겹치도록 배치 */}
 					{!isLoginPage && (
 						<div className="absolute -bottom-[17vh] right-[-40%] w-[130%] z-10 hidden lg:block">
 							<img
@@ -69,7 +63,6 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 					)}
 				</div>
 
-				{/* 하단 배경색 영역 */}
 				{!isLoginPage && <div className="h-[35vh] bg-primary-20" />}
 			</div>
 

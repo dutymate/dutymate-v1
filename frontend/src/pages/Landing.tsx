@@ -52,9 +52,9 @@ const Landing = () => {
 				size="lg"
 				width="long"
 				onClick={handleStart}
-				className="mt-1 lg:mt-[5vh] h-[4.5vh] lg:h-12"
+				className="mt-[0.0625rem] lg:mt-[5rem] h-[2.8125rem] lg:h-[3rem]"
 			>
-				<span className="text-xl lg:text-base">시작하기</span>
+				<span className="text-[1.25rem] lg:text-[1rem]">시작하기</span>
 			</Button>
 		</LandingTemplate>
 	) : (
@@ -65,9 +65,9 @@ const Landing = () => {
 					size="lg"
 					width="long"
 					onClick={handleStart}
-					className="mt-1 lg:mt-[5vh] h-[4.5vh] lg:h-12"
+					className="mt-[0.0625rem] lg:mt-[5rem] h-[2.8125rem] lg:h-[3rem]"
 				>
-					<span className="text-xl lg:text-base">시작하기</span>
+					<span className="text-[1.25rem] lg:text-[1rem]">시작하기</span>
 				</Button>
 			</div>
 		</StartTemplate>

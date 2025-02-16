@@ -82,10 +82,10 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 	};
 
 	return (
-		<div className="bg-white rounded-[0.904375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-8 w-[25rem]">
+		<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[2rem] py-[2rem] w-[23rem] lg:px-[3rem] lg:py-[3rem]">
 			<form onSubmit={handleSubmit}>
 				{/* 간호사 연차 입력 */}
-				<div className="mb-4">
+				<div className="mb-[1.5rem]">
 					<Select
 						id="career"
 						name="career"
@@ -100,8 +100,8 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 				</div>
 
 				{/* 성별 선택 */}
-				<div className="mb-4">
-					<label className="block text-base font-medium text-gray-900 mb-3">
+				<div className="mb-[1.5rem]">
+					<label className="block text-[1rem] font-medium text-gray-900 mb-[0.75rem]">
 						성별
 					</label>
 					<ToggleButton
@@ -116,8 +116,8 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 				</div>
 
 				{/* 직책 선택 */}
-				<div className="mb-8 lg:mb-10">
-					<label className="block text-base font-medium text-gray-900 mb-3">
+				<div className="mb-[2rem] lg:mb-[2.5rem]">
+					<label className="block text-[1rem] font-medium text-gray-900 mb-[0.75rem]">
 						직책
 					</label>
 					<ToggleButton
@@ -129,16 +129,16 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 				</div>
 
 				{/* 작성 완료 버튼 */}
-				<div className="mt-12 lg:mt-0">
+				<div className="mt-[2rem] lg:mt-0">
 					<Button
 						type="submit"
 						size="lg"
 						width="long"
 						fullWidth
 						disabled={isLoading}
-						className="w-full h-16 lg:h-12"
+						className="w-full h-[3.5rem] lg:h-[3rem]"
 					>
-						<span className="text-xl lg:text-sm">
+						<span className="text-[1.125rem] lg:text-[0.875rem]">
 							{isLoading ? "제출 중..." : "작성 완료"}
 						</span>
 					</Button>

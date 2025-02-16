@@ -20,7 +20,7 @@ const Signup = () => {
 	return (
 		<Template>
 			<div className="flex flex-col items-center">
-				<div className="mt-[15vh] lg:mt-8"></div>
+				<div className="mt-[3.75rem] lg:mt-[2rem]"></div>
 			</div>
 			<SignupForm />
 		</Template>

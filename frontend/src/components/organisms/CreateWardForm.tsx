@@ -142,14 +142,14 @@ const CreateWardForm = ({
 	}
 
 	return (
-		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 lg:py-16 w-[25rem] flex flex-col items-center">
+		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[3rem] py-[4rem] lg:py-[4rem] w-[23rem] flex flex-col items-center">
 			{isSearching && <PageLoadingSpinner />}
 			<form
 				noValidate
 				onSubmit={handleSubmit}
-				className="flex flex-col gap-6 w-full"
+				className="flex flex-col gap-[1.5rem] w-full"
 			>
-				<div className="flex flex-col gap-4">
+				<div className="flex flex-col gap-[1rem]">
 					<div className="relative" ref={dropdownRef}>
 						<Input
 							id="hospital-name"
@@ -163,7 +163,7 @@ const CreateWardForm = ({
 							required
 						/>
 						{showDropdown && (
-							<div className="absolute top-[calc(100%rem)] left-0 w-full bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
+							<div className="absolute top-[calc(100%+0.25rem)] left-0 w-full bg-white border border-gray-200 rounded-[0.25rem] shadow-lg z-50 max-h-[15rem] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
 								{hospitals
 									.filter((hospital) =>
 										hospital.hospitalName
@@ -173,7 +173,7 @@ const CreateWardForm = ({
 									.map((hospital) => (
 										<div
 											key={hospital.hospitalName}
-											className="px-4 py-3 rounded-md cursor-pointer hover:bg-primary-10 active:bg-primary-10"
+											className="px-[1rem] py-[0.75rem] rounded-[0.25rem] cursor-pointer hover:bg-primary-10 active:bg-primary-10"
 											onClick={() =>
 												handleHospitalSelect(hospital.hospitalName)
 											}
@@ -193,12 +193,12 @@ const CreateWardForm = ({
 												e.currentTarget.classList.remove("bg-primary-10")
 											}
 										>
-											<div className="flex items-center gap-2">
+											<div className="flex items-center gap-[0.5rem]">
 												<span className="font-medium">
 													{hospital.hospitalName}
 												</span>
 											</div>
-											<div className="text-sm text-gray-500 mt-1">
+											<div className="text-[0.875rem] text-gray-500 mt-[0.25rem]">
 												{hospital.address}
 											</div>
 										</div>
@@ -217,16 +217,16 @@ const CreateWardForm = ({
 						required
 					/>
 				</div>
-				<div className="mt-8 lg:mt-2 -mb-1">
+				<div className="mt-[2rem] lg:mt-[0.5rem] -mb-[0.25rem]">
 					<Button
 						type="submit"
 						color="primary"
 						size="lg"
 						fullWidth
 						disabled={isLoading}
-						className="h-[5vh] lg:h-12"
+						className="h-[5vh] lg:h-[3rem]"
 					>
-						<span className="text-xl lg:text-base">
+						<span className="text-[1.25rem] lg:text-[1rem]">
 							{isLoading ? "생성 중..." : "생성하기"}
 						</span>
 					</Button>

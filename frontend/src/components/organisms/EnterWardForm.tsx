@@ -69,19 +69,19 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 
 	if (useUserAuthStore.getState().userInfo?.sentWardCode) {
 		return (
-			<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 lg:py-16 w-[25rem] h-[25.5rem] flex flex-col items-center justify-center">
+			<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[3rem] py-[4rem] lg:py-[4rem] w-[23rem] h-[25.5rem] flex flex-col items-center justify-center">
 				<div className="flex flex-col items-center text-center w-full">
-					<h1 className="text-2xl font-bold text-gray-800 mb-1">
+					<h1 className="text-[1.5rem] font-bold text-gray-800 mb-[0.25rem]">
 						병동 입장 대기 중입니다.
 					</h1>
-					<p className="text-gray-400 text-lg mb-8">
+					<p className="text-gray-400 text-[1.125rem] mb-[2rem]">
 						관리자의 승인 후 입장이 가능합니다. <br />
 						병동 관리자에게 문의해주세요!
 					</p>
 					<div className="w-full mt-0 lg:mt-0 -mb-0"></div>
 					<button
 						onClick={handleLogoutButton}
-						className="w-full lg:w-[100px] px-3 py-2 bg-white text-gray-900 border border-gray-400 rounded-md hover:bg-gray-100 text-xs lg:text-sm h-[35px] ml-3"
+						className="w-full lg:w-[6.25rem] px-[0.75rem] py-[0.5rem] bg-white text-gray-900 border border-gray-400 rounded-[0.25rem] hover:bg-gray-100 text-[0.75rem] lg:text-[0.875rem] h-[2.1875rem] ml-[0.75rem]"
 					>
 						로그아웃
 					</button>
@@ -91,12 +91,14 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 	}
 
 	return (
-		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-12 py-16 w-[25rem]">
-			<h2 className="text-2xl font-bold text-center mb-8">병동 입장하기</h2>
-			<form onSubmit={handleSubmit} className="flex flex-col gap-6">
-				<div className="flex flex-col gap-2">
+		<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[3rem] py-[4rem] w-[23rem]">
+			<h2 className="text-[1.5rem] font-bold text-center mb-[2rem]">
+				병동 입장하기
+			</h2>
+			<form onSubmit={handleSubmit} className="flex flex-col gap-[1.5rem]">
+				<div className="flex flex-col gap-[0.5rem]">
 					<div className="relative">
-						<label className="block text-lg font-medium text-gray-700 mb-2 text-left">
+						<label className="block text-[1.125rem] font-medium text-gray-700 mb-[0.5rem] text-left">
 							병동 코드
 						</label>
 						<div className="w-full flex justify-center">
@@ -118,15 +120,15 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 					size="lg"
 					fullWidth
 					disabled={isLoading || !!error || wardCode.length !== 6}
-					className={`h-[5vh] lg:h-12 ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+					className={`h-[3.5rem] lg:h-[3rem] ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
 				>
 					{isLoading ? (
-						<div className="flex items-center justify-center gap-2">
+						<div className="flex items-center justify-center gap-[0.5rem]">
 							<span className="animate-spin">⌛</span>
-							<span className="text-xl lg:text-base">확인 중...</span>
+							<span className="text-[1.25rem] lg:text-[1rem]">확인 중...</span>
 						</div>
 					) : (
-						<span className="text-lg lg:text-base">입장하기</span>
+						<span className="text-[1.125rem] lg:text-[1rem]">입장하기</span>
 					)}
 				</Button>
 			</form>

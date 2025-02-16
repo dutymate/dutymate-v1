@@ -205,9 +205,9 @@ const SignupForm = () => {
 	};
 
 	return (
-		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] px-8 py-8 w-[25rem] lg:w-[25rem] lg:px-12 lg:py-12">
+		<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[1.25rem] py-[1.25rem] w-[22rem] sm:w-[25rem] sm:px-[2rem] sm:py-[2rem] lg:px-[3rem] lg:py-[3rem]">
 			<form onSubmit={handleSignupSubmit} className="lg:block">
-				<div className="lg:mt-0 mt-0">
+				<div className="space-y-[0.375rem] sm:space-y-[0.5rem]">
 					<EmailInput
 						id="email"
 						label=""
@@ -218,8 +218,6 @@ const SignupForm = () => {
 						error={error.email}
 						placeholder="이메일"
 					/>
-				</div>
-				<div className="lg:mt-2 mt-2">
 					<PasswordInput
 						id="password"
 						label=""
@@ -230,8 +228,6 @@ const SignupForm = () => {
 						error={error.password}
 						placeholder="비밀번호"
 					/>
-				</div>
-				<div className="lg:mt-2 mt-2">
 					<PasswordInput
 						id="passwordConfirm"
 						label=""
@@ -242,8 +238,6 @@ const SignupForm = () => {
 						error={error.passwordConfirm}
 						placeholder="비밀번호 확인"
 					/>
-				</div>
-				<div className="lg:mt-2 mt-2">
 					<Input
 						id="name"
 						name="name"
@@ -255,60 +249,63 @@ const SignupForm = () => {
 						placeholder="이름"
 					/>
 				</div>
-				<div className="lg:mt-4 mt-6 flex justify-center">
+				<div className="mt-[1rem] sm:mt-[1.5rem] flex justify-center">
 					<div className="flex items-center">
 						<input
 							type="checkbox"
 							id="agreement"
 							checked={isAgreed}
 							onChange={(e) => setIsAgreed(e.target.checked)}
-							className="w-4 h-4 text-primary-dark"
+							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] text-primary-dark"
 						/>
-						<label htmlFor="agreement" className="ml-2 text-sm text-gray-600">
+						<label
+							htmlFor="agreement"
+							className="ml-[0.375rem] text-[0.75rem] sm:text-[0.875rem] text-gray-600"
+						>
 							개인정보 수집 및 이용에 동의합니다.
 						</label>
 					</div>
 				</div>
-				<div className="lg:mt-4 mt-6">
+				<div className="mt-[0.75rem] sm:mt-[1rem] space-y-[0.375rem] sm:space-y-[0.5rem]">
 					<button
 						type="submit"
-						className="w-full px-3 py-2 text-sm font-medium text-white bg-base-black rounded-md hover:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-base-black"
+						className="w-full px-[0.75rem] py-[0.6rem] sm:py-[0.5rem] text-[0.75rem] sm:text-[0.875rem] font-medium text-white bg-base-black rounded-md hover:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-base-black"
 					>
 						회원가입
 					</button>
+					<div className="flex items-center">
+						<div className="flex-grow h-[0.0625rem] bg-gray-200"></div>
+						<span className="px-[0.75rem] text-[0.75rem] sm:text-[0.875rem] text-gray-500">
+							또는
+						</span>
+						<div className="flex-grow h-[0.0625rem] bg-gray-200"></div>
+					</div>
+					<button
+						type="button"
+						className="w-full px-[0.75rem] py-[0.6rem] sm:py-[0.5rem] text-[0.75rem] sm:text-[0.875rem] font-medium text-[#000000] bg-[#FEE500] rounded-md hover:bg-[#e6cf00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] relative"
+						onClick={handleKakaoSignup}
+					>
+						<img
+							src={kakaoIcon}
+							alt="카카오 아이콘"
+							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] absolute left-[1.25rem] sm:left-[1.5rem] top-1/2 transform -translate-y-1/2"
+						/>
+						<span className="w-full text-center">카카오 계정으로 시작하기</span>
+					</button>
+					<button
+						type="button"
+						className="w-full px-[0.75rem] py-[0.6rem] sm:py-[0.5rem] text-[0.75rem] sm:text-[0.875rem] font-medium text-[#000000] bg-[#F2F2F2] rounded-md hover:bg-[#E6E6E6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2F2F2] relative"
+						onClick={handleGoogleSignup}
+					>
+						<img
+							src={googleIcon}
+							alt="구글 아이콘"
+							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] absolute left-[1.25rem] sm:left-[1.5rem] top-1/2 transform -translate-y-1/2"
+						/>
+						<span className="w-full text-center">구글 계정으로 시작하기</span>
+					</button>
 				</div>
 			</form>
-			<div className="lg:mt-4 mt-6 flex items-center">
-				<div className="flex-grow h-[1px] bg-gray-200"></div>
-				<span className="px-4 text-sm text-gray-500">또는</span>
-				<div className="flex-grow h-[1px] bg-gray-200"></div>
-			</div>
-			<div className="lg:mt-4 mt-6 space-y-2 mb-2">
-				<button
-					type="button"
-					className="w-full px-3 py-2 text-sm font-medium text-[#000000] bg-[#FEE500] rounded-md hover:bg-[#e6cf00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] relative"
-					onClick={handleKakaoSignup}
-				>
-					<img
-						src={kakaoIcon}
-						alt="카카오 아이콘"
-						className="w-4 h-4 absolute left-6 top-1/2 transform -translate-y-1/2"
-					/>
-					<span className="w-full text-center">카카오 계정으로 시작하기</span>
-				</button>
-				<button
-					type="button"
-					className="w-full px-3 py-2 text-sm font-medium text-[#000000] bg-[#F2F2F2] rounded-md hover:bg-[#E6E6E6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2F2F2] relative"
-					onClick={handleGoogleSignup}
-				>
-					<img
-						src={googleIcon}
-						alt="구글 아이콘"
-						className="w-4 h-4 absolute left-6 top-1/2 transform -translate-y-1/2"
-					/>
-					<span className="w-full text-center">구글 계정으로 시작하기</span>
-				</button>
-			</div>
 		</div>
 	);
 };

@@ -47,7 +47,7 @@ const Login = () => {
 	return (
 		<Template isLoginPage>
 			<div className="flex flex-col items-center">
-				<div className="mt-[8vh] lg:mt-8"></div>
+				<div className="mt-[8rem] lg:mt-[2rem]"></div>
 			</div>
 			<LoginForm />
 		</Template>
