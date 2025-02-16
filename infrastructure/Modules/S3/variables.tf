@@ -1,7 +1,7 @@
-variable "vpce_s3_id" {
+variable "cloudfront_distribution_arn" {
   type = string
 }
 
-variable "cloudfront_distribution_arn" {
+variable "vpce_s3_id" {
   type = string
 }

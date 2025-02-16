@@ -1,3 +1,7 @@
+variable "availability_zones" {
+  type = list(string)
+}
+
 variable "aws_profile" {
   type = string
 }
@@ -6,28 +10,8 @@ variable "aws_region" {
   type = string
 }
 
-variable "vpc_cidr" {
-  type = string
-}
-
-variable "availability_zones" {
-  type = list(string)
-}
-
-variable "public_subnet_cidr_block" {
-  type = list(string)
-}
-
-variable "private_subnet_cidr_block" {
-  type = list(string)
-}
-
 variable "database_subnet_cidr_block" {
   type = list(string)
-}
-
-variable "route53_zone_id" {
-  type = string
 }
 
 variable "domain_name" {
@@ -38,11 +22,7 @@ variable "health_check_path" {
   type = string
 }
 
-variable "mysql_username" {
-  type = string
-}
-
-variable "mysql_password" {
+variable "mongodb_password" {
   type = string
 }
 
@@ -50,6 +30,26 @@ variable "mongodb_username" {
   type = string
 }
 
-variable "mongodb_password" {
+variable "mysql_password" {
+  type = string
+}
+
+variable "mysql_username" {
+  type = string
+}
+
+variable "private_subnet_cidr_block" {
+  type = list(string)
+}
+
+variable "public_subnet_cidr_block" {
+  type = list(string)
+}
+
+variable "route53_zone_id" {
+  type = string
+}
+
+variable "vpc_cidr" {
   type = string
 }

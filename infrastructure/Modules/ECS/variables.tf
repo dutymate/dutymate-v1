@@ -1,16 +1,12 @@
+variable "asset_bucket_arn" {
+  type = string
+}
+
 variable "aws_region" {
   type = string
 }
 
-variable "private_subnets" {
-  type = list(string)
-}
-
-variable "sg_ecs_id" {
-  type = string
-}
-
-variable "target_group_arn" {
+variable "ecr_repository_url" {
   type = string
 }
 
@@ -30,14 +26,18 @@ variable "ecs_task_role_arn" {
   type = string
 }
 
-variable "ecr_repository_url" {
-  type = string
-}
-
-variable "asset_bucket_arn" {
-  type = string
-}
-
 variable "log_group_name" {
+  type = string
+}
+
+variable "private_subnets" {
+  type = list(string)
+}
+
+variable "sg_ecs_id" {
+  type = string
+}
+
+variable "target_group_arn" {
   type = string
 }
