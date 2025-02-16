@@ -144,19 +144,34 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		}
 	};
 
-	const handleEnterPress = (e:React.KeyboardEvent<HTMLTextAreaElement>) => {
-		if(e.key === "Enter" && !e.shiftKey){
+	const handleEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === "Enter" && !e.shiftKey) {
 			e.preventDefault(); // 기본 줄바꿈 방지
-			handleAddComment(); // 댓글 작성 실행 
+			handleAddComment(); // 댓글 작성 실행
 		}
-	}
+	};
 
 	return (
 		<div className="bg-white rounded-xl p-4 lg:p-6 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
 			{/* 게시글 헤더 */}
 			<div className="flex justify-between items-start mb-4">
 				<div className="flex flex-wrap items-center gap-2">
-					<Icon name="user" size={24} className="text-gray-400" />
+					{post.profileImg ? (
+						<img
+							src={post.profileImg}
+							alt="프로필 이미지"
+							className="w-[1.5rem] h-[1.5rem] min-w-[1.5rem] text-gray-500 rounded-full"
+							onError={(e) => {
+								e.currentTarget.onerror = null;
+								e.currentTarget.style.display = "none";
+							}}
+						/>
+					) : (
+						<Icon
+							name="user"
+							className="w-[1.5rem] h-[1.5rem] min-w-[1.5rem] text-gray-500 rounded-full"
+						/>
+					)}
 					<span className="font-medium">{post.nickname}</span>
 					<span className="text-gray-400">·</span>
 					<span className="text-gray-600">
@@ -260,7 +275,22 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 						<div key={comment.commentId} className="py-4 first:pt-0 last:pb-0">
 							<div className="flex justify-between items-start">
 								<div className="flex items-center gap-2">
-									<Icon name="user" size={20} className="text-gray-400" />
+									{comment.profileImg ? (
+										<img
+											src={comment.profileImg}
+											alt="프로필 이미지"
+											className="w-[1.125rem] h-[1.125rem] min-w-[1.125em] text-gray-500 rounded-full"
+											onError={(e) => {
+												e.currentTarget.onerror = null;
+												e.currentTarget.style.display = "none";
+											}}
+										/>
+									) : (
+										<Icon
+											name="user"
+											className="w-[1.125rem] h-[1.125rem] min-w-[1.125em] text-gray-500 rounded-full"
+										/>
+									)}
 									<span className="font-medium text-sm">
 										{comment.nickname}
 									</span>
