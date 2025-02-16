@@ -436,10 +436,8 @@ public class MemberService {
 	@Transactional
 	public void exitWard(Member member) {
 		Ward ward = member.getWardMember().getWard();
-		Long wardId = ward.getWardId();
 
-		WardMember wardMember = wardMemberRepository.findById(member.getWardMember().getWardMemberId())
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
+		WardMember wardMember = member.getWardMember();
 
 		if (member.getRole() == Role.RN) {
 			ward.removeWardMember(wardMember);
@@ -471,28 +469,10 @@ public class MemberService {
 
 			System.out.println("🔥 deleteWardMemberInMongo 실행 전");
 
-			try {
-				deleteWardMemberInMongo(member, ward);
-				System.out.println("🔥 deleteWardMemberInMongo 실행 후");
-			} catch (Exception e) {
-				System.out.println("❌ deleteWardMemberInMongo 실행 중 예외 발생: " + e.getMessage());
-				e.printStackTrace();
-			}
-
+			deleteWardMemberInMongo(member, ward);
 			member.updateRole(null);
-			ward.removeWardMember(wardMember);
 
-			System.out.println(
-				"222222= " + wardMemberRepository.existsByWard(
-					ward)); // false
-
-			// 💡 삭제 후 즉시 반영 및 영속성 컨텍스트 정리
-			wardMemberRepository.delete(wardMember);
-			wardMemberRepository.flush();
-
-			if (!wardMemberRepository.existsByWard(ward)) {
-				wardRepository.deleteById(wardId);
-			}
+			wardRepository.delete(ward);
 		}
 	}
 

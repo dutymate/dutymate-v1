@@ -2,6 +2,9 @@ package net.dutymate.api.entity;
 
 import java.util.List;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.enumclass.ShiftType;
 import net.dutymate.api.enumclass.SkillLevel;
@@ -40,6 +43,7 @@ public class WardMember {
 	// ManyToOne => wardMember : Ward = N : 1
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "ward_id", nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Ward ward;
 
 	// OneToOne => WardMember : Member = 1 : 1
