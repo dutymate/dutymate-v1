@@ -94,4 +94,8 @@ public class Board {
 			this.likesCntHigh--;
 		}
 	}
+
+	public int getLikesCnt() {
+		return likesCntLow + likesCntMid + likesCntHigh;
+	}
 }

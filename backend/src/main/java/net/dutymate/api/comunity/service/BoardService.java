@@ -18,9 +18,11 @@ import net.dutymate.api.comunity.dto.BoardImgResponseDto;
 import net.dutymate.api.comunity.dto.BoardListResponseDto;
 import net.dutymate.api.comunity.repository.BoardLikesRepository;
 import net.dutymate.api.comunity.repository.BoardRepository;
+import net.dutymate.api.comunity.repository.HotBoardRepository;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.community.Board;
 import net.dutymate.api.entity.community.BoardLikes;
+import net.dutymate.api.entity.community.HotBoard;
 import net.dutymate.api.enumclass.Category;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class BoardService {
 	private final S3Client s3Client;
 	private final BoardRepository boardRepository;
 	private final BoardLikesRepository boardLikesRepository;
+	private final HotBoardRepository hotBoardRepository;
 
 	@Value("${cloud.aws.region.static}")
 	private String region;
@@ -62,7 +65,13 @@ public class BoardService {
 				.toList();
 		}
 
-		// TODO cateogry == HOT 인 경우 별도 조회 로직 필요함
+		if (category == Category.HOT) {
+			return hotBoardRepository.findAll(Sort.by(Sort.Direction.DESC, "uploadAtHotBoard"))
+				.stream()
+				.map(HotBoard::getBoard)
+				.map(BoardListResponseDto::of)
+				.toList();
+		}
 
 		return boardRepository.findAllByCategory(category, sort)
 			.stream()
@@ -141,6 +150,11 @@ public class BoardService {
 			BoardLikes boardLikes = BoardLikes.builder().board(board).member(member).build();
 			boardLikesRepository.save(boardLikes);
 			board.increaseLikeCnt(member.getGrade());
+
+			if (board.getLikesCnt() == 10) {
+				HotBoard hotBoard = HotBoard.builder().board(board).build();
+				hotBoardRepository.save(hotBoard);
+			}
 		}
 	}
 
@@ -152,6 +166,10 @@ public class BoardService {
 		if (boardLikesRepository.existsByBoardAndMember(board, member)) {
 			boardLikesRepository.deleteByBoardAndMember(board, member);
 			board.decreaseLikeCnt(member.getGrade());
+
+			if (board.getLikesCnt() == 9) {
+				hotBoardRepository.deleteByBoard(board);
+			}
 		}
 	}
 }
