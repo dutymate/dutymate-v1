@@ -152,19 +152,21 @@ const MyShiftCalendar = ({
 	);
 
 	return (
-		<div className={`${isMobile ? "" : "flex gap-8"}`}>
+		<div className={`${isMobile ? "" : "flex gap-[2rem]"}`}>
 			<div
-				className={`bg-white rounded-2xl p-2 shadow-sm ${isMobile ? "w-full" : "w-[750px]"}`}
+				className={`bg-white rounded-[1rem] p-[0.5rem] shadow-sm ${
+					isMobile ? "w-full" : "w-[46.875rem] h-[46.875rem]"
+				}`}
 			>
 				{/* 달력 헤더 */}
-				<div className="flex justify-center items-center gap-16 mb-6 pt-2">
+				<div className="flex justify-center items-center gap-[4rem] mb-[1.5rem] pt-[0.5rem]">
 					<button
 						onClick={handlePrevMonth}
 						className="text-base-muted hover:text-base-foreground"
 					>
 						<IoIosArrowBack className="w-6 h-6" />
 					</button>
-					<h2 className="text-base-foreground text-base font-medium">
+					<h2 className="text-base-foreground text-[1rem] font-medium">
 						{currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
 					</h2>
 					<button
@@ -176,16 +178,16 @@ const MyShiftCalendar = ({
 				</div>
 
 				{/* 요일 헤더 */}
-				<div className="grid grid-cols-7 mb-1">
+				<div className="grid grid-cols-7 mb-[0.25rem]">
 					{weekDays.map((day, index) => (
 						<div
 							key={day}
-							className={`text-center text-sm font-medium ${
+							className={`text-center text-[0.875rem] font-medium ${
 								index === 0
-									? "text-duty-evening"
+									? "text-red-500"
 									: index === 6
-										? "text-duty-night"
-										: "text-base-foreground"
+										? "text-blue-500"
+										: "text-gray-900"
 							}`}
 						>
 							{day}

@@ -104,7 +104,7 @@ const MyShift = () => {
 	return (
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
-			<div className="hidden lg:block w-[238px] shrink-0">
+			<div className="hidden lg:block w-[14.875rem] shrink-0">
 				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 			</div>
 
@@ -116,22 +116,23 @@ const MyShift = () => {
 			/>
 
 			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 lg:px-8 py-6 overflow-y-auto">
+			<div className="flex-1 min-w-0 lg:px-[2rem] py-[1.5rem] overflow-y-auto">
 				{/* 모바일 메뉴 버튼 */}
 				<button
 					onClick={() => setIsSidebarOpen(true)}
-					className="lg:hidden mb-4 p-2 hover:bg-gray-100 rounded-lg"
+					className="lg:hidden mb-[1rem] p-[0.5rem] hover:bg-gray-100 rounded-lg"
 				>
 					<IoMdMenu className="w-6 h-6 text-gray-600" />
 				</button>
 
-				<div className="mb-3">
+				{/* Title 컴포넌트의 위치 조정 */}
+				<div className="mb-[0.75rem] pl-[0.5rem] lg:pl-[1rem]">
 					<Title
 						title="나의 근무표"
 						subtitle="나의 근무 일정을 확인해보세요."
 					/>
 				</div>
-				<div className="block lg:flex lg:gap-8">
+				<div className="block lg:flex lg:gap-[2rem]">
 					<MyShiftCalendar
 						onDateSelect={handleDateSelect}
 						selectedDate={selectedDate}
