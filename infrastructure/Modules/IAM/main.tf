@@ -138,3 +138,8 @@ resource "aws_iam_role" "ecs_task_role" {
     Name = "dutymate-ecs-task-role"
   }
 }
+
+resource "aws_iam_role_policy_attachment" "ecs_task_role_policy" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonElastiCacheFullAccess"
+}

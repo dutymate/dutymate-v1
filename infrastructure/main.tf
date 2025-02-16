@@ -45,7 +45,7 @@ module "ecs" {
   ecs_instance_profile_name   = module.iam.ecs_instance_profile_name
   ecs_service_role_arn        = module.iam.ecs_service_role_arn
   ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
-  ecs_task_role_arn           = module.iam.ecs_task_execution_role_arn
+  ecs_task_role_arn           = module.iam.ecs_task_role_arn
   log_group_name              = module.cloudwatch.log_group_name
   private_subnets             = module.networking.private_subnets
   sg_ecs_id                   = module.security_group.sg_ecs_id
