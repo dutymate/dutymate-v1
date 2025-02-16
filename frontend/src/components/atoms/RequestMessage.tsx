@@ -57,8 +57,8 @@ function RequestMessage({
 			}}
 		>
 			<div className="bg-white px-3 py-2 rounded-md shadow-lg">
-				<p className="text-xs text-gray-600 whitespace-nowrap">
-					내용: {message}
+				<p className="text-xs text-foreground whitespace-nowrap">
+					{message ? `사유: ${message}` : "메시지가 없습니다."}
 				</p>
 				<div className="absolute -left-2 top-1/2 h-0 w-0 -translate-y-1/2 border-y-8 border-r-8 border-y-transparent border-r-white" />
 			</div>

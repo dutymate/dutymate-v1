@@ -5,7 +5,7 @@ import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import { Button } from "../atoms/Button";
 import { Icon } from "../atoms/Icon";
 import { ProgressChecker } from "../atoms/ProgressChecker";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { dutyService } from "../../services/dutyService";
 import { toast } from "react-toastify";
 import useShiftStore from "../../store/shiftStore";
@@ -13,44 +13,33 @@ import FaultLayer from "../atoms/FaultLayer";
 import { toPng } from "html-to-image";
 import { requestService, WardRequest } from "../../services/requestService";
 import RequestStatusLayer from "../atoms/RequestStatusLayer";
-// import { AutoSpinner } from "../atoms/AutoSpinner";
 import { debounce } from "lodash";
 import { useNavigate } from "react-router-dom";
-// import { wardService } from "../../services/wardService";
-// import { Nurse } from "../../services/wardService";
 import { Tooltip } from "../atoms/Tooltip";
 import KeyboardGuide from "../atoms/KeyboardGuide";
+import { memo } from "react";
+import {
+	getDefaultOffDays,
+	getMaxAllowedMonth,
+	isHoliday,
+} from "../../utils/dateUtils";
 
-// 월별 주말과 공휴일 계산 유틸리티 함수 수정
-const getWeekendAndHolidayPairs = (year: number, month: number): number[][] => {
-	const pairs: number[][] = [];
-
-	// 다른 달의 경우 기존 로직 사용
-	const daysInMonth = new Date(year, month, 0).getDate();
-	for (let day = 1; day <= daysInMonth; day++) {
-		const date = new Date(year, month - 1, day);
-		const dayOfWeek = date.getDay();
-		if (dayOfWeek === 6) {
-			pairs.push([day, Math.min(day + 1, daysInMonth)]);
-		}
-	}
-
-	return pairs;
-};
-
+// 근무표 관리자 테이블의 props 인터페이스
 interface ShiftAdminTableProps {
 	dutyData: {
+		// 간호사별 근무 데이터
 		memberId: number;
 		name: string;
 		role: "HN" | "RN";
-		prevShifts: string;
-		shifts: string;
+		prevShifts: string; // 이전 달 마지막 주 근무
+		shifts: string; // 현재 달 근무
 	}[];
-	invalidCnt: number;
-	year: number;
-	month: number;
-	onUpdate: (year: number, month: number, historyIdx?: number) => Promise<void>;
+	invalidCnt: number; // 규칙 위반 수
+	year: number; // 년도
+	month: number; // 월
+	onUpdate: (year: number, month: number, historyIdx?: number) => Promise<void>; // 업데이트 핸들러
 	issues: {
+		// 근무표 문제점 목록
 		name: string;
 		startDate: number;
 		endDate: number;
@@ -59,26 +48,123 @@ interface ShiftAdminTableProps {
 	}[];
 }
 
-const getMaxAllowedMonth = () => {
-	const today = new Date();
-	const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1);
-	return {
-		year: nextMonth.getFullYear(),
-		month: nextMonth.getMonth() + 1,
-	};
+// 근무 타입 정의 (D: 데이, E: 이브닝, N: 나이트, O: 오프, X: 미지정, ALL: 전체)
+type DutyType = "D" | "E" | "N" | "O" | "X" | "ALL";
+// 유효한 근무 타입 (X와 ALL 제외)
+type ValidDutyType = Exclude<DutyType, "X" | "ALL">;
+// 근무 타입별 카운트 인터페이스
+type DutyCounts = {
+	[key in ValidDutyType]: number;
+} & { total?: number };
+
+// 유효한 근무 타입인지 확인하는 타입 가드 함수
+const isValidDuty = (duty: string): duty is ValidDutyType => {
+	return duty === "D" || duty === "E" || duty === "N" || duty === "O";
 };
+
+// Cell 컴포넌트를 분리하여 최적화
+interface CellProps {
+	nurse: string;
+	dayIndex: number;
+	duty: string;
+	isSelected: boolean;
+	violations: any[];
+	requestStatus: any;
+	isHovered: boolean;
+	onClick: () => void;
+	onMouseEnter: () => void;
+	onMouseLeave: () => void;
+	highlightClass: string;
+}
+
+// 개별 근무 셀 컴포넌트 (성능 최적화를 위해 memo로 래핑)
+const DutyCell = memo(
+	({
+		nurse,
+		dayIndex,
+		duty,
+		isSelected,
+		violations,
+		requestStatus,
+		isHovered,
+		onClick,
+		onMouseEnter,
+		onMouseLeave,
+		highlightClass,
+	}: CellProps) => {
+		// 규칙 위반이 시작되는 날짜인지 확인
+		const isAnyViolationStart = violations.some(
+			(v) => dayIndex + 1 === v.startDate,
+		);
+
+		return (
+			<td
+				onClick={onClick}
+				className={`p-0 text-center border-r border-gray-200 relative ${highlightClass}`}
+				onMouseEnter={onMouseEnter}
+				onMouseLeave={onMouseLeave}
+			>
+				<div
+					className="flex items-center justify-center cursor-pointer relative outline-none"
+					tabIndex={0}
+					role="button"
+					onClick={onClick}
+					aria-label={`${nurse}의 ${dayIndex + 1}일 근무`}
+					style={{
+						WebkitTapHighlightColor: "transparent",
+					}}
+				>
+					{isAnyViolationStart && (
+						<FaultLayer
+							key={`violations-${dayIndex + 1}`}
+							startDate={dayIndex + 1}
+							endDate={Math.max(
+								...violations
+									.filter((v) => v.startDate === dayIndex + 1)
+									.map((v) => v.endDate),
+							)}
+							messages={violations
+								.filter((v) => v.startDate === dayIndex + 1)
+								.map((v) => v.message)}
+							total={violations.length}
+							className={isHovered ? "opacity-90" : ""}
+						/>
+					)}
+					{requestStatus && (
+						<RequestStatusLayer
+							date={dayIndex + 1}
+							status={requestStatus.status}
+							message={requestStatus.memo}
+							className={isHovered ? "opacity-90" : ""}
+						/>
+					)}
+					<div className="relative z-[2]">
+						<div className="scale-[0.95]">
+							<DutyBadgeEng
+								type={duty as "D" | "E" | "N" | "O" | "X"}
+								size="sm"
+								isSelected={isSelected}
+							/>
+						</div>
+					</div>
+				</div>
+			</td>
+		);
+	},
+);
+
+DutyCell.displayName = "DutyCell";
 
 const ShiftAdminTable = ({
 	dutyData = [],
-	// invalidCnt,
 	year,
 	month,
 	onUpdate,
-	issues,
+	issues = [],
 }: ShiftAdminTableProps) => {
 	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
 	// const [isAutoSpinnerOpen, setIsAutoSpinnerOpen] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading] = useState(false);
 	const ruleButtonRef = useRef<HTMLButtonElement>(null);
 	const tableRef = useRef<HTMLDivElement>(null);
 
@@ -93,12 +179,36 @@ const ShiftAdminTable = ({
 		day: number;
 	} | null>(null);
 
-	// 근무표 데이터 변환
-	const nurses = dutyData.map((nurse) => nurse.name);
-	const [duties, setDuties] = useState(
-		dutyData.map((nurse) => nurse.shifts.split("")),
+	// 현재 달의 일수 계산을 상단으로 이동
+	const daysInMonth = new Date(year, month, 0).getDate();
+
+	// Memoize heavy calculations
+	const nurses = useMemo(() => dutyData.map((nurse) => nurse.name), [dutyData]);
+
+	// duties 상태 초기화를 단순화
+	const [duties, setDuties] = useState<string[][]>([]);
+
+	// useEffect를 추가하여 dutyData 변경 시 duties 업데이트
+	useEffect(() => {
+		if (!dutyData || !dutyData.length) {
+			setDuties([]);
+			return;
+		}
+
+		setDuties(
+			dutyData.map((nurse) => {
+				if (!nurse.shifts || nurse.shifts.length === 0) {
+					return Array(daysInMonth).fill("X");
+				}
+				return nurse.shifts.split("");
+			}),
+		);
+	}, [dutyData, daysInMonth]);
+
+	const prevShifts = useMemo(
+		() => dutyData.map((nurse) => nurse.prevShifts.split("")),
+		[dutyData],
 	);
-	const prevShifts = dutyData.map((nurse) => nurse.prevShifts.split(""));
 
 	const [pendingRequests, setPendingRequests] = useState<any[]>([]);
 
@@ -130,30 +240,47 @@ const ShiftAdminTable = ({
 					autoClose: 1000,
 				});
 			}
-		}, 600),
+		}, 1000),
 		[year, month],
 	);
 
-	// 근무 변경 핸들러
+	// 근무 변경을 처리하는 핸들러 함수
 	const handleShiftChange = useCallback(
 		(
 			nurseIndex: number,
 			dayIndex: number,
 			shift: "D" | "E" | "N" | "O" | "X",
 		) => {
-			const nurse = dutyData[nurseIndex];
-			const currentShift = nurse.shifts.split("")[dayIndex];
-
-			// Check if the new shift is the same as the current shift
-			if (currentShift === shift) {
-				return; // Exit early if no change is needed
+			// nurseIndex나 dayIndex가 유효한지 확인
+			if (!duties[nurseIndex] || dayIndex < 0 || dayIndex >= daysInMonth) {
+				console.error("Invalid nurse index or day index");
+				return;
 			}
 
-			// Optimistically update the UI
-			const updatedDuties = [...duties];
-			updatedDuties[nurseIndex][dayIndex] = shift;
+			const nurse = dutyData[nurseIndex];
+			if (!nurse) {
+				console.error("Nurse not found");
+				return;
+			}
+
+			const currentShift = duties[nurseIndex][dayIndex];
+
+			// 현재 근무와 동일한 경우 변경하지 않음
+			if (currentShift === shift) return;
+
+			// UI 즉시 업데이트 (낙관적 업데이트)
+			const updatedDuties = duties.map((nurseShifts, idx) => {
+				if (idx === nurseIndex) {
+					const newShifts = [...nurseShifts];
+					newShifts[dayIndex] = shift;
+					return newShifts;
+				}
+				return nurseShifts;
+			});
+
 			setDuties(updatedDuties);
 
+			// 서버 요청 준비
 			const request = {
 				year,
 				month,
@@ -167,21 +294,22 @@ const ShiftAdminTable = ({
 				},
 			};
 
-			// Add the request to the pending requests
+			// 대기 중인 요청 목록에 새로운 요청 추가
 			setPendingRequests((prevRequests) => [...prevRequests, request]);
 
-			// Trigger the debounced function
+			// 디바운스된 일괄 처리 함수 호출
 			sendBatchRequest([...pendingRequests, request]);
 		},
-		[dutyData, year, month, pendingRequests, sendBatchRequest],
+		[
+			dutyData,
+			year,
+			month,
+			pendingRequests,
+			sendBatchRequest,
+			duties,
+			daysInMonth,
+		],
 	);
-
-	// 현재 달의 일수 계산
-	const daysInMonth = new Date(year, month, 0).getDate();
-
-	// 상단에 state 추가
-	const [isKeyboardGuideOpen, setIsKeyboardGuideOpen] = useState(false);
-	const keyboardGuideButtonRef = useRef<HTMLButtonElement>(null);
 
 	// 키보드 이벤트 핸들러
 	useEffect(() => {
@@ -231,7 +359,7 @@ const ShiftAdminTable = ({
 				}
 			}
 
-			// 근무 입력 키 처리
+			// 근무 입력 키 처리 (한/영 모두 지원)
 			if (!e.repeat && col >= 0 && col < daysInMonth) {
 				const key = e.key.toUpperCase();
 				const validKeys = [
@@ -280,34 +408,19 @@ const ShiftAdminTable = ({
 	};
 
 	// 이전 달로 이동
-	const handlePrevMonth = async () => {
+	const handlePrevMonth = () => {
 		const newYear = month === 1 ? year - 1 : year;
 		const newMonth = month === 1 ? 12 : month - 1;
 
-		try {
-			setIsLoading(true);
-			// URL 쿼리 파라미터 업데이트
-			const url = new URL(window.location.href);
-			url.searchParams.set("year", newYear.toString());
-			url.searchParams.set("month", newMonth.toString());
-			window.history.pushState({}, "", url.toString());
-
-			await onUpdate(newYear, newMonth);
-		} catch (error) {
-			toast.error("근무표 조회에 실패했습니다.", {
-				position: "top-center",
-				autoClose: 2000,
-			});
-		} finally {
-			setIsLoading(false);
-		}
+		// URL 업데이트 및 페이지 새로고침
+		window.location.href = `/shift-admin?year=${newYear}&month=${newMonth}`;
 	};
 
 	// 다음 달로 이동
-	const handleNextMonth = async () => {
+	const handleNextMonth = () => {
 		const maxAllowed = getMaxAllowedMonth();
 
-		// Calculate next month (수정된 로직)
+		// Calculate next month
 		const nextMonth = month === 12 ? 1 : month + 1;
 		const nextYear = month === 12 ? year + 1 : year;
 
@@ -323,68 +436,60 @@ const ShiftAdminTable = ({
 			return;
 		}
 
-		try {
-			setIsLoading(true);
-			// URL 쿼리 파라미터 업데이트
-			const url = new URL(window.location.href);
-			url.searchParams.set("year", nextYear.toString());
-			url.searchParams.set("month", nextMonth.toString());
-			window.history.pushState({}, "", url.toString());
+		// URL 업데이트 및 페이지 새로고침
+		window.location.href = `/shift-admin?year=${nextYear}&month=${nextMonth}`;
+	};
 
-			await onUpdate(nextYear, nextMonth);
-		} catch (error) {
-			toast.error("근무표 조회에 실패했습니다.", {
-				position: "top-center",
-				autoClose: 2000,
+	// Memoize duty counts calculation
+	const dutyCounts = useMemo(() => {
+		return Array.from({ length: 31 }, (_, dayIndex) => {
+			const counts: DutyCounts = {
+				D: 0,
+				E: 0,
+				N: 0,
+				O: 0,
+				total: 0,
+			};
+
+			duties.forEach((nurseShifts: string[]) => {
+				const shift = nurseShifts[dayIndex];
+				if (shift && isValidDuty(shift)) {
+					counts[shift]++;
+					counts.total!++;
+				}
 			});
-		} finally {
-			setIsLoading(false);
-		}
-	};
 
-	// 날짜별 근무 통계 계산
-	const dutyCounts = Array.from({ length: 31 }, (_, dayIndex) => {
-		const counts = {
-			D: 0,
-			E: 0,
-			N: 0,
-			O: 0,
-			total: 0,
-		};
-
-		duties.forEach((nurseShifts) => {
-			const shift = nurseShifts[dayIndex];
-			if (shift && shift !== "X") {
-				counts[shift as keyof typeof counts]++;
-				counts.total++;
-			}
+			return counts;
 		});
+	}, [duties]);
 
-		return counts;
-	});
+	// Update nurse duty counts calculation with proper types
+	const nurseDutyCounts = useMemo(() => {
+		if (!duties || !duties.length) return [];
 
-	// 간호사별 근무 통계 계산
-	const getNurseDutyCounts = (nurseIndex: number) => {
-		const counts = {
-			D: 0,
-			E: 0,
-			N: 0,
-			O: 0,
-		};
+		return duties.map((nurseShifts: string[] = []) => {
+			const counts: Omit<DutyCounts, "total"> = {
+				D: 0,
+				E: 0,
+				N: 0,
+				O: 0,
+			};
 
-		duties[nurseIndex].forEach((shift) => {
-			if (shift && shift !== "X") {
-				counts[shift as keyof typeof counts]++;
+			if (nurseShifts) {
+				nurseShifts.forEach((shift: string) => {
+					if (shift && isValidDuty(shift)) {
+						counts[shift]++;
+					}
+				});
 			}
-		});
 
-		return counts;
-	};
+			return counts;
+		});
+	}, [duties]);
 
 	// 주말 및 공휴일 체크
-	const isHoliday = (day: number) => {
-		const weekendPairs = getWeekendAndHolidayPairs(year, month);
-		return weekendPairs.some((pair) => day >= pair[0] && day <= pair[1]);
+	const isHolidayDay = (day: number) => {
+		return isHoliday(year, month, day);
 	};
 
 	// 셀 하이라이트 로직
@@ -426,25 +531,22 @@ const ShiftAdminTable = ({
 		return "";
 	};
 
-	// 완성도 계산
-	const calculateProgress = () => {
+	// Memoize progress calculation
+	const progress = useMemo(() => {
 		const totalCells = nurses.length * daysInMonth;
 		const filledCells = duties.reduce(
-			(acc, nurseRow) => acc + nurseRow.filter((duty) => duty !== "X").length,
+			(acc: number, nurseRow: string[]) =>
+				acc + nurseRow.filter((duty: string) => duty !== "X").length,
 			0,
 		);
 
-		// 이슈당 해당하는 일수 계산
-		const issueCnt = issues.reduce((acc, issue) => {
+		const issueCnt = issues.reduce((acc: number, issue) => {
 			return acc + (issue.endDate - issue.startDate + 1);
 		}, 0);
 
-		// 완성도 = (채워진 셀 - 이슈 셀) / 전체 셀 * 100
 		const progress = ((filledCells - issueCnt) / totalCells) * 100;
-
-		// 음수가 나올 경우 0으로 처리하고, 소수점 반올림
 		return Math.max(0, Math.round(progress));
-	};
+	}, [nurses.length, daysInMonth, duties, issues]);
 
 	// Add a state to track if auto-create is in progress
 	const [isAutoCreating, setIsAutoCreating] = useState(false);
@@ -535,15 +637,6 @@ const ShiftAdminTable = ({
 		} finally {
 			setIsAutoCreating(false);
 		}
-	};
-
-	// 해당 월의 기본 OFF 일수 계산 (주말/공휴일)
-	const getDefaultOffDays = (year: number, month: number) => {
-		const pairs = getWeekendAndHolidayPairs(year, month);
-		// 각 쌍의 날짜 수를 계산하여 합산
-		return pairs.reduce((total, [start, end]) => {
-			return total + (end - start + 1);
-		}, 0);
 	};
 
 	// 근무표 다운로드 기능
@@ -655,35 +748,22 @@ const ShiftAdminTable = ({
 					</div>
 					{/* 버튼 영역 */}
 					<div className="flex gap-1 sm:gap-2 items-center">
-						<div className="flex items-center gap-2">
+						<div className="flex items-center gap-2 relative group">
 							<Button
-								ref={keyboardGuideButtonRef}
 								text-size="md"
 								size="register"
 								color="off"
 								className="py-0.5 px-1.5 sm:py-1 sm:px-2"
-								onClick={() => setIsKeyboardGuideOpen(!isKeyboardGuideOpen)}
 							>
-								<div className="flex items-center gap-1">
+								<div className="flex items-center gap-1 relative group">
 									<span>키보드 가이드</span>
 								</div>
 							</Button>
 
-							{isKeyboardGuideOpen && (
-								<div
-									className="absolute z-50 mt-2"
-									style={{
-										top: keyboardGuideButtonRef.current?.getBoundingClientRect()
-											.bottom,
-										left: keyboardGuideButtonRef.current?.getBoundingClientRect()
-											.left,
-									}}
-								>
-									<KeyboardGuide
-										onClose={() => setIsKeyboardGuideOpen(false)}
-									/>
-								</div>
-							)}
+							{/* 호버 시 나타나는 가이드 */}
+							<div className="absolute z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 top-full left-0 mt-2">
+								<KeyboardGuide />
+							</div>
 						</div>
 						<div className="h-6 w-[1px] bg-gray-200 mx-1" />
 						<Button
@@ -779,7 +859,7 @@ const ShiftAdminTable = ({
 													<th
 														key={i}
 														className={`p-0 text-center w-10 border-r border-gray-200 ${
-															isHoliday(day) ? "text-red-500" : ""
+															isHolidayDay(day) ? "text-red-500" : ""
 														}`}
 													>
 														{day}
@@ -847,18 +927,14 @@ const ShiftAdminTable = ({
 													</div>
 												</td>
 												{Array.from({ length: daysInMonth }, (_, dayIndex) => {
+													if (!duties[i] || !duties[i][dayIndex]) return null;
+
 													const violations = issues.filter(
 														(issue) =>
 															issue.name === nurses[i] &&
 															dayIndex + 1 >= issue.startDate &&
 															dayIndex + 1 <= issue.endDate,
 													);
-													const isAnyViolationStart = violations.some(
-														(v) => dayIndex + 1 === v.startDate,
-													);
-													const isHovered =
-														hoveredCell?.row === i &&
-														hoveredCell?.day === dayIndex;
 
 													const requestStatus = requests.find((request) => {
 														const requestDate = new Date(request.date);
@@ -871,95 +947,49 @@ const ShiftAdminTable = ({
 													});
 
 													return (
-														<td
+														<DutyCell
 															key={dayIndex}
+															nurse={name}
+															dayIndex={dayIndex}
+															duty={duties[i][dayIndex] || "X"}
+															isSelected={
+																selectedCell?.row === i &&
+																selectedCell?.col === dayIndex
+															}
+															violations={violations}
+															requestStatus={requestStatus}
+															isHovered={
+																hoveredCell?.row === i &&
+																hoveredCell?.day === dayIndex
+															}
 															onClick={() => handleCellClick(i, dayIndex)}
-															className={`p-0 text-center border-r border-gray-200 relative ${isHighlighted(i, dayIndex)}`}
 															onMouseEnter={() =>
 																setHoveredCell({ row: i, day: dayIndex })
 															}
 															onMouseLeave={() => setHoveredCell(null)}
-														>
-															<div
-																className="flex items-center justify-center cursor-pointer relative outline-none"
-																tabIndex={0}
-																role="button"
-																onClick={() => handleCellClick(i, dayIndex)}
-																aria-label={`${nurses[i]}의 ${dayIndex + 1}일 근무`}
-																style={{
-																	WebkitTapHighlightColor: "transparent",
-																}}
-															>
-																{isAnyViolationStart && (
-																	<FaultLayer
-																		key={`violations-${dayIndex + 1}`}
-																		startDate={dayIndex + 1}
-																		endDate={Math.max(
-																			...violations
-																				.filter(
-																					(v) => v.startDate === dayIndex + 1,
-																				)
-																				.map((v) => v.endDate),
-																		)}
-																		messages={violations
-																			.filter(
-																				(v) => v.startDate === dayIndex + 1,
-																			)
-																			.map((v) => v.message)}
-																		total={violations.length}
-																		className={isHovered ? "opacity-90" : ""}
-																	/>
-																)}
-																{requestStatus && (
-																	<RequestStatusLayer
-																		date={dayIndex + 1}
-																		status={requestStatus.status}
-																		message={requestStatus.memo}
-																		className={isHovered ? "opacity-90" : ""}
-																	/>
-																)}
-																<div className="relative z-[2]">
-																	<div className="scale-[0.95]">
-																		<DutyBadgeEng
-																			type={
-																				duties[i][dayIndex] as
-																					| "D"
-																					| "E"
-																					| "N"
-																					| "O"
-																					| "X"
-																			}
-																			size="sm"
-																			isSelected={
-																				selectedCell?.row === i &&
-																				selectedCell?.col === dayIndex
-																			}
-																		/>
-																	</div>
-																</div>
-															</div>
-														</td>
+															highlightClass={isHighlighted(i, dayIndex)}
+														/>
 													);
 												})}
 												<td
 													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 31)}`}
 												>
-													{getNurseDutyCounts(i).D}
+													{nurseDutyCounts[i]?.D || 0}
 												</td>
 												<td
 													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 32)}`}
 												>
-													{getNurseDutyCounts(i).E}
+													{nurseDutyCounts[i]?.E || 0}
 												</td>
 												<td
 													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 33)}`}
 												>
-													{getNurseDutyCounts(i).N}
+													{nurseDutyCounts[i]?.N || 0}
 												</td>
 												<td
 													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 34)}`}
 												>
-													{getNurseDutyCounts(i).O}
+													{nurseDutyCounts[i]?.O || 0}
 												</td>
 											</tr>
 										))}
@@ -1016,7 +1046,7 @@ const ShiftAdminTable = ({
 															<div className="flex justify-center items-center h-full">
 																<div className="scale-[0.85]">
 																	<ProgressChecker
-																		value={calculateProgress()}
+																		value={progress}
 																		size={80}
 																		strokeWidth={4}
 																		showLabel={true}
@@ -1043,16 +1073,8 @@ const ShiftAdminTable = ({
 					buttonRef={ruleButtonRef}
 				/>
 			)}
-
-			{/* 모달 컴포넌트 */}
-			{/* {isAutoSpinnerOpen && (
-				<AutoSpinner
-					isOpen={isAutoSpinnerOpen}
-					onClose={() => setIsAutoSpinnerOpen(false)}
-				/>
-			)} */}
 		</div>
 	);
 };
 
-export default ShiftAdminTable;
+export default memo(ShiftAdminTable);

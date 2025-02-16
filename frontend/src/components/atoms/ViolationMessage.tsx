@@ -69,7 +69,7 @@ function ViolationMessage({
 				visibility: isVisible ? "visible" : "hidden",
 			}}
 		>
-			<div className="bg-white px-3 py-2 rounded-md shadow-lg">
+			<div className="bg-duty-evening-bg px-3 py-2 rounded-md shadow-lg">
 				<ul className="space-y-1.5">
 					{messages.map((message, idx) => (
 						<li key={idx} className="text-xs text-red-600 whitespace-nowrap">
