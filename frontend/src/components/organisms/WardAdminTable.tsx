@@ -59,18 +59,17 @@ const WardAdminTable = ({}: WardAdminTableProps) => {
 									<div className="w-[3.75rem] text-center">성별</div>
 									<div className="w-[4.375rem] pl-[1.7rem]">경력</div>
 									<div className="w-[5rem] pl-[2rem]">숙련도</div>
-									<div className="w-[7.5rem] pl-[8vh]">근무 유형</div>
+									<div className="w-[7.5rem] pl-[3rem]">전담 근무</div>
 								</div>
 								<div className="flex items-center gap-[1.5rem] flex-1 min-w-0">
 									<div className="flex-1 text-center">메모</div>
 								</div>
 							</div>
 						</div>
-
 						{/* Nurse List */}
-						{sortedNurses.map((nurse) => (
+						{sortedNurses.map((nurse, index) => (
 							<WardAdminRowCard
-								key={nurse.memberId}
+								key={`${nurse.memberId}-${nurse.name}-${index}`}
 								nurse={nurse}
 								onUpdate={handleNurseUpdate}
 							/>

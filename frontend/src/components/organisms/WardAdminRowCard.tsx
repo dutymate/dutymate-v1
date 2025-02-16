@@ -469,40 +469,47 @@ const WardAdminRowCard = ({
 					<div className="flex items-center gap-[1.5rem] flex-1 min-w-0">
 						<div className="relative flex-1 min-w-0 group">
 							{isEditingMemo ? (
-								<input
-									ref={memoInputRef}
-									type="text"
-									value={memo}
-									onChange={(e) => setMemo(e.target.value)}
-									onBlur={handleMemoComplete}
-									onKeyDown={handleMemoKeyDown}
-									autoFocus
-									className="w-full rounded px-[0.75rem] py-[0.25rem] text-[0.875rem] border border-primary-dark"
-									placeholder="메모를 입력하세요"
-								/>
+								<div className="flex w-full lg:w-auto">
+									<input
+										ref={memoInputRef}
+										type="text"
+										value={memo}
+										onChange={(e) => setMemo(e.target.value)}
+										onBlur={handleMemoComplete}
+										onKeyDown={handleMemoKeyDown}
+										autoFocus
+										maxLength={50}
+										className="max-w-[17.9rem] lg:w-full rounded px-[0.75rem] py-[0.25rem] text-[0.875rem] border outline-primary-40 overflow-hidden text-ellipsis"
+										placeholder="메모를 입력하세요"
+									/>
+									<div className="w-[3.75rem] lg:hidden flex-shrink-0" />
+								</div>
 							) : (
-								<div className="flex items-center w-full">
-									<span className="flex-1 truncate text-[0.875rem] text-gray-500">
-										{memo || "메모 없음"}
-									</span>
-									<button
-										onClick={() => {
-											setIsEditingMemo(true);
-											setTimeout(() => memoInputRef.current?.focus(), 0);
-										}}
-										className="opacity-0 group-hover:opacity-100 transition-opacity"
-									>
-										<Icon
-											name="edit"
-											size={16}
-											className="text-gray-400 hover:text-primary-dark"
-										/>
-									</button>
+								<div className="flex w-full lg:w-auto">
+									<div className="flex items-center max-w-[17.9rem] lg:w-full">
+										<span className="flex-1 truncate text-[0.875rem] text-gray-500">
+											{memo || "메모 없음"}
+										</span>
+										<button
+											onClick={() => {
+												setIsEditingMemo(true);
+												setTimeout(() => memoInputRef.current?.focus(), 0);
+											}}
+											className="opacity-0 group-hover:opacity-100 transition-opacity"
+										>
+											<Icon
+												name="edit"
+												size={16}
+												className="text-gray-400 hover:text-primary-dark"
+											/>
+										</button>
+									</div>
+									<div className="w-[3.75rem] lg:hidden flex-shrink-0" />
 								</div>
 							)}
 						</div>
 						<div
-							className="w-[3.75rem] flex-shrink-0"
+							className="w-[3.75rem] flex-shrink-0 absolute right-0 lg:relative"
 							ref={authorityDropdownRef}
 						>
 							<Dropdown
