@@ -54,4 +54,16 @@ public class BoardController {
 	public ResponseEntity<?> uploadBoardImage(@RequestParam("file") MultipartFile multipartFile) {
 		return ResponseEntity.ok(boardService.uploadBoardImage(multipartFile));
 	}
+
+	@PostMapping("/{boardId}/like")
+	public ResponseEntity<?> boardLike(@PathVariable Long boardId, @Auth Member member) {
+		boardService.boardLike(boardId, member);
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{boardId}/like")
+	public ResponseEntity<?> boardLikeDelete(@PathVariable Long boardId, @Auth Member member) {
+		boardService.boardLikeDelete(boardId, member);
+		return ResponseEntity.ok().build();
+	}
 }

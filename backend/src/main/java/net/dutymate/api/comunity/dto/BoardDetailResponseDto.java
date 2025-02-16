@@ -26,9 +26,10 @@ public class BoardDetailResponseDto {
 	private Integer likeCnt;
 	private Integer commentCnt;
 	private Boolean isMyWrite;
+	private Boolean isLike;
 	private List<CommentDto> comments;
 
-	public static BoardDetailResponseDto of(Board board, Member loginMember) {
+	public static BoardDetailResponseDto of(Board board, Member loginMember, boolean isLike) {
 		return BoardDetailResponseDto.builder()
 			.boardId(board.getBoardId())
 			.nickname(board.getMember().getNickname())
@@ -42,6 +43,7 @@ public class BoardDetailResponseDto {
 			.likeCnt(board.getLikesCntHigh() + board.getLikesCntMid() + board.getLikesCntLow())
 			.commentCnt(board.getCommentList().size())
 			.isMyWrite(loginMember == board.getMember())
+			.isLike(isLike)
 			.comments(board.getCommentList().stream().map(o -> CommentDto.of(o, loginMember)).toList())
 			.build();
 	}

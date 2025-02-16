@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +16,11 @@ import net.dutymate.api.comunity.dto.BoardCreateRequestDto;
 import net.dutymate.api.comunity.dto.BoardDetailResponseDto;
 import net.dutymate.api.comunity.dto.BoardImgResponseDto;
 import net.dutymate.api.comunity.dto.BoardListResponseDto;
+import net.dutymate.api.comunity.repository.BoardLikesRepository;
 import net.dutymate.api.comunity.repository.BoardRepository;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.community.Board;
+import net.dutymate.api.entity.community.BoardLikes;
 import net.dutymate.api.enumclass.Category;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class BoardService {
 
 	private final S3Client s3Client;
 	private final BoardRepository boardRepository;
+	private final BoardLikesRepository boardLikesRepository;
 
 	@Value("${cloud.aws.region.static}")
 	private String region;
@@ -73,7 +75,8 @@ public class BoardService {
 		Board board = boardRepository.findById(boardId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 게시글입니다."));
 		board.increaseViewCnt();
-		return BoardDetailResponseDto.of(board, member);
+		boolean isLike = boardLikesRepository.existsByBoardAndMember(board, member);
+		return BoardDetailResponseDto.of(board, member, isLike);
 	}
 
 	@Transactional
@@ -127,5 +130,28 @@ public class BoardService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일입니다.");
 		}
 		return fileName.substring(fileName.lastIndexOf("."));
+	}
+
+	@Transactional
+	public void boardLike(Long boardId, Member member) {
+		Board board = boardRepository.findById(boardId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 게시글입니다."));
+
+		if (!boardLikesRepository.existsByBoardAndMember(board, member)) {
+			BoardLikes boardLikes = BoardLikes.builder().board(board).member(member).build();
+			boardLikesRepository.save(boardLikes);
+			board.increaseLikeCnt(member.getGrade());
+		}
+	}
+
+	@Transactional
+	public void boardLikeDelete(Long boardId, Member member) {
+		Board board = boardRepository.findById(boardId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 게시글입니다."));
+
+		if (boardLikesRepository.existsByBoardAndMember(board, member)) {
+			boardLikesRepository.deleteByBoardAndMember(board, member);
+			board.decreaseLikeCnt(member.getGrade());
+		}
 	}
 }

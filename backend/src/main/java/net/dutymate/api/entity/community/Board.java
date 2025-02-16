@@ -74,4 +74,24 @@ public class Board {
 	public void increaseViewCnt() {
 		this.viewCnt++;
 	}
+
+	public void increaseLikeCnt(Integer grade) {
+		if (grade < 4) { // 1, 2, 3년차
+			this.likesCntLow++;
+		} else if (grade < 8) { // 4, 5, 6, 7년차
+			this.likesCntMid++;
+		} else { // 8년차 이상
+			this.likesCntHigh++;
+		}
+	}
+
+	public void decreaseLikeCnt(Integer grade) {
+		if (grade < 4) { // 1, 2, 3년차
+			this.likesCntLow--;
+		} else if (grade < 8) { // 4, 5, 6, 7년차
+			this.likesCntMid--;
+		} else { // 8년차 이상
+			this.likesCntHigh--;
+		}
+	}
 }
