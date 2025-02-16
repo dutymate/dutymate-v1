@@ -1,5 +1,7 @@
 package net.dutymate.api.entity;
 
+import net.dutymate.api.rule.dto.RuleUpdateRequestDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -90,5 +92,20 @@ public class Rule {
 		this.prioMaxShift = 3;
 		this.offCntAfterMaxShift = 2;
 		this.prioOffCntAfterMaxShift = 2;
+	}
+
+	public void update(RuleUpdateRequestDto dto) {
+		this.wdayDCnt = dto.getWdayDCnt();
+		this.wdayECnt = dto.getWdayECnt();
+		this.wdayNCnt = dto.getWdayNCnt();
+		this.wendDCnt = dto.getWendDCnt();
+		this.wendECnt = dto.getWendECnt();
+		this.wendNCnt = dto.getWendNCnt();
+		this.maxN = dto.getMaxN();
+		this.prioMaxN = dto.getPrioMaxN();
+		this.minN = dto.getMinN();
+		this.prioMinN = dto.getPrioMinN();
+		this.maxShift = dto.getMaxShift();
+		this.prioMaxShift = dto.getPrioMaxShift();
 	}
 }

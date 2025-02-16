@@ -787,7 +787,7 @@ public class NurseScheduler {
 			weekDayNeededShift * yearMonth.weekDaysInMonth()
 				+ endDayNeededShift * (yearMonth.daysInMonth() - yearMonth.weekDaysInMonth());
 
-		while (neededNurseCount * yearMonth.daysInMonth() < totalShifts) {
+		while (neededNurseCount * (yearMonth.weekDaysInMonth()) < totalShifts) {
 			neededNurseCount++;
 		}
 		return neededNurseCount;

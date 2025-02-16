@@ -75,6 +75,7 @@ public class AutoScheduleService {
 			< nurseScheduler.neededNurseCount(yearMonth, rule)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사가 더 필요합니다.");
 		}
+
 		// scheduleGenerator.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth);
 		Long memberId = member.getMemberId();
 
