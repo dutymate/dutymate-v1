@@ -3,6 +3,7 @@ package net.dutymate.api.member.service;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
@@ -436,6 +437,7 @@ public class MemberService {
 	@Transactional
 	public void exitWard(Member member) {
 		Ward ward = member.getWardMember().getWard();
+		Long wardId = ward.getWardId();
 
 		WardMember wardMember = wardMemberRepository.findById(member.getWardMember().getWardMemberId())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 병동 멤버를 찾을 수 없습니다."));
@@ -457,11 +459,46 @@ public class MemberService {
 				if (!hasOtherHN) {
 					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 관리자 권한을 넘겨주세요.");
 				}
+
+				ward.removeWardMember(wardMember);
+				deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
+				member.updateRole(null);
+				return;
 			}
 
+			System.out.println(
+				"1111111 = " + wardMemberRepository.existsByWard(
+					ward)); // true
+
+			System.out.println("🔥 deleteWardMemberInMongo 실행 전");
+
+			CompletableFuture.runAsync(() -> {
+				try {
+					deleteWardMemberInMongo(member, ward);
+					System.out.println("🔥 deleteWardMemberInMongo 실행 후");
+				} catch (Exception e) {
+					System.out.println("❌ deleteWardMemberInMongo 실행 중 예외 발생: " + e.getMessage());
+					e.printStackTrace();
+				}
+			});
+
+			// 병동에 한 명만 남아 있는 경우,
 			ward.removeWardMember(wardMember);
-			deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
+
+			System.out.println(
+				"222222= " + wardMemberRepository.existsByWard(
+					ward)); // false
+
 			member.updateRole(null);
+
+			System.out.println(
+				"44444= " + wardMemberRepository.existsByWard(
+					ward)); //
+
+			if (!wardMemberRepository.existsByWard(ward)) {
+				Ward managedWard = wardRepository.findById(wardId).orElseThrow();
+				wardRepository.delete(managedWard); // 이게 실행이 안 됨
+			}
 		}
 	}
 
@@ -494,8 +531,14 @@ public class MemberService {
 				if (!hasOtherHN) {
 					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "병동 멤버에게 관리자 권한 부여 후, 탈퇴가 가능합니다.");
 				}
+
+				ward.removeWardMember(member.getWardMember());
+				memberRepository.delete(member);
+				deleteWardMemberInMongo(member, ward); // mongodb에서 삭제
+				return;
 			}
 
+			// 병동에 한 명만 남아 있는 경우
 			if (member.getWardMember() != null) {
 				ward.removeWardMember(member.getWardMember()); // 병동에서 마지막 관리자 삭제
 				wardRepository.delete(ward); // 해당 병동도 같이 삭제
@@ -507,23 +550,46 @@ public class MemberService {
 
 	// MongoDB 에서 내보내는 wardmember 찾아서 삭제 (이전 달은 상관 X)
 	public void deleteWardMemberInMongo(Member member, Ward ward) {
-		// 이번달 듀티에서 삭제
-		YearMonth yearMonth = YearMonth.nowYearMonth();
+		System.out.println("🔥 deleteWardMemberInMongo 실행 시작");
+		System.out.println("🔥 대상 wardId: " + ward.getWardId());
+		System.out.println("🔥 대상 memberId: " + member.getMemberId());
 
-		WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(),
-			yearMonth.year(), yearMonth.month()).orElse(null);
+		try {
+			// 이번달 듀티에서 삭제
+			YearMonth yearMonth = YearMonth.nowYearMonth();
+			System.out.println("🔥 이번달: " + yearMonth.year() + "-" + yearMonth.month());
 
-		if (currMonthSchedule != null) {
-			wardMemberService.deleteWardMemberDuty(currMonthSchedule, member);
-		}
+			WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
+				ward.getWardId(), yearMonth.year(), yearMonth.month()).orElse(null);
 
-		// 다음달 듀티에서 삭제
-		YearMonth nextYearMonth = yearMonth.nextYearMonth();
-		WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(ward.getWardId(),
-			nextYearMonth.year(), nextYearMonth.month()).orElse(null);
+			if (currMonthSchedule != null) {
+				System.out.println("✅ 이번달 듀티 존재! 삭제 시작...");
+				wardMemberService.deleteWardMemberDuty(currMonthSchedule, member);
+				System.out.println("✅ 이번달 듀티 삭제 완료");
+			} else {
+				System.out.println("⚠ 이번달 듀티 없음");
+			}
 
-		if (nextMonthSchedule != null) {
-			wardMemberService.deleteWardMemberDuty(nextMonthSchedule, member);
+			// 다음달 듀티에서 삭제
+			YearMonth nextYearMonth = yearMonth.nextYearMonth();
+			System.out.println("🔥 다음달: " + nextYearMonth.year() + "-" + nextYearMonth.month());
+
+			WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
+				ward.getWardId(), nextYearMonth.year(), nextYearMonth.month()).orElse(null);
+
+			if (nextMonthSchedule != null) {
+				System.out.println("✅ 다음달 듀티 존재! 삭제 시작...");
+				wardMemberService.deleteWardMemberDuty(nextMonthSchedule, member);
+				System.out.println("✅ 다음달 듀티 삭제 완료");
+			} else {
+				System.out.println("⚠ 다음달 듀티 없음");
+			}
+
+			System.out.println("🔥 deleteWardMemberInMongo 실행 완료");
+
+		} catch (Exception e) {
+			System.out.println("❌ deleteWardMemberInMongo 중 예외 발생: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
