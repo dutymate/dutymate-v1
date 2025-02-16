@@ -85,15 +85,17 @@ const ReqAdminTable = () => {
 
 	return (
 		<div className="w-full">
-			<div className="bg-white rounded-[1.154375rem] p-4">
-				<div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-4 px-2">
-					<div className="w-full flex justify-between items-center mb-2 lg:mb-0">
-						<h2 className="text-base lg:text-lg font-semibold">요청 내역</h2>
+			<div className="bg-white rounded-[1.154375rem] p-[1rem]">
+				<div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-[1rem] px-[0.5rem]">
+					<div className="w-full flex justify-between items-center mb-[0.5rem] lg:mb-0">
+						<h2 className="text-base lg:text-[1.125rem] font-semibold">
+							요청 내역
+						</h2>
 						{/* <h2 className="text-lg font-semibold">요청 내역</h2> */}
 					</div>
 
 					{/* 검색창과 데스크톱용 정렬/필터 */}
-					<div className="flex flex-row gap-1 lg:gap-2 w-full lg:w-auto items-center">
+					<div className="flex flex-row gap-[0.25rem] lg:gap-[0.5rem] w-full lg:w-auto items-center">
 						{/* 검색창 */}
 						{/* <div className="w-[140px] lg:w-[260px]">
 							<SmallSearchInput
@@ -118,36 +120,36 @@ const ReqAdminTable = () => {
 				</div>
 
 				{/* 요청 목록 */}
-				<div className="overflow-x-auto">
-					<table className="w-full min-w-[20rem] md:min-w-[40rem] lg:min-w-[60rem]">
+				<div className="overflow-x-auto lg:overflow-x-hidden">
+					<table className="w-full min-w-[20rem] md:min-w-[40rem] lg:min-w-0 lg:w-full">
 						{/* 헤더 */}
 						<thead>
 							<tr>
-								<th className="bg-base-muted-30 first:rounded-l-xl w-[5rem] lg:w-[7.5rem] p-2 text-left whitespace-nowrap">
+								<th className="bg-base-muted-30 first:rounded-l-xl w-[5rem] lg:w-[7.5rem] p-[0.5rem] text-left whitespace-nowrap">
 									<div className="flex justify-center translate-x-[2rem] lg:translate-x-0">
-										<span className="text-xs lg:text-sm text-gray-600 font-medium mr-[2rem]">
+										<span className="text-[0.75rem] lg:text-[0.875rem] text-gray-600 font-medium mr-[2rem]">
 											이름
 										</span>
 									</div>
 								</th>
-								<th className="bg-base-muted-30 w-[4rem] lg:w-[5.625rem] p-2 whitespace-nowrap">
-									<span className="text-xs lg:text-sm text-gray-600 font-medium text-center block">
+								<th className="bg-base-muted-30 w-[4rem] lg:w-[5.625rem] p-[0.5rem] whitespace-nowrap">
+									<span className="text-[0.75rem] lg:text-[0.875rem] text-gray-600 font-medium text-center block">
 										날짜
 									</span>
 								</th>
-								<th className="bg-base-muted-30 w-[3.5rem] lg:w-[4.125rem] p-2 whitespace-nowrap">
-									<span className="text-xs lg:text-sm text-gray-600 font-medium text-center block">
+								<th className="bg-base-muted-30 w-[3.5rem] lg:w-[4.125rem] p-[0.5rem] whitespace-nowrap">
+									<span className="text-[0.75rem] lg:text-[0.875rem] text-gray-600 font-medium text-center block">
 										근무
 									</span>
 								</th>
-								<th className="bg-base-muted-30 hidden md:table-cell w-[8rem] lg:w-[11.25rem] p-2 whitespace-nowrap">
-									<span className="text-xs lg:text-sm text-gray-600 font-medium text-center block">
+								<th className="bg-base-muted-30 hidden md:table-cell w-[8rem] lg:w-[11.25rem] p-[0.5rem] whitespace-nowrap">
+									<span className="text-[0.75rem] lg:text-[0.875rem] text-gray-600 font-medium text-center block">
 										요청 내용
 									</span>
 								</th>
-								<th className="bg-base-muted-30 rounded-r-xl w-auto lg:w-[11.25rem] p-2 whitespace-nowrap">
-									<div className="flex justify-center translate-x-[0.1rem] lg:translate-x-0">
-										<span className="text-xs lg:text-sm text-gray-600 font-medium">
+								<th className="bg-base-muted-30 rounded-r-xl w-auto lg:w-[11.25rem] p-[0.5rem] whitespace-nowrap">
+									<div className="flex justify-center translate-x-[0.1rem] lg:translate-x-[4rem]">
+										<span className="text-[0.75rem] lg:text-[0.875rem] text-gray-600 font-medium">
 											상태
 										</span>
 									</div>
@@ -160,7 +162,7 @@ const ReqAdminTable = () => {
 							{filteredRequests.length === 0 ? (
 								<tr>
 									<td colSpan={5}>
-										<div className="flex items-center justify-center h-[400px] text-gray-500">
+										<div className="flex items-center justify-center h-[25rem] text-gray-500">
 											요청 내역이 없습니다.
 										</div>
 									</td>
@@ -171,20 +173,20 @@ const ReqAdminTable = () => {
 										key={request.requestId}
 										className="border-b border-gray-100"
 									>
-										<td className="w-[5rem] lg:w-[7.5rem] p-2">
-											<div className="flex items-center justify-start pl-2">
+										<td className="w-[5rem] lg:w-[7.5rem] p-[0.5rem]">
+											<div className="flex items-center justify-start pl-[0.5rem]">
 												<FaUserCircle className="w-4 h-4 lg:w-6 lg:h-6 text-gray-500 flex-shrink-0" />
-												<span className="font-medium truncate ml-1 lg:ml-2 text-xs lg:text-base whitespace-nowrap">
+												<span className="font-medium truncate ml-[0.25rem] lg:ml-[0.5rem] text-[0.75rem] lg:text-[1rem] whitespace-nowrap">
 													{request.name}
 												</span>
 											</div>
 										</td>
-										<td className="w-[4rem] lg:w-[5.625rem] p-2">
-											<div className="text-gray-600 text-xs lg:text-sm text-center whitespace-nowrap">
+										<td className="w-[4rem] lg:w-[5.625rem] p-[0.5rem]">
+											<div className="text-gray-600 text-[0.75rem] lg:text-[0.875rem] text-center whitespace-nowrap">
 												{request.date}
 											</div>
 										</td>
-										<td className="w-[3.5rem] lg:w-[4.125rem] p-2">
+										<td className="w-[3.5rem] lg:w-[4.125rem] p-[0.5rem]">
 											<div className="flex justify-center scale-75 lg:scale-90">
 												<DutyBadgeKor
 													type={
@@ -200,12 +202,12 @@ const ReqAdminTable = () => {
 												/>
 											</div>
 										</td>
-										<td className="hidden md:table-cell w-[8rem] lg:w-[11.25rem] p-2">
-											<div className="truncate text-gray-600 text-xs lg:text-sm text-center whitespace-nowrap">
+										<td className="hidden md:table-cell w-[8rem] lg:w-[11.25rem] p-[0.5rem]">
+											<div className="truncate text-gray-600 text-[0.75rem] lg:text-[0.875rem] text-center whitespace-nowrap">
 												{request.memo}
 											</div>
 										</td>
-										<td className="w-auto lg:w-[11.25rem] p-2">
+										<td className="w-auto lg:w-[11.25rem] p-[0.5rem]">
 											<div className="flex justify-end items-center h-full whitespace-nowrap">
 												<div className="scale-[0.65] lg:scale-90 transform-gpu">
 													<ApprovalBtn

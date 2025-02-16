@@ -25,11 +25,11 @@ const ReqAdmin = () => {
 			/>
 
 			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 px-4 md:px-6 lg:px-8 py-3 overflow-y-auto pb-8">
+			<div className="flex-1 min-w-0 px-[1rem] md:px-[1.5rem] lg:px-[2rem] py-[0.75rem] overflow-y-auto pb-[2rem] lg:overflow-x-hidden">
 				{/* 모바일 메뉴 버튼 */}
 				<button
 					onClick={() => setIsSidebarOpen(true)}
-					className="lg:hidden mb-2 p-2 hover:bg-gray-100 rounded-lg"
+					className="lg:hidden mb-[0.5rem] p-[0.5rem] hover:bg-gray-100 rounded-lg"
 				>
 					<IoMdMenu className="w-6 h-6 text-gray-600" />
 				</button>
@@ -38,7 +38,7 @@ const ReqAdmin = () => {
 					title="요청 근무 관리"
 					subtitle="간호사들의 근무 요청을 관리해보세요."
 				/>
-				<div className="mt-3">
+				<div className="mt-[0.75rem]">
 					<ReqAdminTable />
 				</div>
 			</div>
