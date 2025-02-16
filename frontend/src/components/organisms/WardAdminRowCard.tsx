@@ -291,9 +291,9 @@ const WardAdminRowCard = ({
 	return (
 		<div ref={containerRef} className="relative">
 			<div className="flex items-center p-1.5 lg:p-2 bg-white rounded-xl border border-gray-100">
-				<div className="flex items-center justify-between flex-1 gap-10">
-					<div className="flex items-center gap-6 flex-shrink-0">
-						<div className="w-[120px] pl-2 group relative">
+				<div className="flex items-center justify-between flex-1 gap-[2.5rem]">
+					<div className="flex items-center gap-[1.5rem] flex-shrink-0">
+						<div className="w-[7.5rem] pl-[0.5rem] group relative">
 							{!nurse.isSynced && (
 								<div className="flex items-center">
 									{isEditingName ? (
@@ -311,19 +311,14 @@ const WardAdminRowCard = ({
 												}
 											}}
 											autoFocus
-											className="w-full rounded px-2 py-1 text-sm border border-primary-dark"
+											className="w-full rounded px-[0.5rem] py-[0.25rem] text-[0.875rem] border border-primary-dark"
 										/>
 									) : (
 										<div className="flex items-center w-full">
-											{/* <Icon
-													name="edit"
-													size={12}
-													className="text-gray-400 hover:text-primary-dark"
-												/> */}
-											<span className="flex-1  text-duty-off">{name}</span>
+											<span className="flex-1 text-duty-off">{name}</span>
 											<button
 												onClick={() => setIsEditingName(true)}
-												className="opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+												className="opacity-0 group-hover:opacity-100 transition-opacity ml-[0.25rem]"
 											>
 												<Icon
 													name="edit"
@@ -337,7 +332,7 @@ const WardAdminRowCard = ({
 							)}
 							{nurse.isSynced && <span>{nurse.name}</span>}
 						</div>
-						<div className="w-[60px] flex items-center">
+						<div className="w-[3.75rem] flex items-center">
 							<Badge type={nurse.role} className="whitespace-nowrap" />
 						</div>
 						<div className="relative" ref={genderDropdownRef}>
@@ -346,7 +341,7 @@ const WardAdminRowCard = ({
 									!nurse.isSynced &&
 									setIsGenderDropdownOpen(!isGenderDropdownOpen)
 								}
-								className={`flex items-center gap-1 w-[60px] p-1 rounded ${
+								className={`flex items-center gap-[0.25rem] w-[3.75rem] p-[0.25rem] rounded ${
 									!nurse.isSynced ? "hover:bg-gray-50" : "cursor-not-allowed"
 								}`}
 							>
@@ -358,7 +353,7 @@ const WardAdminRowCard = ({
 								<span>{nurse.gender === "F" ? "여자" : "남자"}</span>
 							</button>
 							{isGenderDropdownOpen && !nurse.isSynced && (
-								<div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg border border-gray-200 z-10 w-[80px]">
+								<div className="absolute top-full left-0 mt-[0.25rem] bg-white shadow-lg rounded-lg border border-gray-200 z-10 w-[5rem]">
 									<button
 										onClick={() => handleGenderChange("F")}
 										className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-50 whitespace-nowrap"
@@ -422,9 +417,9 @@ const WardAdminRowCard = ({
 								</div>
 							)}
 						</div>
-						<div className="relative w-[80px]">
+						<div className="relative w-[5rem]">
 							<button
-								className="flex items-center gap-1 px-2 py-1 border rounded hover:bg-gray-50"
+								className="flex items-center gap-[0.25rem] px-[0.5rem] py-[0.25rem] border rounded hover:bg-gray-50"
 								onClick={() => setOpenSkillDropdown(!openSkillDropdown)}
 								ref={skillButtonRef}
 							>
@@ -432,7 +427,7 @@ const WardAdminRowCard = ({
 									name={(nurse.skillLevel?.toLowerCase() ?? "low") as IconName}
 									size={16}
 								/>
-								<span className="text-sm">
+								<span className="text-[0.875rem]">
 									{
 										skillOptions.find((opt) => opt.value === nurse.skillLevel)
 											?.label
@@ -458,7 +453,7 @@ const WardAdminRowCard = ({
 								</div>
 							)}
 						</div>
-						<div className="flex gap-2 w-[155px]">
+						<div className="flex gap-[0.5rem] w-[9.6875rem]">
 							{(["D", "E", "N", "ALL"] as const).map((duty) => (
 								<DutyBadgeEng
 									key={duty}
@@ -471,7 +466,7 @@ const WardAdminRowCard = ({
 							))}
 						</div>
 					</div>
-					<div className="flex items-center gap-6 flex-1 min-w-0">
+					<div className="flex items-center gap-[1.5rem] flex-1 min-w-0">
 						<div className="relative flex-1 min-w-0 group">
 							{isEditingMemo ? (
 								<input
@@ -482,12 +477,12 @@ const WardAdminRowCard = ({
 									onBlur={handleMemoComplete}
 									onKeyDown={handleMemoKeyDown}
 									autoFocus
-									className="w-full rounded px-3 py-1 text-sm border border-primary-dark"
+									className="w-full rounded px-[0.75rem] py-[0.25rem] text-[0.875rem] border border-primary-dark"
 									placeholder="메모를 입력하세요"
 								/>
 							) : (
 								<div className="flex items-center w-full">
-									<span className="flex-1 truncate text-sm text-gray-500">
+									<span className="flex-1 truncate text-[0.875rem] text-gray-500">
 										{memo || "메모 없음"}
 									</span>
 									<button
@@ -506,7 +501,10 @@ const WardAdminRowCard = ({
 								</div>
 							)}
 						</div>
-						<div className="w-[60px] flex-shrink-0" ref={authorityDropdownRef}>
+						<div
+							className="w-[3.75rem] flex-shrink-0"
+							ref={authorityDropdownRef}
+						>
 							<Dropdown
 								variant="authority"
 								value={null}

@@ -63,7 +63,7 @@ const WardAdmin = () => {
 	return (
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
-			<div className="hidden lg:block w-[238px] shrink-0">
+			<div className="hidden lg:block w-[14.875rem] shrink-0">
 				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 			</div>
 
@@ -81,7 +81,7 @@ const WardAdmin = () => {
 					onClick={() => setIsSidebarOpen(true)}
 					className="lg:hidden mb-4 p-2 hover:bg-gray-100 rounded-lg"
 				>
-					<IoMdMenu className="w-6 h-6 text-gray-600" />
+					<IoMdMenu className="w-[1.5rem] h-[1.5rem] text-gray-600" />
 				</button>
 
 				<div className="mb-3">

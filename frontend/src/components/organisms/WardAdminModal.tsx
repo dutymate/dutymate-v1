@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { ConnectButton } from "../atoms/Button";
 import { WaitingNurseInfo, wardService } from "../../services/wardService";
+import { IoMdClose } from "react-icons/io";
 
 interface Nurse {
 	name: string;
@@ -66,73 +67,73 @@ export const HistoryModal = ({
 				}
 			}}
 		>
-			<div className="bg-white rounded-2xl p-6 w-full max-w-[480px] mx-4">
+			<div className="bg-white rounded-2xl p-6 w-full max-w-[29rem] sm:max-w-[30rem] mx-4">
 				<div className="flex justify-between items-center mb-4 relative">
 					<h2 className="text-xl font-semibold text-center w-full">
 						입장 신청 내역
 					</h2>
 					<button
 						onClick={onClose}
-						className="text-gray-500 hover:text-gray-700 absolute right-0"
+						className="text-gray-600 hover:text-gray-800 absolute right-0 p-1 rounded-lg hover:bg-gray-100 transition-colors"
 					>
-						<Icon name="close" size={24} />
+						<IoMdClose size={24} />
 					</button>
 				</div>
 
 				<div className="bg-gray-50 rounded-xl p-4">
-					<div className="max-h-[320px] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+					<div className="flex flex-col items-center max-h-[20rem] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
 						{nurses.length === 0 ? (
-							<div className="flex items-center justify-center h-24 text-gray-500">
+							<div className="flex items-center justify-center h-[6rem] text-gray-500">
 								입장 대기 인원이 없습니다.
 							</div>
 						) : (
 							nurses.map((nurse, i) => (
 								<div
 									key={i}
-									className="flex items-center justify-between gap-2 px-3 py-2.5 bg-white rounded-xl border border-gray-100"
+									className="flex items-center justify-between gap-2 px-3 py-2.5 bg-white rounded-xl border border-gray-100 min-w-[18.5rem] sm:min-w-0 w-full max-w-[25rem]"
 								>
-									<div className="flex items-center gap-4">
-										<div className="flex items-center gap-1.5 w-[80px]">
+									<div className="flex items-center sm:gap-4 gap-2">
+										<div className="flex items-center gap-1 sm:gap-1.5 w-[4rem] sm:w-[5rem]">
 											<Icon
 												name="user"
-												size={18}
+												size={1.125}
 												className="text-gray-500 flex-shrink-0"
 											/>
-											<span className="font-medium truncate text-sm">
+											<span className="font-medium truncate text-[0.875rem]">
 												{nurse.name}
 											</span>
 										</div>
-										<div className="flex items-center gap-1 w-[45px]">
+										<div className="flex items-center gap-0.5 sm:gap-1 w-[2.2rem] sm:w-[2.8125rem]">
 											<Icon
 												name={nurse.gender === "여자" ? "female" : "male"}
-												size={14}
+												size={0.875}
 												className="text-gray-500 flex-shrink-0"
 											/>
-											<span className="text-gray-600 text-sm">
+											<span className="text-gray-600 text-[0.875rem]">
 												{nurse.gender}
 											</span>
 										</div>
-										<div className="flex items-center gap-1 w-[45px]">
+										<div className="flex items-center gap-0.5 sm:gap-1 w-[2.2rem] sm:w-[2.8125rem]">
 											<Icon
 												name="idCard"
-												size={14}
+												size={0.875}
 												className="text-gray-500 flex-shrink-0"
 											/>
-											<span className="text-gray-600 text-sm whitespace-nowrap">
+											<span className="text-gray-600 text-[0.875rem] whitespace-nowrap">
 												{nurse.grade}차
 											</span>
 										</div>
 									</div>
-									<div className="flex items-center gap-1.5 flex-shrink-0">
+									<div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0 ml-auto">
 										<button
 											onClick={() => onSelectNurse(nurse)}
-											className="px-3 py-1 rounded-md text-xs transition-colors bg-primary text-white hover:bg-primary-dark whitespace-nowrap"
+											className="px-2 sm:px-3 py-1 rounded-[0.375rem] text-[0.75rem] transition-colors bg-primary text-white hover:bg-primary-dark whitespace-nowrap"
 										>
 											수락
 										</button>
 										<button
 											onClick={() => handleDenyWaitingNurse(nurse)}
-											className="px-3 py-1 rounded-md text-xs transition-colors bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 whitespace-nowrap"
+											className="px-2 sm:px-3 py-1 rounded-[0.375rem] text-[0.75rem] transition-colors bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 whitespace-nowrap"
 										>
 											거절
 										</button>
@@ -235,44 +236,48 @@ export const NurseAssignModal = ({
 				}
 			}}
 		>
-			<div className="bg-white rounded-2xl p-6 w-full max-w-[480px] mx-4">
+			<div className="bg-white rounded-2xl p-6 w-full max-w-[29rem] sm:max-w-[30rem] mx-4">
 				<div className="flex justify-between items-center mb-4 relative">
 					<h2 className="text-xl font-semibold text-center w-full">
 						간호사 배정
 					</h2>
 					<button
 						onClick={onClose}
-						className="text-gray-500 hover:text-gray-700 absolute right-0"
+						className="text-gray-600 hover:text-gray-800 absolute right-0 p-1 rounded-lg hover:bg-gray-100 transition-colors"
 					>
-						<Icon name="close" size={24} />
+						<IoMdClose size={24} />
 					</button>
 				</div>
 
 				{/* 선택된 간호사 정보 */}
-				<div className="flex items-center justify-center gap-4 px-3 py-2.5 bg-white rounded-xl mb-4 border border-primary-20">
-					<div className="flex items-center gap-1.5 w-[80px]">
+				<div className="flex items-center justify-center gap-4 px-3 py-2.5 bg-white rounded-xl mb-4 border border-primary-20 min-w-[18.5rem] sm:min-w-0 w-full max-w-[25rem]">
+					<div className="flex items-center gap-1.5 w-[5rem]">
 						<Icon
 							name="user"
-							size={18}
+							size={1.125}
 							className="text-gray-500 flex-shrink-0"
 						/>
-						<span className="font-medium truncate text-sm">{nurse.name}</span>
+						<span className="font-medium truncate text-[0.875rem]">
+							{nurse.name}
+						</span>
 					</div>
-					<div className="flex items-center gap-1 w-[45px]">
+					<div className="flex items-center gap-1 w-[2.8125rem]">
 						<Icon
 							name={nurse.gender === "여자" ? "female" : "male"}
-							size={14}
+							size={0.875}
 							className="text-gray-500 flex-shrink-0"
 						/>
-						<span className="text-gray-600 text-sm">{nurse.gender}</span>
+						<span className="text-gray-600 text-[0.875rem]">
+							{nurse.gender}
+						</span>
 					</div>
-					<div className="flex items-center gap-1 w-[45px]">
+					<div className="flex items-center gap-1 w-[2.8125rem]">
 						<Icon
 							name="idCard"
-							size={14}
+							size={0.875}
 							className="text-gray-500 flex-shrink-0"
 						/>
-						<span className="text-gray-600 text-sm whitespace-nowrap">
+						<span className="text-gray-600 text-[0.875rem] whitespace-nowrap">
 							{nurse.grade}차
 						</span>
 					</div>
@@ -284,8 +289,8 @@ export const NurseAssignModal = ({
 
 				{/* 간호사 선택 리스트 */}
 				<div className="bg-gray-50 rounded-xl p-4 mb-4">
-					<div className="text-sm text-gray-600 mb-2 px-2">근무자</div>
-					<div className="max-h-[280px] overflow-y-auto space-y-2 pr-2">
+					<div className="text-[0.875rem] text-gray-600 mb-2 px-2">근무자</div>
+					<div className="max-h-[17.5rem] overflow-y-auto space-y-2 pr-2">
 						{isLoading ? (
 							<div className="text-center py-4">로딩 중...</div>
 						) : tempNurses.length === 0 ? (
@@ -294,7 +299,7 @@ export const NurseAssignModal = ({
 							tempNurses.map((tempNurse) => (
 								<div
 									key={tempNurse.tempMemberId}
-									className="flex items-center justify-between gap-2 px-3 py-2.5 bg-white rounded-xl"
+									className="flex items-center justify-between gap-2 px-3 py-2.5 bg-white rounded-xl min-w-[18.5rem] sm:min-w-0 w-full max-w-[25rem]"
 								>
 									<div className="flex items-center gap-4">
 										<div className="flex items-center gap-1.5 w-[80px]">

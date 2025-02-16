@@ -62,30 +62,30 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 
 	return (
 		<div className="w-full">
-			<div className="bg-white rounded-[1.154375rem] p-4">
+			<div className="bg-white rounded-[1.15rem] p-4">
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-					<div className="bg-white rounded-xl p-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+					<div className="bg-white rounded-xl p-2.5 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
 						<h3 className="text-[0.95rem] text-gray-600 mb-1 font-medium">
 							병동 정보
 						</h3>
-						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
+						<p className="font-semibold border border-gray-300 rounded-[0.375rem] px-3 py-1 text-center">
 							{wardInfo.hospitalName} | {wardInfo.wardName}
 						</p>
 					</div>
 
-					<div className="bg-white rounded-xl p-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+					<div className="bg-white rounded-xl p-2.5 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
 						<div className="flex items-center justify-between mb-1">
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								병동 인원
 							</h3>
 							<TempNurseButton onClick={onAddTempNurse} />
 						</div>
-						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
+						<p className="font-semibold border border-gray-300 rounded-[0.375rem] px-3 py-1 text-center">
 							{wardInfo.nursesTotalCnt}명
 						</p>
 					</div>
 
-					<div className="bg-white rounded-xl p-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+					<div className="bg-white rounded-xl p-2.5 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
 						<div className="flex gap-2 items-center text-center">
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								병동 코드
@@ -98,13 +98,13 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 							</button>
 						</div>
 						<div className="flex items-center gap-2">
-							<p className="flex-1 font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
+							<p className="flex-1 font-semibold border border-gray-300 rounded-[0.375rem] px-3 py-1 text-center">
 								{wardInfo.wardCode}
 							</p>
 						</div>
 					</div>
 
-					<div className="bg-white rounded-xl p-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+					<div className="bg-white rounded-xl p-2.5 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
 						<div className="flex items-center justify-between mb-1">
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								입장 신청
@@ -117,7 +117,7 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 								<span className="text-[0.8rem] text-white">내역 조회</span>
 							</button>
 						</div>
-						<p className="font-semibold border border-gray-300 rounded-md px-3 py-1 text-center">
+						<p className="font-semibold border border-gray-300 rounded-[0.375rem] px-3 py-1 text-center">
 							{waitingCount > 0 ? `${waitingCount}명 대기` : "0명 대기"}
 						</p>
 					</div>
