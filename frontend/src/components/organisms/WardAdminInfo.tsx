@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 // import { TempNurseButton } from "../atoms/Button";
 import { HistoryModal, NurseAssignModal } from "./WardAdminModal";
 import { TempNurseButton } from "../atoms/Button";
+import WardAdminTemp from "./WardAdminTemp";
 
 interface WardAdminInfoProps {
 	wardInfo: WardInfo;
@@ -27,6 +28,7 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 		grade: number;
 		memberId: number;
 	} | null>(null);
+	const [isTempModalOpen, setIsTempModalOpen] = useState(false);
 
 	const handleCopyCode = () => {
 		navigator.clipboard.writeText(wardInfo.wardCode);
@@ -60,6 +62,12 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 		fetchNurses();
 	}, [wardInfo.nurses]);
 
+	const handleTempNurseAdd = (count: number) => {
+		// 여기에 임시 간호사 추가 로직 구현
+		onAddTempNurse();
+		setIsTempModalOpen(false);
+	};
+
 	return (
 		<div className="w-full">
 			<div className="bg-white rounded-[1.15rem] p-4">
@@ -78,7 +86,14 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								병동 인원
 							</h3>
-							<TempNurseButton onClick={onAddTempNurse} />
+							{/* To 현진 임시 간호사 추가 버튼의 기능을 잠시 중단하기 위해 아래 두줄을 주석처리 해두었습니다.  */}
+							<TempNurseButton
+								// onClick={() => {
+								// 	// onAddTempNurse();  // 기존 기능 주석처리
+								// 	// 여기에 모달 오픈 핸들러가 들어갈 예정
+								// }}
+								onClick={() => setIsTempModalOpen(true)}
+							/>
 						</div>
 						<p className="font-semibold border border-gray-300 rounded-[0.375rem] px-3 py-1 text-center">
 							{wardInfo.nursesTotalCnt}명
@@ -165,6 +180,12 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 					fetchNurses={fetchNurses}
 				/>
 			)}
+
+			<WardAdminTemp
+				isOpen={isTempModalOpen}
+				onClose={() => setIsTempModalOpen(false)}
+				onConfirm={handleTempNurseAdd}
+			/>
 		</div>
 	);
 };
