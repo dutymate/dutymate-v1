@@ -17,7 +17,7 @@ import Mypage from "../pages/Mypage";
 import ShiftAdmin from "../pages/ShiftAdmin";
 import Signup from "../pages/Signup";
 import { ReactElement } from "react";
-
+import Game from "../pages/Game";
 interface ProtectedRouteProps {
 	element: ReactElement;
 }
@@ -77,6 +77,9 @@ const Router = () => {
 				path="/my-page"
 				element={<ProtectedRoute element={<Mypage />} />}
 			/>
+
+			{/* 이스터에그 */}
+			<Route path="/game" element={<ProtectedRoute element={<Game />} />} />
 
 			{/* 기타 */}
 			<Route path="/error" element={<Error />} />
