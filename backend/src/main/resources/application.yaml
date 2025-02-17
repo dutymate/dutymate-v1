@@ -18,9 +18,3 @@ spring:
     multipart:
       maxFileSize: 10MB
       maxRequestSize: 10MB
-
-  # P6Spy 설정
-decorator:
-  datasource:
-    p6spy:
-      enable-logging: true

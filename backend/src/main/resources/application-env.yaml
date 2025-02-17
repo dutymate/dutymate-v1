@@ -20,6 +20,11 @@ spring:
       ssl:
         enabled: ${SPRING_DATA_REDIS_SSL_ENABLED}
 
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: ${DECORATOR_DATASOURCE_P6SPY_ENABLE_LOGGING}
+
 # JWT 비밀키, 유효기간 설정
 jwt:
   secret: ${JWT_SECRET}
