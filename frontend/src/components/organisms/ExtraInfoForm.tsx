@@ -105,10 +105,7 @@ const ExtraInfoForm = ({ initialData, onSubmit }: ExtraInfoFormProps) => {
 						성별
 					</label>
 					<ToggleButton
-						options={[
-							{ text: "여자", icon: "♀" },
-							{ text: "남자", icon: "♂" },
-						]}
+						options={[{ text: "여자" }, { text: "남자" }]}
 						selectedIndex={formState.gender === "F" ? 0 : 1}
 						onChange={handleGenderChange}
 						variant="gender"

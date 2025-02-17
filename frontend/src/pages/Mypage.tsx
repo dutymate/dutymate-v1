@@ -55,7 +55,7 @@ const Mypage = () => {
 	return (
 		<div className="w-full min-h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
-			<div className="hidden lg:block w-[238px] shrink-0">
+			<div className="hidden lg:block w-[14.875rem] shrink-0">
 				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 			</div>
 
@@ -87,7 +87,7 @@ const Mypage = () => {
 					</button>
 				</div>
 				<div className="mt-4 flex justify-center">
-					<div className="w-full lg:w-[1400px] space-y-4">
+					<div className="w-full lg:w-[87.5rem] space-y-4">
 						<MypageProfile />
 						<MypagePassword />
 						<MypageExit />

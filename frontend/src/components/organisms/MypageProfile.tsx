@@ -214,7 +214,7 @@ const MypageProfile = () => {
 					/>
 				</div>
 				{/* 오른쪽 정보 */}
-				<div className="space-y-[0.5rem]">
+				<div className="flex flex-col justify-center space-y-[1rem] mt-[1.5rem] lg:mt-0">
 					<MypageInput
 						id="email"
 						name="email"
