@@ -603,16 +603,16 @@ const ShiftAdminTable = ({
 			return;
 		}
 
-		// 총 간호사 수 확인
-		if (nurses.length < 5) {
-			const confirmed = window.confirm(
-				"해당 기능 최소 인원은 5명입니다. 임시 간호사를 추가해주세요.",
-			);
-			if (confirmed) {
-				navigate("/ward-admin");
-			}
-			return;
-		}
+		// // 총 간호사 수 확인
+		// if (nurses.length < 5) {
+		// 	const confirmed = window.confirm(
+		// 		"해당 기능 최소 인원은 5명입니다. 임시 간호사를 추가해주세요.",
+		// 	);
+		// 	if (confirmed) {
+		// 		navigate("/ward-admin");
+		// 	}
+		// 	return;
+		// }
 
 		try {
 			setIsAutoCreating(true);
