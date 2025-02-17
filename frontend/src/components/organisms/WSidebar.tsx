@@ -38,7 +38,7 @@ const staffNurseNavigation: NavigationItem[] = [
 
 const NavigationItem = React.memo(
 	({ item }: { item: NavigationItem}) => {
-		
+
 		const handleClick = (
 			e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
 		) => {
