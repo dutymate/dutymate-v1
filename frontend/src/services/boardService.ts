@@ -34,6 +34,15 @@ export interface NewsResponse {
 	link: string;
 }
 
+export interface RecommendedPost {
+	boardId: number;
+	title: string;
+}
+
+export interface RecommendedPostsResponse {
+	boardList: RecommendedPost[];
+}
+
 export interface ApiErrorResponse {
 	message: string;
 	timestamp: string;
@@ -295,6 +304,29 @@ export const boardService = {
 	) => {
 		return axiosInstance
 			.get(`/news`)
+			.then((response) => {
+				success(response.data);
+			})
+			.catch((error) => {
+				if (axios.isAxiosError(error)) {
+					fail(error.response?.data);
+				}
+				throw error;
+			});
+	},
+
+	/**
+	 * 추천 게시글 조회
+	 * @param code - 카테고리
+	 * @param success - 성공 시 콜백 함수
+	 * @param fail - 실패 시 콜백 함수
+	 */
+	getRecommendedPosts: async (
+		success: (data: RecommendedBoardListResponse) => void,
+		fail: (error: ApiErrorResponse) => void,
+	) => {
+		return axiosInstance
+			.get(`/board/recommend`)
 			.then((response) => {
 				success(response.data);
 			})

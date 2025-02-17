@@ -5,7 +5,10 @@ import { Icon } from "../atoms/Icon";
 import CommunityCategories from "./CommunityCategories";
 import { useState, useEffect } from "react";
 import { CommunityWriteButton } from "../atoms/Button";
-import boardService, { AllPostResponse } from "@/services/boardService";
+import boardService, {
+	AllPostResponse,
+	RecommendedPost,
+} from "@/services/boardService";
 import { formatTimeAgo } from "@/utils/dateUtiles";
 
 interface CommunityFormProps {
@@ -21,6 +24,9 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const category = searchParams.get("category") || "ALL";
 	const [selectedCategory, setSelectedCategory] = useState(category);
+	const [recommendedPosts, setRecommendedPosts] = useState<RecommendedPost[]>(
+		[],
+	);
 
 	const handleCategoryChange = (category: string) => {
 		setSelectedCategory(category);
@@ -34,12 +40,14 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 
 	useEffect(() => {
 		fetchPosts(selectedCategory);
+		fetchRecommendedPosts();
 	}, [selectedCategory]);
 
 	useEffect(() => {
 		// location이 변경될 때마다 카테고리를 기본값으로 리셋
 		setSelectedCategory(category);
 		fetchPosts(category);
+		fetchRecommendedPosts();
 	}, [category]);
 
 	const fetchPosts = (category: string) =>
@@ -49,26 +57,30 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 			(error) => console.error(error),
 		);
 
+	const fetchRecommendedPosts = () => {
+		boardService.getRecommendedPosts(
+			// ({boardList}) => setRecommendedPosts(boardList),
+			({ boardList }) => {
+				setRecommendedPosts(
+					boardList.map((post: any) => ({
+						...post,
+						title:
+							post.title.length > 16
+								? post.title.slice(0, 16) + "..."
+								: post.title,
+					})),
+				);
+			},
+			(error) => console.error(error),
+		);
+	};
+
 	// 빈 카테고리 메시지 표시 여부 확인
 	const shouldShowEmptyMessage = posts.length === 0;
 
-	// 추천 게시글 데이터
-	const recommendedPosts = [
-		{
-			id: 2, // 실제 posts 배열의 게시글 id와 매칭
-			title: "동기들이랑 3년 차 기념 여행...",
-			isHighlighted: true,
-		},
-		{
-			id: 1, // 실제 posts 배열의 게시글 id와 매칭
-			title: "수혈이 난감해,,ㅜ",
-			isHighlighted: false,
-		},
-	];
-
 	// 추천 게시글 클릭 핸들러
 	const handleRecommendedClick = (recommendedId: number) => {
-		const post = posts.find((p) => p.boardId === recommendedId);
+		const post = recommendedPosts.find((p) => p.boardId === recommendedId);
 		if (post) {
 			onPostClick(post);
 		}
@@ -101,13 +113,9 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 						<div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
 							{recommendedPosts.map((recommended) => (
 								<button
-									key={recommended.id}
-									onClick={() => handleRecommendedClick(recommended.id)}
-									className={`px-2 py-1 rounded text-sm whitespace-nowrap cursor-pointer transition-colors ${
-										recommended.isHighlighted
-											? "bg-primary-10 text-primary-dark hover:bg-primary-20"
-											: "bg-gray-100 text-gray-600 hover:bg-gray-200"
-									}`}
+									key={recommended.boardId}
+									onClick={() => handleRecommendedClick(recommended.boardId)}
+									className={`px-2 py-1 rounded text-sm whitespace-nowrap cursor-pointer transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200`}
 								>
 									{recommended.title}
 								</button>

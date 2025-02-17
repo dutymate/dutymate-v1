@@ -32,7 +32,7 @@ public class BoardCurationService {
 		List<CuratedBoard> curatedBoards = boards.stream()
 			.map(board -> new CuratedBoard(board, calculateScore(board, viewer)))
 			.sorted((a, b) -> Double.compare(b.getScore(), a.getScore()))
-			.limit(5)
+			.limit(3)
 			.toList();
 
 		return createResponseDto(curatedBoards);

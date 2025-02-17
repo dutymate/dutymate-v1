@@ -35,7 +35,7 @@ const CommunityNews = ({}: any) => {
 							href={news.link}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="block hover:transform hover:scale-[1.02] transition-transform"
+							className="block hover:transform hover:scale-[1.02] transition-transform border-2 rounded-lg"
 						>
 							<div className="rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
 								<div className="bg-white p-3 border-b border-gray-100">
