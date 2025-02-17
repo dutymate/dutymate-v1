@@ -323,6 +323,7 @@ const ShiftAdminTable = ({
 				// 키를 꾹 누르고 있을 때는 무시
 				switch (e.key) {
 					case "ArrowRight":
+						e.preventDefault(); // 스크롤 방지
 						if (col < daysInMonth - 1) {
 							setSelectedCell({ row, col: col + 1 });
 						} else if (row < nurses.length - 1) {
@@ -330,6 +331,7 @@ const ShiftAdminTable = ({
 						}
 						break;
 					case "ArrowLeft":
+						e.preventDefault(); // 스크롤 방지
 						if (col > 0) {
 							setSelectedCell({ row, col: col - 1 });
 						} else if (row > 0) {
@@ -337,11 +339,13 @@ const ShiftAdminTable = ({
 						}
 						break;
 					case "ArrowUp":
+						e.preventDefault(); // 스크롤 방지
 						if (row > 0) {
 							setSelectedCell({ row: row - 1, col });
 						}
 						break;
 					case "ArrowDown":
+						e.preventDefault(); // 스크롤 방지
 						if (row < nurses.length - 1) {
 							setSelectedCell({ row: row + 1, col });
 						}

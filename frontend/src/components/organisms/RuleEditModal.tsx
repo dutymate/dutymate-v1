@@ -224,18 +224,9 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           focus:border-primary
                         "
 												>
-													{[...Array(5)].map((_, i) => (
-														<option
-															key={i + 1}
-															value={i + 1}
-															className="
-                              text-center 
-                              bg-white 
-                              hover:bg-primary-10
-                              py-1
-                            "
-														>
-															{i + 1}
+													{[...Array(6)].map((_, i) => (
+														<option key={i} value={i} className="text-center">
+															{i}
 														</option>
 													))}
 												</select>
@@ -266,13 +257,9 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           focus:border-primary
                         "
 												>
-													{[...Array(5)].map((_, i) => (
-														<option
-															key={i + 1}
-															value={i + 1}
-															className="text-center"
-														>
-															{i + 1}
+													{[...Array(6)].map((_, i) => (
+														<option key={i} value={i} className="text-center">
+															{i}
 														</option>
 													))}
 												</select>
@@ -303,13 +290,9 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           focus:border-primary
                         "
 												>
-													{[...Array(5)].map((_, i) => (
-														<option
-															key={i + 1}
-															value={i + 1}
-															className="text-center"
-														>
-															{i + 1}
+													{[...Array(6)].map((_, i) => (
+														<option key={i} value={i} className="text-center">
+															{i}
 														</option>
 													))}
 												</select>
@@ -349,13 +332,9 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           focus:border-primary
                         "
 												>
-													{[...Array(5)].map((_, i) => (
-														<option
-															key={i + 1}
-															value={i + 1}
-															className="text-center"
-														>
-															{i + 1}
+													{[...Array(6)].map((_, i) => (
+														<option key={i} value={i} className="text-center">
+															{i}
 														</option>
 													))}
 												</select>
@@ -386,13 +365,9 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           focus:border-primary
                         "
 												>
-													{[...Array(5)].map((_, i) => (
-														<option
-															key={i + 1}
-															value={i + 1}
-															className="text-center"
-														>
-															{i + 1}
+													{[...Array(6)].map((_, i) => (
+														<option key={i} value={i} className="text-center">
+															{i}
 														</option>
 													))}
 												</select>
@@ -423,13 +398,9 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                           focus:border-primary
                         "
 												>
-													{[...Array(5)].map((_, i) => (
-														<option
-															key={i + 1}
-															value={i + 1}
-															className="text-center"
-														>
-															{i + 1}
+													{[...Array(6)].map((_, i) => (
+														<option key={i} value={i} className="text-center">
+															{i}
 														</option>
 													))}
 												</select>
@@ -544,7 +515,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                         focus:border-primary
                       "
 											>
-												{[...Array(5)].map((_, i) => (
+												{[...Array(6)].map((_, i) => (
 													<option
 														key={i + 2}
 														value={i + 2}
@@ -621,13 +592,9 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
                         focus:border-primary
                       "
 											>
-												{[...Array(5)].map((_, i) => (
-													<option
-														key={i + 1}
-														value={i + 1}
-														className="text-center"
-													>
-														{i + 1}
+												{[...Array(6)].map((_, i) => (
+													<option key={i} value={i} className="text-center">
+														{i}
 													</option>
 												))}
 											</select>
