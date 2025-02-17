@@ -13,7 +13,7 @@ interface ReqShiftModalProps {
 
 interface MyRequest {
 	date: string;
-	duty: "D" | "E" | "N" | "O";
+	shift: "D" | "E" | "N" | "O";
 	status: string;
 	memo: string;
 }
@@ -183,7 +183,7 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 							<div key={index} className="border-b border-gray-100 pb-4 mb-4">
 								<div className="flex items-center gap-4">
 									<DutyBadgeEng
-										type={request.duty}
+										type={request.shift}
 										variant="outline"
 										size="md"
 									/>
