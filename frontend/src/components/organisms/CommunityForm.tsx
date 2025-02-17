@@ -16,15 +16,15 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 	const [posts, setPosts] = useState<AllPostResponse[]>([]);
 	// const location = useLocation();
 	// const navigate = useNavigate();
-	
+
 	const [searchParams, setSearchParams] = useSearchParams();
 	const category = searchParams.get("category") || "ALL";
 	const [selectedCategory, setSelectedCategory] = useState(category);
 
-	const handleCategoryChange = (category : string) => {
+	const handleCategoryChange = (category: string) => {
 		setSelectedCategory(category);
-		setSearchParams({category});
-	}
+		setSearchParams({ category });
+	};
 
 	// 컴포넌트 마운트 시 상단으로 스크롤
 	useEffect(() => {
@@ -37,7 +37,7 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 
 	useEffect(() => {
 		// location이 변경될 때마다 카테고리를 기본값으로 리셋
-		setSelectedCategory(category)
+		setSelectedCategory(category);
 		fetchPosts(category);
 	}, [category]);
 

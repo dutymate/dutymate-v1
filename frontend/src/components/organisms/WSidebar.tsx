@@ -1,16 +1,15 @@
 "use client";
 
 import React from "react";
-import { useLocation } from "react-router-dom";
-import { SlCalender } from "react-icons/sl";
-import { FaHospital } from "react-icons/fa";
 import { AiFillSchedule } from "react-icons/ai";
 import { BiSolidUserPin } from "react-icons/bi";
+import { FaHospital } from "react-icons/fa";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { IoIosChatboxes } from "react-icons/io";
 import { PiLightbulbFilamentFill } from "react-icons/pi";
-import Profile from "../atoms/Profile";
+import { SlCalender } from "react-icons/sl";
 import { Link } from "react-router-dom";
+import Profile from "../atoms/Profile";
 
 interface NavigationItem {
 	name: string;
@@ -49,13 +48,18 @@ const NavigationItem = React.memo(
 			}
 		};
 
-		const isActive = (item.href === location.pathname) || (location.pathname.startsWith("/community/") && item.href.startsWith("/community"))
 
-		return (
-			<li className="flex justify-center px-[1.3rem]">
-				<Link
-					to={item.name === "튜토리얼" ? "#" : item.href}
-					className={`
+
+	const isActive =
+		item.href === location.pathname ||
+		(location.pathname.startsWith("/community/") &&
+			item.href.startsWith("/community"));
+
+	return (
+		<li className="flex justify-center px-[1.3rem]">
+			<Link
+				to={item.name === "튜토리얼" ? "#" : item.href}
+				className={`
 					flex items-center gap-x-3 px-4 py-2.5 w-full rounded-lg
 					font-['Pretendard Variable'] text-[0.9rem] group
 					${
@@ -64,28 +68,26 @@ const NavigationItem = React.memo(
 							: "text-gray-700 hover:text-primary hover:bg-primary-10"
 					}
 				`}
-					onClick={handleClick}
-				>
-					{React.createElement(item.icon, {
-						className: `w-4 h-4 min-w-4 ${
-							isActive
-								? "text-primary-dark"
-								: "text-gray-500 group-hover:text-primary"
-						}`,
-					})}
-					<span className="font-semibold">{item.name}</span>
-				</Link>
-			</li>
-		);
-	},
-);
+				onClick={handleClick}
+			>
+				{React.createElement(item.icon, {
+					className: `w-4 h-4 min-w-4 ${
+						isActive
+							? "text-primary-dark"
+							: "text-gray-500 group-hover:text-primary"
+					}`,
+				})}
+				<span className="font-semibold">{item.name}</span>
+			</Link>
+		</li>
+	);
+});
 
 interface SidebarProps {
 	userType: "HN" | "RN"; // "head" | "staff" 대신 실제 role 타입 사용
 }
 
 const Sidebar = ({ userType }: SidebarProps) => {
-	const location = useLocation();
 	const navigation =
 		userType === "HN" ? headNurseNavigation : staffNurseNavigation;
 
@@ -102,14 +104,7 @@ const Sidebar = ({ userType }: SidebarProps) => {
 			<nav className="flex-1 py-4 mt-4">
 				<div className="flex flex-col space-y-[0.325rem] mb-5">
 					{navigation.map((item, index) => (
-
-						
-						<NavigationItem
-						key={index}
-						item={item}
-						
-						/>
-					
+						<NavigationItem key={index} item={item} />
 					))}
 				</div>
 			</nav>
