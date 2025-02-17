@@ -63,6 +63,7 @@ public class WardScheduleResponseDto {
 	@Builder
 	public static class Issue {
 
+		private Long memberId;
 		private String name;
 		private Integer startDate;
 		private Integer endDate;

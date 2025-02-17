@@ -53,14 +53,15 @@ public class DutyAutoCheck {
 		String shifts = ns.getPrevShifts().concat(ns.getShifts());
 		String name = ns.getName();
 		int prevShfitsDay = ns.getPrevShifts().length();
+		Long memberId = ns.getMemberId();
 
-		nightIssuesGenerator(name, prevShfitsDay, shifts, rule, result);
-		maxShiftsIssuesGenerator(name, prevShfitsDay, shifts, rule, result);
-		specificPatternIssuesGenerator(name, prevShfitsDay, shifts, result);
+		nightIssuesGenerator(memberId, name, prevShfitsDay, shifts, rule, result);
+		maxShiftsIssuesGenerator(memberId, name, prevShfitsDay, shifts, rule, result);
+		specificPatternIssuesGenerator(memberId, name, prevShfitsDay, shifts, result);
 		return result;
 	}
 
-	private void nightIssuesGenerator(String name, int prevShiftsDay,
+	private void nightIssuesGenerator(Long memberId, String name, int prevShiftsDay,
 		String shifts, RuleResponseDto rule, List<WardScheduleResponseDto.Issue> issues) {
 
 		int index = shifts.indexOf(Shift.N.getValue(), prevShiftsDay);
@@ -73,6 +74,7 @@ public class DutyAutoCheck {
 
 			if (nightCnt < rule.getMinN() || nightCnt > rule.getMaxN()) {
 				issues.add(WardScheduleResponseDto.Issue.builder()
+					.memberId(memberId)
 					.name(name)
 					.startDate(index + 1 - prevShiftsDay)
 					.endDate(index + nightCnt - prevShiftsDay)
@@ -86,7 +88,7 @@ public class DutyAutoCheck {
 		}
 	}
 
-	private void maxShiftsIssuesGenerator(String name, int prevShiftsDay,
+	private void maxShiftsIssuesGenerator(Long memberId, String name, int prevShiftsDay,
 		String shifts, RuleResponseDto rule, List<WardScheduleResponseDto.Issue> issues) {
 		int index = prevShiftsDay;
 		while (index < shifts.length()
@@ -106,6 +108,7 @@ public class DutyAutoCheck {
 
 			if (shiftCnt > rule.getMaxShift()) {
 				issues.add(WardScheduleResponseDto.Issue.builder()
+					.memberId(memberId)
 					.name(name)
 					.startDate(index + 1 - prevShiftsDay)
 					.endDate(index + shiftCnt - prevShiftsDay)
@@ -122,7 +125,7 @@ public class DutyAutoCheck {
 		}
 	}
 
-	private void specificPatternIssuesGenerator(String name, int prevShiftsDay,
+	private void specificPatternIssuesGenerator(Long memberId, String name, int prevShiftsDay,
 		String shifts, List<WardScheduleResponseDto.Issue> issues) {
 
 		for (String pattern : FORBIDDEN_PATTERNS) {
@@ -136,6 +139,7 @@ public class DutyAutoCheck {
 
 				if (startDate > 0 && endDate <= shifts.length() - prevShiftsDay) {
 					issues.add(WardScheduleResponseDto.Issue.builder()
+						.memberId(memberId)
 						.name(name)
 						.startDate(startDate)
 						.endDate(endDate)
