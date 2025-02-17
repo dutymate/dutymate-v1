@@ -12,7 +12,7 @@ export interface LoginResponse {
 	existAdditionalInfo: boolean;
 	existMyWard: boolean;
 	sentWardCode: boolean;
-	provider : string;
+	provider: string;
 }
 
 interface AdditionalInfoRequest {

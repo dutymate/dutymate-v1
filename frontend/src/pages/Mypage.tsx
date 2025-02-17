@@ -89,7 +89,6 @@ const Mypage = () => {
 				<div className="mt-4 flex justify-center">
 					<div className="w-full lg:w-[87.5rem] space-y-4">
 						<MypageProfile />
-						{/* {userAuthStore.userInfo?.provider === "NONE" ? (<MypagePassword />):""} */}
 						<MypagePassword />
 						<MypageExit />
 					</div>
