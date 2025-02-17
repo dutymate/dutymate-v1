@@ -1,6 +1,6 @@
 import { EmailInput, PasswordInput, Input } from "../atoms/Input";
-import googleIcon from "../../assets/google.logo.png";
-import kakao_logo from "../../assets/kakao_logo.png";
+// import googleIcon from "../../assets/google.logo.png";  // 제거
+// import kakao_logo from "../../assets/kakao_logo.png";  // 제거
 import { useState } from "react";
 import { toast } from "react-toastify";
 import userService from "@/services/userService";
@@ -286,7 +286,7 @@ const SignupForm = () => {
 						onClick={handleKakaoSignup}
 					>
 						<img
-							src={kakao_logo}
+							src="/images/kakao_logo.png"
 							alt="카카오 아이콘"
 							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] absolute left-[1.05rem] sm:left-[1.05rem] top-1/2 transform -translate-y-1/2"
 						/>
@@ -298,7 +298,7 @@ const SignupForm = () => {
 						onClick={handleGoogleSignup}
 					>
 						<img
-							src={googleIcon}
+							src="/images/google.logo.png"
 							alt="구글 아이콘"
 							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] absolute left-[1.05rem] sm:left-[1.05rem] top-1/2 transform -translate-y-1/2"
 						/>

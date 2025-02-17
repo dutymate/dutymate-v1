@@ -1,5 +1,5 @@
 import React from "react";
-import notebookImage from "../../assets/notebook.svg";
+// import notebookImage from "../../assets/notebook.svg";
 
 interface LandingTemplateProps {
 	children?: React.ReactNode;
@@ -46,7 +46,7 @@ const LandingTemplate: React.FC<LandingTemplateProps> = ({ children }) => {
 						</div>
 						<div className="relative w-[120%] -ml-[10%]">
 							<img
-								src={notebookImage}
+								src="/images/notebook.svg"
 								alt="Notebook Preview"
 								className="w-full"
 							/>

@@ -1,6 +1,6 @@
 import { EmailInput, PasswordInput } from "../atoms/Input";
-import googleIcon from "../../assets/google.logo.png";
-import kakao_logo from "../../assets/kakao_logo.png";
+// import googleIcon from "../../assets/google.logo.png";  // 제거
+// import kakao_logo from "../../assets/kakao_logo.png";  // 제거
 import { useState } from "react";
 import userService from "@/services/userService";
 import { toast } from "react-toastify";
@@ -162,7 +162,7 @@ const LoginForm = () => {
 						onClick={handleKakaoLogin}
 					>
 						<img
-							src={kakao_logo}
+							src="/images/kakao_logo.png"
 							alt="카카오 아이콘"
 							className="w-[1rem] h-[1rem] absolute left-[0.8rem] top-1/2 transform -translate-y-1/2"
 						/>
@@ -174,7 +174,7 @@ const LoginForm = () => {
 						onClick={handleGoogleLogin}
 					>
 						<img
-							src={googleIcon}
+							src="/images/google.logo.png"
 							alt="구글 아이콘"
 							className="w-[1rem] h-[1rem] absolute left-[0.8rem] top-1/2 transform -translate-y-1/2"
 						/>

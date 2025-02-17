@@ -1,7 +1,5 @@
 // StartTemplate.tsx
 
-import notebookImage from "../../assets/notebook.svg";
-
 interface StartTemplateProps {
 	children: React.ReactNode;
 	isLoginPage?: boolean;
@@ -55,7 +53,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 					{!isLoginPage && (
 						<div className="absolute -bottom-[17vh] right-[-40%] w-[130%] z-10 hidden lg:block">
 							<img
-								src={notebookImage}
+								src="/images/notebook.svg"
 								alt="Notebook Preview"
 								className="w-full"
 							/>
@@ -96,7 +94,7 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 							{/* 노트북 이미지 */}
 							<div className="absolute top-[14vh] -left-[20%] w-[120%] z-20">
 								<img
-									src={notebookImage}
+									src="/images/notebook.svg"
 									alt="Notebook Preview"
 									className="w-full"
 								/>
