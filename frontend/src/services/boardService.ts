@@ -322,7 +322,7 @@ export const boardService = {
 	 * @param fail - 실패 시 콜백 함수
 	 */
 	getRecommendedPosts: async (
-		success: (data: RecommendedBoardListResponse) => void,
+		success: (data: RecommendedPostsResponse) => void,
 		fail: (error: ApiErrorResponse) => void,
 	) => {
 		return axiosInstance
