@@ -475,7 +475,7 @@ const WardAdminRowCard = ({
 						<div className="relative flex-1 min-w-0 group">
 							{isEditingMemo ? (
 								<div className="flex w-full">
-									<div className="flex-1 min-w-0">
+									<div className="flex-1 min-w-0 overflow-hidden">
 										<input
 											ref={memoInputRef}
 											type="text"
@@ -493,8 +493,8 @@ const WardAdminRowCard = ({
 								</div>
 							) : (
 								<div className="flex w-full">
-									<div className="flex items-center w-full min-w-0">
-										<span className="flex-1 truncate text-[0.875rem] text-gray-500">
+									<div className="flex items-center w-full min-w-0 overflow-hidden">
+										<span className="w-0 flex-1 truncate text-gray-500">
 											{memo || "메모 없음"}
 										</span>
 										<button
