@@ -60,6 +60,29 @@ export const WardCodeInput = ({
 		}
 	};
 
+	const handlePaste = (e: any): void => {
+		e.preventDefault();
+		const pastedText = e.clipboardData.getData("text");
+		const chars = pastedText.slice(0, length).split("");
+
+		const newValues = [...values];
+		chars.forEach((char: any, index: any) => {
+			if (index < length) {
+				newValues[index] = char;
+			}
+		});
+
+		setValues(newValues);
+
+		// Call onChange with joined value
+		onChange?.(newValues.join(""));
+
+		// Focus on the next empty input or the last input
+		const nextEmptyIndex = newValues.findIndex((val) => !val);
+		const focusIndex = nextEmptyIndex === -1 ? length - 1 : nextEmptyIndex;
+		inputRefs.current[focusIndex]?.focus();
+	};
+
 	const singleInputClass = error
 		? "w-8 h-10 sm:w-9 sm:h-12 rounded-md bg-white text-center text-[1rem] sm:text-[1.125rem] text-red-900 border border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
 		: "w-8 h-10 sm:w-9 sm:h-12 rounded-md bg-white text-center text-[1rem] sm:text-[1.125rem] text-gray-900 border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:border-gray-200 disabled:cursor-not-allowed";
@@ -88,6 +111,7 @@ export const WardCodeInput = ({
 							value={values[index] || ""}
 							onChange={(e) => handleChange(index, e.target.value)}
 							onKeyDown={(e) => handleKeyDown(index, e)}
+							onPaste={handlePaste}
 							disabled={disabled}
 							className={singleInputClass}
 							aria-invalid={error ? "true" : undefined}
