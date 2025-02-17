@@ -20,6 +20,7 @@ import net.dutymate.api.enumclass.Gender;
 import net.dutymate.api.enumclass.Provider;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.member.repository.MemberRepository;
+import net.dutymate.api.member.service.MemberService;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.ward.dto.AddNurseCntRequestDto;
 import net.dutymate.api.ward.dto.EnterWaitingResponseDto;
@@ -52,6 +53,7 @@ public class WardService {
 	private final EnterWaitingRepository enterWaitingRepository;
 	private final HospitalRepository hospitalRepository;
 	private final WardScheduleService wardScheduleService;
+	private final MemberService memberService;
 
 	@Transactional
 	public void createWard(WardRequestDto requestWardDto, Member member) {
@@ -315,9 +317,6 @@ public class WardService {
 
 	@Transactional
 	public void addVirtualMember(AddNurseCntRequestDto addNurseCntRequestDto, Member member) {
-		System.out.println(
-			"addNurseCntRequestDto.getVirtualNurseCnt() = " + addNurseCntRequestDto.getVirtualNurseCnt());
-
 		int addNurseCnt = addNurseCntRequestDto.getVirtualNurseCnt();
 
 		// 1. 수간호사가 아니면 예외 처리
@@ -335,6 +334,7 @@ public class WardService {
 		List<WardMember> newWardMemberList = new ArrayList<>();
 
 		Integer tempNurseSeq = ward.getTempNurseSeq();
+		String defaultProfileImgUrl = memberService.addBasicProfileImgUrl();
 
 		for (int newNurse = 0; newNurse < addNurseCnt; newNurse++) {
 
@@ -349,6 +349,7 @@ public class WardService {
 				.role(Role.RN)
 				.gender(Gender.F)
 				.provider(Provider.NONE)
+				.profileImg(defaultProfileImgUrl)
 				.build();
 			newMemberList.add(virtualMember);
 		}

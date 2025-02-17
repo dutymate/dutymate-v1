@@ -429,7 +429,7 @@ public class MemberService {
 	}
 
 	// 기본 프로필 이미지 URL 생성
-	private String addBasicProfileImgUrl() {
+	public String addBasicProfileImgUrl() {
 		return "https://" + bucket + ".s3." + region + ".amazonaws.com/profile/default_profile.png";
 	}
 
