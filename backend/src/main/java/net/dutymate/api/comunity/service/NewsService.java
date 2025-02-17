@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -38,6 +39,12 @@ public class NewsService {
 	private String openaiModel;
 	@Value("${openai.secret-key}")
 	private String openaiSecretKey;
+
+	// 스프링 서버가 실행될 때 무조건 뉴스 데이터 넣기 (null pointer exception 방지)
+	@PostConstruct
+	public void init() throws JsonProcessingException {
+		newsBatch();
+	}
 
 	// 매일 06:00에 실행
 	@Scheduled(cron = "0 0 6 * * *")
