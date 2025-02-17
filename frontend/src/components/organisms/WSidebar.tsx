@@ -38,7 +38,8 @@ const staffNurseNavigation: NavigationItem[] = [
 ];
 
 const NavigationItem = React.memo(
-	({ item, isActive }: { item: NavigationItem; isActive: boolean }) => {
+	({ item }: { item: NavigationItem}) => {
+		
 		const handleClick = (
 			e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
 		) => {
@@ -47,6 +48,8 @@ const NavigationItem = React.memo(
 				window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
 			}
 		};
+
+		const isActive = (item.href === location.pathname) || (location.pathname.startsWith("/community/") && item.href.startsWith("/community"))
 
 		return (
 			<li className="flex justify-center px-[1.3rem]">
@@ -99,11 +102,14 @@ const Sidebar = ({ userType }: SidebarProps) => {
 			<nav className="flex-1 py-4 mt-4">
 				<div className="flex flex-col space-y-[0.325rem] mb-5">
 					{navigation.map((item, index) => (
+
+						
 						<NavigationItem
-							key={index}
-							item={item}
-							isActive={location.pathname === item.href}
+						key={index}
+						item={item}
+						
 						/>
+					
 					))}
 				</div>
 			</nav>
