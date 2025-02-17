@@ -36,19 +36,13 @@ const staffNurseNavigation: NavigationItem[] = [
 	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
 ];
 
-const NavigationItem = React.memo(
-	({ item }: { item: NavigationItem}) => {
-
-		const handleClick = (
-			e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-		) => {
-			if (item.name === "튜토리얼") {
-				e.preventDefault();
-				window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
-			}
-		};
-
-
+const NavigationItem = React.memo(({ item }: { item: NavigationItem }) => {
+	const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+		if (item.name === "튜토리얼") {
+			e.preventDefault();
+			window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
+		}
+	};
 
 	const isActive =
 		item.href === location.pathname ||
