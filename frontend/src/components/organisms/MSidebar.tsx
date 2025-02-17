@@ -36,8 +36,9 @@ const staffNurseNavigation: NavigationItem[] = [
 	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
 ];
 
+
 const NavigationItem = React.memo(
-	({ item, isActive }: { item: NavigationItem; isActive: boolean }) => {
+	({ item }: { item: NavigationItem }) => {
 		const handleClick = (
 			e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
 		) => {
@@ -46,6 +47,11 @@ const NavigationItem = React.memo(
 				window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
 			}
 		};
+		
+		const isActive =
+				item.href === location.pathname ||
+				(location.pathname.startsWith("/community/") &&
+					item.href.startsWith("/community"));
 
 		return (
 			<li className="flex justify-center px-[1.3rem]">
@@ -131,7 +137,6 @@ const Sidebar = ({ userType, isOpen, onClose }: SidebarProps) => {
 							<NavigationItem
 								key={index}
 								item={item}
-								isActive={location.pathname === item.href}
 							/>
 						))}
 					</div>
