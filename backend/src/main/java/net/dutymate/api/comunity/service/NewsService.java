@@ -1,14 +1,18 @@
 package net.dutymate.api.comunity.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import net.dutymate.api.comunity.collections.News;
 import net.dutymate.api.comunity.dto.GptApiResponseDto;
 import net.dutymate.api.comunity.dto.NewsApiResponseDto;
+import net.dutymate.api.comunity.repository.NewsRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class NewsService {
+
+	private final NewsRepository newsRepository;
 
 	@Value("${naver.client.id}")
 	private String naverClientId;
@@ -33,10 +39,38 @@ public class NewsService {
 	@Value("${openai.secret-key}")
 	private String openaiSecretKey;
 
-	public List<GptApiResponseDto> getNews() throws JsonProcessingException {
+	// 매일 06:00에 실행
+	@Scheduled(cron = "0 0 6 * * *")
+	public void executeAt6AM() throws JsonProcessingException {
+		newsBatch();
+	}
+
+	// 매일 14:00에 실행
+	@Scheduled(cron = "0 0 14 * * *")
+	public void executeAt2PM() throws JsonProcessingException {
+		newsBatch();
+	}
+
+	// 매일 21:00에 실행
+	@Scheduled(cron = "0 0 21 * * *")
+	public void executeAt9PM() throws JsonProcessingException {
+		newsBatch();
+	}
+
+	public List<GptApiResponseDto> getNews() {
+		return newsRepository.findFirstByOrderByCreatedAtDesc().getNewsList();
+	}
+
+	public void newsBatch() throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(getChatGptResponse(generatePrompt()), new TypeReference<>() {
-		});
+		List<GptApiResponseDto> newsList = mapper.readValue(getChatGptResponse(generatePrompt()),
+			new TypeReference<>() {
+			});
+		newsRepository.save(News.builder()
+			.newsList(newsList)
+			.createdAt(LocalDateTime.now())
+			.build()
+		);
 	}
 
 	private NewsApiResponseDto requestNewsApi() {

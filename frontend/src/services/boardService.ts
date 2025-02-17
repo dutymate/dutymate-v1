@@ -28,6 +28,12 @@ export interface BoardRequest {
 	boardImgUrl: string;
 }
 
+export interface NewsResponse {
+	title: string;
+	description: string;
+	link: string;
+}
+
 export interface ApiErrorResponse {
 	message: string;
 	timestamp: string;
@@ -272,6 +278,29 @@ export const boardService = {
 						default:
 							throw error;
 					}
+				}
+				throw error;
+			});
+	},
+
+	/**
+	 * 뉴스 조회회
+	 * @param code - 카테고리
+	 * @param success - 성공 시 콜백 함수
+	 * @param fail - 실패 시 콜백 함수
+	 */
+	getNews: async (
+		success: (data: NewsResponse[]) => void,
+		fail: (error: ApiErrorResponse) => void,
+	) => {
+		return axiosInstance
+			.get(`/news`)
+			.then((response) => {
+				success(response.data);
+			})
+			.catch((error) => {
+				if (axios.isAxiosError(error)) {
+					fail(error.response?.data);
 				}
 				throw error;
 			});
