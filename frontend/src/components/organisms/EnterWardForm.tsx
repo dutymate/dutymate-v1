@@ -69,7 +69,7 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 
 	if (useUserAuthStore.getState().userInfo?.sentWardCode) {
 		return (
-			<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[3rem] py-[4rem] lg:py-[4rem] w-[20rem] h-[25.5rem] flex flex-col items-center justify-center">
+			<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[1.5em] py-[1.5rem] w-[20rem] sm:w-[25rem] sm:px-[2rem] sm:py-[2rem]  lg:py-[3rem] h-[25.5rem] flex flex-col items-center justify-center">
 				<div className="flex flex-col items-center text-center w-full">
 					<h1 className="text-[1.25rem] font-bold text-gray-800 mb-[0.25rem]">
 						병동 입장 대기 중입니다.
@@ -86,7 +86,7 @@ const EnterWardForm = ({ onSubmit }: EnterWardFormProps) => {
 	}
 
 	return (
-		<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[3rem] py-[4rem] w-[23rem]">
+		<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[1.5em] py-[1.5rem] w-[20rem] sm:w-[25rem] sm:px-[2rem] sm:py-[2rem] lg:px-[3rem] lg:py-[3rem]">
 			<h2 className="text-[1.5rem] font-bold text-center mb-[2rem]">
 				병동 입장하기
 			</h2>
