@@ -203,6 +203,24 @@ export const ConnectButton = ({
 	);
 };
 
+//
+export const EnterWardLogoutButton = ({
+	onClick,
+	className,
+}: {
+	onClick: () => void;
+	className?: string;
+}) => {
+	return (
+		<button
+			onClick={onClick}
+			className={`w-full lg:w-[9rem] px-[0.75rem] py-[0.5rem] bg-primary-20 text-primary hover:text-white transition-colors rounded-[0.25rem] hover:bg-primary text-[0.75rem] lg:text-[0.875rem] h-[2.1875rem] ml-[0.75rem] ${className}`}
+		>
+			로그인으로 돌아가기
+		</button>
+	);
+};
+
 // 커뮤니티 전용 버튼
 export const CommunityWriteButton = ({
 	onClick,

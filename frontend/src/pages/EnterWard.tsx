@@ -65,7 +65,9 @@ const EnterWard = () => {
 	return (
 		<Template>
 			<div className="flex flex-col items-center justify-center text-center -mt-[3vh]">
-				<div className={`${isMobile ? "" : "mt-[4rem]"}`}>
+				<div
+					className={`${isMobile ? "" : "mt-[4rem]"} flex flex-col items-center`}
+				>
 					<p className="text-[#FF8282] font-semibold text-[1.125rem] mb-[0.25rem]">
 						{userInfo?.name}님 환영합니다!
 					</p>
