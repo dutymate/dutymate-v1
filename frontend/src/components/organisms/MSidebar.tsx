@@ -36,28 +36,24 @@ const staffNurseNavigation: NavigationItem[] = [
 	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
 ];
 
+const NavigationItem = React.memo(({ item }: { item: NavigationItem }) => {
+	const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+		if (item.name === "튜토리얼") {
+			e.preventDefault();
+			window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
+		}
+	};
 
-const NavigationItem = React.memo(
-	({ item }: { item: NavigationItem }) => {
-		const handleClick = (
-			e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-		) => {
-			if (item.name === "튜토리얼") {
-				e.preventDefault();
-				window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
-			}
-		};
-		
-		const isActive =
-				item.href === location.pathname ||
-				(location.pathname.startsWith("/community/") &&
-					item.href.startsWith("/community"));
+	const isActive =
+		item.href === location.pathname ||
+		(location.pathname.startsWith("/community/") &&
+			item.href.startsWith("/community"));
 
-		return (
-			<li className="flex justify-center px-[1.3rem]">
-				<Link
-					to={item.name === "튜토리얼" ? "#" : item.href}
-					className={`
+	return (
+		<li className="flex justify-center px-[1.3rem]">
+			<Link
+				to={item.name === "튜토리얼" ? "#" : item.href}
+				className={`
 						flex items-center gap-x-3 px-4 py-2.5 w-full rounded-lg
 						text-[0.85rem] lg:text-[0.9rem] group
 						font-['Pretendard Variable']
@@ -67,21 +63,20 @@ const NavigationItem = React.memo(
 								: "text-gray-700 hover:text-primary hover:bg-primary-10"
 						}
 					`}
-					onClick={handleClick}
-				>
-					{React.createElement(item.icon, {
-						className: `w-4 h-4 min-w-4 ${
-							isActive
-								? "text-primary-dark"
-								: "text-gray-500 group-hover:text-primary"
-						}`,
-					})}
-					<span className="font-semibold">{item.name}</span>
-				</Link>
-			</li>
-		);
-	},
-);
+				onClick={handleClick}
+			>
+				{React.createElement(item.icon, {
+					className: `w-4 h-4 min-w-4 ${
+						isActive
+							? "text-primary-dark"
+							: "text-gray-500 group-hover:text-primary"
+					}`,
+				})}
+				<span className="font-semibold">{item.name}</span>
+			</Link>
+		</li>
+	);
+});
 
 interface SidebarProps {
 	userType: "HN" | "RN";
@@ -134,10 +129,7 @@ const Sidebar = ({ userType, isOpen, onClose }: SidebarProps) => {
 				<nav className="flex-1 py-4 mt-4">
 					<div className="flex flex-col space-y-[0.325rem] mb-5">
 						{navigation.map((item, index) => (
-							<NavigationItem
-								key={index}
-								item={item}
-							/>
+							<NavigationItem key={index} item={item} />
 						))}
 					</div>
 				</nav>
