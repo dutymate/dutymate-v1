@@ -3,6 +3,7 @@ package net.dutymate.api.autoschedule.service;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,7 +50,7 @@ public class AutoScheduleService {
 	private final NurseScheduler nurseScheduler;
 
 	@Transactional
-	public void generateAutoSchedule(YearMonth yearMonth, Member member) {
+	public ResponseEntity<?> generateAutoSchedule(YearMonth yearMonth, Member member) {
 
 		Long wardId = member.getWardMember().getWard().getWardId();
 		//전월 달 근무 호출
@@ -73,7 +74,8 @@ public class AutoScheduleService {
 
 		if (wardSchedule.getDuties().get(wardSchedule.getNowIdx()).getDuty().size()
 			< nurseScheduler.neededNurseCount(yearMonth, rule)) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사가 더 필요합니다.");
+			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+				.body("간호사가 더 필요합니다.");
 		}
 
 		// scheduleGenerator.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth);
@@ -98,13 +100,16 @@ public class AutoScheduleService {
 			}
 		}
 
-		String response = isChanged ? "자동 생성 완료" : "모든 조건을 만족하는 최적의 근무표입니다";
-
 		//요청 상태 관리
 		updateRequestStatuses.updateRequestStatuses(requests, updateWardSchedule, yearMonth);
 
 		wardScheduleRepository.save(updateWardSchedule);
 
+		if (!isChanged) {
+			return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+				.body("모든 조건을 만족하는 최적의 근무표입니다");
+		}
+		return ResponseEntity.ok("자동 생성 완료");
 	}
 
 }
