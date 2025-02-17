@@ -104,7 +104,7 @@ export const HistoryModal = ({
 											</span>
 										</div>
 										<div className="flex items-center gap-0.5 sm:gap-1 w-[2.2rem] sm:w-[2.8125rem]">
-										<Icon
+											<Icon
 												name={nurse.gender === "F" ? "female" : "male"}
 												size={14}
 												className="text-gray-500 flex-shrink-0"
@@ -262,14 +262,14 @@ export const NurseAssignModal = ({
 						</span>
 					</div>
 					<div className="flex items-center gap-1 w-[2.8125rem]">
-					<Icon
-												name={nurse.gender === "F" ? "female" : "male"}
-												size={14}
-												className="text-gray-500 flex-shrink-0"
-											/>
-											<span className="text-gray-600 text-sm">
-												{nurse.gender === "F" ? "여자" : "남자"}
-											</span>
+						<Icon
+							name={nurse.gender === "F" ? "female" : "male"}
+							size={14}
+							className="text-gray-500 flex-shrink-0"
+						/>
+						<span className="text-gray-600 text-sm">
+							{nurse.gender === "F" ? "여자" : "남자"}
+						</span>
 					</div>
 					<div className="flex items-center gap-1 w-[2.8125rem]">
 						<Icon
