@@ -17,6 +17,7 @@ const MypageProfile = () => {
 		deleteProfileImage,
 	} = useProfileStore();
 	const [selectedImageOption, setSelectedImageOption] = useState(0);
+	const [isAvailable, setIsAvailable] = useState(true);
 	const [formData, setFormData] = useState({
 		name: "",
 		nickname: "",
@@ -81,10 +82,11 @@ const MypageProfile = () => {
 
 			if (nickname.length > 0) {
 				try {
-					const isAvailable = await checkNickname(nickname);
+					const isAvail = await checkNickname(nickname);
+					setIsAvailable(isAvail);
 					setNicknameStatus({
-						isValid: isAvailable,
-						message: isAvailable
+						isValid: isAvail,
+						message: isAvail
 							? "사용 가능한 닉네임입니다."
 							: "이미 사용 중인 닉네임입니다.",
 					});
@@ -94,6 +96,7 @@ const MypageProfile = () => {
 						message: "닉네임 확인 중 오류가 발생했습니다.",
 					});
 				}
+				console.log(nicknameStatus);
 			} else {
 				setNicknameStatus({ isValid: null, message: "" });
 			}
@@ -282,9 +285,9 @@ const MypageProfile = () => {
 				<Button
 					type="button"
 					size="sm"
-					color="primary"
-					className="w-full lg:w-[7.5rem] h-[2.25rem]"
+					className={`w-full lg:w-[7.5rem] h-[2.25rem] ${!isAvailable ? "opacity-50 cursor-not-allowed" : ""}`}
 					onClick={handleSubmit}
+					disabled={!isAvailable}
 				>
 					저장하기
 				</Button>
