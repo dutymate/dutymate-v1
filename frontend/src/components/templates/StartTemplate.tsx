@@ -1,5 +1,7 @@
 // StartTemplate.tsx
 
+import { Link } from "react-router-dom";
+
 interface StartTemplateProps {
 	children: React.ReactNode;
 	isLoginPage?: boolean;
@@ -110,13 +112,22 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 					<div className="h-[70%] bg-base-muted-30"></div>
 					<div className="h-[30%] bg-primary-20"></div>
 				</div>
-				<div className="relative z-10 h-full flex flex-col items-center justify-center translate-y-[2vh]">
-					<img
-						src="/images/logo.svg"
-						alt="DutyMate Logo"
-						className="w-[35%] -mb-3"
-					/>
-					{children}
+
+				<div className="relative z-10 min-h-screen flex flex-col items-center justify-center">
+					<div className="w-fit flex flex-col items-center justify-center gap-2">
+						<Link
+							to={"/"}
+							className="flex items-center justify-center w-[35%] h-[35%]"
+						>
+							<img
+								src="/images/logo.svg"
+								alt="DutyMate Logo"
+								className="w-full h-full object-contain"
+							/>
+						</Link>
+
+						{children}
+					</div>
 				</div>
 			</div>
 		</div>

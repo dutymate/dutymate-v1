@@ -1,5 +1,7 @@
 // StartTemplate.tsx
 
+import { Link } from "react-router-dom";
+
 interface StartTemplateProps {
 	children: React.ReactNode;
 	isLandingPage?: boolean;
@@ -19,11 +21,16 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 						<>
 							<div className="absolute w-full top-[25%]">
 								<div className="flex justify-center">
-									<img
-										src="/images/logo.svg"
-										alt="DutyMate Logo"
-										className="w-[60%] max-w-[17.5rem]"
-									/>
+									<Link
+										to={"/"}
+										className="flex items-center justify-center w-[50%] max-w-[17.5rem] mb-[3rem]"
+									>
+										<img
+											src="/images/logo.svg"
+											alt="DutyMate Logo"
+											className="w-full h-full object-contain"
+										/>
+									</Link>
 								</div>
 							</div>
 							<div className="absolute w-full top-[40%]">
@@ -35,11 +42,16 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 						<>
 							<div className="absolute w-full top-[11%]">
 								<div className="flex justify-center">
-									<img
-										src="/images/logo.svg"
-										alt="DutyMate Logo"
-										className="w-[60%] max-w-[17.5rem]"
-									/>
+									<Link
+										to={"/"}
+										className="flex items-center justify-center w-[50%] max-w-[17.5rem] mb-[3rem]"
+									>
+										<img
+											src="/images/logo.svg"
+											alt="DutyMate Logo"
+											className="w-full h-full object-contain"
+										/>
+									</Link>
 								</div>
 							</div>
 							<div className="absolute w-full top-[22%]">
@@ -80,7 +92,16 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 					<div className="h-full bg-base-muted-30"></div>
 				</div>
 				<div className="relative z-10 h-full flex flex-col items-center justify-center translate-y-[5rem]">
-					<img alt="듀티메이트" src="/images/logo.svg" className="w-full" />
+					<Link
+						to={"/"}
+						className="flex items-center justify-center w-[60%] max-w-[17.5rem] mb-[3rem]"
+					>
+						<img
+							src="/images/logo.svg"
+							alt="DutyMate Logo"
+							className="w-full h-full object-contain"
+						/>
+					</Link>
 					{children}
 				</div>
 			</div>
