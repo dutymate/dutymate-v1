@@ -119,7 +119,7 @@ const LoginForm = () => {
 	};
 
 	return (
-		<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[1.25rem] py-[1.25rem] w-[22rem] sm:w-[25rem] sm:px-[2rem] sm:py-[2rem] lg:px-[3rem] lg:py-[3rem]">
+		<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[1.5em] py-[1.5rem] w-[20rem] sm:w-[25rem] sm:px-[2rem] sm:py-[2rem] lg:px-[3rem] lg:py-[3rem]">
 			<form className="lg:block">
 				<div className="space-y-[0.375rem] sm:space-y-[0.5rem] ">
 					<EmailInput
