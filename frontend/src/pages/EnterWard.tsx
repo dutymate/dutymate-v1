@@ -62,8 +62,6 @@ const EnterWard = () => {
 		}
 	};
 
-	useUserAuthStore.getState().userInfo?.sentWardCode
-
 	return (
 		<Template>
 			<div className="flex flex-col items-center justify-center text-center -mt-[3vh]">
