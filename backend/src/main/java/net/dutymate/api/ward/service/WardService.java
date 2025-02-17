@@ -334,9 +334,11 @@ public class WardService {
 		List<Member> newMemberList = new ArrayList<>();
 		List<WardMember> newWardMemberList = new ArrayList<>();
 
+		Integer tempNurseSeq = ward.getTempNurseSeq();
+
 		for (int newNurse = 0; newNurse < addNurseCnt; newNurse++) {
 
-			String virtualNurseName = generateTempName(ward, newNurse + 1);
+			String virtualNurseName = "간호사" + (++tempNurseSeq);
 
 			// 4. 병동 회원으로 가상 간호사 추가하기
 			Member virtualMember = Member.builder()
@@ -350,6 +352,7 @@ public class WardService {
 				.build();
 			newMemberList.add(virtualMember);
 		}
+		ward.changeTempNurseSeq(tempNurseSeq);
 		memberRepository.saveAll(newMemberList);
 
 		for (Member virtualMember : newMemberList) {

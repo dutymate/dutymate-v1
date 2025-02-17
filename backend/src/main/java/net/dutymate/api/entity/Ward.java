@@ -53,6 +53,8 @@ public class Ward {
 	@Column(length = 50)
 	private String uuid;
 
+	private Integer tempNurseSeq;
+
 	/**
 	 * 엔티티에 저장되기 전에 wardCode와 UUID 자동 생성
 	 */
@@ -70,5 +72,9 @@ public class Ward {
 
 	public void removeWardMember(WardMember wardMember) {
 		this.wardMemberList.remove(wardMember);
+	}
+
+	public void changeTempNurseSeq(Integer tempNurseSeq) {
+		this.tempNurseSeq = tempNurseSeq;
 	}
 }
