@@ -129,7 +129,9 @@ const TeamShiftTable = () => {
 			className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6"
 		>
 			<div className="flex flex-col sm:flex-row items-center justify-between mb-4">
-				<div className="w-[180px] hidden sm:block">{/* 왼쪽 여백 공간 */}</div>
+				<div className="w-[11.25rem] hidden sm:block">
+					{/* 왼쪽 여백 공간 */}
+				</div>
 				<div className="flex items-center gap-4 sm:gap-14 mb-4 sm:mb-0">
 					{/* <Icon
 						name="left"
@@ -147,12 +149,12 @@ const TeamShiftTable = () => {
 						onClick={handleNextMonth}
 					/> */}
 				</div>
-				<div className="flex gap-2 w-full sm:w-[180px] justify-center sm:justify-end shrink-0">
+				<div className="flex gap-2 w-full sm:w-[11.25rem] justify-center sm:justify-end shrink-0">
 					<Button
 						text-size="lg"
 						size="sm"
 						color="primary"
-						className="whitespace-nowrap px-3"
+						className="whitespace-nowrap px-3 w-[45%] sm:w-auto"
 						onClick={() => setIsReqModalOpen(true)}
 					>
 						근무 요청
@@ -161,25 +163,25 @@ const TeamShiftTable = () => {
 						text-size="lg"
 						size="sm"
 						color="off"
-						className="whitespace-nowrap px-3"
+						className="whitespace-nowrap px-3 w-[45%] sm:w-auto"
 						onClick={handleDownloadWardSchedule}
 					>
 						다운로드
 					</Button>
 				</div>
 			</div>
-			<div className="overflow-x-auto relative max-w-full md:max-w-none -mx-6 md:mx-0 px-6 md:px-0">
+			<div className="overflow-x-auto relative w-[calc(100vw-2rem)] sm:w-auto -mx-6 md:mx-0 px-0 md:px-0">
 				<div className="duty-table-content">
-					<table className="w-full border-separate border-spacing-0">
+					<table className="w-full border-separate border-spacing-0 rounded-lg">
 						<thead>
 							<tr className="bg-gray-50">
-								<th className="w-[120px] px-2 py-2 sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white">
-									<span className="text-gray-50"></span>
+								<th className="w-[3.75rem] lg:w-[7.5rem] px-1 lg:px-2 py-2 sticky left-0 bg-gray-50 z-20 opacity-0">
+									<span className="text-gray-50">공백</span>
 								</th>
 								{days.map((day) => (
 									<th
 										key={day}
-										className={`w-[calc((100%-120px)/31)] px-1 py-2 ${
+										className={`w-[calc((100%-7.5rem)/31)] px-1 py-2 ${
 											isWeekend(wardDuty.year, wardDuty.month, day)
 												? "text-red-500"
 												: ""
@@ -193,9 +195,9 @@ const TeamShiftTable = () => {
 						<tbody>
 							{sortedDuty.map((member) => (
 								<tr key={member.memberId} className="border-b border-gray-100">
-									<td className="w-[120px] pl-2 pr-2 py-2 font-medium sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white text-center group">
-										<div className="bg-gray-50 rounded-lg px-2 py-0.5 relative">
-											<span className="block truncate max-w-[120px]">
+									<td className="w-[3.75rem] lg:w-[7.5rem] pl-1 lg:pl-2 pr-1 lg:pr-2 py-2 font-medium sticky left-0 bg-white z-20 before:absolute before:content-[''] before:top-0 before:left-[-9999px] before:bottom-0 before:w-[9999px] before:bg-white text-center group">
+										<div className="bg-gray-50 rounded-lg px-1 lg:px-2 py-0.5 relative">
+											<span className="block truncate max-w-[3.75rem] lg:max-w-[7.5rem] text-xs lg:text-base">
 												{member.name}
 											</span>
 											{member.name.length > 3 && (
@@ -208,7 +210,7 @@ const TeamShiftTable = () => {
 									{member.shifts.split("").map((shift, index) => (
 										<td
 											key={index}
-											className="w-[calc((100%-120px)/31)] px-1 py-1.5 text-center"
+											className="w-[calc((100%-7.5rem)/31)] px-1 py-1.5 text-center"
 										>
 											<DutyBadgeEng
 												type={

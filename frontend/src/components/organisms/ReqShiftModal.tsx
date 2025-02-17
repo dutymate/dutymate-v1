@@ -95,7 +95,7 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 	};
 
 	return (
-		<div className="bg-white rounded-xl p-6 w-[400px]">
+		<div className="bg-white rounded-xl p-6 w-[23rem]">
 			<div className="flex justify-between items-center mb-6">
 				<ToggleButton
 					options={[{ text: "근무 요청하기" }, { text: "요청 내역 확인하기" }]}
@@ -153,7 +153,7 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 							placeholder="요청 사유를 입력해주세요."
 							value={memo}
 							onChange={(e) => setMemo(e.target.value)}
-							className="h-[100px]"
+							className="h-[6.25rem]"
 						/>
 					</div>
 
@@ -163,44 +163,54 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 							color="primary"
 							onClick={handleSubmit}
 							disabled={!selectedDate || !selectedDuty}
-							className="min-w-[100px] min-h-[40px]"
+							className="min-w-[6.25rem] min-h-[2.5rem]"
 						>
 							요청하기
 						</Button>
 						<Button
 							color="off"
 							onClick={onClose}
-							className="border border-gray-900 bg-white text-gray-900 min-w-[100px] min-h-[40px]"
+							className="border border-gray-900 bg-white text-gray-900 min-w-[6.25rem] min-h-[2.5rem]"
 						>
 							닫기
 						</Button>
 					</div>
 				</div>
 			) : (
-				<div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-					{requests.map((request, index) => (
-						<div key={index} className="border-b border-gray-100 pb-4">
-							<div className="flex items-center gap-4">
-								<DutyBadgeEng type={request.duty} variant="outline" size="md" />
-								<div className="flex-1">
-									<div className="flex justify-between items-center mb-2">
-										<span className="text-sm font-medium">{request.date}</span>
-										<span
-											className={`text-sm ${getStatusColor(request.status)}`}
-										>
-											{getStatusText(request.status)}
+				<div>
+					<div className="overflow-y-auto custom-scrollbar max-h-[20rem] pr-2">
+						{requests.map((request, index) => (
+							<div key={index} className="border-b border-gray-100 pb-4 mb-4">
+								<div className="flex items-center gap-4">
+									<DutyBadgeEng
+										type={request.duty}
+										variant="outline"
+										size="md"
+									/>
+									<div className="flex-1">
+										<div className="flex justify-between items-center mb-2">
+											<span className="text-sm font-medium">
+												{request.date}
+											</span>
+											<span
+												className={`text-sm ${getStatusColor(request.status)}`}
+											>
+												{getStatusText(request.status)}
+											</span>
+										</div>
+										<span className="text-sm text-gray-600">
+											{request.memo}
 										</span>
 									</div>
-									<span className="text-sm text-gray-600">{request.memo}</span>
 								</div>
 							</div>
-						</div>
-					))}
-					<div className="flex justify-center pt-4">
+						))}
+					</div>
+					<div className="flex justify-center pt-4 border-t border-gray-100">
 						<Button
 							color="off"
 							onClick={onClose}
-							className="border border-gray-900 bg-white text-gray-900 min-w-[100px] min-h-[40px]"
+							className="border border-gray-900 bg-white text-gray-900 min-w-[6.25rem] min-h-[2.5rem]"
 						>
 							닫기
 						</Button>
