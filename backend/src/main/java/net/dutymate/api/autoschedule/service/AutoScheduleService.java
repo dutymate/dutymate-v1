@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import net.dutymate.api.autoschedule.dto.AutoScheduleNurseCountResponseDto;
 import net.dutymate.api.autoschedule.util.NurseScheduler;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Request;
@@ -74,10 +75,12 @@ public class AutoScheduleService {
 
 		if (wardSchedule.getDuties().get(wardSchedule.getNowIdx()).getDuty().size()
 			< nurseScheduler.neededNurseCount(yearMonth, rule)) {
+			AutoScheduleNurseCountResponseDto responseDto = new AutoScheduleNurseCountResponseDto(
+				nurseScheduler.neededNurseCount(yearMonth, rule)
+			);
 			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
-				.body("간호사가 더 필요합니다.");
+				.body(responseDto);
 		}
-
 		// scheduleGenerator.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth);
 		Long memberId = member.getMemberId();
 
@@ -106,8 +109,7 @@ public class AutoScheduleService {
 		wardScheduleRepository.save(updateWardSchedule);
 
 		if (!isChanged) {
-			return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
-				.body("모든 조건을 만족하는 최적의 근무표입니다");
+			throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "모든 조건을 만족하는 최적의 근무표입니다.");
 		}
 		return ResponseEntity.ok("자동 생성 완료");
 	}
