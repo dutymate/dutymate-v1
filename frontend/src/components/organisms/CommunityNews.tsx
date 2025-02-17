@@ -6,7 +6,7 @@ const CommunityNews = ({}: any) => {
 
 	useEffect(() => {
 		fetchNewsies();
-	});
+	}, []);
 
 	const fetchNewsies = () =>
 		boardService.getNews(
