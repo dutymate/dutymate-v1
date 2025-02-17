@@ -39,12 +39,12 @@ const CommunityLayout = ({ title, subtitle, children }: any) => {
 
 				{/* 컨텐츠 영역 */}
 				<div className="flex-1 flex justify-center mt-6 pb-6">
-					<div className="w-full lg:w-[53rem] px-3 lg:px-8 overflow-y-auto -mt-2">
+					<div className="w-full lg:w-[53rem]  lg:px-8 overflow-y-auto">
 						{children}
 					</div>
 					{/* 광고 배너 영역 - 데스크톱에서만 표시 */}
 					<div className={`hidden lg:block w-[20rem] shrink-0 px-1 `}>
-						<div className="bg-white rounded-lg p-4 min-h-[37.5rem] sticky top-6 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
+						<div className="bg-white rounded-lg p-3 min-h-[37.5rem] sticky top-6 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
 							<h2 className="text-gray-800 font-semibold mb-4 whitespace-nowrap">
 								간호사 뉴스, 날씨
 							</h2>
