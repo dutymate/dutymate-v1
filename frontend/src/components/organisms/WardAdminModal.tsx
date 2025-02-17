@@ -94,11 +94,6 @@ export const HistoryModal = ({
 								>
 									<div className="flex items-center sm:gap-4 gap-2">
 										<div className="flex items-center gap-1 sm:gap-1.5 w-[4rem] sm:w-[5rem]">
-											<Icon
-												name="user"
-												size={1.125}
-												className="text-gray-500 flex-shrink-0"
-											/>
 											<span className="font-medium truncate text-[0.875rem]">
 												{nurse.name}
 											</span>
@@ -303,20 +298,7 @@ export const NurseAssignModal = ({
 								>
 									<div className="flex items-center gap-4">
 										<div className="flex items-center gap-1.5 w-[80px]">
-											{tempNurse.profileImg ? (
-												<img
-													src={tempNurse.profileImg}
-													alt="프로필"
-													className="w-[18px] h-[18px] rounded-full"
-												/>
-											) : (
-												<Icon
-													name="user"
-													size={18}
-													className="text-gray-500 flex-shrink-0"
-												/>
-											)}
-											<span className="font-medium truncate text-sm">
+											<span className="font-medium truncate text-sm mx-2">
 												{tempNurse.name}
 											</span>
 										</div>

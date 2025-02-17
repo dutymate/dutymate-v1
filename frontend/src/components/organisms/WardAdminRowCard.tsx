@@ -293,7 +293,12 @@ const WardAdminRowCard = ({
 			<div className="flex items-center p-1.5 lg:p-2 bg-white rounded-xl border border-gray-100">
 				<div className="flex items-center justify-between flex-1 gap-[2.5rem]">
 					<div className="flex items-center gap-[1.5rem] flex-shrink-0">
-						<div className="w-[7.5rem] pl-[0.5rem] group relative">
+						<div className="flex items-center gap-3 w-[7.5rem] pl-[0.5rem] group relative">
+							<img
+								src={nurse.profileImg}
+								alt="프로필"
+								className="w-6 h-6 rounded-full"
+							/>
 							{!nurse.isSynced && (
 								<div className="flex items-center">
 									{isEditingName ? (

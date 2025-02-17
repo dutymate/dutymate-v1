@@ -36,6 +36,7 @@ export interface Nurse {
 	memo: string;
 	/** 동기화 여부 */
 	isSynced: boolean;
+	profileImg: string;
 }
 
 /**
