@@ -28,8 +28,30 @@ resource "aws_wafv2_web_acl" "waf_web_acl" {
   }
 
   rule {
-    name     = "RateLimitRule"
+    name     = "AnonymousIpListRule"
     priority = 200
+
+    override_action {
+      count {}
+    }
+
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAnonymousIpList"
+        vendor_name = "AWS"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      sampled_requests_enabled   = true
+      metric_name                = "AnonymousIpListRule"
+    }
+  }
+
+  rule {
+    name     = "RateLimitRule"
+    priority = 300
 
     action {
       block {}
