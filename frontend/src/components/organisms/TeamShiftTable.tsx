@@ -175,7 +175,7 @@ const TeamShiftTable = () => {
 					<table className="w-full border-separate border-spacing-0 rounded-lg">
 						<thead>
 							<tr className="bg-gray-50">
-								<th className="w-[3.75rem] lg:w-[7.5rem] px-1 lg:px-2 py-2 sticky left-0 bg-gray-50 z-20 opacity-0">
+								<th className="w-[3.75rem] lg:w-[7.5rem] px-1 lg:px-2 py-2 sticky left-0 bg-gray-50 z-20 opacity-100">
 									<span className="text-gray-50">공백</span>
 								</th>
 								{days.map((day) => (
