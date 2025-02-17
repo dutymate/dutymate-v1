@@ -63,6 +63,7 @@ public class Ward {
 		this.uuid = UUID.randomUUID().toString(); // 자동 UUID 생성
 
 		this.wardMemberList = new ArrayList<>();
+		this.tempNurseSeq = 0;
 	}
 
 	// Ward 생성하는 사람을 첫 번째 병동 멤버로 추가
