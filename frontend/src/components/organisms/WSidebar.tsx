@@ -11,7 +11,6 @@ import { IoIosChatboxes } from "react-icons/io";
 import { PiLightbulbFilamentFill } from "react-icons/pi";
 import Profile from "../atoms/Profile";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 
 interface NavigationItem {
 	name: string;
@@ -44,8 +43,8 @@ const NavigationItem = React.memo(
 			e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
 		) => {
 			if (item.name === "튜토리얼") {
-				e.preventDefault(); // 🔹 링크 이동 막기
-				toast.info("준비 중입니다."); // 🔹 Toast 메시지 출력
+				e.preventDefault();
+				window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
 			}
 		};
 

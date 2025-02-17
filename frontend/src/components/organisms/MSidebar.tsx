@@ -37,32 +37,44 @@ const staffNurseNavigation: NavigationItem[] = [
 ];
 
 const NavigationItem = React.memo(
-	({ item, isActive }: { item: NavigationItem; isActive: boolean }) => (
-		<li className="flex justify-center px-[1.3rem]">
-			<Link
-				to={item.href}
-				className={`
-					flex items-center gap-x-3 px-4 py-2.5 w-full rounded-lg
-					text-[0.85rem] lg:text-[0.9rem] group
-					font-['Pretendard Variable']
-					${
-						isActive
-							? "text-primary-dark bg-primary-10"
-							: "text-gray-700 hover:text-primary hover:bg-primary-10"
-					}
-				`}
-			>
-				{React.createElement(item.icon, {
-					className: `w-4 h-4 min-w-4 ${
-						isActive
-							? "text-primary-dark"
-							: "text-gray-500 group-hover:text-primary"
-					}`,
-				})}
-				<span className="font-semibold">{item.name}</span>
-			</Link>
-		</li>
-	),
+	({ item, isActive }: { item: NavigationItem; isActive: boolean }) => {
+		const handleClick = (
+			e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+		) => {
+			if (item.name === "튜토리얼") {
+				e.preventDefault();
+				window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
+			}
+		};
+
+		return (
+			<li className="flex justify-center px-[1.3rem]">
+				<Link
+					to={item.name === "튜토리얼" ? "#" : item.href}
+					className={`
+						flex items-center gap-x-3 px-4 py-2.5 w-full rounded-lg
+						text-[0.85rem] lg:text-[0.9rem] group
+						font-['Pretendard Variable']
+						${
+							isActive
+								? "text-primary-dark bg-primary-10"
+								: "text-gray-700 hover:text-primary hover:bg-primary-10"
+						}
+					`}
+					onClick={handleClick}
+				>
+					{React.createElement(item.icon, {
+						className: `w-4 h-4 min-w-4 ${
+							isActive
+								? "text-primary-dark"
+								: "text-gray-500 group-hover:text-primary"
+						}`,
+					})}
+					<span className="font-semibold">{item.name}</span>
+				</Link>
+			</li>
+		);
+	},
 );
 
 interface SidebarProps {
