@@ -16,15 +16,13 @@ const CommunityNews = ({}: any) => {
 
 	return (
 		// {/* 광고 배너 영역 - 데스크톱에서만 표시 */}
-		<div className={`hidden lg:block w-[20rem] shrink-0 px-1`}>
+		<div className={`hidden lg:block w-[22rem] shrink-0 px-1`}>
 			<div className="bg-white rounded-lg p-3 min-h-[37.5rem] sticky top-6 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
 				{/* Title with dots */}
 				<div className="flex items-center justify-center gap-2 mb-6">
-					<div className="w-2 h-2 rounded-full bg-primary-30" />
-					<h2 className="text-primary font-semibold whitespace-nowrap">
-						Nurse News
+					<h2 className="mt-2 text-primary-dark font-semibold whitespace-nowrap">
+						오늘의 간호 NEWS
 					</h2>
-					<div className="w-2 h-2 rounded-full bg-primary-30" />
 				</div>
 
 				{/* News Cards */}
@@ -35,16 +33,16 @@ const CommunityNews = ({}: any) => {
 							href={news.link}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="block hover:transform hover:scale-[1.02] transition-transform border-2 rounded-lg"
+							className="block hover:border-primary border-2 rounded-lg"
 						>
-							<div className="rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-								<div className="bg-white p-3 border-b border-gray-100">
-									<h3 className="font-medium text-gray-800 text-sm">
+							<div className="rounded-lg overflow-hidden">
+								<div className="bg-white p-3">
+									<h3 className="font-medium text-foreground flex-1 truncate text-md">
 										{news.title}
 									</h3>
 								</div>
-								<div className="bg-primary-10 p-3">
-									<p className="text-gray-500 text-xs leading-relaxed">
+								<div className="bg-white p-3">
+									<p className="text-gray-500 text-sm leading-relaxed line-clamp-4">
 										{news.description}
 									</p>
 								</div>
