@@ -463,12 +463,7 @@ public class MemberService {
 				return;
 			}
 
-			System.out.println(
-				"1111111 = " + wardMemberRepository.existsByWard(
-					ward)); // true
-
-			System.out.println("🔥 deleteWardMemberInMongo 실행 전");
-
+			ward.removeWardMember(wardMember);
 			deleteWardMemberInMongo(member, ward);
 			member.updateRole(null);
 
