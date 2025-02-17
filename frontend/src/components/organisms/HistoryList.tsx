@@ -57,14 +57,14 @@ const HistoryList = () => {
 	};
 
 	return (
-		<div className="flex w-1/2 max-w-[600px] bg-white rounded-xl p-5 shadow-lg relative overflow-hidden">
+		<div className="flex flex-1 bg-white rounded-xl p-[1.25rem] shadow-lg relative overflow-hidden">
 			{/* 헤더 고정 */}
-			<div className="flex items-top justify-center pr-4 sticky top-0 bg-white z-10">
+			<div className="flex items-top justify-center pr-[1rem] sticky top-0 bg-white z-10">
 				<Icon name="history" size={24} className="text-gray-600" />
 			</div>
 
 			{/* 스크롤 영역 */}
-			<div className="relative h-[300px] flex-1 w-full min-w-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 hover:scrollbar-thumb-gray-500">
+			<div className="relative h-[18.75rem] flex-1 w-full min-w-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 hover:scrollbar-thumb-gray-500">
 				{sortedHistories.length === 0 ? (
 					<div className="flex items-center justify-center h-full text-gray-500">
 						수정 기록이 없습니다.
@@ -74,11 +74,13 @@ const HistoryList = () => {
 						{sortedHistories.map((item) => (
 							<div
 								key={item.idx}
-								className={`flex items-center w-full gap-3 px-2 py-1 hover:bg-gray-50 ${item.idx === selectedHistoryIdx ? "bg-gray-100" : ""}`}
+								className={`flex items-center w-full gap-[0.75rem] px-[0.5rem] py-[0.25rem] hover:bg-gray-50 ${
+									item.idx === selectedHistoryIdx ? "bg-gray-100" : ""
+								}`}
 							>
-								<div className="flex items-center gap-3 flex-1 min-w-0">
+								<div className="flex items-center gap-[0.75rem] flex-1 min-w-0">
 									<span
-										className={`px-1.5 py-0.75 rounded-md ${
+										className={`px-[0.375rem] py-[0.1875rem] rounded-md ${
 											item.isAutoCreated ? "bg-duty-off-bg" : "bg-duty-off-bg"
 										}`}
 									>
@@ -92,7 +94,7 @@ const HistoryList = () => {
 									{renderChangeIndicator(item)}
 								</div>
 								<button
-									className="flex items-center gap-1 text-gray-400 hover:text-gray-600 px-2 py-1 rounded-md hover:bg-gray-100"
+									className="flex items-center gap-[0.25rem] text-gray-400 hover:text-gray-600 px-[0.5rem] py-[0.25rem] rounded-md hover:bg-gray-100"
 									onClick={() => handleRevert(item.idx)}
 								>
 									<span className="text-sm whitespace-nowrap">돌아가기</span>

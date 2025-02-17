@@ -54,7 +54,7 @@ const DutyManagement = () => {
 	return (
 		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
 			{/* 데스크톱 Sidebar */}
-			<div className="hidden lg:block w-[238px] shrink-0">
+			<div className="hidden lg:block w-[14.875rem] shrink-0">
 				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 			</div>
 
@@ -66,16 +66,16 @@ const DutyManagement = () => {
 			/>
 
 			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 h-[calc(100vh-1rem)] lg:h-screen overflow-y-auto">
+			<div className="flex-1 min-w-0 px-[1rem] lg:px-[2rem] py-[1.5rem] h-[calc(100vh-1rem)] lg:h-screen overflow-y-auto">
 				{/* 모바일 메뉴 버튼 */}
 				<button
 					onClick={() => setIsSidebarOpen(true)}
-					className="lg:hidden mb-4 p-2 hover:bg-gray-100 rounded-lg"
+					className="lg:hidden mb-[1rem] p-[0.5rem] hover:bg-gray-100 rounded-lg"
 				>
 					<IoMdMenu className="w-6 h-6 text-gray-600" />
 				</button>
 
-				<div className="flex flex-col gap-3 pb-8">
+				<div className="flex flex-col gap-[0.75rem] pb-[2rem]">
 					<ShiftAdminTable
 						dutyData={dutyInfo.duty}
 						invalidCnt={dutyInfo.invalidCnt}
@@ -84,7 +84,7 @@ const DutyManagement = () => {
 						onUpdate={fetchDutyInfo}
 						issues={dutyInfo.issues}
 					/>
-					<div className="flex flex-col lg:flex-row gap-4 w-full">
+					<div className="flex flex-col lg:flex-row gap-[1rem] w-full">
 						<RuleCheckList />
 						<HistoryList />
 					</div>

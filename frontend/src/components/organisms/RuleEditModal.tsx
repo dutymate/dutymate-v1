@@ -154,9 +154,9 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 
 	return (
 		<div className="fixed inset-0 z-50" style={{ background: "transparent" }}>
-			<div ref={modalRef} className="bg-white rounded-xl shadow-lg w-[360px]">
+			<div ref={modalRef} className="bg-white rounded-xl shadow-lg w-[22.5rem]">
 				{/* 헤더 */}
-				<div className="flex rounded-t-xl justify-between bg-primary-bg items-center px-4 py-1 border-b">
+				<div className="flex rounded-t-xl justify-between bg-primary-bg items-center px-[1rem] py-[0.25rem] border-b">
 					<h2 className="text-sm font-medium text-primary-dark">규칙 조회</h2>
 					<button
 						onClick={onClose}
@@ -166,19 +166,19 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 					</button>
 				</div>
 
-				<div className="p-4">
+				<div className="p-[1rem]">
 					{isLoading ? (
 						/* 스켈레톤 UI */
-						<div className="space-y-2 animate-pulse">
+						<div className="space-y-[0.5rem] animate-pulse">
 							{[...Array(7)].map((_, index) => (
 								<div
 									key={index}
-									className="flex items-center justify-between py-1.5 border-b"
+									className="flex items-center justify-between py-[0.375rem] border-b"
 								>
-									<div className="h-4 bg-gray-200 rounded w-24"></div>
-									<div className="flex items-center gap-1.5">
-										<div className="h-6 bg-gray-200 rounded w-24"></div>
-										<div className="h-6 bg-gray-200 rounded w-24"></div>
+									<div className="h-[1rem] bg-gray-200 rounded w-[6rem]"></div>
+									<div className="flex items-center gap-[0.375rem]">
+										<div className="h-[1.5rem] bg-gray-200 rounded w-[6rem]"></div>
+										<div className="h-[1.5rem] bg-gray-200 rounded w-[6rem]"></div>
 									</div>
 								</div>
 							))}
@@ -186,15 +186,14 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 					) : (
 						rules && (
 							<>
-								{/* 각 규칙 행 */}
-								<div className="space-y-2">
+								<div className="space-y-[0.5rem]">
 									{/* 자동 적용 규칙 안내 */}
-									<div className="flex items-center justify-center gap-1 py-2 px-1 bg-gray-50 rounded font-bold text-xs text-primary">
+									<div className="flex items-center justify-center gap-[0.25rem] py-[0.5rem] px-[0.25rem] bg-gray-50 rounded font-bold text-xs text-primary">
 										<span>ND, ED, DN, NOD 규칙은 자동 적용됩니다.</span>
 									</div>
 
 									{/* 평일 근무자 수 */}
-									<div className="flex items-center justify-between py-1.5 border-b">
+									<div className="flex items-center justify-between py-[0.375rem] border-b">
 										<span className="text-sm text-foreground">
 											평일 근무자 수
 										</span>
@@ -319,7 +318,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 									</div>
 
 									{/* 주말 근무자 수 */}
-									<div className="flex items-center justify-between py-1.5 border-b">
+									<div className="flex items-center justify-between py-[0.375rem] border-b">
 										<span className="text-sm text-foreground">
 											주말 근무자 수
 										</span>
@@ -439,7 +438,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 									</div>
 
 									{/* 연속 근무 수 최대 */}
-									<div className="flex items-center justify-between py-1.5 border-b">
+									<div className="flex items-center justify-between py-[0.375rem] border-b">
 										<span className="text-sm text-foreground">
 											연속 근무 수 최대
 										</span>
@@ -519,7 +518,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 									</div>
 
 									{/* 나이트 연속 근무 수 최대 */}
-									<div className="flex items-center justify-between py-1.5 border-b">
+									<div className="flex items-center justify-between py-[0.375rem] border-b">
 										<span className="text-sm text-foreground">
 											나이트 연속 최대
 										</span>
@@ -596,7 +595,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 									</div>
 
 									{/* 나이트 연속 근무 수 최소 */}
-									<div className="flex items-center justify-between py-1.5 border-b">
+									<div className="flex items-center justify-between py-[0.375rem] border-b">
 										<span className="text-sm text-foreground">
 											나이트 연속 최소
 										</span>
@@ -675,7 +674,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 								</div>
 
 								{/* 저장 버튼 */}
-								<div className="flex justify-end gap-1 mt-3">
+								<div className="flex justify-end gap-[0.25rem] mt-[0.75rem]">
 									<Button
 										size="xs"
 										color="muted"

@@ -753,14 +753,14 @@ const ShiftAdminTable = ({
 	return (
 		<>
 			<div
-				className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6"
+				className="bg-white rounded-[0.92375rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] p-[1.5rem]"
 				ref={tableRef}
 			>
 				{/* 월 선택 및 버튼 영역 */}
-				<div className="bg-white rounded-xl py-2 px-2 mb-0.75">
+				<div className="bg-white rounded-xl py-[0.5rem] px-[0.5rem] mb-[0.1875rem]">
 					<div className="flex items-center justify-between">
 						<div className="flex items-center">
-							<div className="flex ml-3 items-center gap-3">
+							<div className="flex ml-[0.75rem] items-center gap-[0.75rem]">
 								<Icon
 									name="left"
 									size={16}
@@ -886,15 +886,15 @@ const ShiftAdminTable = ({
 				</div>
 
 				{/* 근무표, 통계, 완성도를 하나의 상자로 통합 */}
-				<div className="bg-white rounded-xl p-2 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+				<div className="bg-white rounded-xl p-[0.5rem] shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
 					{isLoading ? (
-						<div className="flex justify-center items-center h-[400px]">
+						<div className="flex justify-center items-center h-[25rem]">
 							<div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
 						</div>
 					) : (
 						<div className="relative">
 							<div className="overflow-x-auto">
-								<div className="min-w-[800px] duty-table-content">
+								<div className="min-w-[50rem] duty-table-content">
 									<table className="relative w-full border-collapse z-10">
 										<thead>
 											<tr className="text-xs text-gray-600 border-b border-gray-200">
