@@ -12,6 +12,9 @@ const Landing = () => {
 	const [isMobile, setIsMobile] = useState(false);
 
 	useEffect(() => {
+		// 랜딩 페이지로 접근 시, 토큰 삭제
+		sessionStorage.removeItem("user-auth-storage");
+
 		const handleResize = () => {
 			setIsMobile(window.innerWidth < 1024);
 		};
