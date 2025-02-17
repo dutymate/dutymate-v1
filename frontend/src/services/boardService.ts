@@ -147,8 +147,8 @@ export const boardService = {
 
 	/**
 	 *  게시글 삭제하기기
-	 * @param boardId
-	 * @returns
+	 * @param boardId 
+	 * @returns 
 	 */
 	deleteBoard: async (boardId: number) => {
 		return axiosInstance
@@ -175,9 +175,9 @@ export const boardService = {
 
 	/**
 	 * 댓글 작성하기기
-	 * @param contents
-	 * @param boardId
-	 * @returns
+	 * @param contents 
+	 * @param boardId 
+	 * @returns 
 	 */
 	writeComment: async (contents: string, boardId: number) => {
 		return axiosInstance
@@ -204,9 +204,9 @@ export const boardService = {
 
 	/**
 	 * 댓글 삭제하기기
-	 * @param boardId
-	 * @param commentId
-	 * @returns
+	 * @param boardId 
+	 * @param commentId 
+	 * @returns 
 	 */
 	deleteComment: async (boardId: number, commentId: number) => {
 		return axiosInstance

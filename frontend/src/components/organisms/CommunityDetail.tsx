@@ -31,7 +31,7 @@ interface CommunityDetailProps {
 		commentCnt: number;
 		viewCnt: number;
 		isMyWrite: boolean;
-		isLike: boolean;
+		isLike : boolean;
 		comments: Comment[];
 	};
 }
@@ -43,7 +43,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		null,
 	);
 	const dropdownRef = useRef<HTMLDivElement>(null);
-
+	
 	const [isLiked, setIsLiked] = useState(post.isLike);
 	const [likeCount, setLikeCount] = useState(post.likeCnt);
 	const [commentCount, setCommentCount] = useState(post.commentCnt);
@@ -68,15 +68,14 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 	}, []);
 
 	const handleLikeClick = async () => {
-		try {
-			isLiked
-				? await boardService.deleteBoardLike(post.boardId)
-				: await boardService.addBoardLike(post.boardId);
+		try{
+
+			isLiked ? await boardService.deleteBoardLike(post.boardId):await boardService.addBoardLike(post.boardId)
 			setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
 			setIsLiked(!isLiked);
-		} catch (error) {
+		}catch(error){
 			console.error(error);
-			toast.error("다시 시도해주세요.");
+			toast.error("다시 시도해주세요.")
 		}
 	};
 
