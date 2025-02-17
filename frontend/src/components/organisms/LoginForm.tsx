@@ -119,9 +119,9 @@ const LoginForm = () => {
 	};
 
 	return (
-		<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[3rem] py-[2rem] w-[22rem]">
+		<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[1.25rem] py-[1.25rem] w-[22rem] sm:w-[25rem] sm:px-[2rem] sm:py-[2rem] lg:px-[3rem] lg:py-[3rem]">
 			<form className="lg:block">
-				<div className="mt-0">
+				<div className="space-y-[0.375rem] sm:space-y-[0.5rem] ">
 					<EmailInput
 						id="email"
 						name="email"
@@ -131,8 +131,7 @@ const LoginForm = () => {
 						onChange={handleLoginChange}
 						error={error.email}
 					/>
-				</div>
-				<div className="mt-[1rem]">
+
 					<PasswordInput
 						id="password"
 						name="password"
@@ -154,25 +153,25 @@ const LoginForm = () => {
 				<div className="mt-[2rem] space-y-[0.75rem]">
 					<button
 						type="button"
-						className="w-full px-[0.75rem] py-[0.5rem] text-[0.875rem] font-medium text-[#000000] bg-[#FEE500] rounded-md hover:bg-[#FDD835] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] relative"
+						className="w-full px-[0.75rem] py-[0.6rem] sm:py-[0.5rem] text-[0.75rem] sm:text-[0.875rem] font-medium text-[#000000] bg-[#FEE500] rounded-md hover:bg-[#FDD835] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] relative"
 						onClick={handleKakaoLogin}
 					>
 						<img
 							src="/images/kakao_logo.png"
 							alt="카카오 아이콘"
-							className="w-[1rem] h-[1rem] absolute left-[0.8rem] top-1/2 transform -translate-y-1/2"
+							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] absolute left-[1.05rem] sm:left-[1.05rem] top-1/2 transform -translate-y-1/2"
 						/>
 						<span className="w-full text-center">카카오 계정으로 시작하기</span>
 					</button>
 					<button
 						type="button"
-						className="w-full px-[0.75rem] py-[0.5rem] text-[0.875rem] font-medium text-[#000000] bg-[#F2F2F2] rounded-md hover:bg-[#E6E6E6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2F2F2] relative"
+						className="w-full px-[0.75rem] py-[0.6rem] sm:py-[0.5rem] text-[0.75rem] sm:text-[0.875rem] font-medium text-[#000000] bg-[#F2F2F2] rounded-md hover:bg-[#E6E6E6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2F2F2] relative"
 						onClick={handleGoogleLogin}
 					>
 						<img
 							src="/images/google.logo.png"
 							alt="구글 아이콘"
-							className="w-[1rem] h-[1rem] absolute left-[0.8rem] top-1/2 transform -translate-y-1/2"
+							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] absolute left-[1.05rem] sm:left-[1.05rem] top-1/2 transform -translate-y-1/2"
 						/>
 						<span className="w-full text-center">구글 계정으로 시작하기</span>
 					</button>

@@ -62,7 +62,7 @@ export const Input = ({
 					</span>
 				)}
 			</div>
-			<div className={`mt-2 sm:mt-3 ${error ? "grid grid-cols-1" : ""}`}>
+			<div className={`mt-1 sm:mt-2 ${error ? "grid grid-cols-1" : ""}`}>
 				<input
 					id={id}
 					name={name}

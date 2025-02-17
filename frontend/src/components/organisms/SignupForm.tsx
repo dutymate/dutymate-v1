@@ -4,7 +4,7 @@ import { EmailInput, PasswordInput, Input } from "../atoms/Input";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import userService from "@/services/userService";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 interface SignupData {
@@ -207,7 +207,10 @@ const SignupForm = () => {
 	return (
 		<div className="bg-white rounded-[0.925rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] px-[1.25rem] py-[1.25rem] w-[22rem] sm:w-[25rem] sm:px-[2rem] sm:py-[2rem] lg:px-[3rem] lg:py-[3rem]">
 			<form onSubmit={handleSignupSubmit} className="lg:block">
-				<div className="space-y-[0.375rem] sm:space-y-[0.5rem]">
+				<span className="font-medium text-gray-900 text-base sm:text-lg">
+					회원가입
+				</span>
+				<div className="space-y-[0.25rem] sm:space-y-[0.5rem]">
 					<EmailInput
 						id="email"
 						label=""
@@ -269,7 +272,7 @@ const SignupForm = () => {
 				<div className="mt-[0.75rem] sm:mt-[1rem] space-y-[0.375rem] sm:space-y-[0.5rem]">
 					<button
 						type="submit"
-						className="w-full px-[0.75rem] py-[0.6rem] sm:py-[0.5rem] text-[0.75rem] sm:text-[0.875rem] font-medium text-white bg-base-black rounded-md hover:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-base-black"
+						className="w-full px-[0.75rem] py-[0.6rem] sm:py-[0.5rem] text-[0.75rem] sm:text-[0.875rem] font-medium text-white bg-base-black rounded-md hover:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-base-black font-bold"
 					>
 						회원가입
 					</button>
@@ -306,6 +309,12 @@ const SignupForm = () => {
 					</button>
 				</div>
 			</form>
+			<div className="text-center mt-[1rem]">
+				<span className="text-gray-600">이미 계정이 있으신가요? </span>
+				<Link to="/login" className="text-primary-dark hover:underline">
+					로그인
+				</Link>
+			</div>
 		</div>
 	);
 };
