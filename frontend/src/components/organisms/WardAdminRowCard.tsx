@@ -29,7 +29,7 @@ const WardAdminRowCard = ({
 
 	const [openSkillDropdown, setOpenSkillDropdown] = useState(false);
 	const [isEditingMemo, setIsEditingMemo] = useState(false);
-	const [memo, setMemo] = useState(nurse.memo);
+	const [memo, setMemo] = useState(nurse.memo ?? "");
 	const memoInputRef = useRef<HTMLInputElement>(null);
 	const { removeNurse, updateVirtualNurseName, updateVirtualNurseInfo } =
 		useWardStore();
@@ -175,6 +175,11 @@ const WardAdminRowCard = ({
 
 	// 메모 수정 완료 핸들러
 	const handleMemoComplete = () => {
+		if (!memo) {
+			setIsEditingMemo(false);
+			return;
+		}
+
 		if (memo.length > 50) {
 			toast.error("메모는 최대 50자까지 작성 가능합니다.");
 			return;
@@ -293,7 +298,7 @@ const WardAdminRowCard = ({
 			<div className="flex items-center p-1.5 lg:p-2 bg-white rounded-xl border border-gray-100">
 				<div className="flex items-center justify-between flex-1 gap-[2.5rem]">
 					<div className="flex items-center gap-[1.5rem] flex-shrink-0">
-						<div className="flex items-center gap-3 w-[7.5rem] pl-[0.5rem] group relative">
+						<div className="flex items-center gap-3 w-[9rem] pl-[0.5rem] group relative">
 							<img
 								src={nurse.profileImg}
 								alt="프로필"

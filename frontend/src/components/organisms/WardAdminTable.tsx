@@ -54,7 +54,7 @@ const WardAdminTable = ({}: WardAdminTableProps) => {
 							/> */}
 							<div className="flex items-center justify-between flex-1 gap-[2.5rem]">
 								<div className="flex items-center gap-[1.5rem] flex-shrink-0">
-									<div className="w-[7.5rem] pl-[3rem]">이름</div>
+									<div className="w-[9rem] pl-[5rem]">이름</div>
 									<div className="w-[3.75rem] text-center">직위</div>
 									<div className="w-[3.75rem] text-center">성별</div>
 									<div className="w-[4.375rem] pl-[1.7rem]">경력</div>
