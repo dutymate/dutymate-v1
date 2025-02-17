@@ -53,6 +53,7 @@ public class WardInfoResponseDto {
 		private SkillLevel skillLevel;
 		private String memo;
 		private Boolean isSynced;
+		private String profileImg;
 
 		public static Nurse of(WardMember wardMember) {
 			Member member = wardMember.getMember();
@@ -66,6 +67,7 @@ public class WardInfoResponseDto {
 				.skillLevel(wardMember.getSkillLevel())
 				.memo(wardMember.getMemo())
 				.isSynced(wardMember.getIsSynced())
+				.profileImg(member.getProfileImg())
 				.build();
 		}
 	}
