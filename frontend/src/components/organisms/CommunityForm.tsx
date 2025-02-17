@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 // import { Button } from "../atoms/Button";
 import { Icon } from "../atoms/Icon";
 import CommunityCategories from "./CommunityCategories";
@@ -13,9 +13,18 @@ interface CommunityFormProps {
 }
 
 const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
-	const [selectedCategory, setSelectedCategory] = useState("ALL");
 	const [posts, setPosts] = useState<AllPostResponse[]>([]);
-	const location = useLocation();
+	// const location = useLocation();
+	// const navigate = useNavigate();
+	
+	const [searchParams, setSearchParams] = useSearchParams();
+	const category = searchParams.get("category") || "ALL";
+	const [selectedCategory, setSelectedCategory] = useState(category);
+
+	const handleCategoryChange = (category : string) => {
+		setSelectedCategory(category);
+		setSearchParams({category});
+	}
 
 	// 컴포넌트 마운트 시 상단으로 스크롤
 	useEffect(() => {
@@ -28,8 +37,9 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 
 	useEffect(() => {
 		// location이 변경될 때마다 카테고리를 기본값으로 리셋
-		fetchPosts(selectedCategory);
-	}, [location.pathname]);
+		setSelectedCategory(category)
+		fetchPosts(category);
+	}, [category]);
 
 	const fetchPosts = (category: string) =>
 		boardService.getAllPosts(
@@ -74,7 +84,7 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 				<div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 lg:gap-0 mb-6">
 					<div className="overflow-x-auto">
 						<CommunityCategories
-							onCategorySelect={setSelectedCategory}
+							onCategorySelect={handleCategoryChange}
 							selectedCategory={selectedCategory}
 						/>
 					</div>

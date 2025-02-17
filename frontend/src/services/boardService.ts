@@ -145,6 +145,11 @@ export const boardService = {
 			});
 	},
 
+	/**
+	 *  게시글 삭제하기기
+	 * @param boardId 
+	 * @returns 
+	 */
 	deleteBoard: async (boardId: number) => {
 		return axiosInstance
 			.delete(`/board/${boardId}`)
@@ -168,6 +173,12 @@ export const boardService = {
 			});
 	},
 
+	/**
+	 * 댓글 작성하기기
+	 * @param contents 
+	 * @param boardId 
+	 * @returns 
+	 */
 	writeComment: async (contents: string, boardId: number) => {
 		return axiosInstance
 			.post(`/board/${boardId}/comment`, { content: contents })
@@ -191,9 +202,61 @@ export const boardService = {
 			});
 	},
 
+	/**
+	 * 댓글 삭제하기기
+	 * @param boardId 
+	 * @param commentId 
+	 * @returns 
+	 */
 	deleteComment: async (boardId: number, commentId: number) => {
 		return axiosInstance
 			.delete(`/board/${boardId}/comment/${commentId}`)
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (axios.isAxiosError(error)) {
+					throw error.response?.data;
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	addBoardLike: async (boardId: number) => {
+		return axiosInstance
+			.post(`/board/${boardId}/like`)
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (axios.isAxiosError(error)) {
+					throw error.response?.data;
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
+	deleteBoardLike: async (boardId: number) => {
+		return axiosInstance
+			.delete(`/board/${boardId}/like`)
 			.then((response) => {
 				return response.data;
 			})

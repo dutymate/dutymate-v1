@@ -435,9 +435,6 @@ export const wardService = {
 		enterMemberId: number,
 		tempMemberId: { tempMemberId: number },
 	) => {
-		console.log("enterMemberId :>> ", enterMemberId);
-		console.log("tempMemberId :>> ", tempMemberId);
-
 		return axiosInstance
 			.post(`/ward/member/${enterMemberId}/link`, { tempMemberId })
 			.then((response) => response.data)
