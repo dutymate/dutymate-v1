@@ -177,6 +177,7 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 				isOpen={isTempModalOpen}
 				onClose={() => setIsTempModalOpen(false)}
 				onConfirm={handleTempNurseAdd}
+				currentNurseCount={wardInfo.nursesTotalCnt}
 			/>
 		</div>
 	);

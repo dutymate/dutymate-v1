@@ -23,6 +23,7 @@ import {
 	getMaxAllowedMonth,
 	isHoliday,
 } from "../../utils/dateUtils";
+import NurseCountModal from "./NurseCountModal";
 
 // 근무표 관리자 테이블의 props 인터페이스
 interface ShiftAdminTableProps {
@@ -40,7 +41,7 @@ interface ShiftAdminTableProps {
 	onUpdate: (year: number, month: number, historyIdx?: number) => Promise<void>; // 업데이트 핸들러
 	issues: {
 		// 근무표 문제점 목록
-		name: string;
+		memberId: number; // name 대신 memberId 사용
 		startDate: number;
 		endDate: number;
 		endDateShift: string;
@@ -593,21 +594,19 @@ const ShiftAdminTable = ({
 	};
 
 	const navigate = useNavigate();
-	// Modify handleAutoCreate to prevent full page reload and show toast if already in progress
 	const handleAutoCreate = async () => {
 		if (isAutoCreating) {
 			toast.warning("이미 자동생성 중입니다.", {
 				position: "top-center",
 				autoClose: 2000,
 			});
-
 			return;
 		}
 
 		// 총 간호사 수 확인
-		if (nurses.length < 10) {
+		if (nurses.length < 5) {
 			const confirmed = window.confirm(
-				"해당 기능 최소 인원은 10명입니다. 임시 간호사를 추가해주세요.",
+				"해당 기능 최소 인원은 5명입니다. 임시 간호사를 추가해주세요.",
 			);
 			if (confirmed) {
 				navigate("/ward-admin");
@@ -621,15 +620,11 @@ const ShiftAdminTable = ({
 			const loadingToast = toast.loading("근무표에 마침표를 찍고 있습니다...", {
 				position: "top-center",
 			});
-			// setIsAutoSpinnerOpen(true);
 
 			// API 호출
-			const data = await dutyService.autoCreateDuty(year, month);
+			await dutyService.autoCreateDuty(year, month);
 
-			// 받아온 데이터로 직접 상태 업데이트
-			useShiftStore.getState().setDutyInfo(data);
-
-			// onUpdate 함수 호출하여 화면 갱신
+			// 화면 갱신 (이것이 올바른 /duty 엔드포인트를 사용)
 			await onUpdate(year, month);
 
 			// 성공 알림
@@ -640,16 +635,49 @@ const ShiftAdminTable = ({
 				autoClose: 2000,
 				position: "top-center",
 			});
+		} catch (error: any) {
+			// 로딩 토스트 제거
+			toast.dismiss();
 
-			// toast.success("자동생성에 성공했습니다");
-			// setIsAutoSpinnerOpen(false)
-		} catch (error) {
-			// setIsAutoSpinnerOpen(false)
-			// 실패 알림
-			toast.error("자동생성에 실패했습니다", {
-				position: "top-center",
-				autoClose: 2000,
-			});
+			if (error.response) {
+				switch (error.response.status) {
+					case 401:
+						toast.error("로그인이 필요합니다.", {
+							position: "top-center",
+							autoClose: 2000,
+						});
+						window.location.href = "/login";
+						break;
+					case 400:
+						toast.error("근무 일정을 찾을 수 없습니다.", {
+							position: "top-center",
+							autoClose: 2000,
+						});
+						break;
+					case 406:
+						// 모든 토스트 메시지 제거
+						const neededNurseCount = error.response.data.neededNurseCount;
+						setNeededNurseCount(neededNurseCount);
+						setIsNurseCountModalOpen(true);
+						break;
+					case 405:
+						toast.info("모든 조건을 만족하는 최적의 근무표입니다.", {
+							position: "top-center",
+							autoClose: 2000,
+						});
+						break;
+					default:
+						toast.error("자동생성에 실패했습니다", {
+							position: "top-center",
+							autoClose: 2000,
+						});
+				}
+			} else {
+				toast.error("자동생성에 실패했습니다", {
+					position: "top-center",
+					autoClose: 2000,
+				});
+			}
 		} finally {
 			setIsAutoCreating(false);
 		}
@@ -719,381 +747,427 @@ const ShiftAdminTable = ({
 		fetchRequests();
 	}, []);
 
+	const [isNurseCountModalOpen, setIsNurseCountModalOpen] = useState(false);
+	const [neededNurseCount, setNeededNurseCount] = useState(0);
+
 	return (
-		<div
-			className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6"
-			ref={tableRef}
-		>
-			{/* 월 선택 및 버튼 영역 */}
-			<div className="bg-white rounded-xl py-2 px-2 mb-0.75">
-				<div className="flex items-center justify-between">
-					<div className="flex items-center">
-						<div className="flex ml-3 items-center gap-3">
-							<Icon
-								name="left"
-								size={16}
-								className="cursor-pointer text-gray-600 hover:text-gray-800"
-								onClick={handlePrevMonth}
-							/>
-							<span className="text-lg font-medium">{month}월</span>
-							<Icon
-								name="right"
-								size={16}
-								className="cursor-pointer text-gray-600 hover:text-gray-800"
-								onClick={handleNextMonth}
-							/>
-							<div className="flex items-center gap-2 ml-1">
-								<span className="text-[11px] sm:text-xs text-gray-400">
-									기본 OFF
-								</span>
-								<span className="text-[12px] sm:text-sm font-bold text-black">
-									{getDefaultOffDays(year, month)}
-								</span>
-								<span className="text-foreground">일</span>
-							</div>
-							<div>
-								<button
-									className={`flex items-center gap-1 text-gray-400 hover:text-gray-600 px-2 py-1 rounded-md ${
-										isAllCellsEmpty
-											? "opacity-50 cursor-not-allowed hover:bg-transparent hover:text-gray-400"
-											: "hover:bg-gray-100"
-									}`}
-									onClick={handleResetDuty}
-								>
-									<Icon name="reset" size={16} />
-									<span className="text-sm whitespace-nowrap">초기화</span>
-								</button>
+		<>
+			<div
+				className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6"
+				ref={tableRef}
+			>
+				{/* 월 선택 및 버튼 영역 */}
+				<div className="bg-white rounded-xl py-2 px-2 mb-0.75">
+					<div className="flex items-center justify-between">
+						<div className="flex items-center">
+							<div className="flex ml-3 items-center gap-3">
+								<Icon
+									name="left"
+									size={16}
+									className="cursor-pointer text-gray-600 hover:text-gray-800"
+									onClick={handlePrevMonth}
+								/>
+								<span className="text-lg font-medium">{month}월</span>
+								<Icon
+									name="right"
+									size={16}
+									className="cursor-pointer text-gray-600 hover:text-gray-800"
+									onClick={handleNextMonth}
+								/>
+								<div className="flex items-center gap-2 ml-1">
+									<span className="text-[11px] sm:text-xs text-gray-400">
+										기본 OFF
+									</span>
+									<span className="text-[12px] sm:text-sm font-bold text-black">
+										{getDefaultOffDays(year, month)}
+									</span>
+									<span className="text-foreground">일</span>
+								</div>
+								<div>
+									<button
+										className={`flex items-center gap-1 text-gray-400 hover:text-gray-600 px-2 py-1 rounded-md ${
+											isAllCellsEmpty
+												? "opacity-50 cursor-not-allowed hover:bg-transparent hover:text-gray-400"
+												: "hover:bg-gray-100"
+										}`}
+										onClick={handleResetDuty}
+									>
+										<Icon name="reset" size={16} />
+										<span className="text-sm whitespace-nowrap">초기화</span>
+									</button>
+								</div>
 							</div>
 						</div>
-					</div>
-					{/* 버튼 영역 */}
-					<div className="flex gap-1 sm:gap-2 items-center">
-						<div className="flex items-center gap-2 relative group">
+						{/* 버튼 영역 */}
+						<div className="flex gap-1 sm:gap-2 items-center">
+							<div className="flex items-center gap-2 relative group">
+								<Button
+									text-size="md"
+									size="register"
+									color="off"
+									className="py-0.5 px-1.5 sm:py-1 sm:px-2"
+								>
+									<div className="flex items-center gap-1 relative group">
+										<span>키보드 가이드</span>
+									</div>
+								</Button>
+
+								{/* 호버 시 나타나는 가이드 */}
+								<div className="absolute z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 top-full left-0 mt-2">
+									<KeyboardGuide />
+								</div>
+							</div>
+							<div className="h-6 w-[1px] bg-gray-200 mx-1" />
+							<Button
+								ref={ruleButtonRef}
+								size="register"
+								color="primary"
+								className="py-0.5 px-1.5 sm:py-1 sm:px-2"
+								onClick={() => setIsRuleModalOpen(true)}
+							>
+								규칙 조회
+							</Button>
+							<div className="flex items-center gap-1">
+								<Button
+									text-size="md"
+									size="register"
+									color="evening"
+									className="py-0.5 px-1.5 sm:py-1 sm:px-2 flex items-center gap-2 group"
+									onClick={handleAutoCreate}
+								>
+									자동 생성
+									<Tooltip
+										content={
+											<div className="text-left space-y-1.5">
+												<p>
+													근무표는 다음 조건들을 고려하여 자동으로 생성됩니다:
+												</p>
+												<ul className="list-disc pl-4 space-y-1">
+													<li>주중/주말별 필요 최소 인원</li>
+													<li>근무표 규칙</li>
+													<li>개인별 근무 요청</li>
+													<li>간호사 간 균등한 근무 배분</li>
+													<li>지난 달 말일 근무 고려</li>
+												</ul>
+												<p className="mt-2 text-gray-300">
+													*숙련도 반영과 전담 근무는 개발 중입니다.
+													<br />* 커스텀 규칙 생성 기능은 개발 중입니다.
+													<br />
+													*완성도 100%일 시 새로운 근무표가 생성되지 않을 수
+													있습니다.
+													<br />
+													*변경이 필요한 칸을 X로 눌러 자동생성을 재실행하는
+													것을 추천드립니다.
+												</p>
+											</div>
+										}
+										className="ml-1"
+										width="w-96"
+										icon={{
+											name: "alert",
+											size: 16,
+											className:
+												"text-duty-evening group-hover:text-white transition-colors cursor-help",
+										}}
+									/>
+								</Button>
+							</div>
 							<Button
 								text-size="md"
 								size="register"
 								color="off"
 								className="py-0.5 px-1.5 sm:py-1 sm:px-2"
+								onClick={handleDownloadWardSchedule}
 							>
-								<div className="flex items-center gap-1 relative group">
-									<span>키보드 가이드</span>
-								</div>
-							</Button>
-
-							{/* 호버 시 나타나는 가이드 */}
-							<div className="absolute z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 top-full left-0 mt-2">
-								<KeyboardGuide />
-							</div>
-						</div>
-						<div className="h-6 w-[1px] bg-gray-200 mx-1" />
-						<Button
-							ref={ruleButtonRef}
-							size="register"
-							color="primary"
-							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
-							onClick={() => setIsRuleModalOpen(true)}
-						>
-							규칙 조회
-						</Button>
-						<div className="flex items-center gap-1">
-							<Button
-								text-size="md"
-								size="register"
-								color="evening"
-								className="py-0.5 px-1.5 sm:py-1 sm:px-2 flex items-center gap-2 group"
-								onClick={handleAutoCreate}
-							>
-								자동 생성
-								<Tooltip
-									content={
-										<div className="text-left space-y-1.5">
-											<p>
-												근무표는 다음 조건들을 고려하여 자동으로 생성됩니다:
-											</p>
-											<ul className="list-disc pl-4 space-y-1">
-												<li>주중/주말별 필요 최소 인원</li>
-												<li>근무표 규칙</li>
-												<li>개인별 근무 요청</li>
-												<li>간호사 간 균등한 근무 배분</li>
-												<li>지난 달 말일 근무 고려</li>
-											</ul>
-											<p className="mt-2 text-gray-300">
-												완성도 100%일 시 새로운 근무표가 생성되지 않을 수
-												있습니다.
-												<br />
-												변경이 필요한 칸을 X로 눌러 자동생성을 재실행하는 것을
-												추천드립니다.
-											</p>
-										</div>
-									}
-									className="ml-1"
-									width="w-96"
-									icon={{
-										name: "alert",
-										size: 16,
-										className:
-											"text-duty-evening group-hover:text-white transition-colors cursor-help",
-									}}
-								/>
+								다운로드
 							</Button>
 						</div>
-						<Button
-							text-size="md"
-							size="register"
-							color="off"
-							className="py-0.5 px-1.5 sm:py-1 sm:px-2"
-							onClick={handleDownloadWardSchedule}
-						>
-							다운로드
-						</Button>
 					</div>
 				</div>
-			</div>
 
-			{/* 근무표, 통계, 완성도를 하나의 상자로 통합 */}
-			<div className="bg-white rounded-xl p-2 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-				{isLoading ? (
-					<div className="flex justify-center items-center h-[400px]">
-						<div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-					</div>
-				) : (
-					<div className="relative">
-						<div className="overflow-x-auto">
-							<div className="min-w-[800px] duty-table-content">
-								<table className="relative w-full border-collapse z-10">
-									<thead>
-										<tr className="text-xs text-gray-600 border-b border-gray-200">
-											<th className="p-0 text-center w-[90px] sm:w-24 border-r border-gray-200">
-												<span className="block text-xs sm:text-sm px-0.5">
-													이름
-												</span>
-											</th>
-											<th className="p-0 text-center w-[90px] sm:w-24 border-r border-gray-200">
-												<span className="block text-xs sm:text-sm px-0.5">
-													이전 근무
-												</span>
-											</th>
-											{Array.from({ length: daysInMonth }, (_, i) => {
-												const day = i + 1;
-												return (
-													<th
-														key={i}
-														className={`p-0 text-center w-10 border-r border-gray-200 ${
-															isHolidayDay(day) ? "text-red-500" : ""
-														}`}
-													>
-														{day}
-													</th>
-												);
-											})}
-											<th className="p-0 text-center w-7 border-r border-gray-200">
-												<div className="flex items-center justify-center">
-													<div className="scale-[0.65]">
-														<DutyBadgeEng type="D" size="sm" variant="filled" />
-													</div>
-												</div>
-											</th>
-											<th className="p-0 text-center w-7 border-r border-gray-200">
-												<div className="flex items-center justify-center">
-													<div className="scale-[0.65]">
-														<DutyBadgeEng type="E" size="sm" variant="filled" />
-													</div>
-												</div>
-											</th>
-											<th className="p-0 text-center w-7 border-r border-gray-200">
-												<div className="flex items-center justify-center">
-													<div className="scale-[0.65]">
-														<DutyBadgeEng type="N" size="sm" variant="filled" />
-													</div>
-												</div>
-											</th>
-											<th className="p-0 text-center w-7 border-r border-gray-200">
-												<div className="flex items-center justify-center">
-													<div className="scale-[0.65]">
-														<DutyBadgeEng type="O" size="sm" variant="filled" />
-													</div>
-												</div>
-											</th>
-										</tr>
-									</thead>
-									<tbody>
-										{nurses.map((name, i) => (
-											<tr
-												key={i}
-												className="h-8 border-b border-gray-200 group"
-											>
-												<td
-													className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, -2)}`}
-												>
-													<span className="block text-xs sm:text-sm whitespace-nowrap overflow-hidden text-ellipsis">
-														{name}
+				{/* 근무표, 통계, 완성도를 하나의 상자로 통합 */}
+				<div className="bg-white rounded-xl p-2 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+					{isLoading ? (
+						<div className="flex justify-center items-center h-[400px]">
+							<div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+						</div>
+					) : (
+						<div className="relative">
+							<div className="overflow-x-auto">
+								<div className="min-w-[800px] duty-table-content">
+									<table className="relative w-full border-collapse z-10">
+										<thead>
+											<tr className="text-xs text-gray-600 border-b border-gray-200">
+												<th className="p-0 text-center w-[90px] sm:w-24 border-r border-gray-200">
+													<span className="block text-xs sm:text-sm px-0.5">
+														이름
 													</span>
-												</td>
-												<td
-													className={`p-0 border-r border-gray-200 ${isHighlighted(i, -1)}`}
-												>
-													<div className="flex justify-center -space-x-1.5">
-														{prevShifts[i].map((shift, index) => (
-															<div key={index} className="scale-[0.65]">
-																<DutyBadgeEng
-																	type={
-																		shift as "X" | "D" | "E" | "N" | "O" | "ALL"
-																	}
-																	size="sm"
-																	isSelected={false}
-																/>
-															</div>
-														))}
-													</div>
-												</td>
-												{Array.from({ length: daysInMonth }, (_, dayIndex) => {
-													if (!duties[i] || !duties[i][dayIndex]) return null;
-
-													const violations = issues.filter(
-														(issue) =>
-															issue.name === nurses[i] &&
-															dayIndex + 1 >= issue.startDate &&
-															dayIndex + 1 <= issue.endDate,
-													);
-
-													const requestStatus = requests.find((request) => {
-														const requestDate = new Date(request.date);
-														return (
-															requestDate.getFullYear() === year &&
-															requestDate.getMonth() + 1 === month &&
-															requestDate.getDate() === dayIndex + 1 &&
-															request.name === nurses[i]
-														);
-													});
-
+												</th>
+												<th className="p-0 text-center w-[90px] sm:w-24 border-r border-gray-200">
+													<span className="block text-xs sm:text-sm px-0.5">
+														이전 근무
+													</span>
+												</th>
+												{Array.from({ length: daysInMonth }, (_, i) => {
+													const day = i + 1;
 													return (
-														<DutyCell
-															key={dayIndex}
-															nurse={name}
-															dayIndex={dayIndex}
-															duty={duties[i][dayIndex] || "X"}
-															isSelected={
-																selectedCell?.row === i &&
-																selectedCell?.col === dayIndex
-															}
-															violations={violations}
-															requestStatus={requestStatus}
-															isHovered={
-																hoveredCell?.row === i &&
-																hoveredCell?.day === dayIndex
-															}
-															onClick={() => handleCellClick(i, dayIndex)}
-															onMouseEnter={() =>
-																setHoveredCell({ row: i, day: dayIndex })
-															}
-															onMouseLeave={() => setHoveredCell(null)}
-															highlightClass={isHighlighted(i, dayIndex)}
-														/>
-													);
-												})}
-												<td
-													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 31)}`}
-												>
-													{nurseDutyCounts[i]?.D || 0}
-												</td>
-												<td
-													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 32)}`}
-												>
-													{nurseDutyCounts[i]?.E || 0}
-												</td>
-												<td
-													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 33)}`}
-												>
-													{nurseDutyCounts[i]?.N || 0}
-												</td>
-												<td
-													className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 34)}`}
-												>
-													{nurseDutyCounts[i]?.O || 0}
-												</td>
-											</tr>
-										))}
-									</tbody>
-									{/* 통계 행들을 같은 테이블에 직접 추가 */}
-									<tbody>
-										{["DAY", "EVENING", "NIGHT", "OFF", "TOTAL"].map(
-											(text, i) => (
-												<tr
-													key={`empty-${i}`}
-													className="text-[10px] h-6 border-b border-gray-200"
-												>
-													<td
-														colSpan={2}
-														className={`p-0 font-bold text-[11px] border-r border-gray-200 ${
-															i === 0
-																? "text-[#318F3D]"
-																: i === 1
-																	? "text-[#E55656]"
-																	: i === 2
-																		? "text-[#532FC8]"
-																		: i === 3
-																			? "text-[#726F5A]"
-																			: "text-black"
-														}`}
-													>
-														<div className="flex items-center justify-center">
-															{text}
-														</div>
-													</td>
-													{Array.from({ length: daysInMonth }, (_, j) => (
-														<td
-															key={j}
-															className={`p-0 text-center text-[11px] border-r border-gray-200 ${
-																selectedCell?.col === j ? "bg-duty-off-bg" : ""
+														<th
+															key={i}
+															className={`p-0 text-center w-10 border-r border-gray-200 ${
+																isHolidayDay(day) ? "text-red-500" : ""
 															}`}
 														>
-															<div className="flex items-center justify-center h-6">
-																{i === 0 && dutyCounts[j].D}
-																{i === 1 && dutyCounts[j].E}
-																{i === 2 && dutyCounts[j].N}
-																{i === 3 && dutyCounts[j].O}
-																{i === 4 && dutyCounts[j].total}
-															</div>
-														</td>
-													))}
-													{/* 각 행의 마지막 4개 열을 차지하는 셀 */}
-													{i === 0 && (
-														<td
-															rowSpan={5}
-															colSpan={4}
-															className="p-0 border-r border-gray-200"
-														>
-															<div className="flex justify-center items-center h-full">
-																<div className="scale-[0.85]">
-																	<ProgressChecker
-																		value={progress}
-																		size={80}
-																		strokeWidth={4}
-																		showLabel={true}
+															{day}
+														</th>
+													);
+												})}
+												<th className="p-0 text-center w-7 border-r border-gray-200">
+													<div className="flex items-center justify-center">
+														<div className="scale-[0.65]">
+															<DutyBadgeEng
+																type="D"
+																size="sm"
+																variant="filled"
+															/>
+														</div>
+													</div>
+												</th>
+												<th className="p-0 text-center w-7 border-r border-gray-200">
+													<div className="flex items-center justify-center">
+														<div className="scale-[0.65]">
+															<DutyBadgeEng
+																type="E"
+																size="sm"
+																variant="filled"
+															/>
+														</div>
+													</div>
+												</th>
+												<th className="p-0 text-center w-7 border-r border-gray-200">
+													<div className="flex items-center justify-center">
+														<div className="scale-[0.65]">
+															<DutyBadgeEng
+																type="N"
+																size="sm"
+																variant="filled"
+															/>
+														</div>
+													</div>
+												</th>
+												<th className="p-0 text-center w-7 border-r border-gray-200">
+													<div className="flex items-center justify-center">
+														<div className="scale-[0.65]">
+															<DutyBadgeEng
+																type="O"
+																size="sm"
+																variant="filled"
+															/>
+														</div>
+													</div>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											{nurses.map((name, i) => (
+												<tr
+													key={i}
+													className="h-8 border-b border-gray-200 group"
+												>
+													<td
+														className={`p-0 text-center border-r border-gray-200 ${isHighlighted(i, -2)}`}
+													>
+														<span className="block text-xs sm:text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+															{name}
+														</span>
+													</td>
+													<td
+														className={`p-0 border-r border-gray-200 ${isHighlighted(i, -1)}`}
+													>
+														<div className="flex justify-center -space-x-1.5">
+															{prevShifts[i].map((shift, index) => (
+																<div key={index} className="scale-[0.65]">
+																	<DutyBadgeEng
+																		type={
+																			shift as
+																				| "X"
+																				| "D"
+																				| "E"
+																				| "N"
+																				| "O"
+																				| "ALL"
+																		}
+																		size="sm"
+																		isSelected={false}
 																	/>
 																</div>
+															))}
+														</div>
+													</td>
+													{Array.from(
+														{ length: daysInMonth },
+														(_, dayIndex) => {
+															if (!duties[i] || !duties[i][dayIndex])
+																return null;
+
+															const violations = issues.filter(
+																(issue) =>
+																	issue.memberId === dutyData[i].memberId &&
+																	dayIndex + 1 >= issue.startDate &&
+																	dayIndex + 1 <= issue.endDate,
+															);
+
+															const requestStatus = requests.find((request) => {
+																const requestDate = new Date(request.date);
+																return (
+																	requestDate.getFullYear() === year &&
+																	requestDate.getMonth() + 1 === month &&
+																	requestDate.getDate() === dayIndex + 1 &&
+																	request.name === nurses[i]
+																);
+															});
+
+															return (
+																<DutyCell
+																	key={dayIndex}
+																	nurse={name}
+																	dayIndex={dayIndex}
+																	duty={duties[i][dayIndex] || "X"}
+																	isSelected={
+																		selectedCell?.row === i &&
+																		selectedCell?.col === dayIndex
+																	}
+																	violations={violations}
+																	requestStatus={requestStatus}
+																	isHovered={
+																		hoveredCell?.row === i &&
+																		hoveredCell?.day === dayIndex
+																	}
+																	onClick={() => handleCellClick(i, dayIndex)}
+																	onMouseEnter={() =>
+																		setHoveredCell({ row: i, day: dayIndex })
+																	}
+																	onMouseLeave={() => setHoveredCell(null)}
+																	highlightClass={isHighlighted(i, dayIndex)}
+																/>
+															);
+														},
+													)}
+													<td
+														className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 31)}`}
+													>
+														{nurseDutyCounts[i]?.D || 0}
+													</td>
+													<td
+														className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 32)}`}
+													>
+														{nurseDutyCounts[i]?.E || 0}
+													</td>
+													<td
+														className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 33)}`}
+													>
+														{nurseDutyCounts[i]?.N || 0}
+													</td>
+													<td
+														className={`p-0 text-xs text-center border-r border-gray-200 ${isHighlighted(i, 34)}`}
+													>
+														{nurseDutyCounts[i]?.O || 0}
+													</td>
+												</tr>
+											))}
+										</tbody>
+										{/* 통계 행들을 같은 테이블에 직접 추가 */}
+										<tbody>
+											{["DAY", "EVENING", "NIGHT", "OFF", "TOTAL"].map(
+												(text, i) => (
+													<tr
+														key={`empty-${i}`}
+														className="text-[10px] h-6 border-b border-gray-200"
+													>
+														<td
+															colSpan={2}
+															className={`p-0 font-bold text-[11px] border-r border-gray-200 ${
+																i === 0
+																	? "text-[#318F3D]"
+																	: i === 1
+																		? "text-[#E55656]"
+																		: i === 2
+																			? "text-[#532FC8]"
+																			: i === 3
+																				? "text-[#726F5A]"
+																				: "text-black"
+															}`}
+														>
+															<div className="flex items-center justify-center">
+																{text}
 															</div>
 														</td>
-													)}
-												</tr>
-											),
-										)}
-									</tbody>
-								</table>
+														{Array.from({ length: daysInMonth }, (_, j) => (
+															<td
+																key={j}
+																className={`p-0 text-center text-[11px] border-r border-gray-200 ${
+																	selectedCell?.col === j
+																		? "bg-duty-off-bg"
+																		: ""
+																}`}
+															>
+																<div className="flex items-center justify-center h-6">
+																	{i === 0 && dutyCounts[j].D}
+																	{i === 1 && dutyCounts[j].E}
+																	{i === 2 && dutyCounts[j].N}
+																	{i === 3 && dutyCounts[j].O}
+																	{i === 4 && dutyCounts[j].total}
+																</div>
+															</td>
+														))}
+														{/* 각 행의 마지막 4개 열을 차지하는 셀 */}
+														{i === 0 && (
+															<td
+																rowSpan={5}
+																colSpan={4}
+																className="p-0 border-r border-gray-200"
+															>
+																<div className="flex justify-center items-center h-full">
+																	<div className="scale-[0.85]">
+																		<ProgressChecker
+																			value={progress}
+																			size={80}
+																			strokeWidth={4}
+																			showLabel={true}
+																		/>
+																	</div>
+																</div>
+															</td>
+														)}
+													</tr>
+												),
+											)}
+										</tbody>
+									</table>
+								</div>
 							</div>
 						</div>
-					</div>
+					)}
+				</div>
+
+				{/* 규칙 편집 모달 */}
+				{isRuleModalOpen && (
+					<RuleEditModal
+						onClose={() => setIsRuleModalOpen(false)}
+						buttonRef={ruleButtonRef}
+					/>
 				)}
 			</div>
 
-			{/* 규칙 편집 모달 */}
-			{isRuleModalOpen && (
-				<RuleEditModal
-					onClose={() => setIsRuleModalOpen(false)}
-					buttonRef={ruleButtonRef}
-				/>
-			)}
-		</div>
+			<NurseCountModal
+				isOpen={isNurseCountModalOpen}
+				onClose={() => setIsNurseCountModalOpen(false)}
+				onConfirm={() => {
+					setIsNurseCountModalOpen(false);
+					navigate("/ward-admin");
+				}}
+				neededNurseCount={neededNurseCount}
+			/>
+		</>
 	);
 };
 

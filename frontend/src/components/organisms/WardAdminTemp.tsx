@@ -9,11 +9,17 @@ interface WardAdminTempProps {
 	isOpen: boolean;
 	onClose: () => void;
 	onConfirm: (count: number) => void;
+	currentNurseCount: number;
 }
 
-const WardAdminTemp = ({ isOpen, onClose, onConfirm }: WardAdminTempProps) => {
+const WardAdminTemp = ({
+	isOpen,
+	onClose,
+	onConfirm,
+	currentNurseCount,
+}: WardAdminTempProps) => {
 	const [count, setCount] = useState(1);
-	const MAX_NURSES = 20; // 최대 추가 가능 인원
+	const MAX_NURSES = 20; // 최대 병동 인원
 
 	// 모달이 닫힐 때 count를 1로 초기화
 	useEffect(() => {
@@ -31,23 +37,31 @@ const WardAdminTemp = ({ isOpen, onClose, onConfirm }: WardAdminTempProps) => {
 	};
 
 	const handleIncrease = () => {
-		if (count < MAX_NURSES) {
-			// 최대 인원 제한 체크
+		const totalAfterAdd = currentNurseCount + count + 1;
+		if (totalAfterAdd <= MAX_NURSES) {
 			setCount(count + 1);
 		} else {
-			toast.warning(`한 번에 최대 ${MAX_NURSES}명까지 추가할 수 있습니다.`);
+			toast.warning(`병동 최대 인원은 ${MAX_NURSES}명입니다.`);
 		}
 	};
 
-	const handleClose = () => {
-		setCount(1); // 모달을 닫을 때도 count 초기화
+	const handleConfirm = () => {
+		const totalAfterAdd = currentNurseCount + count;
+		if (totalAfterAdd > MAX_NURSES) {
+			toast.warning(
+				`현재 ${currentNurseCount}명이므로, ${MAX_NURSES - currentNurseCount}명까지만 추가할 수 있습니다.`,
+			);
+			return;
+		}
+		onConfirm(count);
+		setCount(1);
 		onClose();
 	};
 
 	return (
 		<div
 			className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
-			onClick={handleClose}
+			onClick={onClose}
 		>
 			<div
 				className="bg-white rounded-[1.25rem] p-[1.5rem] w-[90%] max-w-[25rem] relative"
@@ -59,7 +73,7 @@ const WardAdminTemp = ({ isOpen, onClose, onConfirm }: WardAdminTempProps) => {
 						임시 간호사 추가
 					</h2>
 					<button
-						onClick={handleClose}
+						onClick={onClose}
 						className="absolute top-0 right-0 p-[0.5rem] hover:bg-gray-100 rounded-[0.5rem] transition-colors"
 					>
 						<Icon name="close" size={24} className="text-gray-400" />
@@ -98,10 +112,7 @@ const WardAdminTemp = ({ isOpen, onClose, onConfirm }: WardAdminTempProps) => {
 
 				{/* Confirm Button */}
 				<button
-					onClick={() => {
-						onConfirm(count);
-						setCount(1); // 확인 버튼 클릭 시에도 count 초기화
-					}}
+					onClick={handleConfirm}
 					className="w-full py-[0.875rem] bg-primary hover:bg-primary-dark text-white rounded-[0.625rem] transition-colors"
 				>
 					확인

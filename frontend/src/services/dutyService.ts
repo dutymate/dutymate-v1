@@ -29,6 +29,7 @@ export interface DutyHistory {
 }
 
 export interface DutyIssue {
+	memberId: number;
 	name: string;
 	startDate: number;
 	endDate: number;
