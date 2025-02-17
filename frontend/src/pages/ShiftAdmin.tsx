@@ -84,7 +84,7 @@ const DutyManagement = () => {
 						<h2 className="text-xl text-center font-bold mb-4">알림</h2>
 						<p className="text-gray-600 mb-6 text-center">
 							듀티표 관리는 웹 버전에서만 확인 가능합니다.
-							<br /> 병동 관리 페이지로 이동합니다.
+							<br /> 병동 듀티표로 이동됩니다.
 						</p>
 						<button
 							onClick={() => navigate(-1)}

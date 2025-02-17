@@ -762,7 +762,59 @@ const ShiftAdminTable = ({
 			>
 				{/* 월 선택 및 버튼 영역 */}
 				<div className="bg-white rounded-xl py-[0.5rem] px-[0.5rem] mb-[0.1875rem]">
-					<div className="flex items-center justify-between">
+					{/* 모바일 뷰 */}
+					<div className="lg:hidden">
+						{/* 첫 번째 줄: 월 선택 및 초기화 */}
+						<div className="flex items-center justify-between mb-3">
+							<div className="flex items-center gap-2">
+								<Icon
+									name="left"
+									size={16}
+									className="cursor-pointer text-gray-600 hover:text-gray-800"
+									onClick={handlePrevMonth}
+								/>
+								<span className="text-lg font-medium">{month}월</span>
+								<Icon
+									name="right"
+									size={16}
+									className="cursor-pointer text-gray-600 hover:text-gray-800"
+									onClick={handleNextMonth}
+								/>
+								<div className="flex items-center gap-1 ml-1">
+									<span className="text-xs text-gray-400">기본 OFF</span>
+									<span className="text-sm font-bold text-black">
+										{getDefaultOffDays(year, month)}
+									</span>
+									<span className="text-foreground">일</span>
+								</div>
+								<button
+									className={`flex items-center gap-1 text-gray-400 hover:text-gray-600 px-2 py-1 rounded-md`}
+								>
+									<Icon name="reset" size={16} />
+									<span className="text-sm">초기화</span>
+								</button>
+							</div>
+						</div>
+
+						{/* 두 번째 줄: 4개의 버튼 (기능 없는 UI만) */}
+						<div className="grid grid-cols-4 gap-1">
+							<div className="py-1 px-2 text-center text-xs bg-[#D9D9D9] text-[#999786] rounded">
+								키보드 가이드
+							</div>
+							<div className="py-1 px-2 text-center text-xs bg-[#FACDBB] text-[#F5A281] rounded">
+								규칙 조회
+							</div>
+							<div className="py-1 px-2 text-center text-xs bg-[#FCDADA] text-[#F68585] rounded">
+								자동 생성
+							</div>
+							<div className="py-1 px-2 text-center text-xs bg-[#D9D9D9] text-[#999786] rounded">
+								다운로드
+							</div>
+						</div>
+					</div>
+
+					{/* 데스크톱 뷰 - 기존 코드 유지 */}
+					<div className="hidden lg:flex items-center justify-between">
 						<div className="flex items-center">
 							<div className="flex ml-[0.75rem] items-center gap-[0.75rem]">
 								<Icon
