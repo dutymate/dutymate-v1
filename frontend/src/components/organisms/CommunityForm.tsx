@@ -1,4 +1,5 @@
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+// import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 // import { Button } from "../atoms/Button";
 import { Icon } from "../atoms/Icon";
 import CommunityCategories from "./CommunityCategories";

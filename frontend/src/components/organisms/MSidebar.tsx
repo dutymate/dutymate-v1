@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import { FaHospital } from "react-icons/fa";
 import { BiSolidUserPin } from "react-icons/bi";
 import { HiOutlineUsers } from "react-icons/hi2";
@@ -85,7 +85,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ userType, isOpen, onClose }: SidebarProps) => {
-	const location = useLocation();
+	// const location = useLocation();
 	const navigation =
 		userType === "HN" ? headNurseNavigation : staffNurseNavigation;
 
