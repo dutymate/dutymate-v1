@@ -3,22 +3,43 @@ resource "aws_wafv2_web_acl" "waf_web_acl" {
   scope = "REGIONAL"
 
   default_action {
-    allow {}
+    block {}
+  }
+
+  rule {
+    name     = "AllowKoreaOnlyRule"
+    priority = 100
+
+    action {
+      allow {}
+    }
+
+    statement {
+      geo_match_statement {
+        country_codes = ["KR"]
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      sampled_requests_enabled   = true
+      metric_name                = "AllowKoreaOnlyRule"
+    }
   }
 
   rule {
     name     = "RateLimitRule"
-    priority = 100
+    priority = 200
+
+    action {
+      block {}
+    }
 
     statement {
       rate_based_statement {
         limit              = 1000
         aggregate_key_type = "IP"
       }
-    }
-
-    action {
-      block {}
     }
 
     visibility_config {
