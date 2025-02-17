@@ -104,13 +104,13 @@ export const HistoryModal = ({
 											</span>
 										</div>
 										<div className="flex items-center gap-0.5 sm:gap-1 w-[2.2rem] sm:w-[2.8125rem]">
-											<Icon
-												name={nurse.gender === "여자" ? "female" : "male"}
-												size={0.875}
+										<Icon
+												name={nurse.gender === "F" ? "female" : "male"}
+												size={14}
 												className="text-gray-500 flex-shrink-0"
 											/>
-											<span className="text-gray-600 text-[0.875rem]">
-												{nurse.gender}
+											<span className="text-gray-600 text-sm">
+												{nurse.gender === "F" ? "여자" : "남자"}
 											</span>
 										</div>
 										<div className="flex items-center gap-0.5 sm:gap-1 w-[2.2rem] sm:w-[2.8125rem]">
@@ -120,7 +120,7 @@ export const HistoryModal = ({
 												className="text-gray-500 flex-shrink-0"
 											/>
 											<span className="text-gray-600 text-[0.875rem] whitespace-nowrap">
-												{nurse.grade}차
+												{nurse.grade}년차
 											</span>
 										</div>
 									</div>
@@ -262,14 +262,14 @@ export const NurseAssignModal = ({
 						</span>
 					</div>
 					<div className="flex items-center gap-1 w-[2.8125rem]">
-						<Icon
-							name={nurse.gender === "여자" ? "female" : "male"}
-							size={0.875}
-							className="text-gray-500 flex-shrink-0"
-						/>
-						<span className="text-gray-600 text-[0.875rem]">
-							{nurse.gender}
-						</span>
+					<Icon
+												name={nurse.gender === "F" ? "female" : "male"}
+												size={14}
+												className="text-gray-500 flex-shrink-0"
+											/>
+											<span className="text-gray-600 text-sm">
+												{nurse.gender === "F" ? "여자" : "남자"}
+											</span>
 					</div>
 					<div className="flex items-center gap-1 w-[2.8125rem]">
 						<Icon
@@ -278,7 +278,7 @@ export const NurseAssignModal = ({
 							className="text-gray-500 flex-shrink-0"
 						/>
 						<span className="text-gray-600 text-[0.875rem] whitespace-nowrap">
-							{nurse.grade}차
+							{nurse.grade}년차
 						</span>
 					</div>
 				</div>
@@ -337,7 +337,7 @@ export const NurseAssignModal = ({
 												className="text-gray-500 flex-shrink-0"
 											/>
 											<span className="text-gray-600 text-sm whitespace-nowrap">
-												{tempNurse.grade}차
+												{tempNurse.grade}년차
 											</span>
 										</div>
 									</div>
