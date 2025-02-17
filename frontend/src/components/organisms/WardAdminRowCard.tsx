@@ -300,7 +300,7 @@ const WardAdminRowCard = ({
 								className="w-6 h-6 rounded-full"
 							/>
 							{!nurse.isSynced && (
-								<div className="flex items-center">
+								<div className="flex-1 items-center">
 									{isEditingName ? (
 										<input
 											ref={nameInputRef}
@@ -319,8 +319,10 @@ const WardAdminRowCard = ({
 											className="w-full rounded px-[0.5rem] py-[0.25rem] text-[0.875rem] border border-primary-dark"
 										/>
 									) : (
-										<div className="flex items-center w-full">
-											<span className="flex-1 text-duty-off">{name}</span>
+										<div className="flex items-center w-full overflow-hidden">
+											<span className="w-0 flex-1 truncate text-duty-off">
+												{name}
+											</span>
 											<button
 												onClick={() => setIsEditingName(true)}
 												className="opacity-0 group-hover:opacity-100 transition-opacity ml-[0.25rem]"
@@ -335,7 +337,11 @@ const WardAdminRowCard = ({
 									)}
 								</div>
 							)}
-							{nurse.isSynced && <span>{nurse.name}</span>}
+							{nurse.isSynced && (
+								<span className="w-0 flex-1 truncate text-duty-off">
+									{nurse.name}
+								</span>
+							)}
 						</div>
 						<div className="w-[3.75rem] flex items-center">
 							<Badge type={nurse.role} className="whitespace-nowrap" />
