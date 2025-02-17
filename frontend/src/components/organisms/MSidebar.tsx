@@ -10,7 +10,6 @@ import { PiLightbulbFilamentFill } from "react-icons/pi";
 import { IoCloseOutline } from "react-icons/io5";
 import Profile from "../atoms/Profile";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 
 interface NavigationItem {
 	name: string;
@@ -18,53 +17,43 @@ interface NavigationItem {
 	icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
-// // 수간호사용 네비게이션
-// const headNurseNavigation: NavigationItem[] = [
-// 	{ name: "듀티표 관리", href: "/shift-admin", icon: BiSolidUserPin },
-// 	{ name: "병동 관리", href: "/ward-admin", icon: FaHospital },
-// 	{ name: "요청 근무 관리", href: "/req-admin", icon: HiOutlineUsers },
-// 	{ name: "나의 듀티표", href: "/my-shift", icon: BiSolidUserPin },
-// 	{ name: "병동 듀티표", href: "/team-shift", icon: HiOutlineUsers },
-// 	{ name: "커뮤니티", href: "/community", icon: IoIosChatboxes },
-// 	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
-// ];
+// 수간호사용 네비게이션
+const headNurseNavigation: NavigationItem[] = [
+	{ name: "듀티표 관리", href: "/shift-admin", icon: BiSolidUserPin },
+	{ name: "병동 관리", href: "/ward-admin", icon: FaHospital },
+	{ name: "요청 근무 관리", href: "/req-admin", icon: HiOutlineUsers },
+	{ name: "나의 듀티표", href: "/my-shift", icon: BiSolidUserPin },
+	{ name: "병동 듀티표", href: "/team-shift", icon: HiOutlineUsers },
+	{ name: "커뮤니티", href: "/community", icon: IoIosChatboxes },
+	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
+];
 
-// // 평간호사용 네비게이션
-// const staffNurseNavigation: NavigationItem[] = [
-// 	{ name: "나의 듀티표", href: "/my-shift", icon: BiSolidUserPin },
-// 	{ name: "병동 듀티표", href: "/team-shift", icon: HiOutlineUsers },
-// 	{ name: "커뮤니티", href: "/community", icon: IoIosChatboxes },
-// 	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
-// ];
+// 평간호사용 네비게이션
+const staffNurseNavigation: NavigationItem[] = [
+	{ name: "나의 듀티표", href: "/my-shift", icon: BiSolidUserPin },
+	{ name: "병동 듀티표", href: "/team-shift", icon: HiOutlineUsers },
+	{ name: "커뮤니티", href: "/community", icon: IoIosChatboxes },
+	{ name: "튜토리얼", href: "/tutorial", icon: PiLightbulbFilamentFill },
+];
 
-const NavigationItem = React.memo(
-	({
-		item,
-		onClick,
-	}: {
-		item: NavigationItem;
-		onClick?: (e: React.MouseEvent) => void;
-	}) => {
-		const handleClick = (
-			e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-		) => {
-			if (item.name === "튜토리얼") {
-				e.preventDefault();
-				window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
-			}
-			onClick?.(e);
-		};
+const NavigationItem = React.memo(({ item }: { item: NavigationItem }) => {
+	const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+		if (item.name === "튜토리얼") {
+			e.preventDefault();
+			window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
+		}
+	};
 
-		const isActive =
-			item.href === location.pathname ||
-			(location.pathname.startsWith("/community/") &&
-				item.href.startsWith("/community"));
+	const isActive =
+		item.href === location.pathname ||
+		(location.pathname.startsWith("/community/") &&
+			item.href.startsWith("/community"));
 
-		return (
-			<li className="flex justify-center px-[1.3rem]">
-				<Link
-					to={item.name === "튜토리얼" ? "#" : item.href}
-					className={`
+	return (
+		<li className="flex justify-center px-[1.3rem]">
+			<Link
+				to={item.name === "튜토리얼" ? "#" : item.href}
+				className={`
 						flex items-center gap-x-3 px-4 py-2.5 w-full rounded-lg
 						text-[0.85rem] lg:text-[0.9rem] group
 						font-['Pretendard Variable']
@@ -74,21 +63,20 @@ const NavigationItem = React.memo(
 								: "text-gray-700 hover:text-primary hover:bg-primary-10"
 						}
 					`}
-					onClick={onClick || handleClick}
-				>
-					{React.createElement(item.icon, {
-						className: `w-4 h-4 min-w-4 ${
-							isActive
-								? "text-primary-dark"
-								: "text-gray-500 group-hover:text-primary"
-						}`,
-					})}
-					<span className="font-semibold">{item.name}</span>
-				</Link>
-			</li>
-		);
-	},
-);
+				onClick={handleClick}
+			>
+				{React.createElement(item.icon, {
+					className: `w-4 h-4 min-w-4 ${
+						isActive
+							? "text-primary-dark"
+							: "text-gray-500 group-hover:text-primary"
+					}`,
+				})}
+				<span className="font-semibold">{item.name}</span>
+			</Link>
+		</li>
+	);
+});
 
 interface SidebarProps {
 	userType: "HN" | "RN";
@@ -98,15 +86,8 @@ interface SidebarProps {
 
 const Sidebar = ({ userType, isOpen, onClose }: SidebarProps) => {
 	// const location = useLocation();
-
-	const handleShiftAdminClick = (e: React.MouseEvent) => {
-		e.preventDefault();
-		toast.info("듀티표 관리는 웹에서 확인해주세요.", {
-			position: "top-center",
-			autoClose: 2000,
-		});
-		onClose();
-	};
+	const navigation =
+		userType === "HN" ? headNurseNavigation : staffNurseNavigation;
 
 	return (
 		<>
@@ -147,60 +128,9 @@ const Sidebar = ({ userType, isOpen, onClose }: SidebarProps) => {
 				{/* Navigation */}
 				<nav className="flex-1 py-4 mt-4">
 					<div className="flex flex-col space-y-[0.325rem] mb-5">
-						{userType === "HN" && (
-							<>
-								<NavigationItem
-									item={{
-										name: "듀티표 관리",
-										href: "/shift-admin",
-										icon: BiSolidUserPin,
-									}}
-									onClick={handleShiftAdminClick}
-								/>
-								<NavigationItem
-									item={{
-										name: "병동 관리",
-										href: "/ward-admin",
-										icon: FaHospital,
-									}}
-								/>
-								<NavigationItem
-									item={{
-										name: "요청 근무 관리",
-										href: "/req-admin",
-										icon: HiOutlineUsers,
-									}}
-								/>
-								<NavigationItem
-									item={{
-										name: "나의 듀티표",
-										href: "/my-shift",
-										icon: BiSolidUserPin,
-									}}
-								/>
-								<NavigationItem
-									item={{
-										name: "병동 듀티표",
-										href: "/team-shift",
-										icon: HiOutlineUsers,
-									}}
-								/>
-								<NavigationItem
-									item={{
-										name: "커뮤니티",
-										href: "/community",
-										icon: IoIosChatboxes,
-									}}
-								/>
-								<NavigationItem
-									item={{
-										name: "튜토리얼",
-										href: "/tutorial",
-										icon: PiLightbulbFilamentFill,
-									}}
-								/>
-							</>
-						)}
+						{navigation.map((item, index) => (
+							<NavigationItem key={index} item={item} />
+						))}
 						{userType === "RN" && (
 							<>
 								<NavigationItem
