@@ -63,7 +63,10 @@ public class NewsService {
 		}
 		List<GptApiResponseDto> newsList = newsRepository.findFirstByOrderByCreatedAtDesc().getNewsList();
 		newsList.forEach(o -> {
-			o.setDescription(o.getDescription().substring(0, 57) + "...");
+			String description = o.getDescription();
+			if (description != null && description.length() > 57) {
+				o.setDescription(description.substring(0, 57) + "...");
+			}
 		});
 		return newsList;
 	}
