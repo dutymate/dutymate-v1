@@ -153,10 +153,18 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-center justify-center"
-			style={{ background: "transparent" }}
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+			onClick={(e) => {
+				if (e.target === e.currentTarget) {
+					onClose();
+				}
+			}}
 		>
-			<div ref={modalRef} className="bg-white rounded-xl shadow-lg w-[22.5rem]">
+			<div
+				ref={modalRef}
+				className="bg-white rounded-xl shadow-lg w-[22.5rem] max-h-[90vh] overflow-y-auto"
+				onClick={(e) => e.stopPropagation()}
+			>
 				{/* 헤더 */}
 				<div className="flex rounded-t-xl justify-between bg-primary-bg items-center px-[1rem] py-[0.25rem] border-b">
 					<h2 className="text-sm font-medium text-primary-dark">규칙 조회</h2>
