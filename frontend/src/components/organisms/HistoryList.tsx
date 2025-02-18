@@ -74,7 +74,7 @@ const HistoryList = () => {
 						{sortedHistories.map((item) => (
 							<div
 								key={item.idx}
-								className={`flex items-center w-full gap-[0.75rem] px-[0.5rem] py-[0.25rem] hover:bg-gray-50 ${
+								className={`flex items-center w-full gap-[0.75rem] px-0 py-[0.25rem] hover:bg-gray-50 ${
 									item.idx === selectedHistoryIdx ? "bg-gray-100" : ""
 								}`}
 							>
