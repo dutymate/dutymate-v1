@@ -884,7 +884,7 @@ const ShiftAdminTable = ({
 										className="w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2"
 									>
 										<Icon name="rule" size={16} />
-										<span>규칙 조회</span>
+										<span>규칙 설정</span>
 									</button>
 									<button
 										onClick={() => {
@@ -1227,7 +1227,7 @@ const ShiftAdminTable = ({
 									className="py-0.5 px-1.5 sm:py-1 sm:px-2"
 									onClick={() => setIsRuleModalOpen(true)}
 								>
-									규칙 조회
+									규칙 설정
 								</Button>
 								<div className="flex items-center gap-1">
 									<Button
