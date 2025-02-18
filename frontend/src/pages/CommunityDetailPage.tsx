@@ -16,6 +16,10 @@ const CommunityDetailPage = () => {
 	const numericBoardId = boardId ? Number(boardId) : NaN;
 
 	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, []);
+
+	useEffect(() => {
 		if (isNaN(numericBoardId)) {
 			toast.error("잘못된 게시글 ID입니다.");
 			navigate("/community");
