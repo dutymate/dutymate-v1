@@ -246,9 +246,13 @@ export const boardService = {
 			});
 	},
 
-	updateComment: async (boardId: number, commentId: number, content:string) => {
+	updateComment: async (
+		boardId: number,
+		commentId: number,
+		content: string,
+	) => {
 		return axiosInstance
-			.put(`/board/${boardId}/comment/${commentId}`, {content : content})
+			.put(`/board/${boardId}/comment/${commentId}`, { content: content })
 			.then((response) => {
 				return response.data;
 			})
