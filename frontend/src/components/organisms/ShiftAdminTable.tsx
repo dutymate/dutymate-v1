@@ -764,7 +764,7 @@ const ShiftAdminTable = ({
 	}, []);
 
 	const checkIsWeb = () => {
-		setIsWeb(window.innerWidth >= 1024);
+		setIsWeb(window.innerWidth >= 1280);
 	};
 
 	const [isNurseCountModalOpen, setIsNurseCountModalOpen] = useState(false);
@@ -818,7 +818,7 @@ const ShiftAdminTable = ({
 	return (
 		<>
 			{/* 모바일 뷰 */}
-			<div className="lg:hidden">
+			<div className="xl:hidden">
 				{/* 상단 컨트롤 영역 */}
 				<div className="bg-white rounded-xl py-2 px-3 mb-2 flex items-center justify-between">
 					{/* 왼쪽: 월 선택 및 기본 OFF */}
@@ -1153,7 +1153,7 @@ const ShiftAdminTable = ({
 			</div>
 
 			{/* 웹 뷰 - 기존 코드 */}
-			<div className="hidden lg:block">
+			<div className="hidden xl:block">
 				<div
 					className="bg-white rounded-[0.92375rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] p-[1.5rem]"
 					ref={tableRef}
@@ -1248,11 +1248,12 @@ const ShiftAdminTable = ({
 														<li>주중/주말별 필요 최소 인원</li>
 														<li>근무표 규칙</li>
 														<li>개인별 근무 요청</li>
+														<li>평일 데이, 나이트 전담 근무</li>
 														<li>간호사 간 균등한 근무 배분</li>
 														<li>지난 달 말일 근무 고려</li>
 													</ul>
 													<p className="mt-2 text-gray-300">
-														*숙련도 반영과 전담 근무는 개발 중입니다.
+														*숙련도 반영은은 개발 중입니다.
 														<br />* 커스텀 규칙 생성 기능은 개발 중입니다.
 														<br />
 														*완성도 100%일 시 새로운 근무표가 생성되지 않을 수

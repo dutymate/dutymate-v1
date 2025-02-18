@@ -86,7 +86,7 @@ const DutyManagement = () => {
 						onUpdate={fetchDutyInfo}
 						issues={dutyInfo.issues}
 					/>
-					<div className="flex flex-col lg:flex-row gap-[1rem] w-full">
+					<div className="flex flex-col xl:flex-row gap-[1rem] w-full">
 						<RuleCheckList />
 						<HistoryList />
 					</div>
