@@ -74,7 +74,7 @@ jib {
     }
     container {
         creationTime = 'USE_CURRENT_TIMESTAMP'
-        jvmFlags = ['-XX:+UseContainerSupport', '-Dserver.port=8080', '-Dfile.encoding=UTF-8']
+        jvmFlags = ['-XX:+UseContainerSupport', '-Dserver.port=8080', '-Duser.timezone=Asia/Seoul', '-Dfile.encoding=UTF-8']
         ports = ['8080']
     }
 }
