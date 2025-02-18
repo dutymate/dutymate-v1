@@ -7,6 +7,7 @@ import { formatTimeAgo } from "@/utils/dateUtiles";
 import boardService from "@/services/boardService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import useCommentStore from "@/store/commentStore";
 
 interface Comment {
 	commentId: number;
@@ -50,6 +51,9 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 	const [commentList, setCommentList] = useState<Comment[]>(post.comments);
 
 	const navigate = useNavigate();
+	const { setEditedComment, getEditedContent } = useCommentStore();
+	const [isEditing, setIsEditing] = useState<number | null>(null);
+	const [editContent, setEditContent] = useState("");
 
 	// 드롭다운 외부 클릭 처리
 	useEffect(() => {
@@ -98,8 +102,16 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		}
 	};
 
-	const handleUpdateComment = async () => {
-		console.log("수정 기능");
+	const handleUpdateComment = (commentId: number, originalContent: string) => {
+		if (isEditing === commentId) {
+			// 수정 완료
+			setEditedComment(commentId, editContent);
+			setIsEditing(null);
+		} else {
+			// 수정 시작
+			setIsEditing(commentId);
+			setEditContent(getEditedContent(commentId, originalContent));
+		}
 	};
 
 	const handleDeleteComment = async (
@@ -352,7 +364,10 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 												<button
 													onClick={(e) => {
 														e.stopPropagation();
-														handleUpdateComment();
+														handleUpdateComment(
+															comment.commentId,
+															comment.content,
+														);
 													}}
 													className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
 												>
@@ -374,7 +389,38 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 									""
 								)}
 							</div>
-							<p className="text-gray-700 text-sm mt-2">{comment.content}</p>
+							{isEditing === comment.commentId ? (
+								<div className="mt-2">
+									<textarea
+										value={editContent}
+										onChange={(e) => setEditContent(e.target.value)}
+										className="w-full p-2 border rounded resize-none h-[3rem] mb-2"
+									/>
+									<div className="flex justify-end gap-2">
+										<button
+											onClick={() => {
+												setIsEditing(null);
+												setEditContent("");
+											}}
+											className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded"
+										>
+											취소
+										</button>
+										<button
+											onClick={() => {
+												handleUpdateComment(comment.commentId, comment.content);
+											}}
+											className="px-3 py-1 text-sm text-white bg-primary hover:bg-primary-dark rounded"
+										>
+											완료
+										</button>
+									</div>
+								</div>
+							) : (
+								<p className="text-gray-700 text-sm mt-2">
+									{getEditedContent(comment.commentId, comment.content)}
+								</p>
+							)}
 						</div>
 					))
 				)}
