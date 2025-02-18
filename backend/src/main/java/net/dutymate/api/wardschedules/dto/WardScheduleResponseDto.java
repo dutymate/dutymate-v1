@@ -6,6 +6,7 @@ import net.dutymate.api.entity.Request;
 import net.dutymate.api.enumclass.RequestStatus;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.enumclass.Shift;
+import net.dutymate.api.enumclass.ShiftType;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
 
@@ -50,6 +51,8 @@ public class WardScheduleResponseDto {
 		private Role role;
 		private String prevShifts;
 		private String shifts;
+		private ShiftType shiftType;
+		private Integer grade;
 
 		public static NurseShifts of(WardSchedule.NurseShift nurseShift) {
 			return NurseShifts.builder()

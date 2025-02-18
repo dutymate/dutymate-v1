@@ -19,6 +19,7 @@ import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.enumclass.RequestStatus;
 import net.dutymate.api.enumclass.Role;
 import net.dutymate.api.enumclass.Shift;
+import net.dutymate.api.enumclass.ShiftType;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.request.repository.RequestRepository;
@@ -101,8 +102,10 @@ public class WardScheduleService {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사 매핑 오류"));
 			now.setName(nurse.getName());
 			now.setRole(nurse.getRole());
+			now.setGrade(nurse.getGrade());
+			now.setShiftType(nurse.getWardMember().getShiftType());
 
-			// prevShifts 구하기
+			// prevShifts 구하기 (기존 코드 유지)
 			if (prevNurseShifts == null) {
 				now.setPrevShifts("XXXX");
 			} else {
@@ -114,11 +117,27 @@ public class WardScheduleService {
 			}
 		});
 
-		// Role이 HN인 사람들 위로 정렬
+		// 정렬
 		nurseShiftsDto = nurseShiftsDto.stream()
-			.sorted(Comparator.comparing(nurse -> nurse.getRole() != Role.HN))
+			.sorted(
+				Comparator.comparing((WardScheduleResponseDto.NurseShifts nurse) -> nurse.getRole() != Role.HN)
+					.thenComparing(nurse -> {
+						ShiftType shift = nurse.getShiftType();
+						if (shift == null) {
+							return 2;
+						}
+						return switch (shift) {
+							case D -> 0;    // D가 가장 위
+							case ALL -> 1;  // ALL이 두 번째
+							case N -> 3;    // N이 가장 아래
+							case E -> 4;    // E는 N 다음
+							default -> 2;   // 기타 케이스는 ALL과 N 사이
+						};
+					})
+					.thenComparing(WardScheduleResponseDto.NurseShifts::getGrade,
+						Comparator.nullsLast(Comparator.reverseOrder()))
+			)
 			.toList();
-
 		// TODO invalidCnt 구하기
 		// int invalidCnt = calcInvalidCnt(recentNurseShifts);
 
