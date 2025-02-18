@@ -454,10 +454,11 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 				<Button
 					color="primary"
-					className="absolute bottom-3 right-1.5 w-8 h-8 flex items-center justify-center text-xs sm:text-sm "
+					className="absolute bottom-3 right-1.5 w-8 h-8 sm:w-[8.5rem] sm:h-[2.5rem] flex items-center justify-center text-xs sm:text-base"
 					onClick={handleAddComment}
 				>
-					<FaArrowUpLong className="w-4 h-4 sm:w-5 sm:h-5" />
+					<FaArrowUpLong className="w-4 h-4 sm:hidden" />
+					<span className="hidden sm:block">등록</span>
 				</Button>
 			</div>
 		</div>

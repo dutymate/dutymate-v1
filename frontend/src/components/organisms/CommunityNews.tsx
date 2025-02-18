@@ -1,5 +1,5 @@
 import { useNewsStore } from "@/store/newsStore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const CommunityNews = ({}: any) => {
 	const { newsies, fetchNewsies } = useNewsStore();
