@@ -84,8 +84,6 @@ export type IconName =
 	| "rule"
 	| "auto"
 	| "download"
-	| "image"
-	| "excel"
 	| keyof typeof iconComponents;
 
 interface IconProps {

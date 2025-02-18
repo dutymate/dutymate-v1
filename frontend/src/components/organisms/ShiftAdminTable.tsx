@@ -903,7 +903,6 @@ const ShiftAdminTable = ({
 										}}
 										className="w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2"
 									>
-										<Icon name="image" size={16} />
 										<span>이미지 다운로드</span>
 									</button>
 									<button
@@ -913,7 +912,6 @@ const ShiftAdminTable = ({
 										}}
 										className="w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2"
 									>
-										<Icon name="image" size={16} />
 										<span>엑셀로 다운로드</span>
 									</button>
 								</div>
