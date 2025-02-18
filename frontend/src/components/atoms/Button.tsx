@@ -239,11 +239,21 @@ export const CommunityWriteButton = ({
 export const CommunityRegisterButton = ({
 	onClick,
 	className,
-}: { onClick?: () => void; className?: string }) => {
+	disabled,
+}: {
+	onClick?: () => void;
+	className?: string;
+	disabled?: boolean;
+}) => {
 	return (
 		<button
 			onClick={onClick}
-			className={`px-8 py-2.5 min-w-[8rem] bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors text-sm ${className || ""}`}
+			disabled={disabled}
+			className={`px-8 py-2.5 min-w-[8rem] ${
+				disabled
+					? "bg-gray-300 cursor-not-allowed"
+					: "bg-primary hover:bg-primary-dark"
+			} text-white rounded-lg transition-colors text-sm ${className || ""}`}
 		>
 			등록
 		</button>

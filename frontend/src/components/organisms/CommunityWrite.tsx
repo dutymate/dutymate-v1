@@ -1,10 +1,6 @@
-//글쓰기
-
-// import React from "react";
-// import { Button } from "../atoms/Button";
 import { BsImage } from "react-icons/bs";
 import { CommunityRegisterButton } from "../atoms/Button";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { toast } from "react-toastify";
 import boardService, { BoardRequest } from "@/services/boardService";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +20,15 @@ const CommunityWrite = () => {
 		content: "",
 		boardImgUrl: "",
 	});
+
+	// 폼 유효성 검사
+	const isFormValid = useMemo(() => {
+		return (
+			formData.category !== "" &&
+			formData.title.trim() !== "" &&
+			formData.content.trim() !== ""
+		);
+	}, [formData.category, formData.title, formData.content]);
 
 	const handleImageClick = () => {
 		fileInputRef.current?.click();
@@ -88,6 +93,8 @@ const CommunityWrite = () => {
 	};
 
 	const onRegister = () => {
+		if (!isFormValid) return;
+
 		boardService.writePost(
 			formData,
 			() => toast.success("게시글이 작성되었습니다."),
@@ -188,7 +195,10 @@ const CommunityWrite = () => {
 				</div>
 				{/* 등록 버튼 */}
 				<div className="flex justify-end -mt-2">
-					<CommunityRegisterButton onClick={onRegister} />
+					<CommunityRegisterButton
+						onClick={onRegister}
+						disabled={!isFormValid}
+					/>
 				</div>
 			</div>
 		</div>
