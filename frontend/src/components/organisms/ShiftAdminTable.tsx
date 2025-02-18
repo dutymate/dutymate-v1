@@ -695,6 +695,9 @@ const ShiftAdminTable = ({
 		const tempSelectedCell = selectedCell;
 		setSelectedCell(null);
 
+		const tempRequests = requests;
+		setRequests([]);
+
 		try {
 			const dataUrl = await toPng(tableElement as HTMLElement, {
 				quality: 1.0,
@@ -724,6 +727,7 @@ const ShiftAdminTable = ({
 			});
 		}
 		setSelectedCell(tempSelectedCell);
+		setRequests(tempRequests);
 	};
 
 	// URL 쿼리 파라미터로부터 초기 데이터 로드
