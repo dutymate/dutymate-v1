@@ -175,7 +175,7 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 												<h3 className="text-sm sm:text-lg font-medium mb-2 break-words line-clamp-1">
 													{post.title}
 												</h3>
-												<p className="text-gray-600 text-xs sm:text-sm mb-4 break-words line-clamp-2">
+												<p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-4 break-words line-clamp-2">
 													{post.content}
 												</p>
 

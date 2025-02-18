@@ -162,6 +162,14 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 	return (
 		<div className="bg-white rounded-xl p-4 lg:p-6 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+			<div className="flex justify mb-3">
+				<button
+					onClick={() => navigate("/community")}
+					className="text-foreground text-sm sm:text-base"
+				>
+					← 목록으로
+				</button>
+			</div>
 			{/* 게시글 헤더 */}
 			<div className="flex justify-between items-start mb-4">
 				<div className="flex flex-wrap items-center gap-2">
@@ -181,9 +189,11 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 							className="w-[1.5rem] h-[1.5rem] min-w-[1.5rem] text-gray-500 rounded-full"
 						/>
 					)}
-					<span className="font-medium">{post.nickname}</span>
+					<span className="font-medium text-sm sm:text-base">
+						{post.nickname}
+					</span>
 					<span className="text-gray-400">·</span>
-					<span className="text-gray-600">
+					<span className="text-gray-600 text-sm sm:text-base">
 						{post.category === "DAILY"
 							? "일상글"
 							: post.category === "QNA"
@@ -191,7 +201,9 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 								: "이직 정보"}
 					</span>
 					<span className="text-gray-400">·</span>
-					<span className="text-gray-400">{formatTimeAgo(post.createdAt)}</span>
+					<span className="text-gray-400 text-sm sm:text-base">
+						{formatTimeAgo(post.createdAt)}
+					</span>
 				</div>
 
 				{/* 드롭다운 메뉴 */}
@@ -230,12 +242,12 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 			</div>
 
 			{/* 게시글 제목 */}
-			<h1 className="text-xl lg:text-2xl font-bold mb-4 break-words">
+			<h1 className="text-base sm:text-xl lg:text-2xl font-bold mb-4 break-words">
 				{post.title}
 			</h1>
 
 			{/* 게시글 내용 */}
-			<p className="text-gray-800 mb-6 whitespace-pre-wrap break-words">
+			<p className="text-gray-800 mb-6 whitespace-pre-wrap break-words sm:text-base text-sm">
 				{post.content}
 			</p>
 
@@ -258,19 +270,23 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 				>
 					<Icon
 						name={isLiked ? "heartFilled" : "heart"}
-						size={16}
-						className={isLiked ? "text-primary-dark" : ""}
+						size={24}
+						className={
+							isLiked
+								? "text-primary-dark w-5 h-5 sm:w-7 sm:h-7"
+								: "w-5 h-5 sm:w-7 sm:h-7"
+						}
 					/>
 					<span className={isLiked ? "text-primary-dark" : ""}>
 						{likeCount}
 					</span>
 				</button>
 				<div className="flex items-center gap-1">
-					<Icon name="message" size={16} />
+					<Icon name="message" className="w-5 h-5 sm:w-7 sm:h-7" />
 					<span>{commentCount}</span>
 				</div>
 				<div className="flex items-center gap-1">
-					<Icon name="eye" size={16} />
+					<Icon name="eye" className="w-6 h-6 sm:w-8 sm:h-8" />
 					<span>{post.viewCnt}</span>
 				</div>
 			</div>
@@ -278,7 +294,9 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 			{/* 댓글 목록 */}
 			<div className="mb-3 divide-y divide-gray-200">
 				{commentList.length === 0 ? (
-					<div className="py-4 text-center text-gray-400">댓글이 없습니다.</div>
+					<div className="py-4 text-center text-gray-400 sm:text-base text-sm">
+						댓글이 없습니다.
+					</div>
 				) : (
 					commentList.map((comment) => (
 						<div key={comment.commentId} className="py-4 first:pt-0 last:pb-0">
@@ -369,16 +387,15 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 					onChange={(e) => setNewComment(e.target.value)}
 					onKeyDown={handleEnterPress}
 					placeholder="댓글을 입력해주세요."
-					className="w-full p-4 border border-gray-200 rounded-lg resize-none h-24"
+					className="w-full p-4 border border-gray-200 rounded-lg resize-none h-24 sm:text-base text-xs"
 				/>
 
 				<Button
 					color="primary"
-					size="sm"
-					className="absolute bottom-3 right-2"
+					className="absolute bottom-3 right-1.5 w-8 h-8 flex items-center justify-center text-xs sm:text-sm "
 					onClick={handleAddComment}
 				>
-					<FaArrowUpLong />
+					<FaArrowUpLong className="w-4 h-4 sm:w-5 sm:h-5" />
 				</Button>
 			</div>
 		</div>

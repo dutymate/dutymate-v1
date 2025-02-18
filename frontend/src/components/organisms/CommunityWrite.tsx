@@ -111,23 +111,23 @@ const CommunityWrite = () => {
 				<div className="flex justify mb-3">
 					<button
 						onClick={() => navigate("/community")}
-						className="text-foreground"
+						className="text-foreground text-sm sm:text-base"
 					>
 						← 목록으로
 					</button>
 				</div>
 				{/* 카테고리 선택 */}
-				<div className="flex items-center gap-4 mb-4">
-					<label className="w-20 text-gray-700 font-medium shrink-0">
+				<div className="flex gap-2 sm:gap-4 mb-4 flex-col sm:flex-row sm:items-center">
+					<label className="w-20 text-gray-700 font-medium shrink-0 text-sm sm:text-base">
 						카테고리
 					</label>
 					<select
-						className="flex-1 p-3 border border-gray-200 rounded-lg text-gray-600"
+						className="flex-1 p-3 border border-gray-200 rounded-lg text-gray-600 text-sm sm:text-base"
 						name="category"
 						value={formData.category}
 						onChange={handleSelectChange}
 					>
-						<option value="">카테고리를 선택해주세요</option>
+						<option value="">카테고리를 선택해주세요.</option>
 						{categories.map((category) => (
 							<option key={category.key} value={category.key}>
 								{category.value}
@@ -137,14 +137,14 @@ const CommunityWrite = () => {
 				</div>
 
 				{/* 제목 입력 */}
-				<div className="flex items-center gap-4 mb-4">
-					<label className="w-20 text-gray-700 font-medium shrink-0">
+				<div className="flex gap-2 sm:gap-4 mb-4 flex-col sm:flex-row sm:items-center">
+					<label className="w-20 text-gray-700 font-medium shrink-0 text-sm sm:text-base">
 						제목
 					</label>
 					<input
 						type="text"
 						placeholder="제목을 입력해주세요"
-						className="flex-1 p-3 border border-gray-200 rounded-lg"
+						className="flex-1 p-3 border border-gray-200 rounded-lg text-sm sm:text-base"
 						name="title"
 						value={formData.title}
 						onChange={handleTitleChange}
@@ -152,8 +152,8 @@ const CommunityWrite = () => {
 				</div>
 
 				{/* 내용 입력 */}
-				<div className="flex gap-4 mb-2">
-					<label className="w-20 text-gray-700 font-medium shrink-0 pt-3">
+				<div className="flex gap-2 sm:gap-4 mb-2 flex-col sm:flex-row sm:items-center">
+					<label className="w-20 text-gray-700 font-medium text-sm sm:text-base">
 						내용
 					</label>
 					<textarea
@@ -164,7 +164,7 @@ const CommunityWrite = () => {
 	4. 성적 수치심을 유발하는 콘텐츠 금지: 성적 수치심을 유발할 수 있는 게시물, 이미지, 발언, 링크 등을 게시하는 행위는 금지됩니다. 이와 관련된 게시물은 즉시 삭제되며, 작성자는 커뮤니티 이용이 제한될 수 있습니다.\n
 	5. 허위 정보 및 명예훼손 금지: 근거 없는 의료 정보, 특정 병원 및 의료진에 대한 허위 사실 유포, 악의적인 루머 확산은 금지됩니다. 이는 커뮤니티의 신뢰도를 저하시킬 뿐만 아니라 법적 문제를 초래할 수 있으므로 정확한 정보만 공유해 주시기 바랍니다.\n
 	6. 반복적인 도배 및 무의미한 게시물 제한: 같은 내용의 게시글을 반복적으로 작성하거나, 의미 없는 문자 나열, 채팅형 댓글 도배 등은 금지됩니다. 이러한 행위가 발견될 경우 게시물이 삭제되며, 지속적으로 규칙을 위반하는 경우 커뮤니티 이용이 제한될 수 있습니다.`}
-						className="flex-1 h-[33rem] p-3 border border-gray-200 text-sm rounded-lg resize-none"
+						className="flex-1 h-[33rem] min-h-[160px] p-3 border border-gray-200 rounded-lg resize-none text-xs sm:text-sm"
 						name="content"
 						value={formData.content}
 						onChange={handleContentChange}
@@ -172,8 +172,8 @@ const CommunityWrite = () => {
 				</div>
 
 				{/* 이미지 업로드 영역 */}
-				<div className="flex gap-4">
-					<div className="w-20 shrink-0" />
+				<div className="flex mb-4">
+					<div className="sm:w-20 shrink-0 " />
 					<div className="flex items-center gap-2">
 						<input
 							type="file"
