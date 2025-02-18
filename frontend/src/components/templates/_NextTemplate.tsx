@@ -1,13 +1,13 @@
-// StartTemplate.tsx
+// NextTemplate.tsx
 
 import { Link } from "react-router-dom";
 
-interface StartTemplateProps {
+interface NextTemplateProps {
 	children: React.ReactNode;
 	isLandingPage?: boolean;
 }
 
-const StartTemplate: React.FC<StartTemplateProps> = ({
+const NextTemplate: React.FC<NextTemplateProps> = ({
 	children,
 	isLandingPage,
 }) => {
@@ -109,4 +109,4 @@ const StartTemplate: React.FC<StartTemplateProps> = ({
 	);
 };
 
-export default StartTemplate;
+export default NextTemplate;

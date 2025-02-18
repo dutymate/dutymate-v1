@@ -1,28 +1,17 @@
-import StartTemplate from "../components/templates/StartTemplate";
-import NextTemplate from "../components/templates/NextTemplate";
+import LandingTemplate from "../components/templates/LandingTemplate";
 import CreateWardForm from "../components/organisms/CreateWardForm";
 import { useNavigate } from "react-router-dom";
 import useUserAuthStore from "../store/userAuthStore";
 import { wardService, HospitalInfo } from "../services/wardService";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const CreateWard = () => {
 	const navigate = useNavigate();
 	const userAuthStore = useUserAuthStore();
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 	const [hospitals, setHospitals] = useState<HospitalInfo[]>([]);
 	const [isSearching, setIsSearching] = useState(false);
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMobile(window.innerWidth < 1024);
-		};
-
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
 
 	const handleSearchHospitals = async (searchTerm: string) => {
 		if (!searchTerm.trim()) {
@@ -94,12 +83,10 @@ const CreateWard = () => {
 		}
 	};
 
-	const Template = isMobile ? NextTemplate : StartTemplate;
-
 	return (
-		<Template>
+		<LandingTemplate showIntroText={false}>
 			<div className="flex flex-col items-center">
-				<p className="text-gray-600 text-[1rem] mt-[2rem] mb-[2rem]">
+				<p className="text-primary-dark font-semibold text-[1rem] mt-[0.9rem] mb-[1rem]">
 					병동 생성을 위한 기본 정보를 입력해주세요.
 				</p>
 				<CreateWardForm
@@ -109,7 +96,7 @@ const CreateWard = () => {
 					isSearching={isSearching}
 				/>
 			</div>
-		</Template>
+		</LandingTemplate>
 	);
 };
 

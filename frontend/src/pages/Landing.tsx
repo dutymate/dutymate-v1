@@ -1,27 +1,17 @@
-import StartTemplate from "../components/templates/StartTemplate";
+import LandingTemplate from "../components/templates/LandingTemplate";
 import { Button } from "../components/atoms/Button";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import LandingTemplate from "../components/templates/LandingTemplate"; // 모바일 버전 전용 랜딩 템플릿 임포트
+import { useEffect } from "react";
 import "../styles/animations.css";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 
 const Landing = () => {
 	const navigate = useNavigate();
-	const [isMobile, setIsMobile] = useState(false);
 
 	useEffect(() => {
 		// 랜딩 페이지로 접근 시, 토큰 삭제
 		sessionStorage.removeItem("user-auth-storage");
-
-		const handleResize = () => {
-			setIsMobile(window.innerWidth < 1024);
-		};
-
-		handleResize();
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
 	const handleStart = async () => {
@@ -48,32 +38,18 @@ const Landing = () => {
 		}
 	};
 
-	return isMobile ? (
-		<LandingTemplate>
+	return (
+		<LandingTemplate showIntroText={true}>
 			<Button
-				color="primary"
+				color="tertiary"
 				size="lg"
 				width="long"
 				onClick={handleStart}
-				className="mt-[0.0625rem] lg:mt-[3rem] h-[2.5rem] lg:h-[3rem]"
+				className="mt-[0.0625rem] lg:mt-[3rem] h-[2.5rem] lg:h-[3rem] bg-primary hover:bg-primary-dark text-white"
 			>
 				<span className="text-[1.25rem] lg:text-[1rem]">시작하기</span>
 			</Button>
 		</LandingTemplate>
-	) : (
-		<StartTemplate>
-			<div className="flex flex-col items-center">
-				<Button
-					color="primary"
-					size="lg"
-					width="long"
-					onClick={handleStart}
-					className="mt-[0.0625rem] lg:mt-[3rem] h-[2.5rem] lg:h-[3rem]"
-				>
-					<span className="text-[1.25rem] lg:text-[1rem]">시작하기</span>
-				</Button>
-			</div>
-		</StartTemplate>
 	);
 };
 

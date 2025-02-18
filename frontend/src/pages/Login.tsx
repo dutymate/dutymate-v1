@@ -1,26 +1,17 @@
+import LandingTemplate from "../components/templates/LandingTemplate";
 import LoginForm from "../components/organisms/LoginForm";
-import StartTemplate from "../components/templates/StartTemplate";
-import NextTemplate from "../components/templates/NextTemplate";
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 
 const Login = () => {
 	const navigate = useNavigate();
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
 	useEffect(() => {
 		try {
 			// 로그인 페이지로 접근 시, 토큰 삭제
 			sessionStorage.removeItem("user-auth-storage");
-
-			const handleResize = () => {
-				setIsMobile(window.innerWidth < 1024);
-			};
-
-			window.addEventListener("resize", handleResize);
-			return () => window.removeEventListener("resize", handleResize);
 		} catch (error) {
 			console.error("로그인 페이지 접근 실패:", error);
 			if (error instanceof Error) {
@@ -42,15 +33,10 @@ const Login = () => {
 		}
 	}, [navigate]);
 
-	const Template = isMobile ? NextTemplate : StartTemplate;
-
 	return (
-		<Template isLoginPage>
-			<div className="flex flex-col items-center">
-				<div className="mt-[8rem] lg:mt-[2rem]"></div>
-			</div>
+		<LandingTemplate showIntroText={false}>
 			<LoginForm />
-		</Template>
+		</LandingTemplate>
 	);
 };
 

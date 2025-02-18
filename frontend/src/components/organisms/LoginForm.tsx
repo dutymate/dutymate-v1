@@ -123,7 +123,7 @@ const LoginForm = () => {
 			<form className="lg:block">
 				<div className="space-y-[0.375rem] sm:space-y-[0.5rem] ">
 					<EmailInput
-						id="email"
+						id="login-email"
 						name="email"
 						label="이메일"
 						placeholder="ssafynurse@dutymate.com"
@@ -133,7 +133,7 @@ const LoginForm = () => {
 					/>
 
 					<PasswordInput
-						id="password"
+						id="login-password"
 						name="password"
 						label="비밀번호"
 						value={loginData.password}

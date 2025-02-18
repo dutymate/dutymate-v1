@@ -212,7 +212,7 @@ const SignupForm = () => {
 				</span>
 				<div className="space-y-[0.25rem] sm:space-y-[0.5rem]">
 					<EmailInput
-						id="email"
+						id="signup-email"
 						label=""
 						name="email"
 						value={signupData.email}
@@ -222,7 +222,7 @@ const SignupForm = () => {
 						placeholder="이메일"
 					/>
 					<PasswordInput
-						id="password"
+						id="signup-password"
 						label=""
 						name="password"
 						value={signupData.password}
@@ -232,7 +232,7 @@ const SignupForm = () => {
 						placeholder="비밀번호"
 					/>
 					<PasswordInput
-						id="passwordConfirm"
+						id="signup-password-confirm"
 						label=""
 						name="passwordConfirm"
 						value={signupData.passwordConfirm}
@@ -242,7 +242,7 @@ const SignupForm = () => {
 						placeholder="비밀번호 확인"
 					/>
 					<Input
-						id="name"
+						id="signup-name"
 						name="name"
 						label=""
 						value={signupData.name}
@@ -256,13 +256,13 @@ const SignupForm = () => {
 					<div className="flex items-center">
 						<input
 							type="checkbox"
-							id="agreement"
+							id="signup-agreement"
 							checked={isAgreed}
 							onChange={(e) => setIsAgreed(e.target.checked)}
 							className="w-[0.875rem] h-[0.875rem] sm:w-[1rem] sm:h-[1rem] text-primary-dark"
 						/>
 						<label
-							htmlFor="agreement"
+							htmlFor="signup-agreement"
 							className="ml-[0.375rem] text-[0.75rem] sm:text-[0.875rem] text-gray-600"
 						>
 							개인정보 수집 및 이용에 동의합니다.
