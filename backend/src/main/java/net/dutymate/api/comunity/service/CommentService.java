@@ -66,7 +66,6 @@ public class CommentService {
 		if (board != comment.getBoard()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 게시글에 작성된 댓글이 아닙니다.");
 		}
-		
 		comment.updateComment(commentRequestDto.getContent());
 	}
 }
