@@ -56,20 +56,20 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			let isOutsideClick = true;
-	
+
 			// 모든 드롭다운을 검사하여 클릭한 요소가 내부에 있는지 확인
 			dropdownRef.current.forEach((ref) => {
 				if (ref && ref.contains(event.target as Node)) {
 					isOutsideClick = false;
 				}
 			});
-	
+
 			if (isOutsideClick) {
 				setShowDropdown(false);
 				setShowCommentDropdown(null);
 			}
 		};
-	
+
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
@@ -86,11 +86,11 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 				setEditContent("");
 			}
 		};
-	
+
 		if (isEditing !== null) {
 			document.addEventListener("mousedown", handleClickOutside);
 		}
-	
+
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, [isEditing]); // isEditing이 변경될 때마다 실행
 
@@ -210,7 +210,10 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		}
 	};
 
-	const handleEnterEditPress = (e: React.KeyboardEvent<HTMLTextAreaElement>, commentId : number) => {
+	const handleEnterEditPress = (
+		e: React.KeyboardEvent<HTMLTextAreaElement>,
+		commentId: number,
+	) => {
 		if (e.key === "Enter" && !e.shiftKey) {
 			e.preventDefault(); // 기본 줄바꿈 방지
 			handleUpdateComment(commentId); // 댓글 작성 실행
@@ -430,7 +433,9 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 									<textarea
 										value={editContent}
 										onChange={(e) => setEditContent(e.target.value)}
-										onKeyDown={(e) =>handleEnterEditPress(e, comment.commentId)}
+										onKeyDown={(e) =>
+											handleEnterEditPress(e, comment.commentId)
+										}
 										className="w-full p-2 border rounded resize-none h-[3rem] mb-2"
 									/>
 									<div className="flex justify-end gap-2">
@@ -454,9 +459,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 									</div>
 								</div>
 							) : (
-								<p className="text-gray-700 text-sm mt-2">
-									{comment.content}
-								</p>
+								<p className="text-gray-700 text-sm mt-2">{comment.content}</p>
 							)}
 						</div>
 					))
