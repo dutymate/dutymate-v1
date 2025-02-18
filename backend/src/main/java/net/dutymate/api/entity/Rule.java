@@ -108,4 +108,22 @@ public class Rule {
 		this.maxShift = dto.getMaxShift();
 		this.prioMaxShift = dto.getPrioMaxShift();
 	}
+
+	public void minusNightCnt(int minus) {
+		this.wdayNCnt -= minus;
+		this.wendNCnt -= minus;
+	}
+
+	public void plusNightCnt(int plus) {
+		this.wdayNCnt += plus;
+		this.wendNCnt += plus;
+	}
+
+	public void minusWdayDcnt(int minus) {
+		this.wdayDCnt -= minus;
+	}
+
+	public void plusWdayDcnt(int plus) {
+		this.wdayDCnt += plus;
+	}
 }

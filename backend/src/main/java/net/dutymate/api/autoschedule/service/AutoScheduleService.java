@@ -1,6 +1,9 @@
 package net.dutymate.api.autoschedule.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.Request;
 import net.dutymate.api.entity.Rule;
 import net.dutymate.api.entity.WardMember;
+import net.dutymate.api.enumclass.ShiftType;
 import net.dutymate.api.member.repository.MemberRepository;
 import net.dutymate.api.member.service.MemberService;
 import net.dutymate.api.records.YearMonth;
@@ -73,10 +77,24 @@ public class AutoScheduleService {
 				yearMonth.month())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "근무 일정을 찾을 수 없습니다."));
 
-		if (wardSchedule.getDuties().get(wardSchedule.getNowIdx()).getDuty().size()
-			< nurseScheduler.neededNurseCount(yearMonth, rule)) {
+		//나이트 전담 인원
+		List<WardMember> nightWardMembers = wardMembers.stream()
+			.filter(wm -> wm.getShiftType() == ShiftType.N)
+			.toList();
+
+		//주중 데이 전담 인원
+		List<WardMember> headWardMembers = wardMembers.stream()
+			.filter(wm -> wm.getShiftType() == ShiftType.D)
+			.toList();
+
+		int nightWardMemberCount = nightWardMembers.size();
+		int wardMemberCount = wardMembers.size();
+		int neededNurseCount = nurseScheduler.neededNurseCount(yearMonth, rule, nightWardMemberCount);
+
+		if (wardMemberCount
+			< neededNurseCount) {
 			AutoScheduleNurseCountResponseDto responseDto = new AutoScheduleNurseCountResponseDto(
-				nurseScheduler.neededNurseCount(yearMonth, rule)
+				neededNurseCount
 			);
 			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
 				.body(responseDto);
@@ -85,14 +103,65 @@ public class AutoScheduleService {
 		Long memberId = member.getMemberId();
 
 		List<Request> requests = requestRepository.findAllWardRequests(member.getWardMember().getWard());
+
+		//night 전담 자동 로직에서 제거
+		wardMembers.removeIf(wm -> wm.getShiftType() == ShiftType.N);
+
+		//HN 자동 로직에서 제거
+		wardMembers.removeIf(wm -> wm.getShiftType() == ShiftType.D);
+
+		//HN 한명당 주간 근무 인원 한명 감소
+		rule.minusWdayDcnt(headWardMembers.size());
+
+		Map<Integer, Integer> dailyNightCount = new HashMap<>();
+		List<WardSchedule.NurseShift> newNightNurseShifts = new ArrayList<>();
+		if (!nightWardMembers.isEmpty()) {
+			for (int rotation = 0; rotation < nightWardMembers.size(); rotation++) {
+				WardMember wm = nightWardMembers.get(rotation);
+				newNightNurseShifts.add(WardSchedule.NurseShift.builder()
+					.memberId(wm.getMember().getMemberId())
+					.shifts(
+						nurseScheduler.generateNightSchedule(yearMonth.daysInMonth(), rotation, nightWardMembers.size(),
+							dailyNightCount))
+					.build());
+			}
+		}
+
 		WardSchedule updateWardSchedule = nurseScheduler.generateSchedule(wardSchedule, rule, wardMembers,
 			prevNurseShifts, yearMonth, memberId,
-			requests);
+			requests, dailyNightCount);
+
+		//rule 복구
+		rule.plusWdayDcnt(headWardMembers.size());
+
+		List<WardSchedule.NurseShift> updatedShifts = new ArrayList<>(updateWardSchedule.getDuties()
+			.get(updateWardSchedule.getNowIdx())
+			.getDuty());
+
+		//HN duty표 생성
+		for (WardMember wm : headWardMembers) {
+			WardSchedule.NurseShift newNurseShift = WardSchedule.NurseShift.builder()
+				.memberId(wm.getMember().getMemberId())
+				.shifts(nurseScheduler.headShiftBuilder(yearMonth))
+				.build();
+
+			updatedShifts.add(newNurseShift);
+		}
+
+		//야간 근무자 duty표 생성
+		for (WardSchedule.NurseShift newShift : newNightNurseShifts) {
+			updatedShifts.add(newShift);
+		}
+
+		WardSchedule.Duty currentDuty = updateWardSchedule.getDuties().get(updateWardSchedule.getNowIdx());
+		currentDuty.getDuty().clear();
+
+		for (WardSchedule.NurseShift nurseShift : updatedShifts) {
+			currentDuty.addNurseShift(nurseShift);
+		}
 
 		List<WardSchedule.NurseShift> originalShifts = wardSchedule.getDuties().get(wardSchedule.getNowIdx()).getDuty();
-		List<WardSchedule.NurseShift> updatedShifts = updateWardSchedule.getDuties()
-			.get(updateWardSchedule.getNowIdx())
-			.getDuty();
+
 		boolean isChanged = false;
 		for (int nurseCnt = 0; nurseCnt < originalShifts.size(); nurseCnt++) {
 			if (!originalShifts.get(nurseCnt).getShifts().equals(

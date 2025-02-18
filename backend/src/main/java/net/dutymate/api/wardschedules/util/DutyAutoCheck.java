@@ -66,6 +66,9 @@ public class DutyAutoCheck {
 
 		int index = shifts.indexOf(Shift.N.getValue(), prevShiftsDay);
 		while (index != -1) {
+			if (index == shifts.length() - 1) {
+				return;
+			}
 			int nightCnt = 0;
 
 			while (index + nightCnt < shifts.length() && shifts.charAt(index + nightCnt) == 'N') {

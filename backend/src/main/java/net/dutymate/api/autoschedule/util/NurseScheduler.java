@@ -16,7 +16,6 @@ import net.dutymate.api.entity.Rule;
 import net.dutymate.api.entity.WardMember;
 import net.dutymate.api.records.YearMonth;
 import net.dutymate.api.wardschedules.collections.WardSchedule;
-import net.dutymate.api.wardschedules.repository.WardScheduleRepository;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -29,11 +28,6 @@ public class NurseScheduler {
 	private static final int MAX_ITERATIONS = 50000;
 	private static final int MAX_NO_IMPROVEMENT = 1000;
 	private static final Random random = new Random();
-	private final WardScheduleRepository wardScheduleRepository;
-
-	public NurseScheduler(WardScheduleRepository wardScheduleRepository) {
-		this.wardScheduleRepository = wardScheduleRepository;
-	}
 
 	@Getter
 	@Builder
@@ -100,9 +94,10 @@ public class NurseScheduler {
 		List<WardSchedule.NurseShift> prevNurseShifts,
 		YearMonth yearMonth,
 		Long currentMemberId,
-		List<Request> requests) {
+		List<Request> requests,
+		Map<Integer, Integer> dailyNightCnt) {
 		Map<Long, String> prevMonthSchedules = getPreviousMonthSchedules(prevNurseShifts);
-		Solution currentSolution = createInitialSolution(wardSchedule, rule, wardMembers, yearMonth);
+		Solution currentSolution = createInitialSolution(wardSchedule, rule, wardMembers, yearMonth, dailyNightCnt);
 		Solution bestSolution = currentSolution.copy();
 
 		List<ShiftRequest> shiftRequests = requests.stream()
@@ -161,9 +156,11 @@ public class NurseScheduler {
 	private Solution createInitialSolution(WardSchedule wardSchedule,
 		Rule rule,
 		List<WardMember> wardMembers,
-		YearMonth yearMonth) {
+		YearMonth yearMonth,
+		Map<Integer, Integer> dailyNightCnt) {
 		Map<Long, String> existingSchedules = getExistingSchedules(wardSchedule);
-		Map<Integer, Solution.DailyRequirement> requirements = calculateDailyRequirements(rule, yearMonth);
+		Map<Integer, Solution.DailyRequirement> requirements = calculateDailyRequirements(rule, yearMonth,
+			dailyNightCnt);
 		List<Solution.Nurse> nurses = initializeNurses(wardMembers, existingSchedules, yearMonth.daysInMonth());
 
 		for (int day = 1; day <= yearMonth.daysInMonth(); day++) {
@@ -190,14 +187,17 @@ public class NurseScheduler {
 		return existingSchedules;
 	}
 
-	private Map<Integer, Solution.DailyRequirement> calculateDailyRequirements(Rule rule, YearMonth yearMonth) {
+	private Map<Integer, Solution.DailyRequirement> calculateDailyRequirements(Rule rule, YearMonth yearMonth,
+		Map<Integer, Integer> dailyNightCnt) {
 		Map<Integer, Solution.DailyRequirement> requirements = new HashMap<>();
 		for (int day = 1; day <= yearMonth.daysInMonth(); day++) {
 			boolean isWeekend = yearMonth.isWeekend(day);
 			requirements.put(day, Solution.DailyRequirement.builder()
 				.dayNurses(isWeekend ? rule.getWendDCnt() : rule.getWdayDCnt())
 				.eveningNurses(isWeekend ? rule.getWendECnt() : rule.getWdayECnt())
-				.nightNurses(isWeekend ? rule.getWendNCnt() : rule.getWdayNCnt())
+				.nightNurses(isWeekend
+					? (rule.getWendNCnt() - dailyNightCnt.getOrDefault(day, 0))
+					: (rule.getWdayNCnt() - dailyNightCnt.getOrDefault(day, 0)))
 				.build());
 		}
 		return requirements;
@@ -778,19 +778,34 @@ public class NurseScheduler {
 	}
 
 	// 필요한 총 간호사 수 계산
-	public int neededNurseCount(YearMonth yearMonth, Rule rule) {
-		int neededNurseCount = 1;
-		int weekDayNeededShift = rule.getWdayDCnt() + rule.getWdayECnt() + rule.getWdayNCnt();
-		int endDayNeededShift = rule.getWendDCnt() + rule.getWendECnt() + rule.getWendNCnt();
+	public int neededNurseCount(YearMonth yearMonth, Rule rule, int nightNurseCnt) {
+		// 평일/주말 필요 근무 수 계산
+		int weekdayShifts = rule.getWdayDCnt() + rule.getWdayECnt() + rule.getWdayNCnt();
+		int weekendShifts = rule.getWendDCnt() + rule.getWendECnt() + rule.getWendNCnt();
 
-		int totalShifts =
-			weekDayNeededShift * yearMonth.weekDaysInMonth()
-				+ endDayNeededShift * (yearMonth.daysInMonth() - yearMonth.weekDaysInMonth());
+		// 총 필요 근무 수 계산
+		int totalRequiredShifts = (weekdayShifts * yearMonth.weekDaysInMonth())
+			+ (weekendShifts * (yearMonth.daysInMonth() - yearMonth.weekDaysInMonth()));
 
-		while (neededNurseCount * (yearMonth.weekDaysInMonth()) < totalShifts) {
-			neededNurseCount++;
+		// 야간 전담 간호사가 없는 경우
+		if (nightNurseCnt == 0) {
+			int nurseCount = 1;
+			while (nurseCount * yearMonth.weekDaysInMonth() < totalRequiredShifts) {
+				nurseCount++;
+			}
+			return nurseCount;
 		}
-		return neededNurseCount;
+
+		// 야간 전담 간호사가 있는 경우
+
+		int nightNurseCapacity = nightNurseCnt * (yearMonth.daysInMonth() / 2);
+		int remainingShifts = totalRequiredShifts - nightNurseCapacity;
+		int normalNurseCount = 1;
+		while (normalNurseCount * yearMonth.weekDaysInMonth() < remainingShifts) {
+			normalNurseCount++;
+		}
+
+		return normalNurseCount + nightNurseCnt;
 	}
 
 	@Getter
@@ -821,6 +836,39 @@ public class NurseScheduler {
 			}
 		}
 		return violations;
+	}
+
+	public String generateNightSchedule(int daysInMonth, int rotation, int totalNurses,
+		Map<Integer, Integer> dailyNightCount) {
+		StringBuilder schedule = new StringBuilder();
+
+		// 6일 패턴 (NNNOOO)을 기준으로 rotation 값 적용
+		int startDay = rotation * 3 % 6;
+
+		for (int day = 0; day < daysInMonth; day++) {
+			int patternDay = (day + startDay) % 6;
+			char shift = patternDay < 3 ? 'N' : 'O';
+			schedule.append(shift);
+
+			// Map 업데이트
+			if (shift == 'N') {
+				dailyNightCount.merge(day + 1, 1, Integer::sum);
+			}
+		}
+
+		return schedule.toString();
+	}
+
+	public String headShiftBuilder(YearMonth yearMonth) {
+
+		StringBuilder schedule = new StringBuilder();
+		int daysInMonth = yearMonth.daysInMonth();
+
+		for (int day = 1; day <= daysInMonth; day++) {
+			schedule.append(yearMonth.isWeekend(day) ? 'O' : 'D');
+		}
+
+		return schedule.toString();
 	}
 
 }
