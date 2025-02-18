@@ -59,7 +59,7 @@ const HistoryList = () => {
 	return (
 		<div className="flex flex-1 bg-white rounded-xl p-[1.25rem] shadow-lg relative overflow-hidden">
 			{/* 헤더 고정 */}
-			<div className="flex items-top justify-center pr-[1rem] sticky top-0 bg-white z-10">
+			<div className="hidden sm:flex items-top justify-center pr-[1rem] sticky top-0 bg-white z-10">
 				<Icon name="history" size={24} className="text-gray-600" />
 			</div>
 
@@ -80,11 +80,11 @@ const HistoryList = () => {
 							>
 								<div className="flex items-center gap-[0.75rem] flex-1 min-w-0">
 									<span
-										className={`px-[0.375rem] py-[0.1875rem] rounded-md ${
+										className={`w-[4.3rem] px-[0.375rem] py-[0.1875rem] rounded-md ${
 											item.isAutoCreated ? "bg-duty-off-bg" : "bg-duty-off-bg"
 										}`}
 									>
-										<span className="font-medium text-md">
+										<span className="font-medium text-sm text-center truncate whitespace-nowrap block">
 											{item.isAutoCreated ? "근무표" : item.name}
 										</span>
 									</span>
