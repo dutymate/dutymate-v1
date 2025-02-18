@@ -527,7 +527,9 @@ public class MemberService {
 		WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
 			ward.getWardId(), yearMonth.year(), yearMonth.month()).orElse(null);
 
-		wardMemberService.deleteWardMemberDuty(currMonthSchedule, member);
+		if (currMonthSchedule != null) {
+			wardMemberService.deleteWardMemberDuty(currMonthSchedule, member);
+		}
 
 		// 다음달 듀티에서 삭제
 		YearMonth nextYearMonth = yearMonth.nextYearMonth();
@@ -535,7 +537,9 @@ public class MemberService {
 		WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
 			ward.getWardId(), nextYearMonth.year(), nextYearMonth.month()).orElse(null);
 
-		wardMemberService.deleteWardMemberDuty(nextMonthSchedule, member);
+		if (nextMonthSchedule != null) {
+			wardMemberService.deleteWardMemberDuty(nextMonthSchedule, member);
+		}
 
 	}
 
