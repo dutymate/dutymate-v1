@@ -102,17 +102,35 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		}
 	};
 
-	const handleUpdateComment = (commentId: number, originalContent: string) => {
+	const handleUpdateComment = async (commentId: number) => {
 		if (isEditing === commentId) {
-			// 수정 완료
-			setEditedComment(commentId, editContent);
-			setIsEditing(null);
+			// 수정 완료 → API 호출
+			try {
+				await boardService.updateComment(post.boardId, commentId, editContent);
+	
+				// 기존 댓글 리스트에서 수정된 댓글 업데이트
+				setCommentList((prevComments) =>
+					prevComments.map((comment) =>
+						comment.commentId === commentId
+							? { ...comment, content: editContent }
+							: comment
+					)
+				);
+	
+				toast.success("댓글이 수정되었습니다.");
+				setIsEditing(null);
+				setEditContent("");
+			} catch (error) {
+				console.error("댓글 수정 오류:", error);
+				toast.error("댓글 수정에 실패했습니다.");
+			}
 		} else {
 			// 수정 시작
 			setIsEditing(commentId);
-			setEditContent(getEditedContent(commentId, originalContent));
+			setEditContent(commentList.find((c) => c.commentId === commentId)?.content || "");
 		}
 	};
+	
 
 	const handleDeleteComment = async (
 		event: React.MouseEvent,
@@ -168,7 +186,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 	const handleEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === "Enter" && !e.shiftKey) {
 			e.preventDefault(); // 기본 줄바꿈 방지
-			handleAddComment(); // 댓글 작성 실행
+			handleAddComment(); // 댓글 작성 실행			
 		}
 	};
 
@@ -366,7 +384,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 														e.stopPropagation();
 														handleUpdateComment(
 															comment.commentId,
-															comment.content,
+															
 														);
 													}}
 													className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
@@ -408,7 +426,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 										</button>
 										<button
 											onClick={() => {
-												handleUpdateComment(comment.commentId, comment.content);
+												handleUpdateComment(comment.commentId);
 											}}
 											className="px-3 py-1 text-sm text-white bg-primary hover:bg-primary-dark rounded"
 										>

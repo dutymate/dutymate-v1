@@ -246,6 +246,29 @@ export const boardService = {
 			});
 	},
 
+	updateComment: async (boardId: number, commentId: number, content:string) => {
+		return axiosInstance
+			.put(`/board/${boardId}/comment/${commentId}`, {content : content})
+			.then((response) => {
+				return response.data;
+			})
+			.catch((error) => {
+				if (axios.isAxiosError(error)) {
+					throw error.response?.data;
+				}
+				if (error.response) {
+					switch (error.response.status) {
+						case 401:
+							window.location.href = "/login";
+							break;
+						default:
+							throw error;
+					}
+				}
+				throw error;
+			});
+	},
+
 	addBoardLike: async (boardId: number) => {
 		return axiosInstance
 			.post(`/board/${boardId}/like`)
