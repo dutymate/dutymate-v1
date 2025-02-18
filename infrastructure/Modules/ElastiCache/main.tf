@@ -1,21 +1,25 @@
-resource "aws_elasticache_serverless_cache" "valkey" {
-  name                 = "dutymate-valkey"
-  engine               = "valkey"
-  major_engine_version = "7"
-  security_group_ids   = [var.sg_valkey_id]
-  subnet_ids           = var.database_subnets
-
-  cache_usage_limits {
-    data_storage {
-      maximum = 1
-      unit    = "GB"
-    }
-    ecpu_per_second {
-      maximum = 1000
-    }
-  }
+resource "aws_elasticache_subnet_group" "elasticachesg" {
+  name       = "dutymate-elasticachesg"
+  subnet_ids = var.database_subnets
 
   tags = {
-    Name = "dutymate-valkey"
+    Name = "dutymate-elasticachesg"
+  }
+}
+
+resource "aws_elasticache_replication_group" "elasticache_replication" {
+  replication_group_id       = "dutymate-valkey"
+  description                = "Valkey replication group"
+  engine                     = "valkey"
+  node_type                  = "cache.t2.micro"
+  num_cache_clusters         = 1
+  parameter_group_name       = "default.valkey7"
+  engine_version             = "7.2"
+  security_group_ids         = [var.sg_valkey_id]
+  subnet_group_name          = aws_elasticache_subnet_group.elasticachesg.name
+  automatic_failover_enabled = false
+
+  tags = {
+    Name = "dutymate-elasticache"
   }
 }
