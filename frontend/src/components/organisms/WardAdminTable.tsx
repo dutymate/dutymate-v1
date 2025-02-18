@@ -5,6 +5,8 @@ import WardAdminRowCard from "./WardAdminRowCard";
 
 import { toast } from "react-toastify";
 import useWardStore from "../../store/wardStore";
+import { Icon } from "../atoms/Icon";
+import DutyTooltip from "../atoms/DutyTooltip";
 
 interface WardAdminTableProps {
 	// nurses: Nurse[];
@@ -59,7 +61,18 @@ const WardAdminTable = ({}: WardAdminTableProps) => {
 									<div className="w-[3.75rem] text-center">성별</div>
 									<div className="w-[4.375rem] pl-[1.7rem]">경력</div>
 									<div className="w-[5rem] pl-[2rem]">숙련도</div>
-									<div className="w-[7.5rem] pl-[3rem]">전담 근무</div>
+									<div className="w-[11rem] pl-[3rem] flex items-center gap-[0.25rem]">
+										전담 근무
+										<DutyTooltip message="자동생성 시 반영됩니다.">
+											<div className="cursor-help relative z-20">
+												<Icon
+													name="alert"
+													size={20}
+													className="text-gray-400"
+												/>
+											</div>
+										</DutyTooltip>
+									</div>
 								</div>
 								<div className="flex items-center gap-[1.5rem] flex-1 min-w-0">
 									<div className="flex-1 text-center">메모</div>
@@ -72,6 +85,7 @@ const WardAdminTable = ({}: WardAdminTableProps) => {
 								key={`${nurse.memberId}-${nurse.name}-${index}`}
 								nurse={nurse}
 								onUpdate={handleNurseUpdate}
+								useCustomDutyLabels={true}
 							/>
 						))}
 					</div>

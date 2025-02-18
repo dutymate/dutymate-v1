@@ -9,17 +9,19 @@ import useWardStore from "../../store/wardStore";
 import { toast } from "react-toastify";
 import useUserAuthStore from "@/store/userAuthStore";
 import { useNavigate } from "react-router-dom";
+import DutyTooltip from "../atoms/DutyTooltip";
 
 interface WardAdminRowCardProps {
 	nurse: Nurse;
 	onUpdate: (memberId: number, data: any) => void;
 	isSelected?: boolean;
 	onSelect?: (memberId: number) => void;
+	useCustomDutyLabels?: boolean;
 }
-
 const WardAdminRowCard = ({
 	nurse,
 	onUpdate,
+	useCustomDutyLabels = false,
 	// isSelected = false,
 	// onSelect,
 }: WardAdminRowCardProps) => {
@@ -293,6 +295,38 @@ const WardAdminRowCard = ({
 		}
 	};
 
+	const getDutyLabel = (duty: "D" | "N" | "ALL") => {
+		if (useCustomDutyLabels && duty === "D") {
+			return {
+				label: "D",
+				useSmallText: true,
+			};
+		}
+		if (duty === "ALL") {
+			return {
+				label: "All",
+				useSmallText: false,
+			};
+		}
+		return {
+			label: duty,
+			useSmallText: false,
+		};
+	};
+
+	const getDutyMessage = (duty: "D" | "N" | "ALL") => {
+		switch (duty) {
+			case "D":
+				return "평일 Day 근무만 해요.";
+			case "N":
+				return "Night 전담 근무자에요.";
+			case "ALL":
+				return "평간호사에요.";
+			default:
+				return "";
+		}
+	};
+
 	return (
 		<div ref={containerRef} className="relative">
 			<div className="flex items-center p-1.5 lg:p-2 bg-white rounded-xl border border-gray-100">
@@ -470,16 +504,22 @@ const WardAdminRowCard = ({
 							)}
 						</div>
 						<div className="flex gap-[0.5rem] w-[9.6875rem]">
-							{(["D", "E", "N", "ALL"] as const).map((duty) => (
-								<DutyBadgeEng
-									key={duty}
-									type={duty}
-									size="md"
-									variant={nurse.shift === duty ? "filled" : "outline"}
-									onClick={() => handleShiftChange(duty)}
-									isSelected={nurse.shift === duty}
-								/>
-							))}
+							{(["D", "N", "ALL"] as const).map((duty) => {
+								const dutyDisplay = getDutyLabel(duty);
+								return (
+									<DutyTooltip key={duty} message={getDutyMessage(duty)}>
+										<DutyBadgeEng
+											type={duty}
+											size="md"
+											variant={nurse.shift === duty ? "filled" : "outline"}
+											onClick={() => handleShiftChange(duty)}
+											isSelected={nurse.shift === duty}
+											customLabel={dutyDisplay.label}
+											useSmallText={dutyDisplay.useSmallText}
+										/>
+									</DutyTooltip>
+								);
+							})}
 						</div>
 					</div>
 					<div className="flex items-center gap-[1.5rem] flex-1 min-w-0">

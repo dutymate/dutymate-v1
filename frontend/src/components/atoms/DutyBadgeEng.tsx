@@ -7,15 +7,18 @@ interface DutyBadgeEngProps {
 	onClick?: () => void;
 	variant?: "filled" | "outline" | "letter";
 	noRing?: boolean;
+	customLabel?: string;
+	useSmallText?: boolean;
 }
 
 const DutyBadgeEng = ({
 	type,
 	size = "md",
+	variant = "filled",
 	isSelected = false,
 	onClick,
-	variant = "filled",
-	// noRing = false,
+	customLabel,
+	useSmallText = false,
 }: DutyBadgeEngProps) => {
 	const sizeClasses = {
 		xs: "w-5 h-5 text-sm",
@@ -68,6 +71,13 @@ const DutyBadgeEng = ({
 		},
 	};
 
+	const getDisplayText = () => {
+		if (customLabel) return customLabel;
+		if (type === "X") return "-";
+		if (type === "ALL") return "All";
+		return type;
+	};
+
 	return (
 		<div
 			onClick={onClick}
@@ -78,9 +88,10 @@ const DutyBadgeEng = ({
         rounded-[9px] font-medium
         ${onClick ? "cursor-pointer" : ""}
         transition-all duration-200
+        ${useSmallText ? "text-[0.875rem]" : "text-md"}
       `}
 		>
-			{type === "X" ? "-" : type === "ALL" ? "All" : type}
+			{getDisplayText()}
 		</div>
 	);
 };
