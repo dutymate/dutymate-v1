@@ -21,3 +21,11 @@ resource "aws_route53_record" "alb_dns" {
     evaluate_target_health = true
   }
 }
+
+resource "aws_route53_record" "google_site_verification" {
+  zone_id = var.route53_zone_id
+  name    = var.domain_name
+  type    = "TXT"
+  ttl     = 300
+  records = [var.google_site_verification_code]
+}

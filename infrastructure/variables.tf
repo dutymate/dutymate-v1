@@ -18,6 +18,10 @@ variable "domain_name" {
   type = string
 }
 
+variable "google_site_verification_code" {
+  type = string
+}
+
 variable "health_check_path" {
   type = string
 }

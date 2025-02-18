@@ -89,6 +89,7 @@ module "route53" {
   cloudfront_distribution_domain_name    = module.cloudfront.cloudfront_distribution_domain_name
   cloudfront_distribution_hosted_zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
   domain_name                            = var.domain_name
+  google_site_verification_code          = var.google_site_verification_code
   route53_zone_id                        = var.route53_zone_id
 }
 
