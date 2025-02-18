@@ -51,4 +51,22 @@ public class CommentService {
 
 		commentRepository.delete(comment);
 	}
+
+	@Transactional
+	public void updateComment(Long boardId, Long commentId, Member member, CommentRequestDto commentRequestDto) {
+		if (!commentRepository.existsByCommentIdAndMember(commentId, member)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않거나 본인이 작성한 댓글이 아닙니다.");
+		}
+
+		Board board = boardRepository.findById(boardId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 게시글입니다."));
+		Comment comment = commentRepository.findById(commentId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 댓글입니다."));
+
+		if (board != comment.getBoard()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 게시글에 작성된 댓글이 아닙니다.");
+		}
+		
+		comment.updateComment(commentRequestDto.getContent());
+	}
 }

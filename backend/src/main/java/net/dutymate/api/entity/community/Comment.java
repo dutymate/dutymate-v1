@@ -48,4 +48,8 @@ public class Comment {
 	protected void prePersist() {
 		this.createdAt = new Timestamp(System.currentTimeMillis());
 	}
+
+	public void updateComment(String comment) {
+		this.content = comment;
+	}
 }
