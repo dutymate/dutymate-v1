@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 // import notebookImage from "../../assets/notebook.svg";
 
 interface LandingTemplateProps {
@@ -10,6 +11,12 @@ const LandingTemplate: React.FC<LandingTemplateProps> = ({
 	children,
 	showIntroText = false,
 }) => {
+	const navigate = useNavigate();
+
+	const handleLogoClick = () => {
+		navigate("/");
+	};
+
 	return (
 		<div className="w-full h-screen bg-base-muted-30 animate-wave-bg">
 			<div className="w-full h-screen flex flex-col lg:flex-row">
@@ -19,7 +26,8 @@ const LandingTemplate: React.FC<LandingTemplateProps> = ({
 						<img
 							src="/images/logo.svg"
 							alt="DutyMate Logo"
-							className="w-[60%] max-w-[17.5rem] mb-[3rem]"
+							className="w-[60%] max-w-[17.5rem] mb-[3rem] cursor-pointer"
+							onClick={handleLogoClick}
 						/>
 						{showIntroText && (
 							<div className="text-center mb-[2rem]">
@@ -67,7 +75,8 @@ const LandingTemplate: React.FC<LandingTemplateProps> = ({
 						<img
 							src="/images/logo.svg"
 							alt="DutyMate Logo"
-							className="w-[60%] max-w-[17.5rem] mb-[3rem]"
+							className="w-[60%] max-w-[17.5rem] mb-[3rem] cursor-pointer"
+							onClick={handleLogoClick}
 						/>
 						{showIntroText && (
 							<div className="text-center mb-[1rem]">
