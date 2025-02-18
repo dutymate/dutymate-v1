@@ -167,7 +167,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 			>
 				{/* 헤더 */}
 				<div className="flex rounded-t-xl justify-between bg-primary-bg items-center px-[1rem] py-[0.25rem] border-b">
-					<h2 className="text-sm font-medium text-primary-dark">규칙 조회</h2>
+					<h2 className="text-sm font-medium text-primary-dark">규칙 설정</h2>
 					<button
 						onClick={onClose}
 						className="text-primary hover:text-primary/80"
@@ -199,7 +199,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 								<div className="space-y-[0.5rem]">
 									{/* 자동 적용 규칙 안내 */}
 									<div className="flex items-center justify-center gap-[0.25rem] py-[0.5rem] px-[0.25rem] bg-gray-50 rounded font-bold text-xs text-primary">
-										<span>ND, ED, DN, NOD 규칙은 자동 적용됩니다.</span>
+										<span>ND, ED, NE, NOD 규칙은 자동 적용됩니다.</span>
 									</div>
 
 									{/* 평일 근무자 수 */}
