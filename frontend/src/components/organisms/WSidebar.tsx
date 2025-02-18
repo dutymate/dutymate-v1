@@ -8,7 +8,7 @@ import { HiOutlineUsers } from "react-icons/hi2";
 import { IoIosChatboxes } from "react-icons/io";
 import { PiLightbulbFilamentFill } from "react-icons/pi";
 import { SlCalender } from "react-icons/sl";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Profile from "../atoms/Profile";
 
 interface NavigationItem {
@@ -82,14 +82,23 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ userType }: SidebarProps) => {
+	const navigate = useNavigate();
 	const navigation =
 		userType === "HN" ? headNurseNavigation : staffNurseNavigation;
+
+	const handleLogoClick = () => {
+		if (userType === "HN") {
+			navigate("/shift-admin");
+		} else {
+			navigate("/my-shift");
+		}
+	};
 
 	return (
 		<div className="fixed inset-y-0 left-0 z-40 flex flex-col bg-white w-[238px] border-r border-gray-200 rounded-tr-[18.47px] rounded-br-[18.47px] shadow-[0_4.62px_18.47px_rgba(0,0,0,0.05)]">
 			{/* Logo */}
 			<div className="flex items-center justify-center px-[1.875rem] pt-7">
-				<div className="w-[140px]">
+				<div className="w-[140px] cursor-pointer" onClick={handleLogoClick}>
 					<img alt="듀티메이트" src="/images/logo.svg" className="w-full" />
 				</div>
 			</div>

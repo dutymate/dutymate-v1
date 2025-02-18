@@ -9,7 +9,7 @@ import { IoIosChatboxes } from "react-icons/io";
 import { PiLightbulbFilamentFill } from "react-icons/pi";
 import { IoCloseOutline } from "react-icons/io5";
 import Profile from "../atoms/Profile";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface NavigationItem {
 	name: string;
@@ -85,9 +85,18 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ userType, isOpen, onClose }: SidebarProps) => {
-	// const location = useLocation();
+	const navigate = useNavigate();
 	const navigation =
 		userType === "HN" ? headNurseNavigation : staffNurseNavigation;
+
+	const handleLogoClick = () => {
+		if (userType === "HN") {
+			navigate("/shift-admin");
+		} else {
+			navigate("/my-shift");
+		}
+		onClose();
+	};
 
 	return (
 		<>
@@ -114,7 +123,7 @@ const Sidebar = ({ userType, isOpen, onClose }: SidebarProps) => {
 			>
 				{/* Logo와 닫기 버튼 */}
 				<div className="flex items-center justify-between px-[1.875rem] pt-7">
-					<div className="w-[140px]">
+					<div className="w-[140px] cursor-pointer" onClick={handleLogoClick}>
 						<img alt="듀티메이트" src="/images/logo.svg" className="w-full" />
 					</div>
 					<button
