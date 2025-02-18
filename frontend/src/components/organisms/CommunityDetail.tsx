@@ -1,5 +1,4 @@
 import { Icon } from "../atoms/Icon";
-import { Button } from "../atoms/Button";
 import { useState, useEffect, useRef } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaArrowUpLong } from "react-icons/fa6";
@@ -51,7 +50,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 	const [commentList, setCommentList] = useState<Comment[]>(post.comments);
 
 	const navigate = useNavigate();
-	const { setEditedComment, getEditedContent } = useCommentStore();
+	const { getEditedContent } = useCommentStore();
 	const [isEditing, setIsEditing] = useState<number | null>(null);
 	const [editContent, setEditContent] = useState("");
 
@@ -451,15 +450,13 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 					placeholder="댓글을 입력해주세요."
 					className="w-full p-4 border border-gray-200 rounded-lg resize-none h-24 sm:text-base text-xs"
 				/>
-
-				<Button
-					color="primary"
-					className="absolute bottom-3 right-1.5 w-8 h-8 sm:w-[8.5rem] sm:h-[2.5rem] flex items-center justify-center text-xs sm:text-base"
+				<button
 					onClick={handleAddComment}
+					className="absolute bottom-3 right-1.5 flex px-3 py-1 text-sm text-white bg-primary hover:bg-primary-dark rounded"
 				>
 					<FaArrowUpLong className="w-4 h-4 sm:hidden" />
 					<span className="hidden sm:block">등록</span>
-				</Button>
+				</button>
 			</div>
 		</div>
 	);
