@@ -808,6 +808,8 @@ const ShiftAdminTable = ({
 		// 엑셀 파일 저장 및 다운로드
 		XLSX.writeFile(wb, `근무표_${year}년_${month}월.xlsx`);
 	};
+	// const [showDownloadDropdown, setShowDownloadDropdown] = useState(false);
+	const [showWebDownloadDropdown, setShowWebDownloadDropdown] = useState(false);
 
 	return (
 		<>
@@ -897,8 +899,18 @@ const ShiftAdminTable = ({
 										}}
 										className="w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2"
 									>
-										<Icon name="download" size={16} />
-										<span>다운로드</span>
+										<Icon name="image" size={16} />
+										<span>이미지 다운로드</span>
+									</button>
+									<button
+										onClick={() => {
+											setIsDropdownOpen(false);
+											handleExportToExcel();
+										}}
+										className="w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+									>
+										<Icon name="image" size={16} />
+										<span>엑셀로 다운로드</span>
 									</button>
 								</div>
 							</>
@@ -1260,15 +1272,39 @@ const ShiftAdminTable = ({
 										/>
 									</Button>
 								</div>
-								<Button
-									text-size="md"
-									size="register"
-									color="off"
-									className="py-0.5 px-1.5 sm:py-1 sm:px-2"
-									onClick={handleDownloadWardSchedule}
-								>
-									다운로드
-								</Button>
+								<div className="relative">
+									<Button
+										text-size="md"
+										size="register"
+										color="off"
+										className="py-0.5 px-1.5 sm:py-1 sm:px-2"
+										onClick={() => setShowWebDownloadDropdown((prev) => !prev)}
+									>
+										다운로드
+									</Button>
+									{showWebDownloadDropdown && (
+										<div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg z-50 min-w-[8rem] py-1">
+											<button
+												onClick={() => {
+													setShowWebDownloadDropdown(false);
+													handleDownloadWardSchedule();
+												}}
+												className="w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
+											>
+												이미지로 다운로드
+											</button>
+											<button
+												onClick={() => {
+													setShowWebDownloadDropdown(false);
+													handleExportToExcel(); // 엑셀 다운로드 함수 추가 필요
+												}}
+												className="w-full px-3 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
+											>
+												엑셀로 다운로드
+											</button>
+										</div>
+									)}
+								</div>
 							</div>
 						</div>
 					</div>

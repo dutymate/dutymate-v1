@@ -83,10 +83,6 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		}
 	};
 
-	const handleUpdateBoard = async () => {
-		console.log("수정 기능");
-	};
-
 	const handleDeleteBoard = async (event: React.MouseEvent) => {
 		event.stopPropagation();
 
@@ -251,12 +247,6 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 						{showDropdown && (
 							<div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-								<button
-									onClick={handleUpdateBoard}
-									className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
-								>
-									수정하기
-								</button>
 								<button
 									onClick={handleDeleteBoard}
 									className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 rounded-b-lg"
