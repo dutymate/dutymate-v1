@@ -138,7 +138,7 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 								onClick={() => handlePostClick(post)}
 							>
 								<div className="flex gap-4">
-									<div className="flex-1">
+									<div className="flex-1 flex-col">
 										{/* 게시글 헤더 */}
 										<div className="flex flex-wrap items-center gap-2 mb-2">
 											{post.profileImg ? (
@@ -161,7 +161,7 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 												{post.nickname}
 											</span>
 											<span className="text-gray-400 text-sm">·</span>
-											<span className="text-gray-600 text-sm">
+											<span className="text-gray-600 text-xs sm:text-sm">
 												{post.category === "DAILY"
 													? "일상글"
 													: post.category === "QNA"
@@ -169,40 +169,42 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 														: "이직 정보"}
 											</span>
 											<span className="text-gray-400 text-sm">·</span>
-											<span className="text-gray-400 text-sm">
+											<span className="text-gray-400 text-xs sm:text-sm">
 												{formatTimeAgo(post.createdAt)}
 											</span>
 										</div>
 
 										{/* 게시글 내용 */}
-										<h3 className="text-sm sm:text-lg font-medium mb-2 break-words">
-											{post.title}
-										</h3>
-										<p className="text-gray-600 text-xs sm:text-sm mb-4 break-words line-clamp-2">
-											{post.content}
-										</p>
+										<div className="flex items-center justify-between gap-2">
+											<div>
+												<h3 className="text-sm sm:text-lg font-medium mb-2 break-words line-clamp-1">
+													{post.title}
+												</h3>
+												<p className="text-gray-600 text-xs sm:text-sm mb-4 break-words line-clamp-2">
+													{post.content}
+												</p>
 
-										{/* 게시글 푸터 */}
-										<div className="flex items-center gap-4 text-gray-400 text-sm">
-											<div className="flex items-center gap-1">
-												<Icon name="heart" size={16} />
-												<span>{post.likeCnt}</span>
+												{/* 게시글 푸터 */}
+												<div className="flex items-center gap-4 text-gray-400 text-xs sm:text-sm">
+													<div className="flex items-center gap-1">
+														<Icon name="heart" size={16} />
+														<span>{post.likeCnt}</span>
+													</div>
+													<div className="flex items-center gap-1">
+														<Icon name="message" size={16} />
+														<span>{post.commentCnt}</span>
+													</div>
+													<div className="flex items-center gap-1">
+														<Icon name="eye" size={16} />
+														<span>{post.viewCnt}</span>
+													</div>
+												</div>
 											</div>
-											<div className="flex items-center gap-1">
-												<Icon name="message" size={16} />
-												<span>{post.commentCnt}</span>
-											</div>
-											<div className="flex items-center gap-1">
-												<Icon name="eye" size={16} />
-												<span>{post.viewCnt}</span>
-											</div>
-										</div>
-									</div>
 
 									{/* 이미지 영역 */}
 									{post.boardImgUrl !== null &&
 										post.boardImgUrl.trim() !== "" && (
-											<div className="hidden sm:flex items-center justify-center w-[7.5rem] h-[7.5rem] bg-gray-50 rounded-lg shrink-0">
+											<div className="flex sm:flex items-center justify-center w-[4rem] h-[4rem] md:w-[6rem] md:h-[6em] xl:w-[7.5rem] xl:h-[7.5rem] bg-gray-50 rounded-lg shrink-0">
 												<img
 													src={post.boardImgUrl}
 													alt={post.title}
@@ -210,6 +212,9 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 												/>
 											</div>
 										)}
+										</div>
+									</div>
+
 								</div>
 							</div>
 						))
