@@ -18,7 +18,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -40,12 +39,6 @@ public class NewsService {
 	@Value("${openai.secret-key}")
 	private String openaiSecretKey;
 
-	// 스프링 서버가 실행될 때 무조건 뉴스 데이터 넣기 (null pointer exception 방지)
-	@PostConstruct
-	public void init() throws JsonProcessingException {
-		newsBatch();
-	}
-
 	// 매일 06:00에 실행
 	@Scheduled(cron = "0 0 6 * * *")
 	public void executeAt6AM() throws JsonProcessingException {
@@ -64,7 +57,11 @@ public class NewsService {
 		newsBatch();
 	}
 
-	public List<GptApiResponseDto> getNews() {
+	public List<GptApiResponseDto> getNews() throws JsonProcessingException {
+		if (newsRepository.count() == 0) {
+			newsBatch();
+		}
+		List<GptApiResponseDto> newsList = newsRepository.findFirstByOrderByCreatedAtDesc().getNewsList();
 		return newsRepository.findFirstByOrderByCreatedAtDesc().getNewsList();
 	}
 
@@ -116,12 +113,12 @@ public class NewsService {
 
 	public String generatePrompt() {
 		return """
-			다음의 간호사 관련 뉴스를 바탕으로 가장 간호사 및 의료와 관련도가 높은 뉴스를 4건 추출하세요.
-			그리고 기사 제목과 내용을 요약하여 제공하고 뉴스 링크를 제공해주세요.
+			다음의 간호사 관련 뉴스를 바탕으로 가장 간호사 및 의료 정책과 관련도가 높은 뉴스를 4건 추출하세요.
+			그리고 기사 제목(30자)과 내용(50자)으로 요약하고 뉴스 링크를 제공해주세요.
 			[제약 사항]
-			제목은 최대 20자
-			내용은 최대 50자
-			내용 뒤가 잘릴 경우 ... 처리 할 것
+			title 값은 최대 30자
+			description 값은 최대 50자
+			응답 값에 HTML 엔티티 코드(예를 들어, &quot;)를 포함하지 않을 것
 			응답은 항상 제시된 JSON 형식을 따를 것
 			[JSON 형식]
 			[

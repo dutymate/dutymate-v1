@@ -35,19 +35,14 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 
 	// 컴포넌트 마운트 시 상단으로 스크롤
 	useEffect(() => {
+		fetchRecommendedPosts();
 		window.scrollTo(0, 0);
 	}, []);
-
-	useEffect(() => {
-		fetchPosts(selectedCategory);
-		fetchRecommendedPosts();
-	}, [selectedCategory]);
 
 	useEffect(() => {
 		// location이 변경될 때마다 카테고리를 기본값으로 리셋
 		setSelectedCategory(category);
 		fetchPosts(category);
-		fetchRecommendedPosts();
 	}, [category]);
 
 	const fetchPosts = (category: string) =>

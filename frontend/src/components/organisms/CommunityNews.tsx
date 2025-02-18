@@ -1,18 +1,14 @@
-import boardService, { NewsResponse } from "@/services/boardService";
+import { useNewsStore } from "@/store/newsStore";
 import { useEffect, useState } from "react";
 
 const CommunityNews = ({}: any) => {
-	const [newsies, setNewsies] = useState<NewsResponse[]>([]);
+	const { newsies, fetchNewsies } = useNewsStore();
 
 	useEffect(() => {
-		fetchNewsies();
+		if (newsies.length === 0) {
+			fetchNewsies();
+		}
 	}, []);
-
-	const fetchNewsies = () =>
-		boardService.getNews(
-			(data) => setNewsies(data),
-			(error) => console.error(error),
-		);
 
 	return (
 		// {/* 광고 배너 영역 - 데스크톱에서만 표시 */}
