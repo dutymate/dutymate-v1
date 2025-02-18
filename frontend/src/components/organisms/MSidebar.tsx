@@ -131,38 +131,6 @@ const Sidebar = ({ userType, isOpen, onClose }: SidebarProps) => {
 						{navigation.map((item, index) => (
 							<NavigationItem key={index} item={item} />
 						))}
-						{userType === "RN" && (
-							<>
-								<NavigationItem
-									item={{
-										name: "나의 듀티표",
-										href: "/my-shift",
-										icon: BiSolidUserPin,
-									}}
-								/>
-								<NavigationItem
-									item={{
-										name: "병동 듀티표",
-										href: "/team-shift",
-										icon: HiOutlineUsers,
-									}}
-								/>
-								<NavigationItem
-									item={{
-										name: "커뮤니티",
-										href: "/community",
-										icon: IoIosChatboxes,
-									}}
-								/>
-								<NavigationItem
-									item={{
-										name: "튜토리얼",
-										href: "/tutorial",
-										icon: PiLightbulbFilamentFill,
-									}}
-								/>
-							</>
-						)}
 					</div>
 				</nav>
 				<Profile />
