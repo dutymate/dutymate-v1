@@ -61,7 +61,11 @@ public class NewsService {
 		if (newsRepository.count() == 0) {
 			newsBatch();
 		}
-		return newsRepository.findFirstByOrderByCreatedAtDesc().getNewsList();
+		List<GptApiResponseDto> newsList = newsRepository.findFirstByOrderByCreatedAtDesc().getNewsList();
+		newsList.forEach(o -> {
+			o.setDescription(o.getDescription().substring(0, 57) + "...");
+		});
+		return newsList;
 	}
 
 	public void newsBatch() throws JsonProcessingException {
@@ -112,11 +116,12 @@ public class NewsService {
 
 	public String generatePrompt() {
 		return """
-			다음의 간호사 관련 뉴스를 바탕으로 가장 간호사 및 의료 정책과 관련도가 높은 뉴스를 4건 추출하세요.
-			그리고 기사 제목(최대30자)과 내용(최대50자)으로 요약하고 뉴스 링크를 제공해주세요.
+			다음의 간호사 관련 뉴스를 바탕으로 가장 간호사 및 의료 정책과 관련도가 높은 뉴스를 5건 추출하세요.
+			그리고 기사 제목(최대30자)과 내용(최대60자)으로 요약하고 뉴스 링크를 제공해주세요.
+			중복된 기사는 제외해주세요.
 			[제약 사항]
 			title 값은 최대 30자
-			description 값은 최대 50자
+			description 값은 최대 60자
 			응답 값에 HTML 엔티티 코드(예를 들어, &quot;)를 포함하지 않을 것
 			응답은 항상 제시된 JSON 형식을 따를 것
 			[JSON 형식]
