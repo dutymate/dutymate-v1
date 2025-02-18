@@ -233,7 +233,8 @@ public class MemberService {
 	public KakaoUserResponseDto.KakaoAccount getKakaoUserInfo(String kakaoAccessToken) {
 		// WebClient 인스턴스 생성 후 사용자 정보 가져오기 POST 요청
 		KakaoUserResponseDto kakaoUserResponseDto
-			= requestApiByPostWithAuthHeader(kakaoUserUri, kakaoAccessToken, KakaoUserResponseDto.class);
+			= requestApiByPostWithAuthHeader(
+			kakaoUserUri + "?secure_resource=true", kakaoAccessToken, KakaoUserResponseDto.class);
 		return Objects.requireNonNull(kakaoUserResponseDto).getKakaoAccount();
 	}
 
@@ -287,7 +288,7 @@ public class MemberService {
 	// API POST 요청 with params, header
 
 	private <T> T requestApiByPostWithAuthHeader(String uri, String token, Class<T> classType) {
-		return WebClient.create().post()
+		return WebClient.create().get()
 			.uri(uri)
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
