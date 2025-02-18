@@ -155,7 +155,7 @@ const MyShiftCalendar = ({
 		<div className={`${isMobile ? "" : "flex gap-[2rem]"}`}>
 			<div
 				className={`bg-white rounded-[1rem] p-[0.5rem] shadow-sm ${
-					isMobile ? "w-full" : "w-[46.875rem] h-[46.875rem]"
+					isMobile ? "w-full" : "w-[46.875rem] h-fit"
 				}`}
 			>
 				{/* 달력 헤더 */}
