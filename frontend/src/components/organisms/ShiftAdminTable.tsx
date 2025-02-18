@@ -867,7 +867,7 @@ const ShiftAdminTable = ({
 				</div>
 
 				{/* 기존 테이블 영역 */}
-				<div className="overflow-x-auto">
+				<div className="overflow-x-auto bg-white rounded-xl p-[0.5rem] shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
 					<div className={`min-w-[800px] ${isWeb ? "" : "duty-table-content"}`}>
 						{/* 기존 테이블 내용을 여기에 복사 */}
 						<table className="w-full border-collapse">
