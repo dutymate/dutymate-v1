@@ -1,12 +1,11 @@
-import { Icon } from "../atoms/Icon";
-import { useState, useEffect, useRef } from "react";
+import boardService from "@/services/boardService";
+import { formatTimeAgo } from "@/utils/dateUtiles";
+import { useEffect, useRef, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaArrowUpLong } from "react-icons/fa6";
-import { formatTimeAgo } from "@/utils/dateUtiles";
-import boardService from "@/services/boardService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import useCommentStore from "@/store/commentStore";
+import { Icon } from "../atoms/Icon";
 
 interface Comment {
 	commentId: number;
@@ -42,7 +41,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 	const [showCommentDropdown, setShowCommentDropdown] = useState<number | null>(
 		null,
 	);
-	const dropdownRef = useRef<HTMLDivElement>(null);
+	const dropdownRef = useRef<(HTMLDivElement | null)[]>([]);
 
 	const [isLiked, setIsLiked] = useState(post.isLike);
 	const [likeCount, setLikeCount] = useState(post.likeCnt);
@@ -50,25 +49,50 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 	const [commentList, setCommentList] = useState<Comment[]>(post.comments);
 
 	const navigate = useNavigate();
-	const { getEditedContent } = useCommentStore();
 	const [isEditing, setIsEditing] = useState<number | null>(null);
 	const [editContent, setEditContent] = useState("");
 
 	// 드롭다운 외부 클릭 처리
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				dropdownRef.current &&
-				!dropdownRef.current.contains(event.target as Node)
-			) {
+			let isOutsideClick = true;
+	
+			// 모든 드롭다운을 검사하여 클릭한 요소가 내부에 있는지 확인
+			dropdownRef.current.forEach((ref) => {
+				if (ref && ref.contains(event.target as Node)) {
+					isOutsideClick = false;
+				}
+			});
+	
+			if (isOutsideClick) {
 				setShowDropdown(false);
 				setShowCommentDropdown(null);
 			}
 		};
-
+	
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
+
+	const editInputRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				editInputRef.current &&
+				!editInputRef.current.contains(event.target as Node)
+			) {
+				setIsEditing(null);
+				setEditContent("");
+			}
+		};
+	
+		if (isEditing !== null) {
+			document.addEventListener("mousedown", handleClickOutside);
+		}
+	
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, [isEditing]); // isEditing이 변경될 때마다 실행
 
 	const handleLikeClick = async () => {
 		try {
@@ -186,6 +210,13 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 		}
 	};
 
+	const handleEnterEditPress = (e: React.KeyboardEvent<HTMLTextAreaElement>, commentId : number) => {
+		if (e.key === "Enter" && !e.shiftKey) {
+			e.preventDefault(); // 기본 줄바꿈 방지
+			handleUpdateComment(commentId); // 댓글 작성 실행
+		}
+	};
+
 	return (
 		<div className="bg-white rounded-xl p-4 lg:p-6 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
 			<div className="flex justify mb-3">
@@ -234,7 +265,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 				{/* 드롭다운 메뉴 */}
 				{post.isMyWrite ? (
-					<div className="relative" ref={dropdownRef}>
+					<div className="relative" ref={(el) => (dropdownRef.current[0] = el)}>
 						<button
 							onClick={(e) => {
 								e.stopPropagation();
@@ -318,7 +349,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 						댓글이 없습니다.
 					</div>
 				) : (
-					commentList.map((comment) => (
+					commentList.map((comment, index) => (
 						<div key={comment.commentId} className="py-4 first:pt-0 last:pb-0">
 							<div className="flex justify-between items-start">
 								<div className="flex items-center gap-2">
@@ -351,7 +382,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 								{comment.isMyWrite ? (
 									<div
 										className="relative dropdown-container"
-										ref={dropdownRef}
+										ref={(el) => (dropdownRef.current[index] = el)}
 									>
 										<button
 											onClick={(e) => {
@@ -395,10 +426,11 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 								)}
 							</div>
 							{isEditing === comment.commentId ? (
-								<div className="mt-2">
+								<div className="mt-2" ref={editInputRef}>
 									<textarea
 										value={editContent}
 										onChange={(e) => setEditContent(e.target.value)}
+										onKeyDown={(e) =>handleEnterEditPress(e, comment.commentId)}
 										className="w-full p-2 border rounded resize-none h-[3rem] mb-2"
 									/>
 									<div className="flex justify-end gap-2">
@@ -423,7 +455,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 								</div>
 							) : (
 								<p className="text-gray-700 text-sm mt-2">
-									{getEditedContent(comment.commentId, comment.content)}
+									{comment.content}
 								</p>
 							)}
 						</div>
