@@ -689,7 +689,7 @@ const ShiftAdminTable = ({
 
 	// 근무표 다운로드 기능
 	const handleDownloadWardSchedule = async () => {
-		const tableElement = tableRef.current?.querySelector(".duty-table-content");
+		const tableElement = document.querySelector(".duty-table-content");
 		if (!tableElement) return;
 
 		try {
@@ -749,12 +749,18 @@ const ShiftAdminTable = ({
 		};
 
 		fetchRequests();
+
+		const checkIsWeb = () => {
+			setIsWeb(window.innerWidth >= 1024);
+		};
+		window.addEventListener("resize", checkIsWeb);
 	}, []);
 
 	const [isNurseCountModalOpen, setIsNurseCountModalOpen] = useState(false);
 	const [neededNurseCount, setNeededNurseCount] = useState(0);
 
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const [isWeb, setIsWeb] = useState(false);
 
 	return (
 		<>
@@ -855,7 +861,7 @@ const ShiftAdminTable = ({
 
 				{/* 기존 테이블 영역 */}
 				<div className="overflow-x-auto">
-					<div className="min-w-[800px]">
+					<div className={`min-w-[800px] ${isWeb ? "" : "duty-table-content"}`}>
 						{/* 기존 테이블 내용을 여기에 복사 */}
 						<table className="w-full border-collapse">
 							{/* 기존 테이블 헤더와 내용 */}
@@ -1229,7 +1235,9 @@ const ShiftAdminTable = ({
 						) : (
 							<div className="relative">
 								<div className="overflow-x-auto">
-									<div className="min-w-[50rem] duty-table-content">
+									<div
+										className={`min-w-[50rem] ${isWeb ? "duty-table-content" : ""}`}
+									>
 										<table className="relative w-full border-collapse z-10">
 											<thead>
 												<tr className="text-xs text-gray-600 border-b border-gray-200">
