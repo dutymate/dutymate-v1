@@ -61,7 +61,6 @@ public class NewsService {
 		if (newsRepository.count() == 0) {
 			newsBatch();
 		}
-		List<GptApiResponseDto> newsList = newsRepository.findFirstByOrderByCreatedAtDesc().getNewsList();
 		return newsRepository.findFirstByOrderByCreatedAtDesc().getNewsList();
 	}
 
@@ -114,7 +113,7 @@ public class NewsService {
 	public String generatePrompt() {
 		return """
 			다음의 간호사 관련 뉴스를 바탕으로 가장 간호사 및 의료 정책과 관련도가 높은 뉴스를 4건 추출하세요.
-			그리고 기사 제목(30자)과 내용(50자)으로 요약하고 뉴스 링크를 제공해주세요.
+			그리고 기사 제목(최대30자)과 내용(최대50자)으로 요약하고 뉴스 링크를 제공해주세요.
 			[제약 사항]
 			title 값은 최대 30자
 			description 값은 최대 50자

@@ -692,6 +692,9 @@ const ShiftAdminTable = ({
 		const tableElement = document.querySelector(".duty-table-content");
 		if (!tableElement) return;
 
+		const tempSelectedCell = selectedCell;
+		setSelectedCell(null);
+
 		try {
 			const dataUrl = await toPng(tableElement as HTMLElement, {
 				quality: 1.0,
@@ -720,6 +723,7 @@ const ShiftAdminTable = ({
 				autoClose: 2000,
 			});
 		}
+		setSelectedCell(tempSelectedCell);
 	};
 
 	// URL 쿼리 파라미터로부터 초기 데이터 로드
@@ -739,6 +743,8 @@ const ShiftAdminTable = ({
 	const [requests, setRequests] = useState<WardRequest[]>([]);
 
 	useEffect(() => {
+		checkIsWeb();
+
 		const fetchRequests = async () => {
 			try {
 				const data = await requestService.getWardRequests();
@@ -750,11 +756,12 @@ const ShiftAdminTable = ({
 
 		fetchRequests();
 
-		const checkIsWeb = () => {
-			setIsWeb(window.innerWidth >= 1024);
-		};
 		window.addEventListener("resize", checkIsWeb);
 	}, []);
+
+	const checkIsWeb = () => {
+		setIsWeb(window.innerWidth >= 1024);
+	};
 
 	const [isNurseCountModalOpen, setIsNurseCountModalOpen] = useState(false);
 	const [neededNurseCount, setNeededNurseCount] = useState(0);
