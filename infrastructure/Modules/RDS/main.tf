@@ -20,15 +20,15 @@ resource "aws_db_instance" "db" {
   multi_az               = false
   db_subnet_group_name   = aws_db_subnet_group.dbsg.name
   vpc_security_group_ids = [var.sg_mysql_id]
-  parameter_group_name   = aws_db_parameter_group.db_parameter_group.name
+  parameter_group_name   = aws_db_parameter_group.db_params.name
 
   tags = {
     Name = "dutymate-db"
   }
 }
 
-resource "aws_db_parameter_group" "db_parameter_group" {
-  name   = "dutymate-db-parameter-group"
+resource "aws_db_parameter_group" "db_params" {
+  name   = "dutymate-db-params"
   family = "mysql8.0"
 
   parameter {
@@ -37,6 +37,6 @@ resource "aws_db_parameter_group" "db_parameter_group" {
   }
 
   tags = {
-    Name = "dutymate-db-parameter-group"
+    Name = "dutymate-db-params"
   }
 }

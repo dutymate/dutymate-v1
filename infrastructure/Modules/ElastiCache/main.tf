@@ -8,8 +8,8 @@ resource "aws_elasticache_subnet_group" "elasticachesg" {
 }
 
 resource "aws_elasticache_replication_group" "elasticache_replication" {
-  replication_group_id       = "dutymate-valkey"
-  description                = "Valkey replication group"
+  replication_group_id       = "dutymate-elasticache"
+  description                = "ElastiCache Replication Group"
   engine                     = "valkey"
   node_type                  = "cache.t2.micro"
   num_cache_clusters         = 1
