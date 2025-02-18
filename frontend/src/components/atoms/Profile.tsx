@@ -1,11 +1,14 @@
 import useUserAuthStore from "@/store/userAuthStore";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Icon } from "./Icon";
 
 const Profile = () => {
 	const userAuthStore = useUserAuthStore();
 	const userInfo = userAuthStore.userInfo;
+	const location = useLocation();
+
+	const isMypage = location.pathname === "/my-page";
 
 	return (
 		<div className="px-[1.3rem] pb-10">
@@ -13,7 +16,14 @@ const Profile = () => {
 				{/* 마이페이지 텍스트와 아이콘 */}
 				<Link
 					to="/my-page"
-					className="flex items-center gap-x-6 px-4 mb-4 hover:bg-gray-100 rounded-lg py-2"
+					className={`
+						flex items-center gap-x-6 px-4 mb-4 rounded-lg py-2
+						${
+							isMypage
+								? "bg-gray-100 text-gray-700"
+								: "text-gray-700 hover:bg-gray-100"
+						}
+					`}
 				>
 					{userInfo?.profileImg ? (
 						<img
@@ -28,7 +38,9 @@ const Profile = () => {
 					) : (
 						<Icon
 							name="user"
-							className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500 rounded-full"
+							className={`w-[1.125rem] h-[1.125rem] min-w-[1.125rem] rounded-full
+								${isMypage ? "text-primary-dark" : "text-gray-500"}
+							`}
 						/>
 					)}
 					<span className="text-sm font-semibold">마이페이지</span>
