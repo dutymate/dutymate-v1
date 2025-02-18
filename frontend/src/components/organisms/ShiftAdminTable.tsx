@@ -1,5 +1,5 @@
 // ShiftAdminTable.tsx
-
+import * as XLSX from "xlsx";
 import RuleEditModal from "./RuleEditModal";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import { Button } from "../atoms/Button";
@@ -769,6 +769,46 @@ const ShiftAdminTable = ({
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isWeb, setIsWeb] = useState(false);
 
+	// 엑셀 다운로드 함수
+	const handleExportToExcel = () => {
+		// 데이터 변환: 테이블 데이터를 배열 형태로 정리
+		const tableData = [];
+
+		// 첫 번째 행: 컬럼 제목 추가
+		const headerRow = [
+			"이름",
+			"이전 근무",
+			...Array.from({ length: daysInMonth }, (_, i) => `${i + 1}일`),
+			"D",
+			"E",
+			"N",
+			"O",
+		];
+		tableData.push(headerRow);
+
+		// 데이터 행 추가
+		dutyData.forEach((nurse, i) => {
+			const rowData = [
+				nurse.name, // 간호사 이름
+				nurse.prevShifts, // 이전 근무
+				...duties[i], // 근무 정보
+				nurseDutyCounts[i]?.D || 0,
+				nurseDutyCounts[i]?.E || 0,
+				nurseDutyCounts[i]?.N || 0,
+				nurseDutyCounts[i]?.O || 0,
+			];
+			tableData.push(rowData);
+		});
+
+		// 워크북 생성 및 시트 추가
+		const ws = XLSX.utils.aoa_to_sheet(tableData);
+		const wb = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, "근무표");
+
+		// 엑셀 파일 저장 및 다운로드
+		XLSX.writeFile(wb, `근무표_${year}년_${month}월.xlsx`);
+	};
+
 	return (
 		<>
 			{/* 모바일 뷰 */}
@@ -1258,6 +1298,7 @@ const ShiftAdminTable = ({
 															이전 근무
 														</span>
 													</th>
+
 													{Array.from({ length: daysInMonth }, (_, i) => {
 														const day = i + 1;
 														return (
