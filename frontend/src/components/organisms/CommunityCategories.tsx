@@ -18,7 +18,7 @@ const CommunityCategories = ({
 	];
 
 	return (
-		<div className="flex gap-1.5 sm:gap-2 w-full overflow-x-auto scrollbar-hide">
+		<div className="flex gap-1.25 sm:gap-2 w-full overflow-x-auto scrollbar-hide">
 			{categories.map((category) => (
 				<button
 					key={category.key}

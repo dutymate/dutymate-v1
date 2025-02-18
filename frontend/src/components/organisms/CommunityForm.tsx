@@ -107,7 +107,7 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 				{/* 추천 게시글 영역 */}
 				<div className="mb-6 p-4 border border-gray-200 rounded-lg">
 					<div className="flex items-center gap-4">
-						<h3 className="text-lg font-semibold whitespace-nowrap">
+						<h3 className="text-sm sm:text-base lg:text-lg font-semibold whitespace-nowrap">
 							추천 게시글
 						</h3>
 						<div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
@@ -115,7 +115,7 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 								<button
 									key={recommended.boardId}
 									onClick={() => handleRecommendedClick(recommended.boardId)}
-									className={`px-2 py-1 rounded text-sm whitespace-nowrap cursor-pointer transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200`}
+									className={`px-2 py-1 rounded text-xs sm:text-sm whitespace-nowrap cursor-pointer transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200`}
 								>
 									{recommended.title}
 								</button>
@@ -157,7 +157,7 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 													className="w-[1.125rem] h-[1.125rem] min-w-[1.125rem] text-gray-500 rounded-full"
 												/>
 											)}
-											<span className="font-medium text-sm">
+											<span className="font-medium text-xs sm:text-sm">
 												{post.nickname}
 											</span>
 											<span className="text-gray-400 text-sm">·</span>
@@ -175,10 +175,10 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 										</div>
 
 										{/* 게시글 내용 */}
-										<h3 className="text-lg font-medium mb-2 break-words">
+										<h3 className="text-sm sm:text-lg font-medium mb-2 break-words">
 											{post.title}
 										</h3>
-										<p className="text-gray-600 text-sm mb-4 break-words line-clamp-2">
+										<p className="text-gray-600 text-xs sm:text-sm mb-4 break-words line-clamp-2">
 											{post.content}
 										</p>
 

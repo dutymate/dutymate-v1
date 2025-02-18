@@ -39,8 +39,8 @@ const CommunityLayout = ({ title, subtitle, children }: any) => {
 				</div>
 
 				{/* 컨텐츠 영역 */}
-				<div className="flex-1 flex justify-center mt-6 pb-6">
-					<div className="w-full lg:w-[53rem]  lg:px-8 overflow-y-auto">
+				<div className="flex-1 flex justify-center mt-6 pb-6 px-4 lg:px-0">
+					<div className="w-full lg:w-[53rem]  lg:px-8 overflow-y-auto ">
 						{children}
 					</div>
 					<CommunityNews />
