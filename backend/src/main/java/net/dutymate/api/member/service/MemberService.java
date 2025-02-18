@@ -520,47 +520,23 @@ public class MemberService {
 
 	// MongoDB 에서 내보내는 wardmember 찾아서 삭제 (이전 달은 상관 X)
 	public void deleteWardMemberInMongo(Member member, Ward ward) {
-		System.out.println("🔥 deleteWardMemberInMongo 실행 시작");
-		System.out.println("🔥 대상 wardId: " + ward.getWardId());
-		System.out.println("🔥 대상 memberId: " + member.getMemberId());
 
-		try {
-			// 이번달 듀티에서 삭제
-			YearMonth yearMonth = YearMonth.nowYearMonth();
-			System.out.println("🔥 이번달: " + yearMonth.year() + "-" + yearMonth.month());
+		// 이번달 듀티에서 삭제
+		YearMonth yearMonth = YearMonth.nowYearMonth();
 
-			WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
-				ward.getWardId(), yearMonth.year(), yearMonth.month()).orElse(null);
+		WardSchedule currMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
+			ward.getWardId(), yearMonth.year(), yearMonth.month()).orElse(null);
 
-			if (currMonthSchedule != null) {
-				System.out.println("✅ 이번달 듀티 존재! 삭제 시작...");
-				wardMemberService.deleteWardMemberDuty(currMonthSchedule, member);
-				System.out.println("✅ 이번달 듀티 삭제 완료");
-			} else {
-				System.out.println("⚠ 이번달 듀티 없음");
-			}
+		wardMemberService.deleteWardMemberDuty(currMonthSchedule, member);
 
-			// 다음달 듀티에서 삭제
-			YearMonth nextYearMonth = yearMonth.nextYearMonth();
-			System.out.println("🔥 다음달: " + nextYearMonth.year() + "-" + nextYearMonth.month());
+		// 다음달 듀티에서 삭제
+		YearMonth nextYearMonth = yearMonth.nextYearMonth();
 
-			WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
-				ward.getWardId(), nextYearMonth.year(), nextYearMonth.month()).orElse(null);
+		WardSchedule nextMonthSchedule = wardScheduleRepository.findByWardIdAndYearAndMonth(
+			ward.getWardId(), nextYearMonth.year(), nextYearMonth.month()).orElse(null);
 
-			if (nextMonthSchedule != null) {
-				System.out.println("✅ 다음달 듀티 존재! 삭제 시작...");
-				wardMemberService.deleteWardMemberDuty(nextMonthSchedule, member);
-				System.out.println("✅ 다음달 듀티 삭제 완료");
-			} else {
-				System.out.println("⚠ 다음달 듀티 없음");
-			}
+		wardMemberService.deleteWardMemberDuty(nextMonthSchedule, member);
 
-			System.out.println("🔥 deleteWardMemberInMongo 실행 완료");
-
-		} catch (Exception e) {
-			System.out.println("❌ deleteWardMemberInMongo 중 예외 발생: " + e.getMessage());
-			e.printStackTrace();
-		}
 	}
 
 	public void checkPassword(Member member, CheckPasswordDto checkPasswordDto) {

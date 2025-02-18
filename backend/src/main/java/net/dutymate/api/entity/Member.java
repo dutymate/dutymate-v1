@@ -130,7 +130,6 @@ public class Member {
 	}
 
 	public void linkMember(Member enterMember) {
-		System.out.println(enterMember.getEmail());
 		this.email = enterMember.getEmail();
 		this.password = enterMember.getPassword();
 		this.name = enterMember.getName();
