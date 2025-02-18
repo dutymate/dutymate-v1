@@ -25,9 +25,12 @@ import {
 	MdOutlineSort,
 	MdContentCopy,
 } from "react-icons/md";
-import { BsThreeDotsVertical, BsFunnel } from "react-icons/bs";
+import { BsThreeDotsVertical, BsFunnel, BsThreeDots } from "react-icons/bs";
 import { GrUndo } from "react-icons/gr";
 import { GrPowerReset } from "react-icons/gr";
+import { HiDownload } from "react-icons/hi";
+import { RiRulerLine } from "react-icons/ri";
+import { MdAutoMode } from "react-icons/md";
 
 const iconComponents = {
 	alert: HiExclamationCircle,
@@ -63,6 +66,10 @@ const iconComponents = {
 	heartFilled: AiFillHeart,
 	message: AiOutlineMessage,
 	eye: AiOutlineEye,
+	more: BsThreeDots,
+	rule: RiRulerLine,
+	auto: MdAutoMode,
+	download: HiDownload,
 };
 
 export type IconName =
@@ -73,6 +80,10 @@ export type IconName =
 	| "heartFilled"
 	| "message"
 	| "eye"
+	| "more"
+	| "rule"
+	| "auto"
+	| "download"
 	| keyof typeof iconComponents;
 
 interface IconProps {

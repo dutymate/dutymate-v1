@@ -79,7 +79,6 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 				modalRef.current &&
 				!modalRef.current.contains(event.target as Node)
 			) {
-				onClose();
 			}
 		};
 
@@ -153,7 +152,10 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 	};
 
 	return (
-		<div className="fixed inset-0 z-50" style={{ background: "transparent" }}>
+		<div
+			className="fixed inset-0 z-50 flex items-center justify-center"
+			style={{ background: "transparent" }}
+		>
 			<div ref={modalRef} className="bg-white rounded-xl shadow-lg w-[22.5rem]">
 				{/* 헤더 */}
 				<div className="flex rounded-t-xl justify-between bg-primary-bg items-center px-[1rem] py-[0.25rem] border-b">
