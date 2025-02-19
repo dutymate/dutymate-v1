@@ -1,6 +1,8 @@
 package net.dutymate.api.config;
 
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -54,7 +56,7 @@ public class LoggingAspect {
 		if (request != null) {
 			final String httpMethod = request.getMethod();
 			final String requestUri = request.getRequestURI();
-			final String queryString = request.getQueryString();
+			final String queryString = URLDecoder.decode(request.getQueryString(), StandardCharsets.UTF_8);
 			final String clientIp = request.getRemoteAddr();
 
 			log.info(HTTP_METHOD_FORMAT, httpMethod);
