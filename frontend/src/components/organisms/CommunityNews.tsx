@@ -20,10 +20,10 @@ const CommunityNews = ({}: any) => {
 					<h2 className="mt-2 text-primary-dark font-semibold whitespace-nowrap">
 						오늘의 간호 NEWS
 					</h2>
-					<div className="mt-2 text-[#b0b0b0] font-semibold whitespace-nowrap text-sm flex items-center" >
-					<GoDotFill />
-					<span>GPT가 추천하는 최신 간호 뉴스</span>
-					<GoDotFill />
+					<div className="mt-2 text-[#b0b0b0] font-semibold whitespace-nowrap text-sm flex items-center">
+						<GoDotFill />
+						<span>GPT가 추천하는 최신 간호 뉴스</span>
+						<GoDotFill />
 					</div>
 				</div>
 
