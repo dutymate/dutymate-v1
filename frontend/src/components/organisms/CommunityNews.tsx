@@ -40,12 +40,12 @@ const CommunityNews = ({}: any) => {
 							className="block hover:border-primary border-2 rounded-lg"
 						>
 							<div className="rounded-lg overflow-hidden">
-								<div className="bg-white p-3 pb-0">
+								<div className="bg-white px-3 pt-3 pb-0">
 									<h3 className="font-medium text-foreground flex-1 truncate text-md">
 										{news.title}
 									</h3>
 								</div>
-								<div className="bg-white p-3">
+								<div className="bg-white px-3 pb-3 pt-1">
 									<p className="text-gray-500 text-sm leading-relaxed line-clamp-4">
 										{news.description}
 									</p>
