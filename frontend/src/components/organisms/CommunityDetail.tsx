@@ -436,7 +436,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 										onKeyDown={(e) =>
 											handleEnterEditPress(e, comment.commentId)
 										}
-										className="w-full p-2 border rounded resize-none h-[3rem] mb-2"
+										className="w-full p-2 border rounded resize-none h-[2rem] mb-2 text-sm"
 									/>
 									<div className="flex justify-end gap-2">
 										<button
@@ -444,7 +444,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 												setIsEditing(null);
 												setEditContent("");
 											}}
-											className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded"
+											className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded"
 										>
 											취소
 										</button>
@@ -452,7 +452,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 											onClick={() => {
 												handleUpdateComment(comment.commentId);
 											}}
-											className="px-3 py-1 text-sm text-white bg-primary hover:bg-primary-dark rounded"
+											className="px-3 py-1 text-xs text-white bg-primary hover:bg-primary-dark rounded"
 										>
 											완료
 										</button>
