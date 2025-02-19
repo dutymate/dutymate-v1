@@ -138,7 +138,7 @@ const MyShift = () => {
 					{/* <div className="mb-[0.75rem] pl-[0.5rem] lg:pl-[1rem]"> */}
 					<Title title="나의 듀티표" subtitle="나의 근무 일정을 확인해보세요" />
 					{/* </div> */}
-					<div className="block lg:flex lg:gap-[2rem]">
+					<div className="block lg:flex lg:gap-[2rem] mt-6 ">
 						<div className="relative">
 							<div className="absolute right-4 top-4 z-10">
 								<Button
