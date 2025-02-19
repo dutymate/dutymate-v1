@@ -41,36 +41,11 @@ const getFontWeight = (value: number) => {
 	}
 };
 
-const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
+const RuleEditModal = ({ onClose }: RuleEditModalProps) => {
 	const [rules, setRules] = useState<WardRule | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const modalRef = useRef<HTMLDivElement>(null);
-
-	// 버튼 위치 기반으로 모달 위치 계산
-	useEffect(() => {
-		if (buttonRef.current && modalRef.current) {
-			const buttonRect = buttonRef.current.getBoundingClientRect();
-			const modalRect = modalRef.current.getBoundingClientRect();
-
-			// 화면 하단 공간 체크
-			const bottomSpace = window.innerHeight - buttonRect.bottom;
-			const modalHeight = modalRect.height;
-
-			modalRef.current.style.position = "fixed";
-
-			// 모달이 화면 하단을 벗어나는 경우 위로 표시
-			if (bottomSpace < modalHeight) {
-				modalRef.current.style.top = `${buttonRect.top - modalHeight - 8}px`;
-			} else {
-				modalRef.current.style.top = `${buttonRect.bottom + 8}px`;
-			}
-
-			// 오른쪽 정렬, 모달의 오른쪽 끝이 버튼의 오른쪽 끝과 일치하도록 설정
-			const rightPosition = buttonRect.right;
-			modalRef.current.style.left = `${rightPosition - modalRect.width}px`;
-		}
-	}, [buttonRef]);
 
 	// 외부 클릭 감지
 	useEffect(() => {
@@ -153,7 +128,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-25"
 			onClick={(e) => {
 				if (e.target === e.currentTarget) {
 					onClose();
