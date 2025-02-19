@@ -99,7 +99,8 @@ public class WardScheduleService {
 		// DTO에 값 넣어주기
 		nurseShiftsDto.forEach(now -> {
 			Member nurse = memberRepository.findById(now.getMemberId())
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사 매핑 오류"));
+				.orElseGet(() -> Member.builder().name("(탈퇴회원)").role(Role.RN).grade(1).build());
+			// .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사 매핑 오류"));
 			now.setName(nurse.getName());
 			now.setRole(nurse.getRole());
 			now.setGrade(nurse.getGrade());
