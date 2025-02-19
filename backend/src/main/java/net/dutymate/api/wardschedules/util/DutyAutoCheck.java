@@ -3,7 +3,6 @@ package net.dutymate.api.wardschedules.util;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,14 +63,60 @@ public class DutyAutoCheck {
 	private void nightIssuesGenerator(Long memberId, String name, int prevShiftsDay,
 		String shifts, RuleResponseDto rule, List<WardScheduleResponseDto.Issue> issues) {
 
-		int index = shifts.indexOf(Shift.N.getValue(), prevShiftsDay);
+		// 월 경계에 걸친 야간 연속 근무 체크
+		int consecutiveFromPrev = 0;
+		int currentIndex = 0;
+
+		// 이전 달의 마지막 야간 근무 카운트 (뒤에서부터)
+		while (currentIndex < prevShiftsDay
+			&& shifts.charAt(prevShiftsDay - 1 - currentIndex) == 'N') {
+			consecutiveFromPrev++;
+			currentIndex++;
+		}
+
+		// 현재 달의 첫 야간 근무 카운트
+		currentIndex = prevShiftsDay;
+		while (currentIndex < shifts.length() && shifts.charAt(currentIndex) == 'N') {
+			consecutiveFromPrev++;
+			currentIndex++;
+		}
+
+		// 월 경계에 걸친 야간 연속 근무 체크
+		if (consecutiveFromPrev > 0 && (consecutiveFromPrev < rule.getMinN()
+			|| consecutiveFromPrev > rule.getMaxN())) {
+
+			// 현재 달에서의 연속 N 개수 계산
+			int currentMonthNCount = 0;
+			for (int i = prevShiftsDay; i < currentIndex; i++) {
+				if (shifts.charAt(i) == 'N') {
+					currentMonthNCount++;
+				}
+			}
+
+			// endDate 계산: 현재 달의 N이 없으면 1, 있으면 N의 개수만큼
+			int endDate = Math.max(1, currentMonthNCount);
+
+			issues.add(WardScheduleResponseDto.Issue.builder()
+				.memberId(memberId)
+				.name(name)
+				.startDate(1)  // 현재 달의 1일부터
+				.endDate(endDate)  // 현재 달의 N 개수나 최소 1
+				.endDateShift(Shift.N)
+				.message(NIGHT_SHIFT_VIOLATION_MESSAGE)
+				.build());
+		}
+
+		// 기존 현재 달 내의 야간 연속 근무 체크 로직은 유지
+		int index = shifts.indexOf(Shift.N.getValue(), currentIndex);
+
 		while (index != -1) {
 			if (index == shifts.length() - 1) {
 				return;
 			}
 			int nightCnt = 0;
 
-			while (index + nightCnt < shifts.length() && shifts.charAt(index + nightCnt) == 'N') {
+			while (index + nightCnt < shifts.length()
+				&& shifts.charAt(index + nightCnt) == 'N') {
 				nightCnt++;
 			}
 
@@ -87,60 +132,130 @@ public class DutyAutoCheck {
 			}
 
 			index = shifts.indexOf(Shift.N.getValue(), index + nightCnt);
-
 		}
 	}
 
 	private void maxShiftsIssuesGenerator(Long memberId, String name, int prevShiftsDay,
 		String shifts, RuleResponseDto rule, List<WardScheduleResponseDto.Issue> issues) {
-		int index = prevShiftsDay;
-		while (index < shifts.length()
-			&& (shifts.charAt(index) == 'X'
-			|| shifts.charAt(index) == 'O')) {
-			index++;
-		}
-		while (index != -1) {
-			int shiftCnt = 0;
 
-			while (index + shiftCnt < shifts.length()
-				&& (shifts.charAt(index + shiftCnt) == 'D'
-				|| shifts.charAt(index + shiftCnt) == 'E'
-				|| shifts.charAt(index + shiftCnt) == 'N')) {
-				shiftCnt++;
+		// 첫 번째 검사: 이전 달에서 이어지는 연속 근무 체크
+		int consecutiveFromPrev = 0;
+		int currentIndex = 0;
+
+		// 이전 달의 마지막 근무들 카운트 (뒤에서부터)
+		while (currentIndex < prevShiftsDay
+			&& isWorkingShift(shifts.charAt(prevShiftsDay - 1 - currentIndex))) {
+			consecutiveFromPrev++;
+			currentIndex++;
+		}
+
+		// 현재 달의 첫 근무들 카운트
+		currentIndex = prevShiftsDay;
+		while (currentIndex < shifts.length()
+			&& isWorkingShift(shifts.charAt(currentIndex))) {
+			consecutiveFromPrev++;
+			currentIndex++;
+		}
+
+		// 이전 달과 현재 달에 걸친 연속 근무 체크
+		if (consecutiveFromPrev > rule.getMaxShift()) {
+			issues.add(WardScheduleResponseDto.Issue.builder()
+				.memberId(memberId)
+				.name(name)
+				.startDate(1)  // 현재 달의 1일부터
+				.endDate(currentIndex - prevShiftsDay)  // 연속 근무가 끝나는 날까지
+				.endDateShift(Shift.valueOf(String.valueOf(shifts.charAt(currentIndex - 1))))
+				.message(MAX_SHIFT_VIOLATION_MESSAGE)
+				.build());
+		}
+
+		// 나머지 현재 달의 연속 근무 체크
+		while (currentIndex < shifts.length()) {
+			// 근무(D,E,N) 시작점 찾기
+			while (currentIndex < shifts.length()
+				&& !isWorkingShift(shifts.charAt(currentIndex))) {
+				currentIndex++;
 			}
 
-			if (shiftCnt > rule.getMaxShift()) {
+			if (currentIndex >= shifts.length()) {
+				break;
+			}
+
+			int startIndex = currentIndex;
+			int consecutiveShifts = 0;
+
+			// 연속 근무일 계산 (O나 X가 나오면 연속성 끊김)
+			while (currentIndex < shifts.length()
+				&& isWorkingShift(shifts.charAt(currentIndex))) {
+				consecutiveShifts++;
+				currentIndex++;
+			}
+
+			// 최대 연속 근무일 초과 체크
+			if (consecutiveShifts > rule.getMaxShift()) {
 				issues.add(WardScheduleResponseDto.Issue.builder()
 					.memberId(memberId)
 					.name(name)
-					.startDate(index + 1 - prevShiftsDay)
-					.endDate(index + shiftCnt - prevShiftsDay)
-					.endDateShift(Shift.valueOf(String.valueOf(shifts.charAt(index + shiftCnt - 1))))
+					.startDate(startIndex + 1 - prevShiftsDay)
+					.endDate(currentIndex - prevShiftsDay)
+					.endDateShift(Shift.valueOf(String.valueOf(shifts.charAt(currentIndex - 1))))
 					.message(MAX_SHIFT_VIOLATION_MESSAGE)
 					.build());
 			}
 
-			final int searchStart = index + shiftCnt;
-			index = Arrays.asList(Shift.D, Shift.E, Shift.N).stream()
-				.mapToInt(shift -> shifts.indexOf(shift.getValue(), searchStart))
-				.min()
-				.orElse(-1);
+			if (currentIndex == startIndex) {
+				currentIndex++;
+			}
 		}
+	}
+
+	private boolean isWorkingShift(char shift) {
+		return shift == 'D' || shift == 'E' || shift == 'N';
 	}
 
 	private void specificPatternIssuesGenerator(Long memberId, String name, int prevShiftsDay,
 		String shifts, List<WardScheduleResponseDto.Issue> issues) {
 
 		for (String pattern : FORBIDDEN_PATTERNS) {
+			// 월 경계에 걸친 패턴 검사 (이전 달 마지막 + 현재 달 초반)
+			if (prevShiftsDay >= pattern.length() - 1) {  // 이전 달에 충분한 일수가 있는 경우
+				String boundaryShifts = shifts.substring(prevShiftsDay - (pattern.length() - 1),
+					Math.min(prevShiftsDay + pattern.length(), shifts.length()));
+				int boundaryIndex = boundaryShifts.indexOf(pattern);
 
+				if (boundaryIndex != -1 && boundaryIndex < pattern.length()) {
+					// 패턴이 월 경계에 걸쳐있는 경우
+					int patternStartInPrevMonth = (pattern.length() - 1) - boundaryIndex;
+					int daysInCurrentMonth = pattern.length() - patternStartInPrevMonth;
+
+					// 현재 달에 포함된 패턴의 마지막 문자 위치 찾기
+					int endDateOffset = 0;
+					for (int i = 0; i < daysInCurrentMonth; i++) {
+						char currentChar = pattern.charAt(patternStartInPrevMonth + i);
+						if (currentChar != 'O') {  // O가 아닌 실제 근무가 있는 날짜
+							endDateOffset = i + 1;
+						}
+					}
+
+					issues.add(WardScheduleResponseDto.Issue.builder()
+						.memberId(memberId)
+						.name(name)
+						.startDate(1)  // 현재 달 1일부터
+						.endDate(endDateOffset)  // 실제 근무가 있는 마지막 날까지
+						.endDateShift(Shift.valueOf(String.valueOf(pattern.charAt(pattern.length() - 1))))
+						.message(pattern + "형태의 근무는 허용되지 않습니다.")
+						.build());
+				}
+			}
+
+			// 현재 달 내의 패턴 검사
 			int index = shifts.indexOf(pattern, prevShiftsDay);
 
 			while (index != -1) {
-
 				int startDate = index + 1 - prevShiftsDay;
 				int endDate = index + pattern.length() - prevShiftsDay;
 
-				if (startDate > 0 && endDate <= shifts.length() - prevShiftsDay) {
+				if (endDate <= shifts.length() - prevShiftsDay) {
 					issues.add(WardScheduleResponseDto.Issue.builder()
 						.memberId(memberId)
 						.name(name)

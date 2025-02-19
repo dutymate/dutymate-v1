@@ -1669,7 +1669,8 @@ const ShiftAdminTable = ({
 					</div>
 				</div>
 			</div>
-			{/* 규칙 편집 모달 */}
+
+			{/* 공통 모달 영역 - 뷰포트 외부에 배치 */}
 			{isRuleModalOpen && (
 				<RuleEditModal
 					onClose={() => setIsRuleModalOpen(false)}

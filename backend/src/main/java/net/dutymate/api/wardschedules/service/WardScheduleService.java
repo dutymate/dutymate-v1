@@ -99,11 +99,12 @@ public class WardScheduleService {
 		// DTO에 값 넣어주기
 		nurseShiftsDto.forEach(now -> {
 			Member nurse = memberRepository.findById(now.getMemberId())
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사 매핑 오류"));
+				.orElseGet(() -> Member.builder().name("(탈퇴회원)").role(Role.RN).grade(1).build());
+			// .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "간호사 매핑 오류"));
 			now.setName(nurse.getName());
 			now.setRole(nurse.getRole());
 			now.setGrade(nurse.getGrade());
-			now.setShiftType(nurse.getWardMember().getShiftType());
+			now.setShiftType(nurse.getWardMember() == null ? ShiftType.ALL : nurse.getWardMember().getShiftType());
 
 			// prevShifts 구하기 (기존 코드 유지)
 			if (prevNurseShifts == null) {
@@ -115,6 +116,7 @@ public class WardScheduleService {
 					.orElseGet(() -> WardSchedule.NurseShift.builder().shifts("XXXX").build());
 				now.setPrevShifts(prevShifts.getShifts().substring(prevShifts.getShifts().length() - 4));
 			}
+
 		});
 
 		// 정렬
@@ -138,6 +140,7 @@ public class WardScheduleService {
 						Comparator.nullsLast(Comparator.reverseOrder()))
 			)
 			.toList();
+
 		// TODO invalidCnt 구하기
 		// int invalidCnt = calcInvalidCnt(recentNurseShifts);
 
@@ -149,7 +152,6 @@ public class WardScheduleService {
 		List<WardScheduleResponseDto.History> histories = findHistory(wardSchedule.getDuties());
 
 		// 승인, 대기 상태인 요청 구하기
-		// List<WardScheduleResponseDto.RequestDto> requests = findRequest(ward);
 		List<WardScheduleResponseDto.RequestDto> requests = null;
 
 		return WardScheduleResponseDto.of(wardSchedule.getId(), yearMonth, 0, nurseShiftsDto, issues, histories,

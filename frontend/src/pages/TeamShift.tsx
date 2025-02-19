@@ -21,14 +21,12 @@ const TeamShift = () => {
 				<div className="hidden lg:block w-[14.875rem] shrink-0">
 					<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 				</div>
-
 				{/* 모바일 Sidebar */}
 				<MSidebar
 					userType={userInfo?.role as "HN" | "RN"}
 					isOpen={isSidebarOpen}
 					onClose={() => setIsSidebarOpen(false)}
 				/>
-
 				{/* 메인 컨텐츠 영역 */}
 				<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 h-[calc(100vh-1rem)] lg:h-screen overflow-y-auto">
 					{/* 모바일 메뉴 버튼 */}
@@ -41,7 +39,7 @@ const TeamShift = () => {
 
 					<Title
 						title="병동 듀티표"
-						subtitle="우리 병동의 전체 듀티표를 확인해보세요."
+						subtitle="우리 병동의 전체 듀티표를 확인해보세요"
 					/>
 					<div className="mt-6">
 						<TeamShiftTable />

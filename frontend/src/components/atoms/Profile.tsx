@@ -9,6 +9,7 @@ const Profile = () => {
 	const location = useLocation();
 
 	const isMypage = location.pathname === "/my-page";
+	const privacyPolicyUrl = import.meta.env.VITE_PRIVACY_POLICY_URL || "#";
 
 	return (
 		<div className="px-[1.3rem] pb-10">
@@ -57,7 +58,7 @@ const Profile = () => {
 						(주)듀티메이트
 					</span>
 					<span className="text-xs text-gray-400">
-						<a href="#">개인정보처리방침</a>
+						<a href={privacyPolicyUrl}>개인정보처리방침</a>
 					</span>
 				</div>
 			</div>

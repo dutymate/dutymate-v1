@@ -25,6 +25,7 @@ import net.dutymate.api.ward.dto.WardInfoResponseDto;
 import net.dutymate.api.ward.dto.WardRequestDto;
 import net.dutymate.api.ward.service.WardService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,7 +37,7 @@ public class WardController {
 
 	// 병동 생성하기 (관리자)
 	@PostMapping
-	public ResponseEntity<?> addWard(@RequestBody WardRequestDto requestWardDto, @Auth Member member) {
+	public ResponseEntity<?> addWard(@Valid @RequestBody WardRequestDto requestWardDto, @Auth Member member) {
 		wardService.createWard(requestWardDto, member);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
@@ -57,7 +58,7 @@ public class WardController {
 
 	// 가상 간호사 추가 (관리자)
 	@PostMapping("/member/virtual")
-	public ResponseEntity<?> addVirtualMember(@RequestBody AddNurseCntRequestDto addNurseCntRequestDto,
+	public ResponseEntity<?> addVirtualMember(@Valid @RequestBody AddNurseCntRequestDto addNurseCntRequestDto,
 		@Auth Member member) {
 		wardService.addVirtualMember(addNurseCntRequestDto, member);
 		return ResponseEntity.ok().build();
@@ -67,7 +68,7 @@ public class WardController {
 	@PutMapping("/member/virtual/{memberId}")
 	public ResponseEntity<?> changeVirtualMember(
 		@PathVariable Long memberId,
-		@RequestBody VirtualEditRequestDto virtualEditRequestDto,
+		@Valid @RequestBody VirtualEditRequestDto virtualEditRequestDto,
 		@Auth Member member) {
 		wardService.changeVirtualMember(memberId, virtualEditRequestDto, member);
 		return ResponseEntity.ok().build();

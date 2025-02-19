@@ -15,6 +15,7 @@ import net.dutymate.api.comunity.dto.CommentRequestDto;
 import net.dutymate.api.comunity.service.CommentService;
 import net.dutymate.api.entity.Member;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,7 +28,7 @@ public class CommentController {
 	@PostMapping("/{boardId}/comment")
 	public ResponseEntity<?> writeComment(
 		@PathVariable Long boardId,
-		@RequestBody CommentRequestDto commentRequestDto,
+		@Valid @RequestBody CommentRequestDto commentRequestDto,
 		@Auth Member member
 	) {
 		BoardDetailResponseDto.CommentDto commentResponseDto = commentService.writeComment(boardId, commentRequestDto,
@@ -48,7 +49,7 @@ public class CommentController {
 	@PutMapping("/{boardId}/comment/{commentId}")
 	public ResponseEntity<?> updateComment(
 		@PathVariable Long boardId, @PathVariable Long commentId, @Auth Member member,
-		@RequestBody CommentRequestDto commentRequestDto
+		@Valid @RequestBody CommentRequestDto commentRequestDto
 	) {
 		commentService.updateComment(boardId, commentId, member, commentRequestDto);
 		return ResponseEntity.ok().build();

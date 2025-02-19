@@ -17,6 +17,7 @@ import net.dutymate.api.comunity.service.BoardService;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.enumclass.Category;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,7 +29,7 @@ public class BoardController {
 
 	@PostMapping
 	public ResponseEntity<?> createBoard(
-		@RequestBody BoardCreateRequestDto boardCreateRequestDto,
+		@Valid @RequestBody BoardCreateRequestDto boardCreateRequestDto,
 		@Auth Member member) {
 
 		return boardService.createBoard(boardCreateRequestDto, member);
