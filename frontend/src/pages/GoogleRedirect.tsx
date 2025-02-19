@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { useLoadingStore } from "@/store/loadingStore";
 import PageLoadingSpinner from "@/components/atoms/Loadingspinner";
 import { AxiosError } from "axios";
+import { SEO } from "../components/SEO";
 
 export function GoogleRedirect() {
 	const navigate = useNavigate();
@@ -71,5 +72,10 @@ export function GoogleRedirect() {
 	}, []);
 
 	// 로딩 상태를 보여주는 컴포넌트 반환
-	return <PageLoadingSpinner />;
+	return (
+		<>
+			<SEO title="구글 로그인 | Dutymate" description="구글 로그인 중입니다." />
+			<PageLoadingSpinner />
+		</>
+	);
 }

@@ -5,6 +5,7 @@ import CommunityDetail from "../components/organisms/CommunityDetail";
 import { toast } from "react-toastify";
 import CommunityLayout from "@/components/organisms/CommunityLayout";
 import PageLoadingSpinner from "@/components/atoms/Loadingspinner";
+import { SEO } from "../components/SEO";
 
 const CommunityDetailPage = () => {
 	const { boardId } = useParams();
@@ -47,27 +48,48 @@ const CommunityDetailPage = () => {
 
 	if (!post)
 		return (
-			<CommunityLayout title="게시글" subtitle="동료들의 이야기를 읽어보세요">
-				<div className="flex justify-center py-10">
-					<PageLoadingSpinner />
-				</div>
-			</CommunityLayout>
+			<>
+				<SEO
+					title={`${post.title} | Dutymate 커뮤니티`}
+					description={post.content.substring(0, 150)}
+					ogImage={post.thumbnail || "/images/og-image.png"}
+				/>
+				<CommunityLayout title="게시글" subtitle="동료들의 이야기를 읽어보세요">
+					<div className="flex justify-center py-10">
+						<PageLoadingSpinner />
+					</div>
+				</CommunityLayout>
+			</>
 		);
 
 	if (isLoading) {
 		return (
-			<CommunityLayout title="게시글" subtitle="동료들의 이야기를 읽어보세요">
-				<div className="flex justify-center py-10">
-					<PageLoadingSpinner />
-				</div>
-			</CommunityLayout>
+			<>
+				<SEO
+					title={`${post.title} | Dutymate 커뮤니티`}
+					description={post.content.substring(0, 150)}
+					ogImage={post.thumbnail || "/images/og-image.png"}
+				/>
+				<CommunityLayout title="게시글" subtitle="동료들의 이야기를 읽어보세요">
+					<div className="flex justify-center py-10">
+						<PageLoadingSpinner />
+					</div>
+				</CommunityLayout>
+			</>
 		);
 	}
 
 	return (
-		<CommunityLayout title="게시글" subtitle="동료들의 이야기를 읽어보세요">
-			<CommunityDetail post={post} />
-		</CommunityLayout>
+		<>
+			<SEO
+				title={`${post.title} | Dutymate 커뮤니티`}
+				description={post.content.substring(0, 150)}
+				ogImage={post.thumbnail || "/images/og-image.png"}
+			/>
+			<CommunityLayout title="게시글" subtitle="동료들의 이야기를 읽어보세요">
+				<CommunityDetail post={post} />
+			</CommunityLayout>
+		</>
 	);
 };
 

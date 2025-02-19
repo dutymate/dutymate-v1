@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 // Mock 응답 데이터 import (임시로 주석 처리)
 // import mockResponse from "../services/response-json/user/PostApiMemberInfo.json";
-
+import { SEO } from "../components/SEO";
 interface FormData {
 	grade: number;
 	gender: "F" | "M";
@@ -90,14 +90,20 @@ const ExtraInfo = () => {
 	};
 
 	return (
-		<LandingTemplate showIntroText={false}>
-			<div className="flex flex-col items-center">
-				<p className="text-primary-dark font-semibold text-[1rem] mt-[0.9rem] mb-[1rem]">
-					원활한 서비스 이용을 위한 부가 정보를 알려주세요.
-				</p>
-				<ExtraInfoForm initialData={formData} onSubmit={handleSubmit} />
-			</div>
-		</LandingTemplate>
+		<>
+			<SEO
+				title="부가 정보 입력 | Dutymate"
+				description="원활한 서비스 이용을 위한 부가 정보를 알려주세요."
+			/>
+			<LandingTemplate showIntroText={false}>
+				<div className="flex flex-col items-center">
+					<p className="text-primary-dark font-semibold text-[1rem] mt-[0.9rem] mb-[1rem]">
+						원활한 서비스 이용을 위한 부가 정보를 알려주세요.
+					</p>
+					<ExtraInfoForm initialData={formData} onSubmit={handleSubmit} />
+				</div>
+			</LandingTemplate>
+		</>
 	);
 };
 

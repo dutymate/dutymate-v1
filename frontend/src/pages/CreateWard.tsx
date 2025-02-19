@@ -6,7 +6,7 @@ import { wardService, HospitalInfo } from "../services/wardService";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { useState } from "react";
-
+import { SEO } from "../components/SEO";
 const CreateWard = () => {
 	const navigate = useNavigate();
 	const userAuthStore = useUserAuthStore();
@@ -84,19 +84,25 @@ const CreateWard = () => {
 	};
 
 	return (
-		<LandingTemplate showIntroText={false}>
-			<div className="flex flex-col items-center">
-				<p className="text-primary-dark font-semibold text-[1rem] mt-[0.9rem] mb-[1rem]">
-					병동 생성을 위한 기본 정보를 입력해주세요.
-				</p>
-				<CreateWardForm
-					onSubmit={handleCreateWard}
-					onSearchHospitals={handleSearchHospitals}
-					hospitals={hospitals}
-					isSearching={isSearching}
-				/>
-			</div>
-		</LandingTemplate>
+		<>
+			<SEO
+				title="병동 생성 | Dutymate"
+				description="병동 생성을 위한 기본 정보를 입력해주세요."
+			/>
+			<LandingTemplate showIntroText={false}>
+				<div className="flex flex-col items-center">
+					<p className="text-primary-dark font-semibold text-[1rem] mt-[0.9rem] mb-[1rem]">
+						병동 생성을 위한 기본 정보를 입력해주세요.
+					</p>
+					<CreateWardForm
+						onSubmit={handleCreateWard}
+						onSearchHospitals={handleSearchHospitals}
+						hospitals={hospitals}
+						isSearching={isSearching}
+					/>
+				</div>
+			</LandingTemplate>
+		</>
 	);
 };
 

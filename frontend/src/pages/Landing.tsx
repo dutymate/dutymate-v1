@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import "../styles/animations.css";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import { SEO } from "../components/SEO";
 
 const Landing = () => {
 	const navigate = useNavigate();
@@ -39,17 +40,23 @@ const Landing = () => {
 	};
 
 	return (
-		<LandingTemplate showIntroText={true}>
-			<Button
-				color="tertiary"
-				size="lg"
-				width="long"
-				onClick={handleStart}
-				className="mt-[0.0625rem] lg:mt-[3rem] h-[2.5rem] lg:h-[3rem] bg-primary hover:bg-primary-dark text-white"
-			>
-				<span className="text-[1.25rem] lg:text-[1rem]">시작하기</span>
-			</Button>
-		</LandingTemplate>
+		<>
+			<SEO
+				title="랜딩 | Dutymate"
+				description="듀티메이트의 랜딩 페이지입니다."
+			/>
+			<LandingTemplate showIntroText={true}>
+				<Button
+					color="tertiary"
+					size="lg"
+					width="long"
+					onClick={handleStart}
+					className="mt-[0.0625rem] lg:mt-[3rem] h-[2.5rem] lg:h-[3rem] bg-primary hover:bg-primary-dark text-white"
+				>
+					<span className="text-[1.25rem] lg:text-[1rem]">시작하기</span>
+				</Button>
+			</LandingTemplate>
+		</>
 	);
 };
 

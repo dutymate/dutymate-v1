@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
-
+import { SEO } from "../components/SEO";
 const Login = () => {
 	const navigate = useNavigate();
 
@@ -34,9 +34,15 @@ const Login = () => {
 	}, [navigate]);
 
 	return (
-		<LandingTemplate showIntroText={false}>
-			<LoginForm />
-		</LandingTemplate>
+		<>
+			<SEO
+				title="로그인 | Dutymate"
+				description="듀티메이트의 로그인 페이지입니다."
+			/>
+			<LandingTemplate showIntroText={false}>
+				<LoginForm />
+			</LandingTemplate>
+		</>
 	);
 };
 

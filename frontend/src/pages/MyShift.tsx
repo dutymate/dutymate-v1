@@ -10,7 +10,7 @@ import useUserAuthStore from "../store/userAuthStore";
 import { toast } from "react-toastify";
 import { useLoadingStore } from "@/store/loadingStore";
 import { useNavigate } from "react-router-dom";
-
+import { SEO } from "../components/SEO";
 // Duty 타입 변환 유틸리티 함수
 const convertDutyType = (
 	duty: "D" | "E" | "N" | "O",
@@ -102,57 +102,63 @@ const MyShift = () => {
 	};
 
 	return (
-		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
-			{/* 데스크톱 Sidebar */}
-			<div className="hidden lg:block w-[14.875rem] shrink-0">
-				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
-			</div>
-
-			{/* 모바일 Sidebar */}
-			<MSidebar
-				userType={userInfo?.role as "HN" | "RN"}
-				isOpen={isSidebarOpen}
-				onClose={() => setIsSidebarOpen(false)}
+		<>
+			<SEO
+				title="나의 근무표 | Dutymate"
+				description="나의 근무 일정을 확인해보세요."
 			/>
-
-			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 lg:px-[2rem] py-[1.5rem] overflow-y-auto">
-				{/* 모바일 메뉴 버튼 */}
-				<button
-					onClick={() => setIsSidebarOpen(true)}
-					className="lg:hidden mb-[1rem] p-[0.5rem] hover:bg-gray-100 rounded-lg"
-				>
-					<IoMdMenu className="w-6 h-6 text-gray-600" />
-				</button>
-
-				{/* Title 컴포넌트의 위치 조정 */}
-				<div className="mb-[0.75rem] pl-[0.5rem] lg:pl-[1rem]">
-					<Title
-						title="나의 근무표"
-						subtitle="나의 근무 일정을 확인해보세요."
-					/>
+			<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
+				{/* 데스크톱 Sidebar */}
+				<div className="hidden lg:block w-[14.875rem] shrink-0">
+					<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 				</div>
-				<div className="block lg:flex lg:gap-[2rem]">
-					<MyShiftCalendar
-						onDateSelect={handleDateSelect}
-						selectedDate={selectedDate}
-						dutyData={myDutyData}
-						onMonthChange={handleMonthChange}
-					/>
-					{selectedDate && dayDutyData && (
-						<TodayShiftModal
-							date={selectedDate}
-							duty={selectedDuty}
-							dutyData={dayDutyData}
-							isMobile={window.innerWidth < 1024}
-							onClose={() => setSelectedDate(null)}
-							onDateChange={(newDate) => handleDateSelect(newDate)}
-							loading={loading}
+
+				{/* 모바일 Sidebar */}
+				<MSidebar
+					userType={userInfo?.role as "HN" | "RN"}
+					isOpen={isSidebarOpen}
+					onClose={() => setIsSidebarOpen(false)}
+				/>
+
+				{/* 메인 컨텐츠 영역 */}
+				<div className="flex-1 min-w-0 lg:px-[2rem] py-[1.5rem] overflow-y-auto">
+					{/* 모바일 메뉴 버튼 */}
+					<button
+						onClick={() => setIsSidebarOpen(true)}
+						className="lg:hidden mb-[1rem] p-[0.5rem] hover:bg-gray-100 rounded-lg"
+					>
+						<IoMdMenu className="w-6 h-6 text-gray-600" />
+					</button>
+
+					{/* Title 컴포넌트의 위치 조정 */}
+					<div className="mb-[0.75rem] pl-[0.5rem] lg:pl-[1rem]">
+						<Title
+							title="나의 근무표"
+							subtitle="나의 근무 일정을 확인해보세요."
 						/>
-					)}
+					</div>
+					<div className="block lg:flex lg:gap-[2rem]">
+						<MyShiftCalendar
+							onDateSelect={handleDateSelect}
+							selectedDate={selectedDate}
+							dutyData={myDutyData}
+							onMonthChange={handleMonthChange}
+						/>
+						{selectedDate && dayDutyData && (
+							<TodayShiftModal
+								date={selectedDate}
+								duty={selectedDuty}
+								dutyData={dayDutyData}
+								isMobile={window.innerWidth < 1024}
+								onClose={() => setSelectedDate(null)}
+								onDateChange={(newDate) => handleDateSelect(newDate)}
+								loading={loading}
+							/>
+						)}
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 

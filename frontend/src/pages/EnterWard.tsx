@@ -4,6 +4,7 @@ import useUserAuthStore from "../store/userAuthStore";
 import { useNavigate } from "react-router-dom";
 import { wardService } from "../services/wardService";
 import { toast } from "react-toastify";
+import { SEO } from "../components/SEO";
 
 const EnterWard = () => {
 	const { userInfo } = useUserAuthStore();
@@ -49,19 +50,25 @@ const EnterWard = () => {
 	};
 
 	return (
-		<LandingTemplate showIntroText={false}>
-			<div className="flex flex-col items-center justify-center text-center">
-				<div className="flex flex-col items-center">
-					<p className="text-[#FF8282] font-semibold text-[1.125rem] mb-[0.25rem]">
-						{userInfo?.name}님 환영합니다!
-					</p>
-					<p className="text-primary-dark font-semibold text-[1rem] mt-[0.9rem] mb-[1rem]">
-						병동 입장하기 위해 전달 받은 병동 코드를 입력해주세요.
-					</p>
-					<EnterWardForm onSubmit={handleEnterWard} />
+		<>
+			<SEO
+				title="병동 입장 | Dutymate"
+				description="병동 입장을 위한 병동 코드를 입력해주세요."
+			/>
+			<LandingTemplate showIntroText={false}>
+				<div className="flex flex-col items-center justify-center text-center">
+					<div className="flex flex-col items-center">
+						<p className="text-[#FF8282] font-semibold text-[1.125rem] mb-[0.25rem]">
+							{userInfo?.name}님 환영합니다!
+						</p>
+						<p className="text-primary-dark font-semibold text-[1rem] mt-[0.9rem] mb-[1rem]">
+							병동 입장하기 위해 전달 받은 병동 코드를 입력해주세요.
+						</p>
+						<EnterWardForm onSubmit={handleEnterWard} />
+					</div>
 				</div>
-			</div>
-		</LandingTemplate>
+			</LandingTemplate>
+		</>
 	);
 };
 

@@ -1,6 +1,7 @@
 import CommunityLayout from "@/components/organisms/CommunityLayout";
 import CommunityForm from "../components/organisms/CommunityForm";
 import { useNavigate } from "react-router-dom";
+import { SEO } from "../components/SEO";
 
 const Community = () => {
 	const navigate = useNavigate();
@@ -16,9 +17,15 @@ const Community = () => {
 	};
 
 	return (
-		<CommunityLayout title="커뮤니티" subtitle="동료들과 소통해보세요">
-			<CommunityForm onWrite={handleWrite} onPostClick={handlePostClick} />
-		</CommunityLayout>
+		<>
+			<SEO
+				title="커뮤니티 | Dutymate"
+				description="간호사들과 소통하고 정보를 공유하는 커뮤니티 공간입니다."
+			/>
+			<CommunityLayout title="커뮤니티" subtitle="동료들과 소통해보세요">
+				<CommunityForm onWrite={handleWrite} onPostClick={handlePostClick} />
+			</CommunityLayout>
+		</>
 	);
 };
 

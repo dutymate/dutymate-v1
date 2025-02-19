@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import useUserAuthStore from "../store/userAuthStore";
 import useWardStore from "../store/wardStore";
 import { useLoadingStore } from "@/store/loadingStore";
+import { SEO } from "../components/SEO";
 
 const WardAdmin = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -61,46 +62,52 @@ const WardAdmin = () => {
 	};
 
 	return (
-		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
-			{/* 데스크톱 Sidebar */}
-			<div className="hidden lg:block w-[14.875rem] shrink-0">
-				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
-			</div>
-
-			{/* 모바일 Sidebar */}
-			<MSidebar
-				userType={userInfo?.role as "HN" | "RN"}
-				isOpen={isSidebarOpen}
-				onClose={() => setIsSidebarOpen(false)}
+		<>
+			<SEO
+				title="병동 관리 | Dutymate"
+				description="병동의 간호사를 관리해보세요."
 			/>
-
-			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 overflow-y-auto">
-				{/* 모바일 메뉴 버튼 */}
-				<button
-					onClick={() => setIsSidebarOpen(true)}
-					className="lg:hidden mb-4 p-2 hover:bg-gray-100 rounded-lg"
-				>
-					<IoMdMenu className="w-[1.5rem] h-[1.5rem] text-gray-600" />
-				</button>
-
-				<div className="mb-3">
-					<Title title="병동 관리" subtitle="병동의 간호사를 관리해보세요." />
+			<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
+				{/* 데스크톱 Sidebar */}
+				<div className="hidden lg:block w-[14.875rem] shrink-0">
+					<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 				</div>
-				<div className="mt-6 flex flex-col gap-4">
-					{!isLoading && wardInfo && (
-						<>
-							<WardAdminInfo
-								wardInfo={wardInfo}
-								onAddTempNurse={handleAddVirtualNurse}
-								onViewHistory={handleViewHistory}
-							/>
-							<WardAdminTable />
-						</>
-					)}
+
+				{/* 모바일 Sidebar */}
+				<MSidebar
+					userType={userInfo?.role as "HN" | "RN"}
+					isOpen={isSidebarOpen}
+					onClose={() => setIsSidebarOpen(false)}
+				/>
+
+				{/* 메인 컨텐츠 영역 */}
+				<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 overflow-y-auto">
+					{/* 모바일 메뉴 버튼 */}
+					<button
+						onClick={() => setIsSidebarOpen(true)}
+						className="lg:hidden mb-4 p-2 hover:bg-gray-100 rounded-lg"
+					>
+						<IoMdMenu className="w-[1.5rem] h-[1.5rem] text-gray-600" />
+					</button>
+
+					<div className="mb-3">
+						<Title title="병동 관리" subtitle="병동의 간호사를 관리해보세요." />
+					</div>
+					<div className="mt-6 flex flex-col gap-4">
+						{!isLoading && wardInfo && (
+							<>
+								<WardAdminInfo
+									wardInfo={wardInfo}
+									onAddTempNurse={handleAddVirtualNurse}
+									onViewHistory={handleViewHistory}
+								/>
+								<WardAdminTable />
+							</>
+						)}
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 

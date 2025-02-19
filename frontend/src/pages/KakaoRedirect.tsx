@@ -11,6 +11,7 @@ import PageLoadingSpinner from "@/components/atoms/Loadingspinner";
 
 import { AxiosError } from "axios";
 import { useLoadingStore } from "@/store/loadingStore";
+import { SEO } from "../components/SEO";
 
 export function KakaoRedirect() {
 	const navigate = useNavigate();
@@ -70,5 +71,13 @@ export function KakaoRedirect() {
 	}, []);
 
 	// 로딩 상태를 보여주는 컴포넌트 반환
-	return <PageLoadingSpinner />;
+	return (
+		<>
+			<SEO
+				title="카카오 로그인 | Dutymate"
+				description="카카오 로그인 중입니다."
+			/>
+			<PageLoadingSpinner />
+		</>
+	);
 }

@@ -8,7 +8,7 @@ import { IoMdMenu } from "react-icons/io";
 import useUserAuthStore from "../store/userAuthStore";
 import useShiftStore from "../store/shiftStore";
 import PageLoadingSpinner from "@/components/atoms/Loadingspinner";
-
+import { SEO } from "../components/SEO";
 const DutyManagement = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -54,45 +54,51 @@ const DutyManagement = () => {
 	if (!dutyInfo) return null;
 
 	return (
-		<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
-			{/* 데스크톱 Sidebar */}
-			<div className="hidden lg:block w-[14.875rem] shrink-0">
-				<Sidebar userType={userInfo?.role as "HN" | "RN"} />
-			</div>
-
-			{/* 모바일 Sidebar */}
-			<MSidebar
-				userType={userInfo?.role as "HN" | "RN"}
-				isOpen={isSidebarOpen}
-				onClose={() => setIsSidebarOpen(false)}
+		<>
+			<SEO
+				title="근무표 관리 | Dutymate"
+				description="근무표를 관리해보세요."
 			/>
+			<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
+				{/* 데스크톱 Sidebar */}
+				<div className="hidden lg:block w-[14.875rem] shrink-0">
+					<Sidebar userType={userInfo?.role as "HN" | "RN"} />
+				</div>
 
-			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 px-[1rem] lg:px-[2rem] py-[1.5rem] h-[calc(100vh-1rem)] lg:h-screen overflow-y-auto">
-				{/* 모바일 메뉴 버튼 */}
-				<button
-					onClick={() => setIsSidebarOpen(true)}
-					className="lg:hidden mb-[1rem] p-[0.5rem] hover:bg-gray-100 rounded-lg"
-				>
-					<IoMdMenu className="w-6 h-6 text-gray-600" />
-				</button>
+				{/* 모바일 Sidebar */}
+				<MSidebar
+					userType={userInfo?.role as "HN" | "RN"}
+					isOpen={isSidebarOpen}
+					onClose={() => setIsSidebarOpen(false)}
+				/>
 
-				<div className="flex flex-col gap-[0.75rem] pb-[2rem]">
-					<ShiftAdminTable
-						dutyData={dutyInfo.duty}
-						invalidCnt={dutyInfo.invalidCnt}
-						year={dutyInfo.year}
-						month={dutyInfo.month}
-						onUpdate={fetchDutyInfo}
-						issues={dutyInfo.issues}
-					/>
-					<div className="flex flex-col xl:flex-row gap-[1rem] w-full">
-						<RuleCheckList />
-						<HistoryList />
+				{/* 메인 컨텐츠 영역 */}
+				<div className="flex-1 min-w-0 px-[1rem] lg:px-[2rem] py-[1.5rem] h-[calc(100vh-1rem)] lg:h-screen overflow-y-auto">
+					{/* 모바일 메뉴 버튼 */}
+					<button
+						onClick={() => setIsSidebarOpen(true)}
+						className="lg:hidden mb-[1rem] p-[0.5rem] hover:bg-gray-100 rounded-lg"
+					>
+						<IoMdMenu className="w-6 h-6 text-gray-600" />
+					</button>
+
+					<div className="flex flex-col gap-[0.75rem] pb-[2rem]">
+						<ShiftAdminTable
+							dutyData={dutyInfo.duty}
+							invalidCnt={dutyInfo.invalidCnt}
+							year={dutyInfo.year}
+							month={dutyInfo.month}
+							onUpdate={fetchDutyInfo}
+							issues={dutyInfo.issues}
+						/>
+						<div className="flex flex-col xl:flex-row gap-[1rem] w-full">
+							<RuleCheckList />
+							<HistoryList />
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
