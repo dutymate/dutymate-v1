@@ -56,7 +56,10 @@ public class LoggingAspect {
 		if (request != null) {
 			final String httpMethod = request.getMethod();
 			final String requestUri = request.getRequestURI();
-			final String queryString = URLDecoder.decode(request.getQueryString(), StandardCharsets.UTF_8);
+			String queryString = request.getQueryString();
+			if (queryString != null) {
+				queryString = URLDecoder.decode(queryString, StandardCharsets.UTF_8);
+			}
 			final String clientIp = request.getRemoteAddr();
 
 			log.info(HTTP_METHOD_FORMAT, httpMethod);
