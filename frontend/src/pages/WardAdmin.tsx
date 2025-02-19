@@ -91,7 +91,7 @@ const WardAdmin = () => {
 					</button>
 
 					<div className="mb-3">
-						<Title title="병동 관리" subtitle="병동의 간호사를 관리해보세요." />
+						<Title title="병동 관리" subtitle="병동의 간호사를 관리해보세요" />
 					</div>
 					<div className="mt-6 flex flex-col gap-4">
 						{!isLoading && wardInfo && (

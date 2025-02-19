@@ -107,6 +107,7 @@ const MyShift = () => {
 				title="나의 근무표 | Dutymate"
 				description="나의 근무 일정을 확인해보세요."
 			/>
+
 			<div className="w-full h-screen flex flex-row bg-[#F4F4F4]">
 				{/* 데스크톱 Sidebar */}
 				<div className="hidden lg:block w-[14.875rem] shrink-0">
@@ -134,7 +135,7 @@ const MyShift = () => {
 					<div className="mb-[0.75rem] pl-[0.5rem] lg:pl-[1rem]">
 						<Title
 							title="나의 근무표"
-							subtitle="나의 근무 일정을 확인해보세요."
+							subtitle="나의 근무 일정을 확인해보세요"
 						/>
 					</div>
 					<div className="block lg:flex lg:gap-[2rem]">

@@ -21,14 +21,12 @@ const ReqAdmin = () => {
 				<div className="hidden lg:block w-[14.875rem] shrink-0">
 					<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 				</div>
-
 				{/* 모바일 Sidebar */}
 				<MSidebar
 					userType={userInfo?.role as "HN" | "RN"}
 					isOpen={isSidebarOpen}
 					onClose={() => setIsSidebarOpen(false)}
 				/>
-
 				{/* 메인 컨텐츠 영역 */}
 				<div className="flex-1 min-w-0 px-[1rem] md:px-[1.5rem] lg:px-[2rem] py-[0.75rem] overflow-y-auto pb-[2rem] lg:overflow-x-hidden">
 					{/* 모바일 메뉴 버튼 */}
@@ -41,7 +39,7 @@ const ReqAdmin = () => {
 
 					<Title
 						title="요청 근무 관리"
-						subtitle="간호사들의 근무 요청을 관리해보세요."
+						subtitle="간호사들의 근무 요청을 관리해보세요"
 					/>
 					<div className="mt-[0.75rem]">
 						<ReqAdminTable />
