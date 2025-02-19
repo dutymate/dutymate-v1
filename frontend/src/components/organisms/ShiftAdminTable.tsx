@@ -816,7 +816,7 @@ const ShiftAdminTable = ({
 	const [showWebDownloadDropdown, setShowWebDownloadDropdown] = useState(false);
 
 	return (
-		<>
+		<div>
 			{/* 모바일 뷰 */}
 			<div className="xl:hidden">
 				{/* 상단 컨트롤 영역 */}
@@ -1142,17 +1142,9 @@ const ShiftAdminTable = ({
 						</table>
 					</div>
 				</div>
-
-				{/* 모달 */}
-				{isRuleModalOpen && (
-					<RuleEditModal
-						onClose={() => setIsRuleModalOpen(false)}
-						buttonRef={ruleButtonRef}
-					/>
-				)}
 			</div>
 
-			{/* 웹 뷰 - 기존 코드 */}
+			{/* 웹 뷰 */}
 			<div className="hidden xl:block">
 				<div
 					className="bg-white rounded-[0.92375rem] shadow-[0_0_0.9375rem_rgba(0,0,0,0.1)] p-[1.5rem]"
@@ -1580,27 +1572,26 @@ const ShiftAdminTable = ({
 							</div>
 						)}
 					</div>
-
-					{/* 규칙 편집 모달 */}
-					{isRuleModalOpen && (
-						<RuleEditModal
-							onClose={() => setIsRuleModalOpen(false)}
-							buttonRef={ruleButtonRef}
-						/>
-					)}
 				</div>
-
-				<NurseCountModal
-					isOpen={isNurseCountModalOpen}
-					onClose={() => setIsNurseCountModalOpen(false)}
-					onConfirm={() => {
-						setIsNurseCountModalOpen(false);
-						navigate("/ward-admin");
-					}}
-					neededNurseCount={neededNurseCount}
-				/>
 			</div>
-		</>
+
+			{/* 공통 모달 영역 - 뷰포트 외부에 배치 */}
+			{isRuleModalOpen && (
+				<RuleEditModal
+					onClose={() => setIsRuleModalOpen(false)}
+					buttonRef={ruleButtonRef}
+				/>
+			)}
+			<NurseCountModal
+				isOpen={isNurseCountModalOpen}
+				onClose={() => setIsNurseCountModalOpen(false)}
+				onConfirm={() => {
+					setIsNurseCountModalOpen(false);
+					navigate("/ward-admin");
+				}}
+				neededNurseCount={neededNurseCount}
+			/>
+		</div>
 	);
 };
 

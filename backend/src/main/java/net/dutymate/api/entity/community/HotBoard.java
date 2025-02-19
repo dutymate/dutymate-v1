@@ -2,6 +2,9 @@ package net.dutymate.api.entity.community;
 
 import java.sql.Timestamp;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,6 +32,7 @@ public class HotBoard {
 
 	@OneToOne(optional = false)
 	@JoinColumn(name = "board_id", nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Board board;
 
 	@Column(nullable = false, updatable = false)

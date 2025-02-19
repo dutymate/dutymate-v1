@@ -195,11 +195,11 @@ const SignupForm = () => {
 						email: "이미 가입된 이메일입니다.",
 					}));
 				} else {
-					toast.error("회원가입에 실패하였습니다.");
+					toast.error(error.message);
 				}
 			} else {
 				// 네트워크 에러 또는 기타 에러 처리
-				toast.error("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+				toast.error(error.message);
 			}
 		}
 	};

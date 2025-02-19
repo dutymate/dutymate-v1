@@ -25,6 +25,7 @@ import net.dutymate.api.member.dto.MypageResponseDto;
 import net.dutymate.api.member.dto.SignUpRequestDto;
 import net.dutymate.api.member.service.MemberService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,7 +36,7 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@PostMapping
-	public ResponseEntity<?> signUp(@RequestBody SignUpRequestDto signUpRequestDto) {
+	public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequestDto signUpRequestDto) {
 		LoginResponseDto loginResponseDto = memberService.signUp(signUpRequestDto);
 		return ResponseEntity.ok(loginResponseDto);
 	}
@@ -47,7 +48,7 @@ public class MemberController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
+	public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
 		LoginResponseDto loginResponseDto = memberService.login(loginRequestDto);
 		return ResponseEntity.ok(loginResponseDto);
 	}
@@ -86,14 +87,15 @@ public class MemberController {
 	}
 
 	@PutMapping
-	public ResponseEntity<?> updateMember(@Auth Member member, @RequestBody MypageEditRequestDto mypageEditRequestDto) {
+	public ResponseEntity<?> updateMember(@Auth Member member,
+		@Valid @RequestBody MypageEditRequestDto mypageEditRequestDto) {
 		memberService.updateMember(member, mypageEditRequestDto);
 		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/check-nickname")
 	public ResponseEntity<?> checkNickname(@Auth Member member,
-		@RequestBody CheckNicknameRequestDto checkNicknameRequestDto) {
+		@Valid @RequestBody CheckNicknameRequestDto checkNicknameRequestDto) {
 		memberService.checkNickname(member, checkNicknameRequestDto.getNickname());
 		return ResponseEntity.ok().body("사용 가능한 닉네임입니다.");
 	}

@@ -19,6 +19,7 @@ import net.dutymate.api.request.dto.RequestCreateDto;
 import net.dutymate.api.request.dto.WardRequestResponseDto;
 import net.dutymate.api.request.service.RequestService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,7 +32,7 @@ public class RequestController {
 	@PostMapping("/request")
 	public ResponseEntity<?> createRequest(
 		@Auth Member member,
-		@RequestBody RequestCreateDto requestCreateDto) {
+		@Valid @RequestBody RequestCreateDto requestCreateDto) {
 
 		requestService.createRequest(requestCreateDto, member);
 		return ResponseEntity.ok().build();

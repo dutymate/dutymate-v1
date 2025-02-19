@@ -50,9 +50,8 @@ const CommunityDetailPage = () => {
 		return (
 			<>
 				<SEO
-					title={`${post.title} | Dutymate 커뮤니티`}
-					description={post.content.substring(0, 150)}
-					ogImage={post.thumbnail || "/images/og-image.png"}
+					title="커뮤니티 | Dutymate"
+					description="간호사들과 소통하고 정보를 공유하는 커뮤니티 공간입니다."
 				/>
 				<CommunityLayout title="게시글" subtitle="동료들의 이야기를 읽어보세요">
 					<div className="flex justify-center py-10">
@@ -66,9 +65,8 @@ const CommunityDetailPage = () => {
 		return (
 			<>
 				<SEO
-					title={`${post.title} | Dutymate 커뮤니티`}
-					description={post.content.substring(0, 150)}
-					ogImage={post.thumbnail || "/images/og-image.png"}
+					title="커뮤니티 | Dutymate"
+					description="간호사들과 소통하고 정보를 공유하는 커뮤니티 공간입니다."
 				/>
 				<CommunityLayout title="게시글" subtitle="동료들의 이야기를 읽어보세요">
 					<div className="flex justify-center py-10">
@@ -82,9 +80,8 @@ const CommunityDetailPage = () => {
 	return (
 		<>
 			<SEO
-				title={`${post.title} | Dutymate 커뮤니티`}
-				description={post.content.substring(0, 150)}
-				ogImage={post.thumbnail || "/images/og-image.png"}
+				title="커뮤니티 | Dutymate"
+				description="간호사들과 소통하고 정보를 공유하는 커뮤니티 공간입니다."
 			/>
 			<CommunityLayout title="게시글" subtitle="동료들의 이야기를 읽어보세요">
 				<CommunityDetail post={post} />

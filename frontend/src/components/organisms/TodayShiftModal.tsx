@@ -66,8 +66,8 @@ const TodayShiftModal = ({
 
 	const modalContent = (
 		<div
-			className={`bg-white rounded-[1rem] p-[1.5rem] w-full max-w-[25rem] shadow-sm ${
-				isMobile ? "h-[80vh]" : "min-h-[37.5rem]"
+			className={`bg-white rounded-[1rem] p-[1rem] w-full max-w-[25rem] shadow-sm ${
+				isMobile ? "h-[80vh] py-6" : "min-h-[37.5rem] my-6"
 			} flex flex-col relative`}
 		>
 			{isMobile && (
@@ -155,10 +155,12 @@ const TodayShiftModal = ({
 											</span>
 										</div>
 										{nurse.shift !== "X" ? (
-											<DutyBadgeKor
-												type={convertDutyType(nurse.shift)}
-												size="xs"
-											/>
+											<div>
+												<DutyBadgeKor
+													type={convertDutyType(nurse.shift)}
+													size="xxs"
+												/>
+											</div>
 										) : (
 											<div className="w-[4.0625rem] h-[1.875rem]" />
 										)}

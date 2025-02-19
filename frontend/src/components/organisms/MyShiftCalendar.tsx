@@ -152,7 +152,7 @@ const MyShiftCalendar = ({
 	);
 
 	return (
-		<div className={`${isMobile ? "" : "flex gap-[2rem]"}`}>
+		<div className={`${isMobile ? "mt-6" : "flex gap-[2rem] py-6"}`}>
 			<div
 				className={`bg-white rounded-[1rem] p-[0.5rem] shadow-sm ${
 					isMobile ? "w-full" : "w-[46.875rem] h-fit"

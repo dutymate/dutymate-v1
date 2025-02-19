@@ -263,8 +263,8 @@ const WardAdminRowCard = ({
 			try {
 				await updateVirtualNurseName(nurse.memberId, name);
 				toast.success("이름이 수정되었습니다.");
-			} catch (error) {
-				toast.error("이름 수정에 실패했습니다.");
+			} catch (error: any) {
+				toast.error(error.response.data.message);
 				setName(nurse.name);
 			}
 		}

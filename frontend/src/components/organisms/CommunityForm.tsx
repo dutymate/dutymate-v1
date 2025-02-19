@@ -85,6 +85,23 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 		onPostClick(post);
 	};
 
+	const getEmptyMessage = (category: string) => {
+		switch (category) {
+			case "ALL":
+				return "아직 작성된 글이 없습니다.";
+			case "DAILY":
+				return "아직 작성된 일상글이 없습니다.";
+			case "QNA":
+				return "아직 작성된 Q&A가 없습니다.";
+			case "INFO":
+				return "아직 작성된 이직 정보가 없습니다.";
+			case "HOT":
+				return "아직 작성된 글이 없습니다.";
+			default:
+				return "이 카테고리에 첫 번째 글을 작성해보세요!";
+		}
+	};
+
 	return (
 		<>
 			<div className="bg-white rounded-xl p-4 lg:p-6 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
@@ -123,7 +140,7 @@ const CommunityForm = ({ onWrite, onPostClick }: CommunityFormProps) => {
 				<div className="space-y-4">
 					{shouldShowEmptyMessage ? (
 						<div className="p-8 text-center text-gray-400 border border-gray-100 rounded-lg">
-							이 카테고리에 첫 번째 글을 작성해보세요!
+							{getEmptyMessage(selectedCategory)}
 						</div>
 					) : (
 						posts.map((post) => (

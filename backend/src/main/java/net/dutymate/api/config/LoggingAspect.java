@@ -1,6 +1,8 @@
 package net.dutymate.api.config;
 
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -27,7 +29,6 @@ public class LoggingAspect {
 	private static final String HTTP_METHOD_FORMAT = "HTTP Method: {}";
 	private static final String REQUEST_URI_FORMAT = "Request URI: {}";
 	private static final String QUERY_STRING_FORMAT = "Query String: {}";
-	private static final String CLIENT_IP_FORMAT = "Client IP: {}";
 	private static final String EXECUTION_TIME_FORMAT = "Execution Time: {} ms";
 	private static final String RETURN_TYPE_FORMAT = "Return Type: {}";
 	private static final String RETURN_VALUE_FORMAT = "Return Value: {}";
@@ -54,8 +55,10 @@ public class LoggingAspect {
 		if (request != null) {
 			final String httpMethod = request.getMethod();
 			final String requestUri = request.getRequestURI();
-			final String queryString = request.getQueryString();
-			final String clientIp = request.getRemoteAddr();
+			String queryString = request.getQueryString();
+			if (queryString != null) {
+				queryString = URLDecoder.decode(queryString, StandardCharsets.UTF_8);
+			}
 
 			log.info(HTTP_METHOD_FORMAT, httpMethod);
 			log.info(REQUEST_URI_FORMAT, requestUri);
@@ -63,7 +66,6 @@ public class LoggingAspect {
 			if (queryString != null) {
 				log.info(QUERY_STRING_FORMAT, queryString);
 			}
-			log.info(CLIENT_IP_FORMAT, clientIp);
 		}
 
 		final long startTime = System.nanoTime();

@@ -63,14 +63,12 @@ const Mypage = () => {
 				<div className="hidden lg:block w-[14.875rem] shrink-0">
 					<Sidebar userType={userInfo?.role as "HN" | "RN"} />
 				</div>
-
 				{/* 모바일 Sidebar */}
 				<MSidebar
 					userType={userInfo?.role as "HN" | "RN"}
 					isOpen={isSidebarOpen}
 					onClose={() => setIsSidebarOpen(false)}
 				/>
-
 				{/* 메인 컨텐츠 영역 */}
 				<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 overflow-y-auto">
 					{/* 모바일 메뉴 버튼 */}
@@ -82,7 +80,7 @@ const Mypage = () => {
 					</button>
 					<div className="flex items-center gap-[0.75rem]">
 						<div className="flex-1">
-							<Title title="마이페이지" subtitle="나의 정보를 확인해보세요." />
+							<Title title="마이페이지" subtitle="나의 정보를 확인해보세요" />
 						</div>
 						<button
 							onClick={handleLogoutButton}

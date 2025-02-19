@@ -139,9 +139,8 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 				toast.success("댓글이 수정되었습니다.");
 				setIsEditing(null);
 				setEditContent("");
-			} catch (error) {
-				console.error("댓글 수정 오류:", error);
-				toast.error("댓글 수정에 실패했습니다.");
+			} catch (error: any) {
+				toast.error(error.message);
 			}
 		} else {
 			// 수정 시작
@@ -168,7 +167,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 			toast.success("댓글이 성공적으로 삭제 되었습니다.");
 		} catch (error) {
 			console.error("댓글 삭제 오류:", error);
-			toast.error("댓글 삭제를 실패했습니다.");
+			toast.error("댓글 삭제에 실패했습니다.");
 		}
 	};
 
@@ -198,8 +197,9 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 			// 댓글 입력창 초기화
 			setNewComment("");
-		} catch (error) {
+		} catch (error: any) {
 			console.error("댓글 작성 오류:", error);
+			toast.error(error.message);
 		}
 	};
 
@@ -436,7 +436,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 										onKeyDown={(e) =>
 											handleEnterEditPress(e, comment.commentId)
 										}
-										className="w-full p-2 border rounded resize-none h-[3rem] mb-2"
+										className="w-full p-2 border rounded resize-none h-[2rem] mb-2 text-sm"
 									/>
 									<div className="flex justify-end gap-2">
 										<button
@@ -444,7 +444,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 												setIsEditing(null);
 												setEditContent("");
 											}}
-											className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded"
+											className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded"
 										>
 											취소
 										</button>
@@ -452,7 +452,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 											onClick={() => {
 												handleUpdateComment(comment.commentId);
 											}}
-											className="px-3 py-1 text-sm text-white bg-primary hover:bg-primary-dark rounded"
+											className="px-3 py-1 text-xs text-white bg-primary hover:bg-primary-dark rounded"
 										>
 											완료
 										</button>
