@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 interface RuleEditModalProps {
 	onClose: () => void;
 	buttonRef: React.RefObject<HTMLButtonElement>;
+	onRuleUpdate: (newRules: WardRule) => void;
 }
 
 interface WardRule {
@@ -41,36 +42,11 @@ const getFontWeight = (value: number) => {
 	}
 };
 
-const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
+const RuleEditModal = ({ onClose, onRuleUpdate }: RuleEditModalProps) => {
 	const [rules, setRules] = useState<WardRule | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const modalRef = useRef<HTMLDivElement>(null);
-
-	// 버튼 위치 기반으로 모달 위치 계산
-	useEffect(() => {
-		if (buttonRef.current && modalRef.current) {
-			const buttonRect = buttonRef.current.getBoundingClientRect();
-			const modalRect = modalRef.current.getBoundingClientRect();
-
-			// 화면 하단 공간 체크
-			const bottomSpace = window.innerHeight - buttonRect.bottom;
-			const modalHeight = modalRect.height;
-
-			modalRef.current.style.position = "fixed";
-
-			// 모달이 화면 하단을 벗어나는 경우 위로 표시
-			if (bottomSpace < modalHeight) {
-				modalRef.current.style.top = `${buttonRect.top - modalHeight - 8}px`;
-			} else {
-				modalRef.current.style.top = `${buttonRect.bottom + 8}px`;
-			}
-
-			// 오른쪽 정렬, 모달의 오른쪽 끝이 버튼의 오른쪽 끝과 일치하도록 설정
-			const rightPosition = buttonRect.right;
-			modalRef.current.style.left = `${rightPosition - modalRect.width}px`;
-		}
-	}, [buttonRef]);
 
 	// 외부 클릭 감지
 	useEffect(() => {
@@ -119,6 +95,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 		setIsSubmitting(true);
 		try {
 			await ruleService.updateWardRules(rules);
+			onRuleUpdate(rules);
 			toast.success("규칙이 저장되었습니다");
 			onClose();
 		} catch (error: any) {
@@ -153,7 +130,7 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-25"
 			onClick={(e) => {
 				if (e.target === e.currentTarget) {
 					onClose();
@@ -414,6 +391,21 @@ const RuleEditModal = ({ onClose, buttonRef }: RuleEditModalProps) => {
 														</option>
 													))}
 												</select>
+											</div>
+										</div>
+									</div>
+
+									{/* 전담 근무 설정 버튼 */}
+									<div className="flex items-center justify-end py-0.5 border-b">
+										<div className="relative group">
+											<button
+												onClick={() => (window.location.href = "/ward-admin")}
+												className="px-3 py-1 text-xs bg-primary text-white rounded-md hover:bg-primary-dark transition-colors"
+											>
+												전담 근무 배정하기
+											</button>
+											<div className="absolute right-0 top-full mt-1 px-3 py-1 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity z-50">
+												평일 D 고정, N 킵 인원을 추가해보세요!
 											</div>
 										</div>
 									</div>
