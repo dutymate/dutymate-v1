@@ -1,5 +1,6 @@
 package net.dutymate.api.autoschedule.service;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +103,13 @@ public class AutoScheduleService {
 		// scheduleGenerator.generateSchedule(wardSchedule, rule, wardMembers, prevNurseShifts, yearMonth);
 		Long memberId = member.getMemberId();
 
-		List<Request> requests = requestRepository.findAllWardRequests(member.getWardMember().getWard());
+		List<Request> requests = requestRepository.findAllWardRequests(member.getWardMember().getWard())
+			.stream()
+			.filter(request -> {
+				Date requestDate = request.getRequestDate();
+				return requestDate.getYear() == yearMonth.year() && (requestDate.getMonth() + 1) == yearMonth.month();
+			})
+			.toList();
 
 		//night 전담 자동 로직에서 제거
 		wardMembers.removeIf(wm -> wm.getShiftType() == ShiftType.N);
