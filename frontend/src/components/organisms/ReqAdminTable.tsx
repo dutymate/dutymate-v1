@@ -85,7 +85,7 @@ const ReqAdminTable = () => {
 
 	return (
 		<div className="w-full">
-			<div className="bg-white rounded-[1.154375rem] p-[1rem]">
+			<div className="bg-white rounded-[1.154375rem] p-4 sm:p-6">
 				<div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-[1rem] px-[0.5rem]">
 					<div className="w-full flex justify-between items-center mb-[0.5rem] lg:mb-0">
 						<h2 className="text-base lg:text-[1.125rem] font-semibold">

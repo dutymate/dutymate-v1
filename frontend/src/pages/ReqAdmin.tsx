@@ -28,7 +28,7 @@ const ReqAdmin = () => {
 					onClose={() => setIsSidebarOpen(false)}
 				/>
 				{/* 메인 컨텐츠 영역 */}
-				<div className="flex-1 min-w-0 px-[1rem] md:px-[1.5rem] lg:px-[2rem] py-[0.75rem] overflow-y-auto pb-[2rem] lg:overflow-x-hidden">
+				<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 h-[calc(100vh-1rem)] lg:h-screen overflow-y-auto lg:overflow-x-hidden">
 					{/* 모바일 메뉴 버튼 */}
 					<button
 						onClick={() => setIsSidebarOpen(true)}
@@ -41,7 +41,7 @@ const ReqAdmin = () => {
 						title="요청 근무 관리"
 						subtitle="간호사들의 근무 요청을 관리해보세요"
 					/>
-					<div className="mt-[0.75rem]">
+					<div className="mt-6">
 						<ReqAdminTable />
 					</div>
 				</div>

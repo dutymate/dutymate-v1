@@ -1,6 +1,6 @@
 interface DutyBadgeProps {
 	type: "day" | "evening" | "night" | "off";
-	size?: "xs" | "sm" | "md";
+	size?: "xxs" | "xs" | "sm" | "md";
 }
 
 export const DutyBadgeKor = ({ type, size = "md" }: DutyBadgeProps) => {
@@ -12,18 +12,21 @@ export const DutyBadgeKor = ({ type, size = "md" }: DutyBadgeProps) => {
 	};
 
 	const borderWidthStyles = {
+		xxs: "border-[0.1rem]",
 		xs: "border-[0.15rem]", // 2.4px
 		sm: "border-[0.2rem]", // 3.2px
 		md: "border-[0.25rem]", // 4px
 	};
 
 	const sizeStyles = {
+		xxs: "text-sm w-[48px] h-[28px]",
 		xs: "text-xl w-[66px] h-[36px]",
 		sm: "text-2xl w-[88px] h-[48px]",
 		md: "text-3xl w-[110px] h-[60px]",
 	};
 
 	const roundedStyles = {
+		xxs: "rounded-[9px]",
 		xs: "rounded-[9px]",
 		sm: "rounded-[13px]",
 		md: "rounded-[18px]",

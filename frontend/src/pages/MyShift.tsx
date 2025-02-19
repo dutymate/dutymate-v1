@@ -122,7 +122,7 @@ const MyShift = () => {
 				/>
 
 				{/* 메인 컨텐츠 영역 */}
-				<div className="flex-1 min-w-0 lg:px-[2rem] py-[1.5rem] overflow-y-auto">
+				<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 h-[calc(100vh-1rem)] lg:h-screen overflow-y-auto">
 					{/* 모바일 메뉴 버튼 */}
 					<button
 						onClick={() => setIsSidebarOpen(true)}
@@ -132,12 +132,9 @@ const MyShift = () => {
 					</button>
 
 					{/* Title 컴포넌트의 위치 조정 */}
-					<div className="mb-[0.75rem] pl-[0.5rem] lg:pl-[1rem]">
-						<Title
-							title="나의 근무표"
-							subtitle="나의 근무 일정을 확인해보세요"
-						/>
-					</div>
+					{/* <div className="mb-[0.75rem] pl-[0.5rem] lg:pl-[1rem]"> */}
+					<Title title="나의 듀티표" subtitle="나의 근무 일정을 확인해보세요" />
+					{/* </div> */}
 					<div className="block lg:flex lg:gap-[2rem]">
 						<MyShiftCalendar
 							onDateSelect={handleDateSelect}
