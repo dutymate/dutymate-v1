@@ -139,9 +139,8 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 				toast.success("댓글이 수정되었습니다.");
 				setIsEditing(null);
 				setEditContent("");
-			} catch (error) {
-				console.error("댓글 수정 오류:", error);
-				toast.error("댓글 수정에 실패했습니다.");
+			} catch (error: any) {
+				toast.error(error.message);
 			}
 		} else {
 			// 수정 시작
@@ -168,7 +167,7 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 			toast.success("댓글이 성공적으로 삭제 되었습니다.");
 		} catch (error) {
 			console.error("댓글 삭제 오류:", error);
-			toast.error("댓글 삭제를 실패했습니다.");
+			toast.error("댓글 삭제에 실패했습니다.");
 		}
 	};
 
@@ -198,8 +197,9 @@ const CommunityDetail = ({ post }: CommunityDetailProps) => {
 
 			// 댓글 입력창 초기화
 			setNewComment("");
-		} catch (error) {
+		} catch (error: any) {
 			console.error("댓글 작성 오류:", error);
+			toast.error(error.message);
 		}
 	};
 

@@ -13,6 +13,7 @@ import net.dutymate.api.entity.Member;
 import net.dutymate.api.wardmember.dto.NurseInfoRequestDto;
 import net.dutymate.api.wardmember.service.WardMemberService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,7 +26,7 @@ public class WardMemberController {
 	// 간호사 정보 수정하기
 	@PutMapping("/member/{memberId}")
 	public ResponseEntity<?> updateWardMemberInfo(@PathVariable Long memberId,
-		@RequestBody NurseInfoRequestDto nurseInfoRequestDto, @Auth Member member) {
+		@Valid @RequestBody NurseInfoRequestDto nurseInfoRequestDto, @Auth Member member) {
 
 		wardMemberService.updateWardMember(memberId, nurseInfoRequestDto, member);
 		return ResponseEntity.ok().build();

@@ -2,10 +2,12 @@ package net.dutymate.api.config;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,6 +51,23 @@ public class GlobalExceptionHandler {
 		body.put(MESSAGE_KEY, ex.getReason());
 
 		return new ResponseEntity<>(body, ex.getStatusCode());
+	}
+
+	// Spring Validation 예외 처리
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException exception) {
+		Map<String, Object> body = new HashMap<>();
+
+		body.put(TIMESTAMP_KEY, LocalDateTime.now());
+		body.put(STATUS_KEY, HttpStatus.BAD_REQUEST.getReasonPhrase());
+
+		List<String> errors = exception.getBindingResult().getFieldErrors()
+			.stream()
+			.map(ex -> ex.getDefaultMessage())
+			.toList();
+		body.put(MESSAGE_KEY, errors.getFirst());
+
+		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
 	}
 
 	private StackTraceElement getFirstRelevantStackTrace(Throwable ex) {

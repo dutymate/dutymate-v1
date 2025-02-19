@@ -6,6 +6,7 @@ import { DateInput, TextArea } from "../atoms/Input";
 import DutyBadgeEng from "../atoms/DutyBadgeEng";
 import ToggleButton from "../atoms/ToggleButton";
 import { requestService } from "../../services/requestService";
+import { toast } from "react-toastify";
 
 interface ReqShiftModalProps {
 	onClose: () => void;
@@ -62,8 +63,8 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 
 			// 요청 내역 탭으로 전환
 			setActiveTab(1);
-		} catch (error) {
-			console.error("Failed to create request:", error);
+		} catch (error: any) {
+			toast.error(error.response.data.message);
 		}
 	};
 

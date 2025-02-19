@@ -97,11 +97,13 @@ const CommunityWrite = () => {
 
 		boardService.writePost(
 			formData,
-			() => toast.success("게시글이 작성되었습니다."),
+			() => {
+				toast.success("게시글이 작성되었습니다.");
+				navigate("/community");
+			},
 			(error) => toast.error(error.message),
 		);
 		window.history.pushState(null, "", "/community");
-		navigate("/community");
 	};
 
 	return (

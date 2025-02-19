@@ -4,6 +4,7 @@ import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.community.Board;
 import net.dutymate.api.enumclass.Category;
 
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,7 +12,9 @@ import lombok.Data;
 @Builder
 public class BoardCreateRequestDto {
 
+	@Size(max = 100, message = "제목은 최대 100자입니다.")
 	private String title;
+	@Size(max = 2000, message = "내용은 최대 2000자입니다.")
 	private String content;
 	private Category category;
 	private String boardImgUrl;
