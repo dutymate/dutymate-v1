@@ -13,7 +13,9 @@ const CommunityNews = ({}: any) => {
 
 	return (
 		// {/* 광고 배너 영역 - 데스크톱에서만 표시 */}
-		<div className={`hidden lg:block w-[22rem] shrink-0 px-1`}>
+		<div
+			className={`hidden lg:block w-[22rem] shrink-0 px-1 flex-col items-center`}
+		>
 			<div className="bg-white rounded-lg p-3 min-h-[37.5rem] sticky top-6 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
 				{/* Title with dots */}
 				<div className="flex flex-col items-center justify-center gap-1 mb-3">
@@ -22,7 +24,7 @@ const CommunityNews = ({}: any) => {
 					</h2>
 					<div className="mt-2 text-[#b0b0b0] font-semibold whitespace-nowrap text-sm flex items-center">
 						<GoDotFill />
-						<span>GPT가 추천하는 최신 간호 뉴스</span>
+						<span>GPT가 추천하는 뉴스 TOP 5</span>
 						<GoDotFill />
 					</div>
 				</div>
@@ -51,6 +53,9 @@ const CommunityNews = ({}: any) => {
 							</div>
 						</a>
 					))}
+				</div>
+				<div className="text-sm text-gray-500 ml-2 mt-2  ">
+					*뉴스는 6시, 14시, 21시에 업데이트됩니다.
 				</div>
 			</div>
 		</div>
