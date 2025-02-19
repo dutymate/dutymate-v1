@@ -3,6 +3,7 @@ import MSidebar from "../components/organisms/MSidebar";
 import Title from "../components/atoms/Title";
 import MyShiftCalendar from "../components/organisms/MyShiftCalendar";
 import TodayShiftModal from "../components/organisms/TodayShiftModal";
+import ReqShiftModal from "../components/organisms/ReqShiftModal";
 import { useState, useEffect } from "react";
 import { IoMdMenu } from "react-icons/io";
 import { dutyService } from "../services/dutyService";
@@ -11,6 +12,7 @@ import { toast } from "react-toastify";
 import { useLoadingStore } from "@/store/loadingStore";
 import { useNavigate } from "react-router-dom";
 import { SEO } from "../components/SEO";
+import { Button } from "../components/atoms/Button";
 // Duty 타입 변환 유틸리티 함수
 const convertDutyType = (
 	duty: "D" | "E" | "N" | "O",
@@ -48,6 +50,7 @@ const MyShift = () => {
 	const [loading, setLoading] = useState(false);
 	const { userInfo } = useUserAuthStore(); // 전역 상태에서 role 가져오기
 	const navigate = useNavigate();
+	const [isReqModalOpen, setIsReqModalOpen] = useState(false);
 
 	// 초기 데이터 로딩
 	useEffect(() => {
@@ -121,7 +124,7 @@ const MyShift = () => {
 				/>
 
 				{/* 메인 컨텐츠 영역 */}
-				<div className="flex-1 min-w-0 lg:px-[2rem] py-[1.5rem] overflow-y-auto">
+				<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 h-[calc(100vh-1rem)] lg:h-screen overflow-y-auto">
 					{/* 모바일 메뉴 버튼 */}
 					<button
 						onClick={() => setIsSidebarOpen(true)}
@@ -130,20 +133,34 @@ const MyShift = () => {
 						<IoMdMenu className="w-6 h-6 text-gray-600" />
 					</button>
 
-					{/* Title 컴포넌트의 위치 조정 */}
+					{/* Title과 근무 요청 버튼을 포함하는 헤더 영역 */}
 					<div className="mb-[0.75rem] pl-[0.5rem] lg:pl-[1rem]">
 						<Title
 							title="나의 근무표"
 							subtitle="나의 근무 일정을 확인해보세요."
 						/>
 					</div>
+
 					<div className="block lg:flex lg:gap-[2rem]">
-						<MyShiftCalendar
-							onDateSelect={handleDateSelect}
-							selectedDate={selectedDate}
-							dutyData={myDutyData}
-							onMonthChange={handleMonthChange}
-						/>
+						<div className="relative">
+							<div className="absolute right-4 top-4 z-10">
+								<Button
+									text-size="lg"
+									size="sm"
+									color="primary"
+									className="whitespace-nowrap px-3"
+									onClick={() => setIsReqModalOpen(true)}
+								>
+									근무 요청
+								</Button>
+							</div>
+							<MyShiftCalendar
+								onDateSelect={handleDateSelect}
+								selectedDate={selectedDate}
+								dutyData={myDutyData}
+								onMonthChange={handleMonthChange}
+							/>
+						</div>
 						{selectedDate && dayDutyData && (
 							<TodayShiftModal
 								date={selectedDate}
@@ -158,6 +175,13 @@ const MyShift = () => {
 					</div>
 				</div>
 			</div>
+
+			{/* 근무 요청 모달 */}
+			{isReqModalOpen && (
+				<div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
+					<ReqShiftModal onClose={() => setIsReqModalOpen(false)} />
+				</div>
+			)}
 		</>
 	);
 };

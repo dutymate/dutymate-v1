@@ -152,185 +152,187 @@ const MyShiftCalendar = ({
 	);
 
 	return (
-		<div className={`${isMobile ? "" : "flex gap-[2rem]"}`}>
-			<div
-				className={`bg-white rounded-[1rem] p-[0.5rem] shadow-sm ${
-					isMobile ? "w-full" : "w-[46.875rem] h-fit"
-				}`}
-			>
-				{/* 달력 헤더 */}
-				<div className="flex justify-center items-center gap-[4rem] mb-[1.5rem] pt-[0.5rem]">
-					<button
-						onClick={handlePrevMonth}
-						className="text-base-muted hover:text-base-foreground"
-					>
-						<IoIosArrowBack className="w-6 h-6" />
-					</button>
-					<h2 className="text-base-foreground text-[1rem] font-medium">
-						{currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
-					</h2>
-					<button
-						onClick={handleNextMonth}
-						className="text-base-muted hover:text-base-foreground"
-					>
-						<IoIosArrowForward className="w-6 h-6" />
-					</button>
-				</div>
-
-				{/* 요일 헤더 */}
-				<div className="grid grid-cols-7 mb-[0.25rem]">
-					{weekDays.map((day, index) => (
-						<div
-							key={day}
-							className={`text-center text-[0.875rem] font-medium ${
-								index === 0
-									? "text-red-500"
-									: index === 6
-										? "text-blue-500"
-										: "text-gray-900"
-							}`}
+		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-4 sm:p-6">
+			<div className={`${isMobile ? "" : "flex gap-[2rem]"}`}>
+				<div
+					className={`bg-white rounded-[1rem] p-[0.5rem] ${
+						isMobile ? "w-full" : "w-[46.875rem] h-fit"
+					}`}
+				>
+					{/* 달력 헤더 */}
+					<div className="flex justify-center items-center gap-[4rem] mb-[1.5rem] pt-[0.5rem]">
+						<button
+							onClick={handlePrevMonth}
+							className="text-base-muted hover:text-base-foreground"
 						>
-							{day}
-						</div>
-					))}
-				</div>
-
-				{/* 달력 그리드 */}
-				<div className="grid grid-cols-7 divide-x divide-y divide-gray-100 border border-gray-100">
-					{/* 이전 달 날짜 */}
-					{prevMonthDays.map((day) => (
-						<div
-							key={`prev-${day}`}
-							className={`
-								min-h-[80px] lg:min-h-[120px] 
-								p-2 lg:p-3 
-								relative bg-gray-50 cursor-not-allowed
-							`}
+							<IoIosArrowBack className="w-6 h-6" />
+						</button>
+						<h2 className="text-base-foreground text-[1rem] font-medium">
+							{currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
+						</h2>
+						<button
+							onClick={handleNextMonth}
+							className="text-base-muted hover:text-base-foreground"
 						>
-							<span className="text-base-muted text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
+							<IoIosArrowForward className="w-6 h-6" />
+						</button>
+					</div>
+
+					{/* 요일 헤더 */}
+					<div className="grid grid-cols-7 mb-[0.25rem]">
+						{weekDays.map((day, index) => (
+							<div
+								key={day}
+								className={`text-center text-[0.875rem] font-medium ${
+									index === 0
+										? "text-red-500"
+										: index === 6
+											? "text-blue-500"
+											: "text-gray-900"
+								}`}
+							>
 								{day}
-							</span>
-							{getDutyFromShifts(
-								new Date(
-									currentDate.getFullYear(),
-									currentDate.getMonth() - 1,
-									day,
-								),
-								day,
-							) && (
-								<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
-									<DutyBadgeKor
-										type={
-											getDutyFromShifts(
-												new Date(
-													currentDate.getFullYear(),
-													currentDate.getMonth() - 1,
-													day,
-												),
-												day,
-											)!
-										}
-										size="xs"
-									/>
-								</div>
-							)}
-						</div>
-					))}
+							</div>
+						))}
+					</div>
 
-					{/* 현재 달 날짜 */}
-					{currentMonthDays.map((day) => (
-						<div
-							key={day}
-							onClick={() => {
-								const newDate = new Date(
-									currentDate.getFullYear(),
-									currentDate.getMonth(),
+					{/* 달력 그리드 */}
+					<div className="grid grid-cols-7 divide-x divide-y divide-gray-100 border border-gray-100">
+						{/* 이전 달 날짜 */}
+						{prevMonthDays.map((day) => (
+							<div
+								key={`prev-${day}`}
+								className={`
+									min-h-[80px] lg:min-h-[120px] 
+									p-2 lg:p-3 
+									relative bg-gray-50 cursor-not-allowed
+								`}
+							>
+								<span className="text-base-muted text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
+									{day}
+								</span>
+								{getDutyFromShifts(
+									new Date(
+										currentDate.getFullYear(),
+										currentDate.getMonth() - 1,
+										day,
+									),
 									day,
-								);
-								onDateSelect(newDate);
-							}}
-							className={`
-								min-h-[80px] lg:min-h-[120px] 
-								p-2 lg:p-3 
-								relative cursor-pointer hover:bg-gray-50
-								${
-									externalSelectedDate &&
-									externalSelectedDate.getDate() === day &&
-									externalSelectedDate.getMonth() === currentDate.getMonth()
-										? "ring-2 ring-primary ring-inset"
-										: ""
-								}
-							`}
-						>
-							<span className="text-base-foreground text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
-								{day}
-							</span>
-							{getDutyFromShifts(
-								new Date(
-									currentDate.getFullYear(),
-									currentDate.getMonth(),
-									day,
-								),
-								day,
-							) && (
-								<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
-									<DutyBadgeKor
-										type={
-											getDutyFromShifts(
-												new Date(
-													currentDate.getFullYear(),
-													currentDate.getMonth(),
+								) && (
+									<div className="absolute bottom-0.5 right-0.5 lg:bottom-1 lg:right-1 transform scale-[0.45] lg:scale-75 origin-bottom-right">
+										<DutyBadgeKor
+											type={
+												getDutyFromShifts(
+													new Date(
+														currentDate.getFullYear(),
+														currentDate.getMonth() - 1,
+														day,
+													),
 													day,
-												),
-												day,
-											)!
-										}
-										size="xs"
-									/>
-								</div>
-							)}
-						</div>
-					))}
+												)!
+											}
+											size="xs"
+										/>
+									</div>
+								)}
+							</div>
+						))}
 
-					{/* 다음 달 날짜 */}
-					{nextMonthDays.map((day) => (
-						<div
-							key={`next-${day}`}
-							className={`
-								min-h-[80px] lg:min-h-[120px] 
-								p-2 lg:p-3 
-								relative bg-gray-50 cursor-not-allowed
-							`}
-						>
-							<span className="text-base-muted text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
-								{day}
-							</span>
-							{getDutyFromShifts(
-								new Date(
-									currentDate.getFullYear(),
-									currentDate.getMonth() + 1,
+						{/* 현재 달 날짜 */}
+						{currentMonthDays.map((day) => (
+							<div
+								key={day}
+								onClick={() => {
+									const newDate = new Date(
+										currentDate.getFullYear(),
+										currentDate.getMonth(),
+										day,
+									);
+									onDateSelect(newDate);
+								}}
+								className={`
+									min-h-[80px] lg:min-h-[120px] 
+									p-2 lg:p-3 
+									relative cursor-pointer hover:bg-gray-50
+									${
+										externalSelectedDate &&
+										externalSelectedDate.getDate() === day &&
+										externalSelectedDate.getMonth() === currentDate.getMonth()
+											? "ring-2 ring-primary ring-inset"
+											: ""
+									}
+								`}
+							>
+								<span className="text-base-foreground text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
+									{day}
+								</span>
+								{getDutyFromShifts(
+									new Date(
+										currentDate.getFullYear(),
+										currentDate.getMonth(),
+										day,
+									),
 									day,
-								),
-								day,
-							) && (
-								<div className="absolute bottom-0.5 right-0.5 scale-[0.45] lg:scale-75">
-									<DutyBadgeKor
-										type={
-											getDutyFromShifts(
-												new Date(
-													currentDate.getFullYear(),
-													currentDate.getMonth() + 1,
+								) && (
+									<div className="absolute bottom-1 right-1 lg:bottom-0.5 lg:right-0.5 transform scale-[0.45] lg:scale-75 origin-bottom-right">
+										<DutyBadgeKor
+											type={
+												getDutyFromShifts(
+													new Date(
+														currentDate.getFullYear(),
+														currentDate.getMonth(),
+														day,
+													),
 													day,
-												),
-												day,
-											)!
-										}
-										size="xs"
-									/>
-								</div>
-							)}
-						</div>
-					))}
+												)!
+											}
+											size="xs"
+										/>
+									</div>
+								)}
+							</div>
+						))}
+
+						{/* 다음 달 날짜 */}
+						{nextMonthDays.map((day) => (
+							<div
+								key={`next-${day}`}
+								className={`
+									min-h-[80px] lg:min-h-[120px] 
+									p-2 lg:p-3 
+									relative bg-gray-50 cursor-not-allowed
+								`}
+							>
+								<span className="text-base-muted text-xs lg:text-sm absolute top-1 lg:top-2 left-1 lg:left-2">
+									{day}
+								</span>
+								{getDutyFromShifts(
+									new Date(
+										currentDate.getFullYear(),
+										currentDate.getMonth() + 1,
+										day,
+									),
+									day,
+								) && (
+									<div className="absolute bottom-1 right-1 lg:bottom-0.5 lg:right-0.5 transform scale-[0.45] lg:scale-75 origin-bottom-right">
+										<DutyBadgeKor
+											type={
+												getDutyFromShifts(
+													new Date(
+														currentDate.getFullYear(),
+														currentDate.getMonth() + 1,
+														day,
+													),
+													day,
+												)!
+											}
+											size="xs"
+										/>
+									</div>
+								)}
+							</div>
+						))}
+					</div>
 				</div>
 			</div>
 		</div>
