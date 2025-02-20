@@ -1,15 +1,13 @@
 // ReqAdminTable.tsx
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 // import { SmallSearchInput } from "../atoms/Input";
 // import { SortButton, FilterButton } from "../atoms/SubButton";
-import { DutyBadgeKor } from "../atoms/DutyBadgeKor";
-import { FaUserCircle } from "react-icons/fa";
-import { ApprovalBtn } from "../atoms/ApprovalBtn";
-import { requestService } from "../../services/requestService";
-import { toast } from "react-toastify";
-import { WardRequest } from "../../services/requestService";
 import { useLoadingStore } from "@/store/loadingStore";
+import { toast } from "react-toastify";
+import { requestService, WardRequest } from "../../services/requestService";
+import { ApprovalBtn } from "../atoms/ApprovalBtn";
+import { DutyBadgeKor } from "../atoms/DutyBadgeKor";
 
 const ReqAdminTable = () => {
 	const [requests, setRequests] = useState<WardRequest[]>([]);
@@ -175,7 +173,6 @@ const ReqAdminTable = () => {
 									>
 										<td className="w-[5rem] lg:w-[7.5rem] p-[0.5rem]">
 											<div className="flex items-center justify-start pl-[0.5rem]">
-												<FaUserCircle className="w-4 h-4 lg:w-6 lg:h-6 text-gray-500 flex-shrink-0" />
 												<span className="font-medium truncate ml-[0.25rem] lg:ml-[0.5rem] text-[0.75rem] lg:text-[1rem] whitespace-nowrap">
 													{request.name}
 												</span>

@@ -1,7 +1,7 @@
 import axiosInstance from "../lib/axios";
 
 // 타입 정의
-interface WardRule {
+export interface WardRule {
 	// 평일/주말 근무 개수
 	wdayDCnt: number; // 평일 D 근무 개수
 	wdayECnt: number; // 평일 E 근무 개수

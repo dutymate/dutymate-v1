@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { HistoryModal, NurseAssignModal } from "./WardAdminModal";
 import { TempNurseButton } from "../atoms/Button";
 import WardAdminTemp from "./WardAdminTemp";
+import { useNavigate } from "react-router-dom";
 
 interface WardAdminInfoProps {
 	wardInfo: WardInfo;
@@ -21,6 +22,7 @@ interface WardAdminInfoProps {
 }
 
 const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
+	const navigate = useNavigate();
 	const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 	const [selectedNurse, setSelectedNurse] = useState<{
 		name: string;
@@ -67,14 +69,32 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 		setIsTempModalOpen(false);
 	};
 
+	const handleGoToAutoGenerate = () => {
+		const today = new Date();
+		navigate(
+			`/shift-admin?year=${today.getFullYear()}&month=${today.getMonth() + 1}`,
+		);
+	};
+
 	return (
 		<div className="w-full">
 			<div className="bg-white rounded-[1.15rem] p-4">
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
 					<div className="bg-white rounded-xl p-2.5 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
-						<h3 className="text-[0.95rem] text-gray-600 mb-1 font-medium">
-							병동 정보
-						</h3>
+						<div className="flex items-center justify-between mb-1">
+							<h3 className="text-[0.95rem] text-gray-600 font-medium">
+								병동 정보
+							</h3>
+							<button
+								onClick={handleGoToAutoGenerate}
+								className="flex items-center justify-center gap-1 py-1 px-3 bg-primary hover:bg-primary-dark rounded-lg transition-colors"
+							>
+								<Icon name="auto" size={14} className="text-white" />
+								<span className="text-[0.8rem] text-white">
+									근무표 생성하기
+								</span>
+							</button>
+						</div>
 						<p className="font-semibold border border-gray-300 rounded-[0.375rem] px-3 py-1 text-center">
 							{wardInfo.hospitalName} | {wardInfo.wardName}
 						</p>
@@ -93,22 +113,21 @@ const WardAdminInfo = ({ wardInfo, onAddTempNurse }: WardAdminInfoProps) => {
 					</div>
 
 					<div className="bg-white rounded-xl p-2.5 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
-						<div className="flex gap-2 items-center text-center">
+						<div className="flex items-center justify-between mb-1">
 							<h3 className="text-[0.95rem] text-gray-600 font-medium">
 								병동 코드
 							</h3>
 							<button
 								onClick={handleCopyCode}
-								className="flex items-center justify-center p-2 hover:bg-gray-100 rounded-lg transition-colors"
+								className="flex items-center justify-center gap-1 py-1 px-3 bg-[#999786] hover:bg-[#88866f] rounded-lg transition-colors"
 							>
-								<Icon name="copy" size={20} className="text-gray-600" />
+								<Icon name="copy" size={14} className="text-white" />
+								<span className="text-[0.8rem] text-white">복사하기</span>
 							</button>
 						</div>
-						<div className="flex items-center gap-2">
-							<p className="flex-1 font-semibold border border-gray-300 rounded-[0.375rem] px-3 py-1 text-center">
-								{wardInfo.wardCode}
-							</p>
-						</div>
+						<p className="font-semibold border border-gray-300 rounded-[0.375rem] px-3 py-1 text-center">
+							{wardInfo.wardCode}
+						</p>
 					</div>
 
 					<div className="bg-white rounded-xl p-2.5 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">

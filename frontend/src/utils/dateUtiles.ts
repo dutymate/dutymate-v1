@@ -1,6 +1,5 @@
 export const formatTimeAgo = (dateString: string) => {
-	const utcDate = dateString ? new Date(dateString) : new Date();
-	const date = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
+	const date = dateString ? new Date(dateString) : new Date();
 	const now = new Date();
 
 	// 날짜 변환에 실패한 경우

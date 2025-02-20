@@ -33,14 +33,6 @@ const WardAdminTable = ({}: WardAdminTableProps) => {
 		}
 	};
 
-	// const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	if (e.target.checked) {
-	// 		setSelectedNurses(nurses.map((nurse) => nurse.memberId.toString()));
-	// 	} else {
-	// 		setSelectedNurses([]);
-	// 	}
-	// };
-
 	return (
 		<div className="bg-white rounded-[1.154375rem] p-[1rem]">
 			<div className="relative overflow-visible">
@@ -48,12 +40,6 @@ const WardAdminTable = ({}: WardAdminTableProps) => {
 					<div className="flex flex-col gap-[0.5rem] min-w-[56.25rem] min-h-[37.5rem]">
 						{/* Header */}
 						<div className="flex items-center p-[0.375rem] lg:p-[0.5rem] mb-[0.5rem] text-[0.875rem] lg:text-[1rem] text-gray-600 font-medium bg-base-muted-30 rounded-xl">
-							{/* <input
-								type="checkbox"
-								className="mr-3 min-w-[20px] flex-shrink-0"
-								onChange={handleSelectAll}
-								checked={selectedNurses.length === nurses.length}
-							/> */}
 							<div className="flex items-center justify-between flex-1 gap-[2.5rem]">
 								<div className="flex items-center gap-[1.5rem] flex-shrink-0">
 									<div className="w-[9rem] pl-[5rem]">이름</div>

@@ -126,7 +126,7 @@ const TeamShiftTable = () => {
 	return (
 		<div
 			ref={tableRef}
-			className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-6"
+			className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-4 sm:p-6"
 		>
 			<div className="flex flex-col sm:flex-row items-center justify-between mb-4">
 				<div className="w-[11.25rem] hidden sm:block">
@@ -149,29 +149,25 @@ const TeamShiftTable = () => {
 						onClick={handleNextMonth}
 					/> */}
 				</div>
-				<div className="flex gap-2 w-full sm:w-[11.25rem] justify-center sm:justify-end shrink-0">
+				<div className="flex gap-2 w-full sm:w-[11.25rem] justify-end sm:justify-end shrink-0">
 					<Button
-						text-size="lg"
-						size="sm"
 						color="primary"
-						className="whitespace-nowrap px-3 w-[45%] sm:w-auto"
+						className="whitespace-nowrap px-7 w-[45%] sm:w-auto text-base"
 						onClick={() => setIsReqModalOpen(true)}
 					>
 						근무 요청
 					</Button>
 					<Button
-						text-size="lg"
-						size="sm"
 						color="off"
-						className="whitespace-nowrap px-3 w-[45%] sm:w-auto"
+						className="whitespace-nowrap px-4 w-[45%] sm:w-auto text-base"
 						onClick={handleDownloadWardSchedule}
 					>
 						다운로드
 					</Button>
 				</div>
 			</div>
-			<div className="overflow-x-auto relative w-[calc(100vw-2rem)] sm:w-auto -mx-6 md:mx-0 px-0 md:px-0">
-				<div className="duty-table-content">
+			<div className="overflow-x-auto relative w-full">
+				<div className="duty-table-content min-w-[640px]">
 					<table className="w-full border-separate border-spacing-0 rounded-lg">
 						<thead>
 							<tr className="bg-gray-50">
@@ -201,7 +197,7 @@ const TeamShiftTable = () => {
 												{member.name}
 											</span>
 											{member.name.length > 3 && (
-												<div className="absolute left-1/2 -translate-x-1/2 -top-8 hidden group-hover:block bg-gray-800 text-white px-2 py-1 rounded text-sm whitespace-nowrap z-30">
+												<div className="absolute left-0 -top-8 hidden group-hover:block bg-gray-800 text-white px-2 py-1 rounded text-sm whitespace-nowrap z-30">
 													{member.name}
 												</div>
 											)}

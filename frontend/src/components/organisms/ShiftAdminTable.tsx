@@ -24,6 +24,9 @@ import {
 	isHoliday,
 } from "../../utils/dateUtils";
 import NurseCountModal from "./NurseCountModal";
+import { ruleService } from "../../services/ruleService";
+import { WardRule } from "../../services/ruleService";
+import AutoGenerateConfirmModal from "./AutoGenerateConfirmModal";
 
 // 근무표 관리자 테이블의 props 인터페이스
 interface ShiftAdminTableProps {
@@ -164,15 +167,13 @@ const ShiftAdminTable = ({
 	issues = [],
 }: ShiftAdminTableProps) => {
 	const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
-	// const [isAutoSpinnerOpen, setIsAutoSpinnerOpen] = useState(false);
+	const [isAutoGenerateModalOpen, setIsAutoGenerateModalOpen] = useState(false);
 	const [isLoading] = useState(false);
 	const ruleButtonRef = useRef<HTMLButtonElement>(null);
 	const tableRef = useRef<HTMLDivElement>(null);
 
 	const selectedCell = useShiftStore((state) => state.selectedCell);
 	const setSelectedCell = useShiftStore((state) => state.setSelectedCell);
-	// const updateShift = useShiftStore((state) => state.updateShift);
-	// const setNurseGrades = useShiftStore((state) => state.setNurseGrades);
 
 	// Add hover state management at component level
 	const [hoveredCell, setHoveredCell] = useState<{
@@ -607,17 +608,11 @@ const ShiftAdminTable = ({
 			return;
 		}
 
-		// // 총 간호사 수 확인
-		// if (nurses.length < 5) {
-		// 	const confirmed = window.confirm(
-		// 		"해당 기능 최소 인원은 5명입니다. 임시 간호사를 추가해주세요.",
-		// 	);
-		// 	if (confirmed) {
-		// 		navigate("/ward-admin");
-		// 	}
-		// 	return;
-		// }
+		setIsAutoGenerateModalOpen(true);
+	};
 
+	const handleAutoGenerateConfirm = async () => {
+		setIsAutoGenerateModalOpen(false);
 		try {
 			setIsAutoCreating(true);
 			// 자동생성 중임을 알림
@@ -628,7 +623,7 @@ const ShiftAdminTable = ({
 			// API 호출
 			await dutyService.autoCreateDuty(year, month);
 
-			// 화면 갱신 (이것이 올바른 /duty 엔드포인트를 사용)
+			// 화면 갱신
 			await onUpdate(year, month);
 
 			// 성공 알림
@@ -814,6 +809,44 @@ const ShiftAdminTable = ({
 	};
 	// const [showDownloadDropdown, setShowDownloadDropdown] = useState(false);
 	const [showWebDownloadDropdown, setShowWebDownloadDropdown] = useState(false);
+
+	const [wardRules, setWardRules] = useState<WardRule | null>(null);
+
+	useEffect(() => {
+		const fetchShiftRules = async () => {
+			try {
+				const rules = await ruleService.getWardRules();
+				setWardRules(rules);
+			} catch (error) {
+				console.error("Failed to fetch ward rules:", error);
+			}
+		};
+		fetchShiftRules();
+	}, []);
+
+	const getCountColor = (
+		count: number,
+		day: number,
+		shiftType: "D" | "E" | "N",
+	) => {
+		if (!wardRules) return "";
+
+		const isWeekendDay = isHoliday(year, month, day);
+		const targetCount = isWeekendDay
+			? {
+					D: wardRules.wendDCnt,
+					E: wardRules.wendECnt,
+					N: wardRules.wendNCnt,
+				}[shiftType]
+			: {
+					D: wardRules.wdayDCnt,
+					E: wardRules.wdayECnt,
+					N: wardRules.wdayNCnt,
+				}[shiftType];
+
+		if (count === targetCount) return "text-green-600 font-medium";
+		return "text-red-600 font-medium";
+	};
 
 	return (
 		<div>
@@ -1109,9 +1142,39 @@ const ShiftAdminTable = ({
 												}`}
 											>
 												<div className="flex items-center justify-center h-6">
-													{i === 0 && dutyCounts[j].D}
-													{i === 1 && dutyCounts[j].E}
-													{i === 2 && dutyCounts[j].N}
+													{i === 0 && (
+														<span
+															className={getCountColor(
+																dutyCounts[j].D,
+																j + 1,
+																"D",
+															)}
+														>
+															{dutyCounts[j].D}
+														</span>
+													)}
+													{i === 1 && (
+														<span
+															className={getCountColor(
+																dutyCounts[j].E,
+																j + 1,
+																"E",
+															)}
+														>
+															{dutyCounts[j].E}
+														</span>
+													)}
+													{i === 2 && (
+														<span
+															className={getCountColor(
+																dutyCounts[j].N,
+																j + 1,
+																"N",
+															)}
+														>
+															{dutyCounts[j].N}
+														</span>
+													)}
 													{i === 3 && dutyCounts[j].O}
 													{i === 4 && dutyCounts[j].total}
 												</div>
@@ -1336,7 +1399,9 @@ const ShiftAdminTable = ({
 															<th
 																key={i}
 																className={`p-0 text-center w-10 border-r border-gray-200 ${
-																	isHolidayDay(day) ? "text-red-500" : ""
+																	isHoliday(year, month, day)
+																		? "text-red-500"
+																		: ""
 																}`}
 															>
 																{day}
@@ -1535,9 +1600,39 @@ const ShiftAdminTable = ({
 																	}`}
 																>
 																	<div className="flex items-center justify-center h-6">
-																		{i === 0 && dutyCounts[j].D}
-																		{i === 1 && dutyCounts[j].E}
-																		{i === 2 && dutyCounts[j].N}
+																		{i === 0 && (
+																			<span
+																				className={getCountColor(
+																					dutyCounts[j].D,
+																					j + 1,
+																					"D",
+																				)}
+																			>
+																				{dutyCounts[j].D}
+																			</span>
+																		)}
+																		{i === 1 && (
+																			<span
+																				className={getCountColor(
+																					dutyCounts[j].E,
+																					j + 1,
+																					"E",
+																				)}
+																			>
+																				{dutyCounts[j].E}
+																			</span>
+																		)}
+																		{i === 2 && (
+																			<span
+																				className={getCountColor(
+																					dutyCounts[j].N,
+																					j + 1,
+																					"N",
+																				)}
+																			>
+																				{dutyCounts[j].N}
+																			</span>
+																		)}
 																		{i === 3 && dutyCounts[j].O}
 																		{i === 4 && dutyCounts[j].total}
 																	</div>
@@ -1580,6 +1675,7 @@ const ShiftAdminTable = ({
 				<RuleEditModal
 					onClose={() => setIsRuleModalOpen(false)}
 					buttonRef={ruleButtonRef}
+					onRuleUpdate={(newRules) => setWardRules(newRules)}
 				/>
 			)}
 			<NurseCountModal
@@ -1590,6 +1686,17 @@ const ShiftAdminTable = ({
 					navigate("/ward-admin");
 				}}
 				neededNurseCount={neededNurseCount}
+			/>
+
+			<AutoGenerateConfirmModal
+				isOpen={isAutoGenerateModalOpen}
+				onClose={() => setIsAutoGenerateModalOpen(false)}
+				onConfirm={handleAutoGenerateConfirm}
+				onModify={() => {
+					setIsAutoGenerateModalOpen(false);
+					setIsRuleModalOpen(true);
+				}}
+				wardRules={wardRules}
 			/>
 		</div>
 	);

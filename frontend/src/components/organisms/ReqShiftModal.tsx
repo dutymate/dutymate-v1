@@ -115,7 +115,7 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 								근무 날짜
 							</label>
 							<span className="text-xs text-gray-400">
-								요청 보낸 날짜를 선택해주세요.
+								요청 보낼 날짜를 선택해주세요.
 							</span>
 						</div>
 						<DateInput
@@ -171,7 +171,7 @@ const ReqShiftModal = ({ onClose }: ReqShiftModalProps) => {
 						<Button
 							color="off"
 							onClick={onClose}
-							className="border border-gray-900 bg-white text-gray-900 min-w-[6.25rem] min-h-[2.5rem]"
+							className="border   bg-white text-gray-900 min-w-[6.25rem] min-h-[2.5rem]"
 						>
 							닫기
 						</Button>

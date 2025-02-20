@@ -135,13 +135,15 @@ const MyShift = () => {
 					{/* <div className="mb-[0.75rem] pl-[0.5rem] lg:pl-[1rem]"> */}
 					<Title title="나의 듀티표" subtitle="나의 근무 일정을 확인해보세요" />
 					{/* </div> */}
-					<div className="block lg:flex lg:gap-[2rem]">
-						<MyShiftCalendar
-							onDateSelect={handleDateSelect}
-							selectedDate={selectedDate}
-							dutyData={myDutyData}
-							onMonthChange={handleMonthChange}
-						/>
+					<div className="block lg:flex lg:gap-[2rem] mt-6 ">
+						<div className="relative">
+							<MyShiftCalendar
+								onDateSelect={handleDateSelect}
+								selectedDate={selectedDate}
+								dutyData={myDutyData}
+								onMonthChange={handleMonthChange}
+							/>
+						</div>
 						{selectedDate && dayDutyData && (
 							<TodayShiftModal
 								date={selectedDate}
