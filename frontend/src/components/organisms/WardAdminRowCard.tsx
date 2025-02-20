@@ -22,8 +22,6 @@ const WardAdminRowCard = ({
 	nurse,
 	onUpdate,
 	useCustomDutyLabels = false,
-	// isSelected = false,
-	// onSelect,
 }: WardAdminRowCardProps) => {
 	if (!nurse) {
 		return null;
@@ -333,11 +331,6 @@ const WardAdminRowCard = ({
 				<div className="flex items-center justify-between flex-1 gap-[2.5rem]">
 					<div className="flex items-center gap-[1.5rem] flex-shrink-0">
 						<div className="flex items-center gap-3 w-[9rem] pl-[0.5rem] group relative">
-							<img
-								src={nurse.profileImg}
-								alt="프로필"
-								className="w-6 h-6 rounded-full"
-							/>
 							{!nurse.isSynced && (
 								<div className="flex-1 items-center">
 									{isEditingName ? (
@@ -377,7 +370,7 @@ const WardAdminRowCard = ({
 								</div>
 							)}
 							{nurse.isSynced && (
-								<span className="w-0 flex-1 truncate text-duty-off">
+								<span className="w-0 flex-1 truncate">
 									{nurse.name}
 								</span>
 							)}
