@@ -370,9 +370,7 @@ const WardAdminRowCard = ({
 								</div>
 							)}
 							{nurse.isSynced && (
-								<span className="w-0 flex-1 truncate">
-									{nurse.name}
-								</span>
+								<span className="w-0 flex-1 truncate">{nurse.name}</span>
 							)}
 						</div>
 						<div className="w-[3.75rem] flex items-center">
