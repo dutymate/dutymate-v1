@@ -59,9 +59,9 @@ const LandingTemplate: React.FC<LandingTemplateProps> = ({
 								</div>
 								<div className="slide-item">
 									<img
-										src="/images/notebook.svg"
+										src="/images/samsung.svg"
 										alt="Notebook Preview"
-										className="w-full h-full object-contain"
+										className="w-[100%] h-[100%] object-contain transform scale-100"
 									/>
 								</div>
 							</div>
