@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { DutyBadgeKor } from "../atoms/DutyBadgeKor";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { Button } from "../atoms/Button";
+import ReqShiftModal from "./ReqShiftModal";
 
 const weekDays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] as const;
 
@@ -27,6 +29,7 @@ const MyShiftCalendar = ({
 }: MyShiftCalendarProps) => {
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024); // lg 브레이크포인트
+	const [isReqModalOpen, setIsReqModalOpen] = useState(false);
 
 	// 화면 크기 변경 감지
 	useEffect(() => {
@@ -153,6 +156,38 @@ const MyShiftCalendar = ({
 
 	return (
 		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-4 sm:p-6">
+			<div className="flex flex-col sm:flex-row items-center justify-between mb-4">
+				<div className="w-[11.25rem] hidden sm:block">
+					{/* 왼쪽 여백 공간 */}
+				</div>
+				<div className="flex items-center gap-4 sm:gap-14 mb-4 sm:mb-0">
+					<button
+						onClick={handlePrevMonth}
+						className="text-base-muted hover:text-base-foreground"
+					>
+						<IoIosArrowBack className="w-6 h-6" />
+					</button>
+					<h2 className="text-base-foreground text-[1rem] font-medium whitespace-nowrap">
+						{currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
+					</h2>
+					<button
+						onClick={handleNextMonth}
+						className="text-base-muted hover:text-base-foreground"
+					>
+						<IoIosArrowForward className="w-6 h-6" />
+					</button>
+				</div>
+				<div className="flex gap-2 w-full sm:w-[11.25rem] justify-end sm:justify-end shrink-0">
+					<Button
+						color="primary"
+						className="whitespace-nowrap px-7 w-[45%] sm:w-auto text-base"
+						onClick={() => setIsReqModalOpen(true)}
+					>
+						근무 요청
+					</Button>
+				</div>
+			</div>
+
 			<div className={`${isMobile ? "" : "flex gap-[2rem]"}`}>
 				<div
 					className={`bg-white rounded-[1rem] p-[0.5rem] ${
@@ -160,25 +195,6 @@ const MyShiftCalendar = ({
 					}`}
 				>
 					{/* 달력 헤더 */}
-					<div className="flex justify-center items-center gap-[4rem] mb-[1.5rem] pt-[0.5rem]">
-						<button
-							onClick={handlePrevMonth}
-							className="text-base-muted hover:text-base-foreground"
-						>
-							<IoIosArrowBack className="w-6 h-6" />
-						</button>
-						<h2 className="text-base-foreground text-[1rem] font-medium">
-							{currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
-						</h2>
-						<button
-							onClick={handleNextMonth}
-							className="text-base-muted hover:text-base-foreground"
-						>
-							<IoIosArrowForward className="w-6 h-6" />
-						</button>
-					</div>
-
-					{/* 요일 헤더 */}
 					<div className="grid grid-cols-7 mb-[0.25rem]">
 						{weekDays.map((day, index) => (
 							<div
@@ -335,6 +351,15 @@ const MyShiftCalendar = ({
 					</div>
 				</div>
 			</div>
+
+			{/* 근무 요청 모달 */}
+			{isReqModalOpen && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+					<div onClick={(e) => e.stopPropagation()}>
+						<ReqShiftModal onClose={() => setIsReqModalOpen(false)} />
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };
