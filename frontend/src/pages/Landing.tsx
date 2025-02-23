@@ -6,8 +6,6 @@ import "../styles/animations.css";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { SEO } from "../components/SEO";
-import { FaRegQuestionCircle } from "react-icons/fa";
-import { FaYoutube } from "react-icons/fa";
 
 const Landing = () => {
 	const navigate = useNavigate();
