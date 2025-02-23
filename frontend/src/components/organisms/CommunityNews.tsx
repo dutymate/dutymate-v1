@@ -2,7 +2,7 @@ import { useNewsStore } from "@/store/newsStore";
 import { useEffect } from "react";
 import { GoDotFill } from "react-icons/go";
 
-const CommunityNews = ({}: any) => {
+const CommunityNews = ({ onClose }: any) => {
 	const { newsies, fetchNewsies } = useNewsStore();
 
 	useEffect(() => {
@@ -13,12 +13,16 @@ const CommunityNews = ({}: any) => {
 
 	return (
 		// {/* 광고 배너 영역 - 데스크톱에서만 표시 */}
-		<div
-			className={`hidden lg:block w-[22rem] shrink-0 px-1 flex-col items-center`}
-		>
-			<div className="bg-white rounded-lg p-3 min-h-[37.5rem] sticky top-6 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)]">
+		<div className={`shrink-0 px-1 flex-col items-center`}>
+			<div className="bg-white rounded-lg p-3 min-h-[37.5rem] sticky top-6 shadow-[0_0.25rem_0.75rem_rgba(0,0,0,0.1)] relative">
 				{/* Title with dots */}
 				<div className="flex flex-col items-center justify-center gap-1 mb-3">
+					<button
+						className="lg:hidden absolute right-3 top-3 p-2"
+						onClick={onClose}
+					>
+						X
+					</button>
 					<h2 className="mt-2 text-primary-dark font-semibold whitespace-nowrap">
 						오늘의 간호 NEWS
 					</h2>
