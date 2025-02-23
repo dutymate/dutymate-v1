@@ -68,8 +68,8 @@ const TodayShiftModal = ({
 		<div
 			className={`bg-white rounded-[1rem] p-[1rem] shadow-sm ${
 				isMobile
-					? "w-full max-w-[25rem] h-[80vh] py-6"
-					: "w-full h-full min-h-[37.5rem]" // 웹에서는 전체 너비 사용
+					? "w-full max-w-[25rem] h-[28rem] py-6"
+					: "w-full h-full min-h-[37.5rem]"
 			} flex flex-col relative`}
 		>
 			{isMobile && (
@@ -127,7 +127,7 @@ const TodayShiftModal = ({
 						<div className="border-t border-gray-900 mb-[0.25rem] lg:mb-[0.5rem]" />
 					</div>
 
-					<div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+					<div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
 						<div className="space-y-[0.0625rem] lg:space-y-[0.125rem]">
 							{dutyData.otherShifts
 								.sort((a, b) => {
@@ -178,7 +178,7 @@ const TodayShiftModal = ({
 	if (isMobile) {
 		return (
 			<div
-				className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-[1.5rem]"
+				className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-[1rem]"
 				onClick={(e) => {
 					if (e.target === e.currentTarget && onClose) {
 						onClose();
