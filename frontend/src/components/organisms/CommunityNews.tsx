@@ -1,6 +1,7 @@
 import { useNewsStore } from "@/store/newsStore";
 import { useEffect } from "react";
 import { GoDotFill } from "react-icons/go";
+import { IoMdClose } from "react-icons/io";
 
 const CommunityNews = ({ onClose }: any) => {
 	const { newsies, fetchNewsies } = useNewsStore();
@@ -21,7 +22,7 @@ const CommunityNews = ({ onClose }: any) => {
 						className="lg:hidden absolute right-3 top-3 p-2"
 						onClick={onClose}
 					>
-						X
+						<IoMdClose className="w-6 h-6 text-gray-600" />
 					</button>
 					<h2 className="mt-2 text-primary-dark font-semibold whitespace-nowrap">
 						오늘의 간호 NEWS
