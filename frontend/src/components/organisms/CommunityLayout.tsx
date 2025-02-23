@@ -25,25 +25,24 @@ const CommunityLayout = ({ title, subtitle, children }: any) => {
 			/>
 
 			{/* 메인 컨텐츠 영역 */}
-			<div className="flex-1 min-w-0 flex flex-col">
-				{/* Title 영역 */}
-				<div className="px-4 lg:px-8 pt-6">
-					{/* 모바일 메뉴 버튼 */}
-					<button
-						onClick={() => setIsSidebarOpen(true)}
-						className="lg:hidden mb-4 p-2 hover:bg-gray-100 rounded-lg"
-					>
-						<IoMdMenu className="w-6 h-6 text-gray-600" />
-					</button>
-					<Title title={title} subtitle={subtitle} />
-				</div>
+			<div className="flex-1 min-w-0 px-4 lg:px-8 py-6 h-[calc(100vh-1rem)] lg:h-screen overflow-y-auto lg:overflow-x-hidden">
+				{/* 모바일 메뉴 버튼 */}
+				<button
+					onClick={() => setIsSidebarOpen(true)}
+					className="lg:hidden mb-4 p-2 hover:bg-gray-100 rounded-lg"
+				>
+					<IoMdMenu className="w-6 h-6 text-gray-600" />
+				</button>
+				<Title title={title} subtitle={subtitle} />
 
-				{/* 컨텐츠 영역 */}
-				<div className="flex-1 flex justify-center mt-6 pb-6 px-4 lg:px-0">
-					<div className="w-full lg:w-[53rem]  lg:px-8 overflow-y-auto ">
-						{children}
+				{/* 컨텐츠와 뉴스 영역 */}
+				<div className="mt-6 flex gap-6">
+					{/* 메인 컨텐츠 */}
+					<div className="flex-1 min-w-0">{children}</div>
+					{/* 뉴스 영역 */}
+					<div className="hidden lg:block w-[22rem] shrink-0">
+						<CommunityNews />
 					</div>
-					<CommunityNews />
 				</div>
 			</div>
 		</div>
