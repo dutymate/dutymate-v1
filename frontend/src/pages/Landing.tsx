@@ -6,6 +6,8 @@ import "../styles/animations.css";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { SEO } from "../components/SEO";
+import { FaRegQuestionCircle } from "react-icons/fa";
+import { FaYoutube } from "react-icons/fa";
 
 const Landing = () => {
 	const navigate = useNavigate();
@@ -39,6 +41,22 @@ const Landing = () => {
 		}
 	};
 
+	const handleGoToTutorial = () => {
+		try {
+			window.open(import.meta.env.VITE_TUTORIAL_URL, "_blank");
+		} catch (error) {
+			navigate("/error");
+		}
+	};
+
+	const handleGoToYoutube = () => {
+		try {
+			window.open(import.meta.env.VITE_YOUTUBE_URL, "_blank");
+		} catch (error) {
+			navigate("/error");
+		}
+	};
+
 	return (
 		<>
 			<SEO
@@ -55,6 +73,23 @@ const Landing = () => {
 				>
 					<span className="text-[1.25rem] lg:text-[1rem]">시작하기</span>
 				</Button>
+
+				<div className="flex gap-2 p-4">
+					사용법이 궁금하다면?
+					<span
+						className="text-primary-dark cursor-pointer font-semibold"
+						onClick={handleGoToTutorial}
+					>
+						튜토리얼
+					</span>{" "}
+					|{" "}
+					<span
+						className="text-primary-dark cursor-pointer font-semibold"
+						onClick={handleGoToYoutube}
+					>
+						소개영상
+					</span>
+				</div>
 			</LandingTemplate>
 		</>
 	);
