@@ -66,8 +66,10 @@ const TodayShiftModal = ({
 
 	const modalContent = (
 		<div
-			className={`bg-white rounded-[1rem] p-[1rem] w-full max-w-[25rem] shadow-sm ${
-				isMobile ? "h-[80vh] py-6" : "min-h-[37.5rem]"
+			className={`bg-white rounded-[1rem] p-[1rem] shadow-sm ${
+				isMobile
+					? "w-full max-w-[25rem] h-[80vh] py-6"
+					: "w-full h-full min-h-[37.5rem]" // 웹에서는 전체 너비 사용
 			} flex flex-col relative`}
 		>
 			{isMobile && (

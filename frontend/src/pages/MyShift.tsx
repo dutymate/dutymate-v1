@@ -135,26 +135,49 @@ const MyShift = () => {
 					{/* <div className="mb-[0.75rem] pl-[0.5rem] lg:pl-[1rem]"> */}
 					<Title title="나의 듀티표" subtitle="나의 근무 일정을 확인해보세요" />
 					{/* </div> */}
-					<div className="block lg:flex lg:gap-[2rem] mt-6 ">
-						<div className="relative">
-							<MyShiftCalendar
-								onDateSelect={handleDateSelect}
-								selectedDate={selectedDate}
-								dutyData={myDutyData}
-								onMonthChange={handleMonthChange}
-							/>
+					<div className="block lg:flex lg:gap-[2rem] mt-6">
+						{/* 캘린더와 모달을 감싸는 컨테이너 */}
+						<div className="calendar-modal-container flex flex-col lg:flex-row w-full gap-4">
+							{/* 캘린더 영역 - 65% */}
+							<div className="relative lg:w-[65%]">
+								<MyShiftCalendar
+									onDateSelect={handleDateSelect}
+									selectedDate={selectedDate}
+									dutyData={myDutyData}
+									onMonthChange={handleMonthChange}
+								/>
+							</div>
+
+							{/* 모달 영역 - 35% */}
+							{selectedDate && dayDutyData && (
+								<>
+									{/* 데스크톱 버전 */}
+									<div className="hidden lg:block lg:w-[35%]">
+										<TodayShiftModal
+											date={selectedDate}
+											duty={selectedDuty}
+											dutyData={dayDutyData}
+											isMobile={false}
+											onClose={() => setSelectedDate(null)}
+											onDateChange={(newDate) => handleDateSelect(newDate)}
+											loading={loading}
+										/>
+									</div>
+									{/* 모바일 버전 */}
+									<div className="lg:hidden">
+										<TodayShiftModal
+											date={selectedDate}
+											duty={selectedDuty}
+											dutyData={dayDutyData}
+											isMobile={true}
+											onClose={() => setSelectedDate(null)}
+											onDateChange={(newDate) => handleDateSelect(newDate)}
+											loading={loading}
+										/>
+									</div>
+								</>
+							)}
 						</div>
-						{selectedDate && dayDutyData && (
-							<TodayShiftModal
-								date={selectedDate}
-								duty={selectedDuty}
-								dutyData={dayDutyData}
-								isMobile={window.innerWidth < 1024}
-								onClose={() => setSelectedDate(null)}
-								onDateChange={(newDate) => handleDateSelect(newDate)}
-								loading={loading}
-							/>
-						)}
 					</div>
 				</div>
 			</div>

@@ -155,7 +155,7 @@ const MyShiftCalendar = ({
 	);
 
 	return (
-		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-4 sm:p-6">
+		<div className="bg-white rounded-[0.92375rem] shadow-[0_0_15px_rgba(0,0,0,0.1)] p-4 sm:p-6 h-full">
 			<div className="flex flex-col sm:flex-row items-center justify-between mb-4">
 				<div className="w-[11.25rem] hidden sm:block">
 					{/* 왼쪽 여백 공간 */}
@@ -191,7 +191,7 @@ const MyShiftCalendar = ({
 			<div className={`${isMobile ? "" : "flex gap-[2rem]"}`}>
 				<div
 					className={`bg-white rounded-[1rem] p-[0.5rem] ${
-						isMobile ? "w-full" : "w-[46.875rem] h-fit"
+						isMobile ? "w-full" : "w-full"
 					}`}
 				>
 					{/* 달력 헤더 */}
