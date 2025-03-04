@@ -52,21 +52,24 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_eip" "ngw_eip" {
+  count = 2
+
   lifecycle {
     create_before_destroy = true
   }
 
   tags = {
-    Name = "dutymate-ngw-eip"
+    Name = "dutymate-ngw-eip${count.index + 1}"
   }
 }
 
 resource "aws_nat_gateway" "ngw" {
-  allocation_id = aws_eip.ngw_eip.id
-  subnet_id     = aws_subnet.public_subnets[0].id
+  count         = 2
+  allocation_id = aws_eip.ngw_eip[count.index].id
+  subnet_id     = aws_subnet.public_subnets[count.index].id
 
   tags = {
-    Name = "dutymate-ngw"
+    Name = "dutymate-ngw${count.index + 1}"
   }
 }
 
@@ -98,22 +101,23 @@ resource "aws_route_table_association" "public_route_table_assoc" {
 }
 
 resource "aws_route_table" "private_route_table" {
+  count  = 2
   vpc_id = aws_vpc.vpc.id
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.ngw.id
+    nat_gateway_id = aws_nat_gateway.ngw[count.index].id
   }
 
   tags = {
-    Name = "dutymate-private-route-table"
+    Name = "dutymate-private-route-table${count.index + 1}"
   }
 }
 
 resource "aws_route_table_association" "private_route_table_assoc" {
   count          = 2
   subnet_id      = aws_subnet.private_subnets[count.index].id
-  route_table_id = aws_route_table.private_route_table.id
+  route_table_id = aws_route_table.private_route_table[count.index].id
 }
 
 resource "aws_route_table" "database_route_table" {
@@ -134,7 +138,7 @@ resource "aws_vpc_endpoint" "vpce_s3" {
   vpc_id            = aws_vpc.vpc.id
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.aws_region}.s3"
-  route_table_ids   = [aws_route_table.private_route_table.id]
+  route_table_ids   = [aws_route_table.private_route_table[0].id, aws_route_table.private_route_table[1].id]
 
   tags = {
     Name = "dutymate-vpce-s3"
