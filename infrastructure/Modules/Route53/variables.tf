@@ -1,11 +1,3 @@
-variable "alb_dns_name" {
-  type = string
-}
-
-variable "alb_zone_id" {
-  type = string
-}
-
 variable "cloudfront_distribution_domain_name" {
   type = string
 }
@@ -15,6 +7,14 @@ variable "cloudfront_distribution_hosted_zone_id" {
 }
 
 variable "domain_name" {
+  type = string
+}
+
+variable "external_alb_dns_name" {
+  type = string
+}
+
+variable "external_alb_zone_id" {
   type = string
 }
 

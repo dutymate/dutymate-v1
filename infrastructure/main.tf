@@ -5,12 +5,15 @@ module "acm" {
 }
 
 module "alb" {
-  source              = "./Modules/ALB"
-  alb_certificate_arn = module.acm.alb_certificate_arn
-  health_check_path   = var.health_check_path
-  public_subnets      = module.networking.public_subnets
-  sg_alb_id           = module.security_group.sg_alb_id
-  vpc_id              = module.networking.vpc_id
+  source                         = "./Modules/ALB"
+  external_alb_certificate_arn   = module.acm.external_alb_certificate_arn
+  external_alb_health_check_path = var.external_alb_health_check_path
+  internal_alb_health_check_path = var.internal_alb_health_check_path
+  private_subnets                = module.networking.private_subnets
+  public_subnets                 = module.networking.public_subnets
+  sg_external_alb_id             = module.security_group.sg_external_alb_id
+  sg_internal_alb_id             = module.security_group.sg_internal_alb_id
+  vpc_id                         = module.networking.vpc_id
 }
 
 module "cloudfront" {
@@ -38,18 +41,24 @@ module "ecr" {
 }
 
 module "ecs" {
-  source                      = "./Modules/ECS"
-  asset_bucket_arn            = module.s3.asset_bucket_arn
-  aws_region                  = var.aws_region
-  ecr_repository_url          = module.ecr.ecr_repository_url
-  ecs_instance_profile_name   = module.iam.ecs_instance_profile_name
-  ecs_service_role_arn        = module.iam.ecs_service_role_arn
-  ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
-  ecs_task_role_arn           = module.iam.ecs_task_role_arn
-  log_group_name              = module.cloudwatch.log_group_name
-  private_subnets             = module.networking.private_subnets
-  sg_ecs_id                   = module.security_group.sg_ecs_id
-  target_group_arn            = module.alb.target_group_arn
+  source                        = "./Modules/ECS"
+  appserver_ecs_task_role_arn   = module.iam.appserver_ecs_task_role_arn
+  appserver_log_group_name      = module.cloudwatch.appserver_log_group_name
+  asset_bucket_arn              = module.s3.asset_bucket_arn
+  aws_region                    = var.aws_region
+  ecr_repository_url            = module.ecr.ecr_repository_url
+  ecs_instance_profile_name     = module.iam.ecs_instance_profile_name
+  ecs_service_role_arn          = module.iam.ecs_service_role_arn
+  ecs_task_execution_role_arn   = module.iam.ecs_task_execution_role_arn
+  external_alb_target_group_arn = module.alb.external_alb_target_group_arn
+  internal_alb_dns_name         = module.alb.internal_alb_dns_name
+  internal_alb_target_group_arn = module.alb.internal_alb_target_group_arn
+  private_subnets               = module.networking.private_subnets
+  public_subnets                = module.networking.public_subnets
+  sg_appserver_ecs_id           = module.security_group.sg_appserver_ecs_id
+  sg_webserver_ecs_id           = module.security_group.sg_webserver_ecs_id
+  webserver_ecs_task_role_arn   = module.iam.webserver_ecs_task_role_arn
+  webserver_log_group_name      = module.cloudwatch.webserver_log_group_name
 }
 
 module "elasticache" {
@@ -84,11 +93,11 @@ module "rds" {
 
 module "route53" {
   source                                 = "./Modules/Route53"
-  alb_dns_name                           = module.alb.alb_dns_name
-  alb_zone_id                            = module.alb.alb_zone_id
   cloudfront_distribution_domain_name    = module.cloudfront.cloudfront_distribution_domain_name
   cloudfront_distribution_hosted_zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
   domain_name                            = var.domain_name
+  external_alb_dns_name                  = module.alb.external_alb_dns_name
+  external_alb_zone_id                   = module.alb.external_alb_zone_id
   google_site_verification_code          = var.google_site_verification_code
   route53_zone_id                        = var.route53_zone_id
 }
@@ -103,6 +112,7 @@ module "security_group" {
   source                     = "./Modules/SecurityGroup"
   database_subnet_cidr_block = var.database_subnet_cidr_block
   private_subnet_cidr_block  = var.private_subnet_cidr_block
+  public_subnet_cidr_block   = var.public_subnet_cidr_block
   vpc_id                     = module.networking.vpc_id
 }
 
@@ -114,6 +124,6 @@ module "ssm" {
 }
 
 module "waf" {
-  source  = "./Modules/WAF"
-  alb_arn = module.alb.alb_arn
+  source           = "./Modules/WAF"
+  external_alb_arn = module.alb.external_alb_arn
 }

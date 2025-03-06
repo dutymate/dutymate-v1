@@ -130,16 +130,25 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_iam_role" "ecs_task_role" {
-  name               = "dutymate-ecs-task-role"
+resource "aws_iam_role" "webserver_ecs_task_role" {
+  name               = "dutymate-webserver-ecs-task-role"
   assume_role_policy = data.aws_iam_policy_document.task_assume_role_policy.json
 
   tags = {
-    Name = "dutymate-ecs-task-role"
+    Name = "dutymate-webserver-ecs-task-role"
   }
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_role_policy" {
-  role       = aws_iam_role.ecs_task_role.name
+resource "aws_iam_role" "appserver_ecs_task_role" {
+  name               = "dutymate-appserver-ecs-task-role"
+  assume_role_policy = data.aws_iam_policy_document.task_assume_role_policy.json
+
+  tags = {
+    Name = "dutymate-appserver-ecs-task-role"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "appserver_ecs_task_role_policy" {
+  role       = aws_iam_role.appserver_ecs_task_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonElastiCacheFullAccess"
 }

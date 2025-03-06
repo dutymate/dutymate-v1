@@ -1,8 +1,17 @@
-resource "aws_cloudwatch_log_group" "log_group" {
-  name              = "/ecs/dutymate-service"
+resource "aws_cloudwatch_log_group" "webserver_log_group" {
+  name              = "/ecs/webserver-service"
   retention_in_days = 7
 
   tags = {
-    Name = "dutymate-log-group"
+    Name = "dutymate-webserver-log-group"
+  }
+}
+
+resource "aws_cloudwatch_log_group" "appserver_log_group" {
+  name              = "/ecs/appserver-service"
+  retention_in_days = 7
+
+  tags = {
+    Name = "dutymate-appserver-log-group"
   }
 }

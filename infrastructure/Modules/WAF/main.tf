@@ -82,7 +82,7 @@ resource "aws_wafv2_web_acl" "waf_web_acl" {
   }
 }
 
-resource "aws_wafv2_web_acl_association" "waf_alb_association" {
-  resource_arn = var.alb_arn
+resource "aws_wafv2_web_acl_association" "waf_external_alb_association" {
+  resource_arn = var.external_alb_arn
   web_acl_arn  = aws_wafv2_web_acl.waf_web_acl.arn
 }

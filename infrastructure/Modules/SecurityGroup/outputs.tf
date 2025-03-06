@@ -1,9 +1,13 @@
-output "sg_alb_id" {
-  value = aws_security_group.sg_alb.id
+output "sg_appserver_ecs_id" {
+  value = aws_security_group.sg_appserver_ecs.id
 }
 
-output "sg_ecs_id" {
-  value = aws_security_group.sg_ecs.id
+output "sg_external_alb_id" {
+  value = aws_security_group.sg_external_alb.id
+}
+
+output "sg_internal_alb_id" {
+  value = aws_security_group.sg_internal_alb.id
 }
 
 output "sg_mongodb_id" {
@@ -28,4 +32,8 @@ output "sg_vpce_ecr_id" {
 
 output "sg_vpce_ssm_id" {
   value = aws_security_group.sg_vpce_ssm.id
+}
+
+output "sg_webserver_ecs_id" {
+  value = aws_security_group.sg_webserver_ecs.id
 }
