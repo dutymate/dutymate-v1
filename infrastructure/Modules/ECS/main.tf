@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "webserver_ecs_task_definition" {
     {
       name      = "webserver-container",
       image     = "nginx:latest",
-      memory    = 1024,
+      memory    = 768,
       cpu       = 512,
       essential = true,
       portMappings = [
@@ -92,7 +92,7 @@ resource "aws_ecs_task_definition" "appserver_ecs_task_definition" {
     {
       name      = "appserver-container",
       image     = "${var.ecr_repository_url}:latest",
-      memory    = 1024,
+      memory    = 768,
       cpu       = 512,
       essential = true,
       portMappings = [{
@@ -168,7 +168,7 @@ data "aws_ssm_parameter" "ecs_ami" {
 resource "aws_launch_template" "webserver_ecs_launch_template" {
   name                   = "dutymate-webserver-webserver-ecs-launch-template"
   image_id               = data.aws_ssm_parameter.ecs_ami.value
-  instance_type          = "t3.small"
+  instance_type          = "t2.micro"
   vpc_security_group_ids = [var.sg_webserver_ecs_id]
 
   iam_instance_profile {
@@ -189,7 +189,7 @@ EOF
 resource "aws_launch_template" "appserver_ecs_launch_template" {
   name                   = "dutymate-appserver-appserver-ecs-launch-template"
   image_id               = data.aws_ssm_parameter.ecs_ami.value
-  instance_type          = "t3.small"
+  instance_type          = "t2.micro"
   vpc_security_group_ids = [var.sg_appserver_ecs_id]
 
   iam_instance_profile {
