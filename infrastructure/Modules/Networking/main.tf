@@ -98,7 +98,6 @@ resource "aws_route_table_association" "public_route_table_assoc" {
 }
 
 resource "aws_route_table" "private_route_table" {
-  count  = 2
   vpc_id = aws_vpc.vpc.id
 
   route {
@@ -107,14 +106,14 @@ resource "aws_route_table" "private_route_table" {
   }
 
   tags = {
-    Name = "dutymate-private-route-table${count.index + 1}"
+    Name = "dutymate-private-route-table"
   }
 }
 
 resource "aws_route_table_association" "private_route_table_assoc" {
   count          = 2
   subnet_id      = aws_subnet.private_subnets[count.index].id
-  route_table_id = aws_route_table.private_route_table[count.index].id
+  route_table_id = aws_route_table.private_route_table.id
 }
 
 resource "aws_route_table" "database_route_table" {
@@ -135,7 +134,7 @@ resource "aws_vpc_endpoint" "vpce_s3" {
   vpc_id            = aws_vpc.vpc.id
   vpc_endpoint_type = "Gateway"
   service_name      = "com.amazonaws.${var.aws_region}.s3"
-  route_table_ids   = [aws_route_table.private_route_table[0].id, aws_route_table.private_route_table[1].id]
+  route_table_ids   = [aws_route_table.private_route_table.id]
 
   tags = {
     Name = "dutymate-vpce-s3"
