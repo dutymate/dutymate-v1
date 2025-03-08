@@ -133,7 +133,7 @@ resource "aws_security_group" "sg_mysql" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = []
   }
 
   tags = {
@@ -156,7 +156,7 @@ resource "aws_security_group" "sg_valkey" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = []
   }
 
   tags = {
@@ -179,7 +179,7 @@ resource "aws_security_group" "sg_mongodb" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = []
   }
 
   tags = {
