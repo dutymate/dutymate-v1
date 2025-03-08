@@ -52,24 +52,21 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_eip" "ngw_eip" {
-  count = 2
-
   lifecycle {
     create_before_destroy = true
   }
 
   tags = {
-    Name = "dutymate-ngw-eip${count.index + 1}"
+    Name = "dutymate-ngw-eip"
   }
 }
 
 resource "aws_nat_gateway" "ngw" {
-  count         = 2
-  allocation_id = aws_eip.ngw_eip[count.index].id
-  subnet_id     = aws_subnet.public_subnets[count.index].id
+  allocation_id = aws_eip.ngw_eip.id
+  subnet_id     = aws_subnet.public_subnets[0].id
 
   tags = {
-    Name = "dutymate-ngw${count.index + 1}"
+    Name = "dutymate-ngw"
   }
 }
 
@@ -106,7 +103,7 @@ resource "aws_route_table" "private_route_table" {
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.ngw[count.index].id
+    nat_gateway_id = aws_nat_gateway.ngw.id
   }
 
   tags = {
