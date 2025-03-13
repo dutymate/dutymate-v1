@@ -141,67 +141,42 @@ resource "aws_vpc_endpoint" "vpce_s3" {
   }
 }
 
-resource "aws_vpc_endpoint" "vpec_ecr_api" {
-  vpc_id              = aws_vpc.vpc.id
-  vpc_endpoint_type   = "Interface"
-  service_name        = "com.amazonaws.${var.aws_region}.ecr.api"
-  private_dns_enabled = true
-  subnet_ids          = aws_subnet.private_subnets[*].id
-  security_group_ids  = [var.sg_vpce_ecr_id]
-
-  tags = {
-    Name = "dutymate-vpce-ecr-api"
-  }
+locals {
+  vpce_ecr = toset([
+    "api",
+    "dkr"
+  ])
+  vpce_ssm = toset([
+    "ssm",
+    "ssmmessages",
+    "ec2messages"
+  ])
 }
 
-resource "aws_vpc_endpoint" "vpec_ecr_dkr" {
+resource "aws_vpc_endpoint" "vpce_ecr" {
+  for_each            = local.vpce_ecr
   vpc_id              = aws_vpc.vpc.id
   vpc_endpoint_type   = "Interface"
-  service_name        = "com.amazonaws.${var.aws_region}.ecr.dkr"
+  service_name        = "com.amazonaws.${var.aws_region}.ecr.${each.key}"
   private_dns_enabled = true
   subnet_ids          = aws_subnet.private_subnets[*].id
   security_group_ids  = [var.sg_vpce_ecr_id]
 
   tags = {
-    Name = "dutymate-vpce-ecr-dkr"
+    Name = "dutymate-vpce-ecr-${each.key}"
   }
 }
 
 resource "aws_vpc_endpoint" "vpce_ssm" {
+  for_each            = local.vpce_ssm
   vpc_id              = aws_vpc.vpc.id
   vpc_endpoint_type   = "Interface"
-  service_name        = "com.amazonaws.${var.aws_region}.ssm"
+  service_name        = "com.amazonaws.${var.aws_region}.${each.key}"
   subnet_ids          = aws_subnet.database_subnets[*].id
   security_group_ids  = [var.sg_vpce_ssm_id]
   private_dns_enabled = true
 
   tags = {
-    Name = "dutymate-vpce-ssm"
-  }
-}
-
-resource "aws_vpc_endpoint" "vpce_ssmmessages" {
-  vpc_id              = aws_vpc.vpc.id
-  vpc_endpoint_type   = "Interface"
-  service_name        = "com.amazonaws.${var.aws_region}.ssmmessages"
-  subnet_ids          = aws_subnet.database_subnets[*].id
-  security_group_ids  = [var.sg_vpce_ssm_id]
-  private_dns_enabled = true
-
-  tags = {
-    Name = "dutymate-vpce-ssmmessages"
-  }
-}
-
-resource "aws_vpc_endpoint" "vpce_ec2messages" {
-  vpc_id              = aws_vpc.vpc.id
-  vpc_endpoint_type   = "Interface"
-  service_name        = "com.amazonaws.${var.aws_region}.ec2messages"
-  subnet_ids          = aws_subnet.database_subnets[*].id
-  security_group_ids  = [var.sg_vpce_ssm_id]
-  private_dns_enabled = true
-
-  tags = {
-    Name = "dutymate-vpce-ec2messages"
+    Name = "dutymate-vpce-${each.key}"
   }
 }
