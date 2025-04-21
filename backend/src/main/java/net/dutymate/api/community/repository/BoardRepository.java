@@ -1,4 +1,4 @@
-package net.dutymate.api.comunity.repository;
+package net.dutymate.api.community.repository;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package net.dutymate.api.comunity.controller;
+package net.dutymate.api.community.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.dutymate.api.annotation.Auth;
-import net.dutymate.api.comunity.dto.BoardDetailResponseDto;
-import net.dutymate.api.comunity.dto.CommentRequestDto;
-import net.dutymate.api.comunity.service.CommentService;
+import net.dutymate.api.community.dto.BoardDetailResponseDto;
+import net.dutymate.api.community.dto.CommentRequestDto;
+import net.dutymate.api.community.service.CommentService;
 import net.dutymate.api.entity.Member;
 
 import jakarta.validation.Valid;

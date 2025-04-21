@@ -1,4 +1,4 @@
-package net.dutymate.api.comunity.dto;
+package net.dutymate.api.community.dto;
 
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.community.Board;

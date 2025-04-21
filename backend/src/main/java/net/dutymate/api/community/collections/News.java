@@ -1,11 +1,11 @@
-package net.dutymate.api.comunity.collections;
+package net.dutymate.api.community.collections;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import net.dutymate.api.comunity.dto.GptApiResponseDto;
+import net.dutymate.api.community.dto.GptApiResponseDto;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;

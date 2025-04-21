@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @EnableMongoRepositories(basePackages = {"net.dutymate.api.wardschedules.repository",
-	"net.dutymate.api.comunity.repository"})
+	"net.dutymate.api.community.repository"})
 public class MongoDBconfig {
 }

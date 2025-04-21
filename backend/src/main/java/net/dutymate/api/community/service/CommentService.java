@@ -1,14 +1,14 @@
-package net.dutymate.api.comunity.service;
+package net.dutymate.api.community.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import net.dutymate.api.comunity.dto.BoardDetailResponseDto;
-import net.dutymate.api.comunity.dto.CommentRequestDto;
-import net.dutymate.api.comunity.repository.BoardRepository;
-import net.dutymate.api.comunity.repository.CommentRepository;
+import net.dutymate.api.community.dto.BoardDetailResponseDto;
+import net.dutymate.api.community.dto.CommentRequestDto;
+import net.dutymate.api.community.repository.BoardRepository;
+import net.dutymate.api.community.repository.CommentRepository;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.community.Board;
 import net.dutymate.api.entity.community.Comment;

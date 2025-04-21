@@ -1,4 +1,4 @@
-package net.dutymate.api.comunity.service;
+package net.dutymate.api.community.service;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,13 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import net.dutymate.api.comunity.dto.BoardCreateRequestDto;
-import net.dutymate.api.comunity.dto.BoardDetailResponseDto;
-import net.dutymate.api.comunity.dto.BoardImgResponseDto;
-import net.dutymate.api.comunity.dto.BoardListResponseDto;
-import net.dutymate.api.comunity.repository.BoardLikesRepository;
-import net.dutymate.api.comunity.repository.BoardRepository;
-import net.dutymate.api.comunity.repository.HotBoardRepository;
+import net.dutymate.api.community.dto.BoardCreateRequestDto;
+import net.dutymate.api.community.dto.BoardDetailResponseDto;
+import net.dutymate.api.community.dto.BoardImgResponseDto;
+import net.dutymate.api.community.dto.BoardListResponseDto;
+import net.dutymate.api.community.repository.BoardLikesRepository;
+import net.dutymate.api.community.repository.BoardRepository;
+import net.dutymate.api.community.repository.HotBoardRepository;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.community.Board;
 import net.dutymate.api.entity.community.BoardLikes;

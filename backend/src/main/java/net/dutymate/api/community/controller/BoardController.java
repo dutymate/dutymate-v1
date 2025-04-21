@@ -1,4 +1,4 @@
-package net.dutymate.api.comunity.controller;
+package net.dutymate.api.community.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import net.dutymate.api.annotation.Auth;
-import net.dutymate.api.comunity.dto.BoardCreateRequestDto;
-import net.dutymate.api.comunity.service.BoardService;
+import net.dutymate.api.community.dto.BoardCreateRequestDto;
+import net.dutymate.api.community.service.BoardService;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.enumclass.Category;
 

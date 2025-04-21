@@ -1,4 +1,4 @@
-package net.dutymate.api.comunity.service;
+package net.dutymate.api.community.service;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
 
-import net.dutymate.api.comunity.dto.RecommendResponseDto;
-import net.dutymate.api.comunity.repository.BoardRepository;
+import net.dutymate.api.community.dto.RecommendResponseDto;
+import net.dutymate.api.community.repository.BoardRepository;
 import net.dutymate.api.entity.Member;
 import net.dutymate.api.entity.community.Board;
 

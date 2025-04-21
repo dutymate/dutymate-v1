@@ -1,4 +1,4 @@
-package net.dutymate.api.comunity.service;
+package net.dutymate.api.community.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,10 +9,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import net.dutymate.api.comunity.collections.News;
-import net.dutymate.api.comunity.dto.GptApiResponseDto;
-import net.dutymate.api.comunity.dto.NewsApiResponseDto;
-import net.dutymate.api.comunity.repository.NewsRepository;
+import net.dutymate.api.community.collections.News;
+import net.dutymate.api.community.dto.GptApiResponseDto;
+import net.dutymate.api.community.dto.NewsApiResponseDto;
+import net.dutymate.api.community.repository.NewsRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
